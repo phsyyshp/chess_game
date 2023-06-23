@@ -18,7 +18,3 @@ class piece_types:
             return pc.king(position, color)
         if normalized_piece_id  == 5:
             return pc.bishop(position, color)
-
-
-
-
