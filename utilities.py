@@ -1,4 +1,5 @@
 import numpy as np
+
 def create_empty_board():
     visual_board = np.full((8,8),0)
     for i in range(8):
@@ -34,3 +35,6 @@ def vertical_squares(position, amount = 8):
     squares_in_range = [(i + numeric_position[0], numeric_position[1]) for i in range(-amount, amount+1) if is_coordinate_in_board((i + numeric_position[0], numeric_position[1]))]
     squares_in_range.remove(numeric_position)
     return squares_in_range 
+def piece_id_to_color(piece_id):
+    color = "white" if piece_id_number <= 7 else   "black"
+    return  color
