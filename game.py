@@ -34,8 +34,11 @@ class game:
 
     def create_board(self):
         ''''creates a board with all the pieces in their starting positions'''
-        self.board[1][:] = 7
-        self.board[0][:] = np.array([4,6,5,3,2,5,6,4])
+        white_piece_id_to_name = {"pawn": 7, "knigth": 6, "bishop": 5, "rook": 4, "queen": 3, "king": 2}
+        # add white pieces
+        self.board[1][:] = white_piece_id_to_name["pawn"]
+        self.board[0][:] = np.array([ white_piece_id_to_name["rook"],white_piece_id_to_name["knigth"],white_piece_id_to_name["bishop"],white_piece_id_to_name["queen"],white_piece_id_to_name["king"],white_piece_id_to_name["bishop"],white_piece_id_to_name["knigth"],white_piece_id_to_name["rook"]])
+        # add black pieces
         self.board[6][:] = 6 + self.board[1][:]
         self.board[7][:] = 6 + self.board[0][:]
             
