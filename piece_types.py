@@ -8,13 +8,13 @@ class piece_types:
         normalized_piece_id= self.piece_id_number - (color == "black") * 6
         if normalized_piece_id  == 1:
             return pc.pawn(position, color)
-        if normalized_piece_id  == 6:
+        elif normalized_piece_id  == 6:
             return pc.knight(position, color)
-        if normalized_piece_id  == 4:
+        elif normalized_piece_id  == 4:
             return pc.rook(position, color)
-        if normalized_piece_id  == 3:
+        elif normalized_piece_id  == 3:
             return pc.queen(position, color)
-        if normalized_piece_id  == 2:
+        elif normalized_piece_id  == 2:
             return pc.king(position, color)
-        if normalized_piece_id  == 5:
+        elif normalized_piece_id  == 5:
             return pc.bishop(position, color)
