@@ -46,6 +46,7 @@ class board:
         if self.is_legal_move(old_position, new_position):
             self.board[new_position[0]][new_position[1]] = self.board[old_position[0]][old_position[1]] 
             self.board[old_position[0]][old_position[1]] = 0
+            return True
         else:
             return False 
 

@@ -1,3 +1,3 @@
-import game
-game_object = game( )
-gane_object.start_game(time_control)
+import game as gg
+game_object = gg.game( )
+game_object.play_game(time_control)
