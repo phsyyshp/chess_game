@@ -36,5 +36,5 @@ def vertical_squares(position, amount = 8):
     squares_in_range.remove(numeric_position)
     return squares_in_range 
 def piece_id_to_color(piece_id):
-    color = "white" if piece_id_number <= 7 else   "black"
+    color = "white" if piece_id <= 7 else   "black"
     return  color
