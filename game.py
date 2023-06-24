@@ -13,7 +13,7 @@ class game:
     def is_path_clear(self, piece_object, new_position):
         if  self.board[new_position[0]][new_position[1]] != 0:
             return False
-        elif piece_object.type() in ["king", "knigth"]:
+        elif piece_object.type() not in ["king", "knigth"]:
             path = piece_object.get_path(new_position)
             is_path_clear = 0 == sum(self.board * path)
             return is_path_clear
@@ -21,9 +21,9 @@ class game:
             return True
     
     def is_legal_move(self, old_position, new_position):
-        piece_to_move = self.board[new_position[0]][new_position[1]] 
-        piece_object = pc.piece_types(piece_to_move).create_piece(old_position)
-        return piece_to_move != 0 and self.is_path_clear(piece_object, new_position) and self.is_safe(old_position, new_position)
+        id_of_piece_to_move = self.board[new_position[0]][new_position[1]] 
+        piece_object = pc.piece_types(id_of_piece_to_move).create_piece(old_position)
+        return id_of_piece_to_move != 0 and self.is_path_clear(piece_object, new_position) and self.is_safe(old_position, new_position)
 
     def move_piece(self, old_position, new_position):
         if self.is_legal_move(old_position, new_position):
@@ -38,7 +38,7 @@ class game:
         # add white pieces
         self.board[1][:] = white_piece_id_to_name["pawn"]
         self.board[0][:] = np.array([ white_piece_id_to_name["rook"],white_piece_id_to_name["knigth"],white_piece_id_to_name["bishop"],white_piece_id_to_name["queen"],white_piece_id_to_name["king"],white_piece_id_to_name["bishop"],white_piece_id_to_name["knigth"],white_piece_id_to_name["rook"]])
-        # add black pieces
+        # add black pieces black piece id is white piece id + 6
         self.board[6][:] = 6 + self.board[1][:]
         self.board[7][:] = 6 + self.board[0][:]
             
