@@ -38,3 +38,5 @@ def vertical_squares(position, amount = 8):
 def piece_id_to_color(piece_id):
     color = "white" if piece_id <= 7 else   "black"
     return  color
+def is_algebraic_notation(input):
+    pass
