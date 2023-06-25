@@ -1,14 +1,5 @@
 import numpy as np
 
-def create_empty_board():
-    visual_board = np.full((8,8),0)
-    for i in range(8):
-        for j in range(8):
-            if (i+j)%2==0:
-               visual_board[i][j] = ord("█")
-            else:
-               visual_board[i][j] =32 
-    return visual_board
 def algebraic_to_numeric(algebraic_position):
     return (int(algebraic_position[1])-1,ord(algebraic_position[0])-97)
 def is_coordinate_in_board(numeric_position):
@@ -38,5 +29,5 @@ def vertical_squares(position, amount = 8):
 def piece_id_to_color(piece_id):
     color = "white" if piece_id <= 7 else   "black"
     return  color
-def is_algebraic_notation(input):
+def is_alg_not(input):
     pass

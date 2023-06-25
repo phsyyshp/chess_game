@@ -36,28 +36,31 @@ class board:
             return is_path_clr
         else:
             return True
-    
-    def is_legal_move(self, old_pos, new_pos):
-        
-        return  (not self.is_sqr_emp(old_pos)) and self.is_path_clr(old_pos, new_pos) and self.is_safe(old_pos, new_pos)
 
-    def move_piece(self, old_pos, new_pos):
-        if self.is_legal_move(old_pos, new_pos):
-            self.board_mat[new_pos[0]][new_pos[1]] = self.board_mat[old_pos[0]][old_pos[1]] 
-            self.board_mat[old_pos[0]][old_pos[1]] = 0
+    def is_legal_castling(alg_not):
+        if alg_not.is_castling():
+            color = alg_not.color()
+        else:
+            return False
+
+
+        pass
+    
+    def is_legal_move(self, alg_not_obj):
+        if self.is_legal_castling():
             return True
         else:
-            return False 
+            old_pos, new_pos = self.alg_to_num_coor(alg_not)
+        
+            return  (not self.is_sqr_emp(old_pos)) and self.is_path_clr(old_pos, new_pos) and self.is_safe(old_pos, new_pos)
 
-    def alg_to_num_dest(alg_not) :
-        pass
-    def alg_to_num_depr(alg_not) :
-        pass
-
-    def alg_to_num_coor(self, alg_not):
-        new_pos = self.alg_to_num_dest(alg_not)
-        old_pos = self.alg_to_num_depr(alg_not)
-        return   old_pos, new_pos 
+    def move(self, alg_not):
+        if alg_not.is_legal_castling():
+            self.castle(alg_not)
+        else:
+            old_pos, new_pos = self.alg_to_num_coor(alg_not)
+            self.board_mat[new_pos[0]][new_pos[1]] = self.get_pc_id_frm_pos(old_pos)
+            self.board_mat[old_pos[0]][old_pos[1]] = 0
             
     def show(self):
         vectorized_chr = np.vectorize(chr)

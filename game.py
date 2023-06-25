@@ -4,41 +4,39 @@ from    utilities  import *
 class game:
 
     def __init__(self):
-        self.board_history = [bd.create_board().board]  
+        self.board_history = [bd.create_board().board_mat]  
         self.board = bd.create_board()
 
     def show(self):
-        graphic_of_board = self.board_history[-1].show(is_print = 0)
-        graph_of_remaining_time = self.remaining_time.show()
-        graphe_of_captured_pieces = self
-
-#        self.showa
-        self.board_history[-1].show()
-        self.player1.show_captured_pieces()
-
+       pass 
+    def is_alg_not_valid(self,alg_not):
+        if self.board.is_alg_not_legal(alg_not):
+            return self.board.is_legal_move(alg_not)
     def is_input_valid(self, user_input):
+        
         if is_alg_not(user_input):
-            return self.board.is_movement_valid(algebraic_notation)
+            return self.is_alg_not_valid(user_input)
         else:
             return False
 
     def get_mov_frm_usr(self):
         is_input_valid = False
         while not is_input_valid:
-            movement = input("movement:")
-            is_input_valid = self.is_input_valid()
+            user_input = input("movement:")
+            is_input_valid = self.is_input_valid(user_input)
+        return user_input
 
-    def update_board(self, movement):
-        old_position, new_position = self.board.algebric_input_to_num(movement)
-        self.board.move_piece(old_position, new_position )
-        self.board_history.append(self.board.board)
+    def update_board(self, mov_alg_not):
+        self.board.move(mov_alg_not)
+        self.board_history.append(self.board.board_mat)
 
 
     def play_game(self, time_control):
         while not self.is_over():
            self.show()
-           movement = self.get_movement_from_user()
+           mov_alg_not = self.get_mov_frm_usr()
            self.update_time()
-           self.update_board(movement)
+           mov_alg_not = self.add_color_inf_to_alg_not(mov_alg_not, self.turn)
+           self.update_board(mov_alg_not)
            self.show()
            
