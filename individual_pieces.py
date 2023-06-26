@@ -33,13 +33,17 @@ class knight:
         self.position = position
         self.color = color
         self.type = 'knight'
+    def moves_in_range(self):
+        numeric_position = algebraic_position(self.position)
+        
 class bishop:
     def __init__(self, position, color):
         self.position = position
         self.color = color
         self.type = 'bishop'
     def moves_in_range(self):
-        return diagonal_squares(self.position, slope = 1) + diagonal_squares(self.position, slope = -1)
+        print(self.position)
+        return diagonal_squares(self.position ) 
         
 class rook:
     def __init__(self, position, color):
@@ -54,7 +58,7 @@ class queen:
         self.color = color
         self.type = 'queen'
     def moves_in_range(self):
-        return horizontal_squares(self.position) + vertical_squares(self.position) + diagonal_squares(self.position, slope = 1) + diagonal_squares(self.position, slope = -1)
+        return horizontal_squares(self.position) + vertical_squares(self.position) +  diagonal_squares(self.position)
 class king:
     def __init__(self, position, color):
         self.position = position
@@ -62,5 +66,5 @@ class king:
         self.type = 'king'
     def moves_in_range(self):
         numeric_position = algebraic_to_numeric(self.position)
-        return horizontal_squares(self.position, amount= 1) + vertical_squares(self.position, amount= 1) + diagonal_squares(self.position, slope = 1, amount= 1) + diagonal_squares(self.position, slope = -1, amount= 1)
+        return horizontal_squares(self.position, amount= 1) + vertical_squares(self.position, amount= 1) +  diagonal_squares(self.position, amount= 1)
 pp = pawn('a7','white')
