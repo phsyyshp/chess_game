@@ -1,6 +1,7 @@
 import numpy as np 
 import piece_types as pct
-frm utilities import create_emp_board, algebraic_to_numeric, is_coordinate_in_board, numeric_to_algebraic, pc_id_to_color
+import algebraic_notation as an
+from utilities import  algebraic_to_numeric, is_coordinate_in_board, numeric_to_algebraic, piece_id_to_color
 import itertools
 
 class board:
@@ -36,8 +37,31 @@ class board:
             return is_path_clr
         else:
             return True
+    def possible_dept(self, alg_not):
+        pc_id = alg_not.pc_id_num()
+        new_pos = alg_not.dest_coor()
+        dum_pc = pct.piece_types(pc_id).create_piece(new_pos)
+        sqrs_in_rng = dum_pc.moves_in_range()
+        i=[]
+        for sqr in sqrs_in_rng:
+            pc_id_of_sqrs_in_rng = self.get_pc_id_frm_pos(sqr)
+            #print(pc_id_of_sqrs_in_rng)
+            if pc_id == pc_id_of_sqrs_in_rng:
+                i.append(sqr) if self.is_legal_move(sqr, new_pos)
+        return i
+           
 
-    def is_legal_castling(alg_not):
+    def is_legal_unique_mov(self, alg_not, board_history):
+        if alg_not.is_castling():
+            return False
+        elif alg_not.is_pawn_prom():
+            return False
+        elif alg_not.is_disamg_move():
+            return False
+        else:
+            return len(self.possible_dept(alg_not)) == 1
+
+    def is_legal_castling(self, alg_not):
         if alg_not.is_castling():
             color = alg_not.color()
         else:
@@ -47,17 +71,22 @@ class board:
         pass
     
     def is_legal_move(self, alg_not_obj):
-        if self.is_legal_castling():
+        if  self.is_legal_castling():
             return True
-        else:
-            old_pos, new_pos = self.alg_to_num_coor(alg_not)
+        elif self.is_legal_pawn_prom():
+            return True
         
-            return  (not self.is_sqr_emp(old_pos)) and self.is_path_clr(old_pos, new_pos) and self.is_safe(old_pos, new_pos)
+        else:
+            old_pos, new_pos = alg_not_obj.num_coor()
+        
+            return  (not self.is_sqr_emp(old_pos)) and self.is_path_clr(old_pos, new_pos) and self.is_safe(old_pos, new_pos) and (self.pc_type(old_pos) == alg_not_obj.piece_type_to_move())
 
     def move(self, alg_not):
-        if alg_not.is_legal_castling():
+        if self.is_legal_castling():
             self.castle(alg_not)
-        else:
+        elif self.is_legal_pawn_prom():
+            self.pawn_prom(alg_not)
+        else: 
             old_pos, new_pos = self.alg_to_num_coor(alg_not)
             self.board_mat[new_pos[0]][new_pos[1]] = self.get_pc_id_frm_pos(old_pos)
             self.board_mat[old_pos[0]][old_pos[1]] = 0
@@ -73,9 +102,6 @@ class board:
 
 gg=board()
 
-gg.create_board_mat()
+gg.set_to_init_conf()
 gg.show()
-old_pos = algebraic_to_numeric("e2") 
-new_pos = algebraic_to_numeric("e3") 
-gg.move_pc(old_pos,new_pos)
-gg.show()
+print(gg.is_ambigious(an.algebraic_notation("4.Bb2")))

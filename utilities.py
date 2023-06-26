@@ -10,15 +10,13 @@ def is_coordinate_in_board(numeric_position):
 def numeric_to_algebraic(numeric_position):
     return chr(numeric_position[1]+97)+str(numeric_position[0]+1)
 def diagonal_squares(position, slope, amount = 8):
-    numeric_position = algebraic_to_numeric(position)
-    squares_in_range = [(numeric_position[0] + slope*i, numeric_position[1]+i) for i in range(-amount,amount + 1)  if is_coordinate_in_board((numeric_position[0] + slope*i, numeric_position[1]+i))]
-    squares_in_range.remove(numeric_position)
+    squares_in_range = [(position[0] + slope*i, position[1]+i) for i in range(-amount,amount + 1)  if is_coordinate_in_board((position[0] + slope*i, position[1]+i))]
+    squares_in_range.remove(position)
     return squares_in_range
 
 def horizontal_squares(position, amount = 8):
-    numeric_position = algebraic_to_numeric(position)
-    squares_in_range = [(numeric_position[0], numeric_position[1] + i) for i in range(-amount, amount+1) if is_coordinate_in_board((numeric_position[0], numeric_position[1] + i))]
-    squares_in_range.remove(numeric_position)
+    squares_in_range = [(position[0], position[1] + i) for i in range(-amount, amount+1) if is_coordinate_in_board((position[0], position[1] + i))]
+    squares_in_range.remove(position)
     return squares_in_range
 
 def vertical_squares(position, amount = 8):
