@@ -22,6 +22,7 @@ def horizontal_squares(position, amount = 8):
     if  numeric_position[1]-amount < 0:
         lwr_bnd = 0
 
+
     zr=[numeric_position[0]][numeric_position[1]]
 
     squares_in_range = [(numeric_position[0], numeric_position[1] + i) for i in range(-amount, amount+1) if is_coordinate_in_board((numeric_position[0], numeric_position[1] + i))]
