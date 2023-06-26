@@ -17,17 +17,17 @@ class algebraic_notation:
         pass
     def is_draw_ofr(self):
         pass
-    def is_pawn_prom(self):
+    def is_pawn_promotion(self):
         pass
     def possible_dept_sqrs(self):
         pass
-    def pc_id_num(self):
+    def piece_id(self):
         color_code = 0 if self.color() == "white" else 6
         #print(color_code)
         num_to_let = {"N":6, "R":4, "K":2, "Q":3, "B":5}
         return num_to_let[self.alg_not[-3]] + color_code
-    def dest_coor(self):
-        return  algebraic_to_numeric(self.alg_not[-2] + self.alg_not[-1]       )
+    def destination_cord(self):
+        return self.alg_not[-2] + self.alg_not[-1]       
     def dept_coor(self):
         pass
     def num_coor(self):
@@ -35,4 +35,4 @@ class algebraic_notation:
 
 
 a=algebraic_notation("4.....Bb2")
-print(a.color())
+#print(a.color())
