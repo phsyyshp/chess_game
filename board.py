@@ -15,21 +15,20 @@ class board:
         self.board_matrix[6][:] = 6 + self.board_matrix[1][:]
         self.board_matrix[7][:] = 6 + self.board_matrix[0][:]
 
-    def get_piece_id_from_position(self, pos):
-        return self.board_matrix[pos[0]][pos[1]] 
+    def get_piece_id_from_position(self, position_row_col):
+        return self.board_matrix[position_row_col[0]][position_row_col[1]] 
 
-    def is_square_empty(self, pos):
-        return  self.get_piece_id_from_position(pos) == 0
+    def is_square_empty(self, position_row_col):
+        return  self.get_piece_id_from_position(position_row_col) == 0
 
-    def is_path_clear(self, old_position, new_position):
-        id_of_pc_to_move = self.get_piece_id_from_position(old_position)
-        pc_obj = pct.piece_types(id_of_pc_to_move).create_piece(old_position)
-
-        is_destination_occupied_by_same_color = pc_obj.color() == piece_id_to_color(self.get_piece_id_frm_pos(new_position)) if not self.is_sqr_emp(new_position) else False
+    def is_path_clear(self, old_position_row_col, new_position_row_col):
+        id_of_pc_to_move = self.get_piece_id_from_position(old_position_row_col)
+        pc_obj = pct.piece_types(id_of_pc_to_move).create_piece(old_position_row_col)
+        is_destination_occupied_by_same_color = pc_obj.color() == piece_id_to_color(self.get_piece_id_from_position(new_position_row_col)) if not self.is_square_empty(new_position_row_col) else False
         if   is_destination_occupied_by_same_color:
             return False
         elif pc_obj.type() not in ["king", "knigth"]:
-            path = pc_obj.get_path(new_position)
+            path = pc_obj.get_path(new_position_row_col)
             is_path_clear = 0 == sum(self.board_matrix * path)
             return is_path_clear
         else:
@@ -38,13 +37,13 @@ class board:
         """ it multiplies the binary mask of the movement of the piece by the board matrix and returns the indices of the pieces that can move to the destination square
         """
         piece_id = algebraic_notation.piece_id()
-        new_position = algebraic_notation.destination_cord()
-        dummy_piece = pct.piece_types(piece_id).create_piece(new_position)
+        new_position_file_rank = algebraic_notation.destination_cord()
+        dummy_piece = pct.piece_types(piece_id).create_piece(new_position_file_rank)
         movement_mask = dummy_piece.moves_in_range()
         masked_board = self.board_matrix * movement_mask
         indices_of_pieces = np.where(masked_board == piece_id)
         for index in indices_of_pieces:
-            if not self.is_legal_move(tuple(index), new_position):
+            if not self.is_legal_move(tuple(index), new_position_file_rank):
                 indices_of_pieces.remove(index)
         return indices_of_pieces 
 
@@ -64,7 +63,7 @@ class board:
 #        pass
         return True
     
-    def is_legal_move(self, old_position, new_position):
+    def is_legal_move(self, old_position_row_col, new_position_row_col):
         if  self.is_legal_castling():
             return True
         elif self.is_legal_pawn_promotion():
@@ -73,7 +72,7 @@ class board:
         else:
 #            old_position, new_position = algebraic_notation_obj.num_coor()
         
-            return  (not self.is_sqr_emp(old_position)) and self.is_path_clear(old_position, new_position) and self.is_safe(old_position, new_position) and (self.pc_type(old_position) == algebraic_notation_obj.piece_type_to_move())
+            return  (not self.is_sqr_emp(old_position_row_col)) and self.is_path_clear(old_position_row_col, new_position_row_col) and self.is_safe(old_position_row_col, new_position_row_col) and (self.pc_type(old_position_row_col) == algebraic_notation_obj.piece_type_to_move())
 
     def move(self, algebraic_notation):
         if self.is_legal_castling():
@@ -81,9 +80,9 @@ class board:
         elif self.is_legal_pawn_promotion():
             self.pawn_promotion(algebraic_notation)
         else: 
-            old_position, new_position = self.alg_to_num_coor(algebraic_notation)
-            self.board_matrix[new_position[0]][new_position[1]] = self.get_piece_id_frm_pos(old_position)
-            self.board_matrix[old_position[0]][old_position[1]] = 0
+            old_position_row_col, new_position_row_col = self.alg_to_num_coor(algebraic_notation)
+            self.board_matrix[new_position_row_col[0]][new_position_row_col[1]] = self.get_piece_id_frm_pos(old_position_row_col)
+            self.board_matrix[old_position_row_col[0]][old_position_row_col[1]] = 0
             
     def show(self):
         vectorized_chr = np.vectorize(chr)
