@@ -1,4 +1,5 @@
 import numpy as np
+import itertools
 
 def file_rank_to_row_col(position_file_rank):
     print(position_file_rank)
@@ -56,6 +57,13 @@ def vertical_squares(position_file_rank, amount = 8):
     binary_mat[position_row_column[0]][position_row_column[1]] = 0
     return binary_mat
 
+def L_shaped_squares(position_file_rank):
+    position_row_column = file_rank_to_row_col(position_file_rank)
+    binary_mat = np.zeros((8,8))
+    for row_jump, column_jump in itertools.product([-1, 1], [-2, 2]):
+        if is_coordinate_in_board((position_row_column[0] + row_jump, position_row_column[1] + column_jump)):
+            binary_mat[position_row_column[0] + row_jump][ position_row_column[1] + column_jump] = 1 
+    return binary_mat
 def piece_id_to_color(piece_id):
     color = "white" if piece_id <= 7 else   "black"
     return  color
@@ -63,3 +71,4 @@ def is_alg_not(input):
     pass
 #print(horizontal_squares("d4",1))
 #print(diagonal_squares("d4",7))
+print(L_shaped_squares('d8'))
