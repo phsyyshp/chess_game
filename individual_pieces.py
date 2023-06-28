@@ -36,9 +36,10 @@ class bishop:
         self.color = color
         self.type = 'bishop'
     def moves_in_range(self):
-        return diagonal_squares(self.position_row_column ) 
-    def get_path(self):
-        
+        return diagonal_squares(self.position_row_column,amount=8, slope=1) + diagonal_squares(self.position_row_column,amount=8, slope=-1) 
+    def get_path(self, new_position_row_column):
+        return get_diagonal_path(self.position_row_column, new_position_row_column)
+
         
 class rook:
     def __init__(self, position_row_column, color):
@@ -47,6 +48,8 @@ class rook:
         self.type = 'rook'
     def moves_in_range(self):
         return horizontal_squares(self.position_row_column) + vertical_squares(self.position_row_column)
+    def get_path(self, new_position_row_column):
+        return get_straight_path(self.position_row_column, new_position_row_column)
 class queen:
     def __init__(self, position_row_column, color):
         self.position_row_column = position_row_column
