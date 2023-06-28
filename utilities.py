@@ -13,6 +13,12 @@ def is_coordinate_in_board(position_row_column):
 def row_column_to_file_rank(position_row_column):
     return chr(position_row_column[1]+97)+str(position_row_column[0]+1)
 
+def does_file_change(old_position_row_column, new_position_row_column):
+    return old_position_row_column[1] != new_position_row_column[1]
+
+def does_rank_change(old_position_row_column, new_position_row_column):
+    return old_position_row_column[0] != new_position_row_column[0]
+
 def find_bounds(input_val, amount):
     if  input_val - amount < 0:
         lower_bound = 0
@@ -82,13 +88,13 @@ def get_straight_path(old_position_row_column, new_position_row_column):
     does_file_change  = old_position_row_column[1] != new_position_row_column[1]
     does_rank_change  = old_position_row_column[0] != new_position_row_column[0]
     binary_mat = np.zeros((8,8), dtype = float)
-    if does_rank_change:
+    if does_rank_change(old_position_row_column, new_position_row_column):
         increment_vertical = int((new_position_row_column[0] - old_position_row_column[0])/abs(new_position_row_column[0] - old_position_row_column[0]))
         numpy_array_of_row_indices = np.arange(old_position_row_column[0], new_position_row_column[0], increment_vertical)
-        numpy_array_of_column_indices = np.ones(numpy_array_of_row_indices.size, dtype='int64')
+        numpy_array_of_column_indices = old_position_row_column[1] * np.ones(numpy_array_of_row_indices.size, dtype='int64')
         print(numpy_array_of_column_indices)
         print(numpy_array_of_row_indices)
-    elif does_file_change:
+    elif does_file_change(old_position_row_column, new_position_row_column):
         increment_horizontal = int((new_position_row_column[1] - old_position_row_column[1])/abs(new_position_row_column[1] - old_position_row_column[1]))
         numpy_array_of_column_indices = np.arange(old_position_row_column[1], new_position_row_column[1], increment_horizontal)
         numpy_array_of_row_indices = np.ones( numpy_array_of_column_indices.size, dtype='int64')       
