@@ -10,7 +10,7 @@ class board:
     def set_board_to_initial_configuration(self):
         white_piece_id_to_name = {"pawn": 7, "knight": 6, "bishop": 5, "rook": 4, "queen": 3, "king": 2, "emp": 0}
         self.board_matrix[1][:] = white_piece_id_to_name["pawn"]
-        self.board_matrix[0][:] = np.array([ white_piece_id_to_name["rook"],white_piece_id_to_name["knigth"],white_piece_id_to_name["bishop"],white_piece_id_to_name["queen"],white_piece_id_to_name["king"],white_piece_id_to_name["bishop"],white_piece_id_to_name["knigth"],white_piece_id_to_name["rook"]])
+        self.board_matrix[0][:] = np.array([ white_piece_id_to_name["rook"],white_piece_id_to_name["knight"],white_piece_id_to_name["bishop"],white_piece_id_to_name["queen"],white_piece_id_to_name["king"],white_piece_id_to_name["bishop"],white_piece_id_to_name["knigth"],white_piece_id_to_name["rook"]])
         self.board_matrix[6][:] = 6 + self.board_matrix[1][:]
         self.board_matrix[7][:] = 6 + self.board_matrix[0][:]
 
@@ -36,9 +36,7 @@ class board:
             is_path_clear = 0 == sum(self.board_matrix * path)
             return is_path_clear
 
-
-    def is_path_clear(self, old_position_row_column, new_position_row_column):
-        piece_object = self.get_piece_object_from_position(old_position_row_column)
+    def is_path_clear(self, piece_object, new_position_row_column):
         if self.is_destination_occupied_by_same_color(piece_object, new_position_row_column):
             return False
         elif piece_object.is_slider():
@@ -52,44 +50,43 @@ class board:
         else:
             return True
 
+    def is_castling_attempt(self, piece_object, new_position_row_column):
+        if piece_object.type() == "king":
+            return (abs(piece_object.position_row_column[1] - new_position_row_column[0])) == 2 and not (does_rank_change(piece_object.position_row_column, new_position_row_column))
     
-    def is_legal_castling(self ):
-#        if algebraic_notation.is_castling():
-#            color = algebraic_notation.color()
-#        else:
-#            return False
-#
-#
-#        pass
-        return True
-
-    def is_in_range(self, old_position_row_column, new_position_row_column):
-        piece_id = self.get_piece_id_from_position(old_position_row_column)
-        piece_object_at_old_position_row_column = pct.piece_types(piece_id).create_piece(old_position_row_column)
-        return piece_object_at_old_position_row_column.is_in_range(new_position_row_column)
+    def is_castling_legal(self, piece_object, new_position_row_column):
+        castling_type = self.get_castling_type(piece_object, new_position_row_column)
+        match castling_type:
+            case "long":
+                return self.is_long_castling_legal(piece_object)
+            case "short":
+                return self.is_short_castling_legal(piece_object)
+        
 #show castling by king movement
-    def is_regular_move_legal(self, old_position_row_column, new_position_row_column):
+    def is_move_legal(self, old_position_row_column, new_position_row_column):
+        piece_object = self.get_piece_object_from_position(old_position_row_column)
         if self.is_square_empty(old_position_row_column):
             return False
-        elif not self.is_in_range():
+        elif self.is_castling_attempt(piece_object, new_position_row_column):
+            return self.is_castling_legal(piece_object, new_position_row_column)
+        elif not self.is_in_range(piece_object, new_position_row_column):
             return False
         else:
-            return    self.is_path_clear(old_position_row_column, new_position_row_column) and self.is_safe(old_position_row_column, new_position_row_column) 
-
-    def is_castling_legal(self, castling_type, color, board_history):
-        pass
+            return self.is_path_clear(piece_object, new_position_row_column) and self.is_safe(old_position_row_column, new_position_row_column) 
 
     def is_pawn_promotion_legal(self, old_position_row_column, new_position_row_column):
         pass
+
     def move_general_input(self, movement_str):
         "movement_str is in format of file"
-        if self.type_of_movement(movement_str) == "castle":
-           self.castle(movement_str)
-        elif self.type_of_movement(movement_str) == "pawn_promotion":
-           self.pawn_promotion(movement_str)
-        elif self.type_of_movement(movement_str) == "regular":
-            old_position_row_column, new_position_row_column = movement_str_to_old_new_position_row_column
-            self.move(old_position_row_column, new_position_row_column)
+        match self.type_of_movement(movement_str):  
+            case  "castle":
+               self.castle(movement_str)
+            case "pawn_promotion":
+               self.pawn_promotion(movement_str)
+            case "regular":
+                old_position_row_column, new_position_row_column = self.movement_str_to_old_new_position_row_column(movement_str)
+                self.move(old_position_row_column, new_position_row_column)
         
     def move(self, old_position_row_column, new_position_row_column):
         self.board_matrix[new_position_row_column[0]][new_position_row_column[1]] = self.get_piece_id_from_position(old_position_row_column)
@@ -102,10 +99,7 @@ class board:
         visual_board = [["\x1b[26;30;46m " + visual_board[i][j] + " \x1b[0m" if (i+j)%2 == 0 else "\x1b[26;30;47m " + visual_board[i][j] + " \x1b[0m"  for j in range(8)] for i in range(8)]
         print( "\n".join(["".join(item) for item in visual_board ]  ) ) 
 
-
-
 gg=board()
-
 gg.set_to_init_conf()
 #gg.show()
 print(gg.is_ambiguous(an.algebraic_notation("4.Qb2")))
