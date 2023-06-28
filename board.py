@@ -21,17 +21,35 @@ class board:
     def is_square_empty(self, position_row_column):
         return  self.get_piece_id_from_position(position_row_column) == 0
 
-    #fix position types
-    def is_path_clear(self, old_position_row_column, new_position_row_column):
-        piece_id = self.get_piece_id_from_position(old_position_row_column)
-        piece_object = pct.piece_types(piece_id).create_piece(old_position_row_column)
-        is_destination_occupied_by_same_color = piece_object.color() == piece_id_to_color(self.get_piece_id_from_position(new_position_row_column)) if not self.is_square_empty(new_position_row_column) else False
-        if   is_destination_occupied_by_same_color:
-            return False
-        elif piece_object.type() not in ["king", "knight"]:
+    def get_piece_object_from_position(self, position_row_column):
+        piece_id = self.get_piece_id_from_position(position_row_column)
+        piece_object = pct.piece_types(piece_id).create_piece(position_row_column)
+        return piece_object
+
+    def is_destination_occupied_by_same_color(self, piece_object, new_position_row_column):
+        return piece_object.color() == piece_id_to_color(self.get_piece_id_from_position(new_position_row_column)) if not self.is_square_empty(new_position_row_column) else False
+    
+    def is_pawn_path_clear(self, piece_object, new_position_row_column):
+        if piece_object.is_capture_attempt(new_position_row_column):
+            return not self.is_destination_occupied_by_same_color(piece_object, new_position_row_column) and not self.is_square_empty(new_position_row_column)
+        else:
             path = piece_object.get_path(new_position_row_column)
             is_path_clear = 0 == sum(self.board_matrix * path)
             return is_path_clear
+
+
+    def is_path_clear(self, old_position_row_column, new_position_row_column):
+        piece_object = self.get_piece_object_from_position(old_position_row_column)
+        if self.is_destination_occupied_by_same_color(piece_object, new_position_row_column):
+            return False
+        elif piece_object.is_slider():
+            path = piece_object.get_path(new_position_row_column)
+            is_path_clear = 0 == sum(self.board_matrix * path)
+            return is_path_clear
+        elif piece_object.type() in ["king", "knight"]:
+            return not self.is_destination_occupied_by_same_color(piece_object, new_position_row_column)
+        elif piece_object.type() == "pawn":
+            return self.is_pawn_path_clear(piece_object, new_position_row_column)
         else:
             return True
 
@@ -64,27 +82,32 @@ class board:
 #
 #        pass
         return True
-    
-    def is_legal_move(self, old_position_row_column, new_position_row_column):
-        if  self.is_legal_castling():
-            return True
-        elif self.is_legal_pawn_promotion():
-            return True
-        
-        else:
-#            old_position, new_position = algebraic_notation_obj.num_coor()
-        
-            return  (not self.is_square_empty(old_position_row_column)) and self.is_path_clear(old_position_row_column, new_position_row_column) and self.is_safe(old_position_row_column, new_position_row_column) and (self.pc_type(old_position_row_column) == algebraic_notation_obj.piece_type_to_move())
+    def is_in_range(self, old_position_row_column, new_position_row_column):
+        piece_id = self.get_piece_id_from_position(old_position_row_column)
+        piece_object_at_old_position_row_column = pct.piece_types(piece_id).create_piece(old_position_row_column)
+        return piece_object_at_old_position_row_column.is_in_range(new_position_row_column)
 
-    def move(self, algebraic_notation):
-        if self.is_legal_castling():
-            self.castle(algebraic_notation)
-        elif self.is_legal_pawn_promotion():
-            self.pawn_promotion(algebraic_notation)
-        else: 
-            old_position_row_column, new_position_row_column = self.alg_to_num_coor(algebraic_notation)
-            self.board_matrix[new_position_row_column[0]][new_position_row_column[1]] = self.get_piece_id_frm_pos(old_position_row_column)
-            self.board_matrix[old_position_row_column[0]][old_position_row_column[1]] = 0
+    def is_legal_move(self, old_position_row_column, new_position_row_column):
+        if self.is_square_empty(old_position_row_column):
+            return False
+        elif not self.is_in_range():
+            return False
+        else:
+            return    self.is_path_clear(old_position_row_column, new_position_row_column) and self.is_safe(old_position_row_column, new_position_row_column) 
+
+    def move_general_input(self, movement_str):
+        "movement_str is in format of file"
+        if self.type_of_movement(movement_str) == "castle":
+           self.castle(movement_str)
+        elif self.type_of_movement(movement_str) == "pawn_promotion":
+           self.pawn_promotion(movement_str)
+        elif self.type_of_movement(movement_str) == "regular":
+            old_position_row_column, new_position_row_column = movement_str_to_old_new_position_row_column
+            self.move(old_position_row_column, new_position_row_column)
+        
+    def move(self, old_position_row_column, new_position_row_column):
+        self.board_matrix[new_position_row_column[0]][new_position_row_column[1]] = self.get_piece_id_from_position(old_position_row_column)
+        self.board_matrix[old_position_row_column[0]][old_position_row_column[1]] = 0
             
     def show(self):
         vectorized_chr = np.vectorize(chr)
