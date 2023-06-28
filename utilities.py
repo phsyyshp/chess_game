@@ -33,46 +33,76 @@ def fill_indices(binary_mat, numpy_array_of_row_indices, numpy_array_of_column_i
     return binary_mat
 
 def get_diagonal_path(old_position_row_column, new_position_row_column):
-    binary_mat = np.zeros((8,8))
-    indices = np.arrage()
+    binary_mat = np.zeros((8,8), dtype = float)
+    increment_horizontal = int((new_position_row_column[1] - old_position_row_column[1])/abs(new_position_row_column[1] - old_position_row_column[1]))
+    increment_vertical = int((new_position_row_column[0] - old_position_row_column[0])/abs(new_position_row_column[0] - old_position_row_column[0]))
+    numpy_array_of_row_indices = np.arange(old_position_row_column[0], new_position_row_column[0], increment_vertical)
+    numpy_array_of_column_indices = np.arange(old_position_row_column[1], new_position_row_column[1], increment_horizontal)
+    print(numpy_array_of_column_indices)
+    print(numpy_array_of_row_indices)
+    binary_mat = fill_indices(binary_mat, numpy_array_of_row_indices, numpy_array_of_column_indices,value_to_fill=1)
+    binary_mat[new_position_row_column[0]][new_position_row_column[1]] = 0
+    binary_mat[old_position_row_column[0]][old_position_row_column[1]] = 0
+    return binary_mat
 
 def diagonal_squares(position_row_column, amount = 8, slope = -1):
     "y = slope*x + offset"
     offset = (position_row_column[0] - slope*position_row_column[1])
     numpy_array_of_row_indices = slope * np.arange(-amount + position_row_column[1], amount + position_row_column[1] + 1) + offset 
     numpy_array_of_column_indices = np.arange(-amount + position_row_column[1], amount + position_row_column[1] + 1)
-    print(numpy_array_of_row_indices)
-    print(numpy_array_of_column_indices)
+    #print(numpy_array_of_row_indices)
+    #print(numpy_array_of_column_indices)
     numpy_array_of_column_indices = numpy_array_of_column_indices[(0<=numpy_array_of_row_indices) * (numpy_array_of_row_indices<8)]
     numpy_array_of_row_indices = numpy_array_of_row_indices[(0<=numpy_array_of_row_indices) * (numpy_array_of_row_indices<8)]
     
     numpy_array_of_row_indices = numpy_array_of_row_indices[(0<=numpy_array_of_column_indices) * (numpy_array_of_column_indices<8)]
     numpy_array_of_column_indices = numpy_array_of_column_indices[(0<=numpy_array_of_column_indices) * (numpy_array_of_column_indices<8)]
-    print(numpy_array_of_row_indices)
-    print(numpy_array_of_column_indices)
-    binary_mat = np.zeros((8,8))
+    #print(numpy_array_of_row_indices)
+    #print(numpy_array_of_column_indices)
+    binary_mat = np.zeros((8,8), dtype = float)
     binary_mat = fill_indices(binary_mat, numpy_array_of_row_indices, numpy_array_of_column_indices, value_to_fill=1)
     binary_mat[position_row_column[0]][position_row_column[1]] = 0
     return  binary_mat
 
 def horizontal_squares(position_row_column, amount = 8):
-    binary_mat = np.zeros((8,8))
+    binary_mat = np.zeros((8,8), dtype = float)
     lower_bound, upper_bound = find_bounds(position_row_column[1], amount)
     binary_mat[position_row_column[0]][lower_bound:upper_bound+1] = 1 
     binary_mat[position_row_column[0]][position_row_column[1]] = 0
     return binary_mat
 
 def vertical_squares(position_row_column, amount = 8):
-    binary_mat = np.zeros((8,8))
+    binary_mat = np.zeros((8,8), dtype = float)
     lower_bound, upper_bound = find_bounds(position_row_column[0], amount)
-    
     binary_mat[lower_bound:upper_bound+1][position_row_column[1]]= 1 
-
     binary_mat[position_row_column[0]][position_row_column[1]] = 0
     return binary_mat
 
+def get_straight_path(old_position_row_column, new_position_row_column):
+    does_file_change  = old_position_row_column[1] != new_position_row_column[1]
+    does_rank_change  = old_position_row_column[0] != new_position_row_column[0]
+    binary_mat = np.zeros((8,8), dtype = float)
+    if does_rank_change:
+        increment_vertical = int((new_position_row_column[0] - old_position_row_column[0])/abs(new_position_row_column[0] - old_position_row_column[0]))
+        numpy_array_of_row_indices = np.arange(old_position_row_column[0], new_position_row_column[0], increment_vertical)
+        numpy_array_of_column_indices = np.ones(numpy_array_of_row_indices.size, dtype='int64')
+        print(numpy_array_of_column_indices)
+        print(numpy_array_of_row_indices)
+    elif does_file_change:
+        increment_horizontal = int((new_position_row_column[1] - old_position_row_column[1])/abs(new_position_row_column[1] - old_position_row_column[1]))
+        numpy_array_of_column_indices = np.arange(old_position_row_column[1], new_position_row_column[1], increment_horizontal)
+        numpy_array_of_row_indices = np.ones( numpy_array_of_column_indices.size, dtype='int64')       
+    else:
+        pass
+        #implement error
+    binary_mat = fill_indices(binary_mat,numpy_array_of_row_indices, numpy_array_of_column_indices, 1)
+    binary_mat[new_position_row_column[0]][new_position_row_column[1]] = 0
+    binary_mat[old_position_row_column[0]][old_position_row_column[1]] = 0
+    return binary_mat
+
+
 def L_shaped_squares(position_row_column):
-    binary_mat = np.zeros((8,8))
+    binary_mat = np.zeros((8,8), dtype = float)
     for row_jump, column_jump in itertools.product([-1, 1], [-2, 2]):
         if is_coordinate_in_board((position_row_column[0] + row_jump, position_row_column[1] + column_jump)):
             binary_mat[position_row_column[0] + row_jump][ position_row_column[1] + column_jump] = 1 
@@ -85,3 +115,5 @@ def is_alg_not(input):
 #print(horizontal_squares("d4",1))
 print(diagonal_squares(file_rank_to_row_column("d7"),1,1))
 print(L_shaped_squares(file_rank_to_row_column("d8")))
+print(get_diagonal_path([2,3],[5,6]))
+print(get_straight_path([2,3],[5,3]))
