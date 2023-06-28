@@ -1,6 +1,5 @@
 import numpy as np 
 import piece_types as pct
-import algebraic_notation as an
 from utilities import  *
 import itertools
 
@@ -8,7 +7,7 @@ class board:
     def __init__(self):
         self.board_matrix = np.full((8,8), 0)
     
-    def set_to_init_conf(self):
+    def set_board_to_initial_configuration(self):
         white_piece_id_to_name = {"pawn": 7, "knight": 6, "bishop": 5, "rook": 4, "queen": 3, "king": 2, "emp": 0}
         self.board_matrix[1][:] = white_piece_id_to_name["pawn"]
         self.board_matrix[0][:] = np.array([ white_piece_id_to_name["rook"],white_piece_id_to_name["knigth"],white_piece_id_to_name["bishop"],white_piece_id_to_name["queen"],white_piece_id_to_name["king"],white_piece_id_to_name["bishop"],white_piece_id_to_name["knigth"],white_piece_id_to_name["rook"]])
@@ -53,26 +52,7 @@ class board:
         else:
             return True
 
-    def possible_departure_squares(self, algebraic_notation):
-        """ it multiplies the binary mask of the movement of the piece by the board matrix and returns the indices of the pieces that can move to the destination square
-        """
-        piece_id = algebraic_notation.piece_id()
-        new_position_row_column = algebraic_notation.destination_cord()
-        dummy_piece = pct.piece_types(piece_id).create_piece(new_position_row_column)
-        movement_mask = dummy_piece.moves_in_range()
-        masked_board = self.board_matrix * movement_mask
-        indices_of_pieces = np.where(masked_board == piece_id)
-        for index in indices_of_pieces:
-            if not self.is_legal_move(tuple(index), new_position_row_column):
-                indices_of_pieces.remove(index)
-        return indices_of_pieces 
-
-    def is_ambiguous(self, algebraic_notation, board_history=0):
-        if algebraic_notation.is_special_move():
-            return False
-        else:
-            return len(self.possible_departure_squares(algebraic_notation)) == 1
-
+    
     def is_legal_castling(self ):
 #        if algebraic_notation.is_castling():
 #            color = algebraic_notation.color()
@@ -82,12 +62,13 @@ class board:
 #
 #        pass
         return True
+
     def is_in_range(self, old_position_row_column, new_position_row_column):
         piece_id = self.get_piece_id_from_position(old_position_row_column)
         piece_object_at_old_position_row_column = pct.piece_types(piece_id).create_piece(old_position_row_column)
         return piece_object_at_old_position_row_column.is_in_range(new_position_row_column)
-
-    def is_legal_move(self, old_position_row_column, new_position_row_column):
+#show castling by king movement
+    def is_regular_move_legal(self, old_position_row_column, new_position_row_column):
         if self.is_square_empty(old_position_row_column):
             return False
         elif not self.is_in_range():
@@ -95,6 +76,11 @@ class board:
         else:
             return    self.is_path_clear(old_position_row_column, new_position_row_column) and self.is_safe(old_position_row_column, new_position_row_column) 
 
+    def is_castling_legal(self, castling_type, color, board_history):
+        pass
+
+    def is_pawn_promotion_legal(self, old_position_row_column, new_position_row_column):
+        pass
     def move_general_input(self, movement_str):
         "movement_str is in format of file"
         if self.type_of_movement(movement_str) == "castle":
