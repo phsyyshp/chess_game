@@ -1,7 +1,7 @@
 import numpy as np 
 import piece_types as pct
 import algebraic_notation as an
-from utilities import  algebraic_to_numeric, is_coordinate_in_board, numeric_to_algebraic, piece_id_to_color
+from utilities import  *
 import itertools
 
 class board:
