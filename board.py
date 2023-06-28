@@ -50,12 +50,16 @@ class board:
         else:
             return True
 
+    def is_under_attack_by_any_piece(self, position_row_column, attacker_color):
+        is_attacked_by_specific_piece_bool_list = [self.is_under_attack_by_specific_piece(position_row_column, attacker_piece_type, attacker_color) for attacker_piece_type in ["pawn", "queen", "king", "bishop", "rook", "knight"]]
+        return sum(is_attacked_by_specific_piece_bool_list) != 0
+
     def is_castling_attempt(self, piece_object, new_position_row_column):
         if piece_object.type() == "king":
             return (abs(piece_object.position_row_column[1] - new_position_row_column[0])) == 2 and not (does_rank_change(piece_object.position_row_column, new_position_row_column))
     
     def is_castling_legal(self, piece_object, new_position_row_column):
-        castling_type = self.get_castling_type(piece_object, new_position_row_column)
+        castling_type = piece_object.get_castling_type(new_position_row_column)
         match castling_type:
             case "long":
                 return self.is_long_castling_legal(piece_object)

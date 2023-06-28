@@ -38,6 +38,9 @@ def fill_indices(binary_mat, numpy_array_of_row_indices, numpy_array_of_column_i
     binary_mat = binary_mat.reshape((8,8))
     return binary_mat
 
+def increment_horizontal(old_position_row_column, new_position_row_column):
+    "returns +1 if new_pos_col>old_pos_col"
+    return np.sign((new_position_row_column[1] - old_position_row_column[1]))
 def get_diagonal_path(old_position_row_column, new_position_row_column):
     binary_mat = np.zeros((8,8), dtype = float)
     increment_horizontal = np.sign((new_position_row_column[1] - old_position_row_column[1]))

@@ -5,6 +5,7 @@ class pawn:
         self.position_row_column = position_row_column
         self.color = color
         self.type = 'pawn'
+
     def is_in_starting_position(self):
         if self.color == 'white':
             return self.position_row_column[0] == 1
@@ -96,5 +97,13 @@ class king:
 
     def is_slider(self):
         return False
+
+    def get_castling_type(self, new_position_row_column):
+        match self.color:
+            case "black":
+               increment_sign = 1
+            case "white":
+                increment_sign = -1
+        castling_type = "short" if increment_horizontal(self.position_row_column, new_position_row_column) == increment_sign else "long"
 
 pp = pawn('a7','white')
