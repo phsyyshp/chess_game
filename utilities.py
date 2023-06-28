@@ -37,13 +37,19 @@ def get_diagonal_path(old_position_row_column, new_position_row_column):
     indices = np.arrage()
 
 def diagonal_squares(position_row_column, amount = 8, slope = -1):
+    "y = slope*x + offset"
     offset = (position_row_column[0] - slope*position_row_column[1])
-    numpy_array_of_row_indices = slope * np.arange(0  , 8  ) + offset 
-    numpy_array_of_column_indices = np.arange(0  , 8 ) 
+    numpy_array_of_row_indices = slope * np.arange(-amount + position_row_column[1], amount + position_row_column[1] + 1) + offset 
+    numpy_array_of_column_indices = np.arange(-amount + position_row_column[1], amount + position_row_column[1] + 1)
+    print(numpy_array_of_row_indices)
+    print(numpy_array_of_column_indices)
     numpy_array_of_column_indices = numpy_array_of_column_indices[(0<=numpy_array_of_row_indices) * (numpy_array_of_row_indices<8)]
     numpy_array_of_row_indices = numpy_array_of_row_indices[(0<=numpy_array_of_row_indices) * (numpy_array_of_row_indices<8)]
-    #print(numpy_array_of_row_indices)
-    #print(numpy_array_of_column_indices)
+    
+    numpy_array_of_row_indices = numpy_array_of_row_indices[(0<=numpy_array_of_column_indices) * (numpy_array_of_column_indices<8)]
+    numpy_array_of_column_indices = numpy_array_of_column_indices[(0<=numpy_array_of_column_indices) * (numpy_array_of_column_indices<8)]
+    print(numpy_array_of_row_indices)
+    print(numpy_array_of_column_indices)
     binary_mat = np.zeros((8,8))
     binary_mat = fill_indices(binary_mat, numpy_array_of_row_indices, numpy_array_of_column_indices, value_to_fill=1)
     binary_mat[position_row_column[0]][position_row_column[1]] = 0
@@ -77,5 +83,5 @@ def piece_id_to_color(piece_id):
 def is_alg_not(input):
     pass
 #print(horizontal_squares("d4",1))
-print(diagonal_squares(file_rank_to_row_column("d7"),7))
+print(diagonal_squares(file_rank_to_row_column("d7"),1,1))
 print(L_shaped_squares(file_rank_to_row_column("d8")))
