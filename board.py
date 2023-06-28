@@ -9,7 +9,7 @@ class board:
         self.board_matrix = np.full((8,8), 0)
     
     def set_to_init_conf(self):
-        white_piece_id_to_name = {"pawn": 7, "knigth": 6, "bishop": 5, "rook": 4, "queen": 3, "king": 2, "emp": 0}
+        white_piece_id_to_name = {"pawn": 7, "knight": 6, "bishop": 5, "rook": 4, "queen": 3, "king": 2, "emp": 0}
         self.board_matrix[1][:] = white_piece_id_to_name["pawn"]
         self.board_matrix[0][:] = np.array([ white_piece_id_to_name["rook"],white_piece_id_to_name["knigth"],white_piece_id_to_name["bishop"],white_piece_id_to_name["queen"],white_piece_id_to_name["king"],white_piece_id_to_name["bishop"],white_piece_id_to_name["knigth"],white_piece_id_to_name["rook"]])
         self.board_matrix[6][:] = 6 + self.board_matrix[1][:]
@@ -28,14 +28,14 @@ class board:
         is_destination_occupied_by_same_color = piece_object.color() == piece_id_to_color(self.get_piece_id_from_position(new_position_row_column)) if not self.is_square_empty(new_position_row_column) else False
         if   is_destination_occupied_by_same_color:
             return False
-        elif piece_object.type() not in ["king", "knigth"]:
+        elif piece_object.type() not in ["king", "knight"]:
             path = piece_object.get_path(new_position_row_column)
             is_path_clear = 0 == sum(self.board_matrix * path)
             return is_path_clear
         else:
             return True
 
-    def possible_departue_squares(self, algebraic_notation):
+    def possible_departure_squares(self, algebraic_notation):
         """ it multiplies the binary mask of the movement of the piece by the board matrix and returns the indices of the pieces that can move to the destination square
         """
         piece_id = algebraic_notation.piece_id()
@@ -49,11 +49,11 @@ class board:
                 indices_of_pieces.remove(index)
         return indices_of_pieces 
 
-    def is_ambigious(self, algebraic_notation, board_history=0):
+    def is_ambiguous(self, algebraic_notation, board_history=0):
         if algebraic_notation.is_special_move():
             return False
         else:
-            return len(self.possible_departue_squares(algebraic_notation)) == 1
+            return len(self.possible_departure_squares(algebraic_notation)) == 1
 
     def is_legal_castling(self ):
 #        if algebraic_notation.is_castling():
@@ -99,4 +99,4 @@ gg=board()
 
 gg.set_to_init_conf()
 #gg.show()
-print(gg.is_ambigious(an.algebraic_notation("4.Qb2")))
+print(gg.is_ambiguous(an.algebraic_notation("4.Qb2")))
