@@ -74,7 +74,7 @@ class board:
         else:
 #            old_position, new_position = algebraic_notation_obj.num_coor()
         
-            return  (not self.is_sqr_emp(old_position_row_column)) and self.is_path_clear(old_position_row_column, new_position_row_column) and self.is_safe(old_position_row_column, new_position_row_column) and (self.pc_type(old_position_row_column) == algebraic_notation_obj.piece_type_to_move())
+            return  (not self.is_square_empty(old_position_row_column)) and self.is_path_clear(old_position_row_column, new_position_row_column) and self.is_safe(old_position_row_column, new_position_row_column) and (self.pc_type(old_position_row_column) == algebraic_notation_obj.piece_type_to_move())
 
     def move(self, algebraic_notation):
         if self.is_legal_castling():
