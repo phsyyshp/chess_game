@@ -10,7 +10,7 @@ class board:
     def set_board_to_initial_configuration(self):
         white_piece_id_to_name = {"pawn": 7, "knight": 6, "bishop": 5, "rook": 4, "queen": 3, "king": 2, "emp": 0}
         self.board_matrix[1][:] = white_piece_id_to_name["pawn"]
-        self.board_matrix[0][:] = np.array([ white_piece_id_to_name["rook"],white_piece_id_to_name["knight"],white_piece_id_to_name["bishop"],white_piece_id_to_name["queen"],white_piece_id_to_name["king"],white_piece_id_to_name["bishop"],white_piece_id_to_name["knigth"],white_piece_id_to_name["rook"]])
+        self.board_matrix[0][:] = np.array([ white_piece_id_to_name["rook"],white_piece_id_to_name["knight"],white_piece_id_to_name["bishop"],white_piece_id_to_name["queen"],white_piece_id_to_name["king"],white_piece_id_to_name["bishop"],white_piece_id_to_name["knight"],white_piece_id_to_name["rook"]])
         self.board_matrix[6][:] = 6 + self.board_matrix[1][:]
         self.board_matrix[7][:] = 6 + self.board_matrix[0][:]
 
@@ -106,7 +106,7 @@ class board:
         visual_board = [["\x1b[26;30;46m " + visual_board[i][j] + " \x1b[0m" if (i+j)%2 == 0 else "\x1b[26;30;47m " + visual_board[i][j] + " \x1b[0m"  for j in range(8)] for i in range(8)]
         print( "\n".join(["".join(item) for item in visual_board ]  ) ) 
 
-gg=board()
-gg.set_to_init_conf()
-#gg.show()
-print(gg.is_ambiguous(an.algebraic_notation("4.Qb2")))
+#gg=board()
+#gg.set_to_init_conf()
+##gg.show()
+#print(gg.is_ambiguous(an.algebraic_notation("4.Qb2")))

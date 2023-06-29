@@ -47,8 +47,8 @@ def get_diagonal_path(old_position_row_column, new_position_row_column):
     increment_vertical = np.sign((new_position_row_column[0] - old_position_row_column[0]))
     numpy_array_of_row_indices = np.arange(old_position_row_column[0], new_position_row_column[0], increment_vertical)
     numpy_array_of_column_indices = np.arange(old_position_row_column[1], new_position_row_column[1], increment_horizontal)
-    print(numpy_array_of_column_indices)
-    print(numpy_array_of_row_indices)
+    #print(numpy_array_of_column_indices)
+    #print(numpy_array_of_row_indices)
     binary_mat = fill_indices(binary_mat, numpy_array_of_row_indices, numpy_array_of_column_indices,value_to_fill=1)
     binary_mat[new_position_row_column[0]][new_position_row_column[1]] = 0
     binary_mat[old_position_row_column[0]][old_position_row_column[1]] = 0
@@ -95,8 +95,8 @@ def get_straight_path(old_position_row_column, new_position_row_column):
         increment_vertical = int((new_position_row_column[0] - old_position_row_column[0])/abs(new_position_row_column[0] - old_position_row_column[0]))
         numpy_array_of_row_indices = np.arange(old_position_row_column[0], new_position_row_column[0], increment_vertical)
         numpy_array_of_column_indices = old_position_row_column[1] * np.ones(numpy_array_of_row_indices.size, dtype='int64')
-        print(numpy_array_of_column_indices)
-        print(numpy_array_of_row_indices)
+       # print(numpy_array_of_column_indices)
+       # print(numpy_array_of_row_indices)
     elif does_file_change(old_position_row_column, new_position_row_column):
         increment_horizontal = int((new_position_row_column[1] - old_position_row_column[1])/abs(new_position_row_column[1] - old_position_row_column[1]))
         numpy_array_of_column_indices = np.arange(old_position_row_column[1], new_position_row_column[1], increment_horizontal)
@@ -122,7 +122,7 @@ def piece_id_to_color(piece_id):
 def is_alg_not(input):
     pass
 #print(horizontal_squares("d4",1))
-print(diagonal_squares(file_rank_to_row_column("d7"),1,1))
-print(L_shaped_squares(file_rank_to_row_column("d8")))
-print(get_diagonal_path([2,3],[5,6]))
-print(get_straight_path([2,3],[5,3]))
+#print(diagonal_squares(file_rank_to_row_column("d7"),1,1))
+#print(L_shaped_squares(file_rank_to_row_column("d8")))
+#print(get_diagonal_path([2,3],[5,6]))
+#print(get_straight_path([2,3],[5,3]))
