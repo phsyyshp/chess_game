@@ -53,6 +53,7 @@ class board:
     # do it like is_attacked_by_slider etc
     def is_under_attack_by_specific_piece(position_row_column, attacker_piece_type, attacker_color):
         attacker_piece_id = piece_type_color_to_piece_id()
+
     def is_under_attack_by_any_piece(self, position_row_column, attacker_color):
         is_attacked_by_specific_piece_bool_list = [self.is_under_attack_by_specific_piece(position_row_column, attacker_piece_type, attacker_color) for attacker_piece_type in ["pawn", "queen", "king", "bishop", "rook", "knight"]]
         return sum(is_attacked_by_specific_piece_bool_list) != 0
@@ -64,10 +65,10 @@ class board:
     def is_castling_legal(self, piece_object, new_position_row_column):
         castling_type = piece_object.get_castling_type(new_position_row_column)
         match castling_type:
-            case "long":
-                return self.is_long_castling_legal(piece_object)
-            case "short":
-                return self.is_short_castling_legal(piece_object)
+            case "queen side":
+                return self.is_queen_side_castling_legal(piece_object)
+            case "king side":
+                return self.is_king_side_castling_legal(piece_object)
         
 #show castling by king movement
     def is_move_legal(self, old_position_row_column, new_position_row_column):
@@ -98,15 +99,25 @@ class board:
     def move(self, old_position_row_column, new_position_row_column):
         self.board_matrix[new_position_row_column[0]][new_position_row_column[1]] = self.get_piece_id_from_position(old_position_row_column)
         self.board_matrix[old_position_row_column[0]][old_position_row_column[1]] = 0
-            
-    def show(self):
+
+    def move_single_file_rank_input(self, old_new_file_rank):
+        old_position_row_column, new_position_row_column = split_single_file_rank_to_old_new_row_column(old_new_file_rank)
+        self.move(old_position_row_column, new_position_row_column)
+
+    def show(self, point_of_view = "white"):
         vectorized_chr = np.vectorize(chr)
+
         visual_board = self.board_matrix + 9810 * (self.board_matrix != 0) 
+        visual_board = np.flipud(visual_board) if point_of_view == "white" else np.fliplr(visual_board)
         visual_board = vectorized_chr( 32*(visual_board == 0)  + visual_board).tolist()
-        visual_board = [["\x1b[26;30;46m " + visual_board[i][j] + " \x1b[0m" if (i+j)%2 == 0 else "\x1b[26;30;47m " + visual_board[i][j] + " \x1b[0m"  for j in range(8)] for i in range(8)]
+        visual_board = [["\x1b[26;30;46m " + visual_board[i][j] + " \x1b[0m" if (i+j + 1)%2 == 0 else "\x1b[26;30;47m " + visual_board[i][j] + " \x1b[0m"  for j in range(8)] for i in range(8)]
         print( "\n".join(["".join(item) for item in visual_board ]  ) ) 
 
-#gg=board()
-#gg.set_to_init_conf()
-##gg.show()
+gg=board()
+gg.set_board_to_initial_configuration()
+gg.show()
+print(" ")
+gg.move_single_file_rank_input('d2d4')
+gg.show()
 #print(gg.is_ambiguous(an.algebraic_notation("4.Qb2")))
+

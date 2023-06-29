@@ -4,14 +4,21 @@ import itertools
 def file_rank_to_row_column(position_file_rank):
     return (int(position_file_rank[1])-1,ord(position_file_rank[0])-97)
 
+def row_column_to_file_rank(position_row_column):
+    return chr(position_row_column[1]+97)+str(position_row_column[0]+1)
+
+def combine_old_new_row_column_to_rank_file(old_position_row_column, new_position_row_column,):
+    return row_column_to_file_rank(old_position_row_column) + row_column_to_file_rank(new_position_row_column) 
+
+def split_single_file_rank_to_old_new_row_column(old_new_file_rank):
+    old_position_file_rank = old_new_file_rank[0:2]
+    new_position_file_rank = old_new_file_rank[2:4]
+    return file_rank_to_row_column(old_position_file_rank),  file_rank_to_row_column(new_position_file_rank) 
 def is_coordinate_in_board(position_row_column):
     if position_row_column[0] in range(8) and position_row_column[1] in range(8):
         return True
     else:
         return False
-
-def row_column_to_file_rank(position_row_column):
-    return chr(position_row_column[1]+97)+str(position_row_column[0]+1)
 
 def does_file_change(old_position_row_column, new_position_row_column):
     return old_position_row_column[1] != new_position_row_column[1]
@@ -41,6 +48,7 @@ def fill_indices(binary_mat, numpy_array_of_row_indices, numpy_array_of_column_i
 def increment_horizontal(old_position_row_column, new_position_row_column):
     "returns +1 if new_pos_col>old_pos_col"
     return np.sign((new_position_row_column[1] - old_position_row_column[1]))
+
 def get_diagonal_path(old_position_row_column, new_position_row_column):
     binary_mat = np.zeros((8,8), dtype = float)
     increment_horizontal = np.sign((new_position_row_column[1] - old_position_row_column[1]))
