@@ -110,8 +110,13 @@ class board:
         visual_board = self.board_matrix + 9810 * (self.board_matrix != 0) 
         visual_board = np.flipud(visual_board) if point_of_view == "white" else np.fliplr(visual_board)
         visual_board = vectorized_chr( 32*(visual_board == 0)  + visual_board).tolist()
-        visual_board = [["\x1b[26;30;46m " + visual_board[i][j] + " \x1b[0m" if (i+j + 1)%2 == 0 else "\x1b[26;30;47m " + visual_board[i][j] + " \x1b[0m"  for j in range(8)] for i in range(8)]
-        print( "\n".join(["".join(item) for item in visual_board ]  ) ) 
+        visual_board = [[str(8-i) + " "] + ["\x1b[26;30;46m " + visual_board[i][j] + " \x1b[0m" if (i+j + 1)%2 == 0 else "\x1b[26;30;47m " + visual_board[i][j] + " \x1b[0m"  for j in range(8)] for i in range(8)]
+        visual_board_string = "\n".join(["".join(item) for item in visual_board ]  )
+        rank_column = "\n".join(map(str,range(8,0,-1)))
+        file_row = "  ".join("bcdefgh") if point_of_view == "white" else "  ".join("gfedcba")
+        file_row = "\n   a  " + file_row if point_of_view == "white" else "\n   h  " + file_row
+        visual_board_string += file_row
+        print(visual_board_string) 
 
 gg=board()
 gg.set_board_to_initial_configuration()
