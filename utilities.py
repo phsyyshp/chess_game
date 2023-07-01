@@ -54,11 +54,17 @@ def increment_vertical(old_position_row_column, new_position_row_column):
     "returns +1 if new_pos_row>old_pos_row"
     return np.sign((new_position_row_column[0] - old_position_row_column[0]))
 
+def get_row_indices_of_shortest_path(old_position_row_column, new_position_row_column) -> np.ndarray:
+    return  np.arange(old_position_row_column[0], new_position_row_column[0], increment_vertical(old_position_row_column, new_position_row_column))      
+    
+def get_column_indices_of_shortest_path(old_position_row_column, new_position_row_column) -> np.ndarray:
+    return np.arange(old_position_row_column[1], new_position_row_column[1], increment_horizontal(old_position_row_column, new_position_row_column))      
+
 def get_diagonal_path(old_position_row_column, new_position_row_column) -> np.ndarray:
     binary_mat = np.zeros((8,8), dtype = float)
-    numpy_array_of_row_indices = np.arange(old_position_row_column[0], new_position_row_column[0], increment_vertical(old_position_row_column, new_position_row_column))
-    numpy_array_of_column_indices = np.arange(old_position_row_column[1], new_position_row_column[1], increment_horizontal(old_position_row_column, new_position_row_column))
-    binary_mat = fill_indices(binary_mat, numpy_array_of_row_indices, numpy_array_of_column_indices,value_to_fill=1)
+    numpy_array_of_row_indices = get_row_indices_of_shortest_path(old_position_row_column, new_position_row_column)
+    numpy_array_of_column_indices = get_column_indices_of_shortest_path(old_position_row_column, new_position_row_column)
+    binary_mat = fill_indices(binary_mat, numpy_array_of_row_indices, numpy_array_of_column_indices)
     binary_mat[new_position_row_column[0]][new_position_row_column[1]] = 0
     binary_mat[old_position_row_column[0]][old_position_row_column[1]] = 0
     return binary_mat
@@ -95,11 +101,10 @@ def vertical_squares(position_row_column, amount = 8) -> np.ndarray:
 def get_straight_path(old_position_row_column, new_position_row_column) -> np.ndarray:
     binary_mat = np.zeros((8,8), dtype = float)
     if does_rank_change(old_position_row_column, new_position_row_column):
-        numpy_array_of_row_indices = np.arange(old_position_row_column[0], new_position_row_column[0], increment_vertical(old_position_row_column, new_position_row_column))
+        numpy_array_of_row_indices = get_row_indices_of_shortest_path(old_position_row_column, new_position_row_column)
         numpy_array_of_column_indices = old_position_row_column[1] * np.ones(numpy_array_of_row_indices.size, dtype='int64')
-
     elif does_file_change(old_position_row_column, new_position_row_column):
-        numpy_array_of_column_indices = np.arange(old_position_row_column[1], new_position_row_column[1], increment_horizontal(old_position_row_column, new_position_row_column))
+        numpy_array_of_column_indices = get_column_indices_of_shortest_path(old_position_row_column, new_position_row_column)
         numpy_array_of_row_indices = np.ones( numpy_array_of_column_indices.size, dtype='int64')       
     else:
         pass
@@ -116,9 +121,11 @@ def L_shaped_squares(position_row_column) -> np.ndarray:
         if is_coordinate_in_board((position_row_column[0] + row_jump, position_row_column[1] + column_jump)):
             binary_mat[position_row_column[0] + row_jump][ position_row_column[1] + column_jump] = 1 
     return binary_mat
+
 def piece_id_to_color(piece_id):
     color = "white" if piece_id <= 7 else   "black"
     return  color
+
 def is_alg_not(input):
     pass
 #print(horizontal_squares("d4",1))
