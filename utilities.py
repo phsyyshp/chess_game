@@ -128,8 +128,8 @@ def piece_id_to_color(piece_id):
 
 def is_alg_not(input):
     pass
-#print(horizontal_squares("d4",1))
-#print(diagonal_squares(file_rank_to_row_column("d7"),1,1))
-#print(L_shaped_squares(file_rank_to_row_column("d8")))
-#print(get_diagonal_path([2,3],[5,6]))
-#print(get_straight_path([2,3],[5,3]))
+print(horizontal_squares(file_rank_to_row_column("d4"),1))
+print(diagonal_squares(file_rank_to_row_column("d7"),1,1))
+print(L_shaped_squares(file_rank_to_row_column("d8")))
+print(get_diagonal_path([2,3],[5,6]))
+print(get_straight_path([2,3],[5,3]))
