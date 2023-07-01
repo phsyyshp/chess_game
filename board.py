@@ -129,4 +129,3 @@ print(" ")
 gg.move_single_file_rank_input('d2d4')
 gg.show()
 #print(gg.is_ambiguous(an.algebraic_notation("4.Qb2")))
-
