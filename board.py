@@ -51,18 +51,22 @@ class board:
             return True
 
     # do it like is_attacked_by_slider etc
-    def is_under_attack_by_specific_piece(position_row_column, attacker_piece_type, attacker_color):
-        attacker_piece_id = piece_type_color_to_piece_id()
+    def is_under_attack_by_specific_piece(self, position_row_column, attacker_piece_type, attacker_color):
+        attacker_piece_id = piece_type_to_piece_id(attacker_piece_type)
+        positions_of_attacker_pieces_bin_mat = self.get_positions_of_piece_type(attacker_piece_id)
+        attack_bool = [self.is_attack_possible(position_row_column, position_of_attacker_piece) for position_of_attacker_piece in positions_of_attacker_pieces] 
+
 
     def is_under_attack_by_any_piece(self, position_row_column, attacker_color):
         is_attacked_by_specific_piece_bool_list = [self.is_under_attack_by_specific_piece(position_row_column, attacker_piece_type, attacker_color) for attacker_piece_type in ["pawn", "queen", "king", "bishop", "rook", "knight"]]
-        return sum(is_attacked_by_specific_piece_bool_list) != 0
+        return any(is_attacked_by_specific_piece_bool_list) 
 
     def is_castling_attempt(self, piece_object, new_position_row_column):
         if piece_object.type() == "king":
             return (abs(piece_object.position_row_column[1] - new_position_row_column[0])) == 2 and not (does_rank_change(piece_object.position_row_column, new_position_row_column))
     
     def is_castling_legal(self, piece_object, new_position_row_column):
+        
         castling_type = piece_object.get_castling_type(new_position_row_column)
         match castling_type:
             case "queen side":
