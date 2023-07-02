@@ -69,7 +69,6 @@ def get_column_indices_of_shortest_path(old_position_row_column, new_position_ro
 #        numpy_array_of_column_indices = np.arange(0, (8 - offset) * slope) 
 #    else:
 #        numpy_array_of_column_indices = np.arrage()
-        
 
 def get_diagonal_path(old_position_row_column, new_position_row_column) -> np.ndarray:
     binary_mat = np.zeros((8,8), dtype = float)
