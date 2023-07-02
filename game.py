@@ -1,17 +1,20 @@
 import board as bd
 import numpy as np
 import algebraic_notation as an
-from    utilities  import *
-class game:
+from utilities import *
 
+
+class game:
     def __init__(self):
-        self.board_history = [bd.create_board().board_mat]  
+        self.board_history = [bd.create_board().board_mat]
         self.board = bd.create_board()
 
     def show(self):
-       pass 
-    def is_alg_not_valid(self,alg_not):
-        return self.board.is_legal_unique_mov(alg_not, self.board_history) 
+        pass
+
+    def is_alg_not_valid(self, alg_not):
+        return self.board.is_legal_unique_mov(alg_not, self.board_history)
+
     def is_input_valid(self, user_input):
         alg_not = an.algebraic_notation(user_input, self.turn)
 
@@ -31,12 +34,10 @@ class game:
         self.board.move(mov_alg_not)
         self.board_history.append(self.board.board_mat)
 
-
     def play_game(self, time_control):
         while not self.is_over():
-           self.show()
-           mov_alg_not = self.get_mov_frm_usr()
-           self.update_time()
-           self.update_board(mov_alg_not)
-           self.show()
-           
+            self.show()
+            mov_alg_not = self.get_mov_frm_usr()
+            self.update_time()
+            self.update_board(mov_alg_not)
+            self.show()
