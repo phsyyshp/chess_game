@@ -35,7 +35,7 @@ class board:
             path = piece_object.get_path(new_position_row_column)
             is_path_clear = 0 == sum(self.board_matrix * path)
             return is_path_clear
-
+    
     def is_path_clear(self, piece_object, new_position_row_column):
         if self.is_destination_occupied_by_same_color(piece_object, new_position_row_column):
             return False
