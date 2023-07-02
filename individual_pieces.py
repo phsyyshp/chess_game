@@ -21,8 +21,8 @@ class pawn:
             self.position_row_column[1] + direction * amount,
         )
 
-    def is_capture_attempt(self, new_position_row_column):
-        return does_file_change(self.position_row_column, new_position_row_column)
+    def is_capture_attempt(self, destination_row_column):
+        return does_file_change(self.position_row_column, destination_row_column)
 
     def moves_in_range(self):
         amounts = [1, 2, 1, 1]
@@ -48,7 +48,7 @@ class knight:
         self.type = "knight"
 
     def moves_in_range(self):
-        return L_shaped_squares(self.position_row_column)
+        return L_shaped_squares_mask(self.position_row_column)
 
     def is_slider(self):
         return False
@@ -61,12 +61,12 @@ class bishop:
         self.type = "bishop"
 
     def moves_in_range(self):
-        return diagonal_squares(
+        return diagonal_squares_mask(
             self.position_row_column, amount=8, slope=1
-        ) + diagonal_squares(self.position_row_column, amount=8, slope=-1)
+        ) + diagonal_squares_mask(self.position_row_column, amount=8, slope=-1)
 
-    def get_path(self, new_position_row_column):
-        return get_diagonal_path(self.position_row_column, new_position_row_column)
+    def get_path(self, destination_row_column):
+        return get_diagonal_path_mask(self.position_row_column, destination_row_column)
 
     def is_slider(self):
         return True
@@ -79,12 +79,12 @@ class rook:
         self.type = "rook"
 
     def moves_in_range(self):
-        return horizontal_squares(self.position_row_column) + vertical_squares(
+        return horizontal_squares_mask(
             self.position_row_column
-        )
+        ) + vertical_squares_mask(self.position_row_column)
 
-    def get_path(self, new_position_row_column):
-        return get_straight_path(self.position_row_column, new_position_row_column)
+    def get_path(self, destination_row_column):
+        return get_straight_path_mask(self.position_row_column, destination_row_column)
 
     def is_slider(self):
         return True
@@ -98,10 +98,10 @@ class queen:
 
     def moves_in_range(self):
         return (
-            horizontal_squares(self.position_row_column)
-            + vertical_squares(self.position_row_column)
-            + diagonal_squares(self.position_row_column, amount=8, slope=1)
-            + diagonal_squares(self.position_row_column, amount=8, slope=-1)
+            horizontal_squares_mask(self.position_row_column)
+            + vertical_squares_mask(self.position_row_column)
+            + diagonal_squares_mask(self.position_row_column, amount=8, slope=1)
+            + diagonal_squares_mask(self.position_row_column, amount=8, slope=-1)
         )
 
     def is_slider(self):
@@ -116,16 +116,16 @@ class king:
 
     def moves_in_range(self):
         return (
-            horizontal_squares(self.position_row_column, amount=1)
-            + vertical_squares(self.position_row_column, amount=1)
-            + diagonal_squares(self.position_row_column, amount=1, slope=1)
-            + diagonal_squares(self.position_row_column, amount=1, slope=-1)
+            horizontal_squares_mask(self.position_row_column, amount=1)
+            + vertical_squares_mask(self.position_row_column, amount=1)
+            + diagonal_squares_mask(self.position_row_column, amount=1, slope=1)
+            + diagonal_squares_mask(self.position_row_column, amount=1, slope=-1)
         )
 
     def is_slider(self):
         return False
 
-    def get_castling_type(self, new_position_row_column):
+    def get_castling_type(self, destination_row_column):
         match self.color:
             case "black":
                 increment_sign = 1
@@ -133,7 +133,7 @@ class king:
                 increment_sign = -1
         castling_type = (
             "short"
-            if increment_horizontal(self.position_row_column, new_position_row_column)
+            if increment_horizontal(self.position_row_column, destination_row_column)
             == increment_sign
             else "long"
         )
