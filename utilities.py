@@ -60,6 +60,17 @@ def get_row_indices_of_shortest_path(old_position_row_column, new_position_row_c
 def get_column_indices_of_shortest_path(old_position_row_column, new_position_row_column) -> np.ndarray:
     return np.arange(old_position_row_column[1], new_position_row_column[1], increment_horizontal(old_position_row_column, new_position_row_column))      
 
+#def solve_linear_equation(position_row_column, slope = 1):
+#    "y = slope * x + c"
+#
+#    offset = (position_row_column[0] - slope * position_row_column[1])
+#
+#    if offset > 0:
+#        numpy_array_of_column_indices = np.arange(0, (8 - offset) * slope) 
+#    else:
+#        numpy_array_of_column_indices = np.arrage()
+        
+
 def get_diagonal_path(old_position_row_column, new_position_row_column) -> np.ndarray:
     binary_mat = np.zeros((8,8), dtype = float)
     numpy_array_of_row_indices = get_row_indices_of_shortest_path(old_position_row_column, new_position_row_column)
