@@ -1,9 +1,9 @@
 import numpy as np 
 import piece_types as pct
 from utilities import  *
-import itertools
 
 class board:
+
     def __init__(self):
         self.board_matrix = np.full((8,8), 0)
     
@@ -49,13 +49,11 @@ class board:
             return self.is_pawn_path_clear(piece_object, new_position_row_column)
         else:
             return True
-
     # do it like is_attacked_by_slider etc
     def is_under_attack_by_specific_piece(self, position_row_column, attacker_piece_type, attacker_color):
         attacker_piece_id = piece_type_to_piece_id(attacker_piece_type)
         positions_of_attacker_pieces_bin_mat = self.get_positions_of_piece_type(attacker_piece_id)
         attack_bool = [self.is_attack_possible(position_row_column, position_of_attacker_piece) for position_of_attacker_piece in positions_of_attacker_pieces] 
-
 
     def is_under_attack_by_any_piece(self, position_row_column, attacker_color):
         is_attacked_by_specific_piece_bool_list = [self.is_under_attack_by_specific_piece(position_row_column, attacker_piece_type, attacker_color) for attacker_piece_type in ["pawn", "queen", "king", "bishop", "rook", "knight"]]
@@ -73,7 +71,6 @@ class board:
                 return self.is_queen_side_castling_legal(piece_object)
             case "king side":
                 return self.is_king_side_castling_legal(piece_object)
-        
 #show castling by king movement
     def is_move_legal(self, old_position_row_column, new_position_row_column):
         piece_object = self.get_piece_object_from_position(old_position_row_column)

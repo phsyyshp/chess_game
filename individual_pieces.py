@@ -1,5 +1,6 @@
 from utilities import *
 import itertools
+
 class pawn:
     def __init__(self, position_row_column, color):
         self.position_row_column = position_row_column
@@ -57,7 +58,6 @@ class bishop:
 
     def is_slider(self):
         return True
-    
         
 class rook:
     def __init__(self, position_row_column, color):
