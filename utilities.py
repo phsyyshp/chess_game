@@ -142,10 +142,7 @@ def diagonal_squares_mask(position_row_column, amount=8, slope=-1) -> np.ndarray
 
     binary_mat = np.zeros((8, 8), dtype=float)
     binary_mat = fill_indices(
-        binary_mat,
-        numpy_array_of_row_indices,
-        numpy_array_of_column_indices,
-        value_to_fill=1,
+        binary_mat, numpy_array_of_row_indices, numpy_array_of_column_indices
     )
     binary_mat[tuple(position_row_column)] = 0
     return binary_mat
