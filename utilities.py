@@ -2,6 +2,7 @@ import numpy as np
 
 import itertools
 
+
 def file_rank_to_row_column(position_file_rank):
     return (int(position_file_rank[1]) - 1, ord(position_file_rank[0]) - 97)
 
@@ -60,13 +61,9 @@ def fill_indices(
     numpy_array_of_column_indices,
     value_to_fill=1,
 ) -> np.ndarray:
-    indices_to_raveled = np.stack(
-        [numpy_array_of_row_indices, numpy_array_of_column_indices]
-    )
-    raveled_indices = np.ravel_multi_index(indices_to_raveled, (8, 8))
-    binary_mat = binary_mat.reshape((1, 64))
-    binary_mat[0][raveled_indices] = value_to_fill
-    binary_mat = binary_mat.reshape((8, 8))
+    binary_mat[
+        numpy_array_of_row_indices, numpy_array_of_column_indices
+    ] = value_to_fill
     return binary_mat
 
 
@@ -100,17 +97,6 @@ def get_column_indices_of_shortest_path(
     )
 
 
-# def solve_linear_equation(position_row_column, slope = 1):
-#    "y = slope * x + c"
-#
-#    offset = (position_row_column[0] - slope * position_row_column[1])
-#
-#    if offset > 0:
-#        numpy_array_of_column_indices = np.arange(0, (8 - offset) * slope)
-#    else:
-#        numpy_array_of_column_indices = np.arrage()
-
-
 def get_diagonal_path_mask(source_row_column, destination_row_column) -> np.ndarray:
     binary_mat = np.zeros((8, 8), dtype=float)
     numpy_array_of_row_indices = get_row_indices_of_shortest_path(
@@ -122,14 +108,16 @@ def get_diagonal_path_mask(source_row_column, destination_row_column) -> np.ndar
     binary_mat = fill_indices(
         binary_mat, numpy_array_of_row_indices, numpy_array_of_column_indices
     )
-    binary_mat[destination_row_column[0]][destination_row_column[1]] = 0
-    binary_mat[source_row_column[0]][source_row_column[1]] = 0
+    binary_mat[tuple(destination_row_column)]= 0
+    binary_mat[tuple(source_row_column)] = 0
     return binary_mat
 
 
 def diagonal_squares_mask(position_row_column, amount=8, slope=-1) -> np.ndarray:
     "y = slope*x + offset"
+
     offset = position_row_column[0] - slope * position_row_column[1]
+
     numpy_array_of_row_indices = (
         slope
         * np.arange(
@@ -137,22 +125,16 @@ def diagonal_squares_mask(position_row_column, amount=8, slope=-1) -> np.ndarray
         )
         + offset
     )
+    
     numpy_array_of_column_indices = np.arange(
         -amount + position_row_column[1], amount + position_row_column[1] + 1
     )
-    numpy_array_of_column_indices = numpy_array_of_column_indices[
-        (0 <= numpy_array_of_row_indices) * (numpy_array_of_row_indices < 8)
-    ]
-    numpy_array_of_row_indices = numpy_array_of_row_indices[
-        (0 <= numpy_array_of_row_indices) * (numpy_array_of_row_indices < 8)
-    ]
 
-    numpy_array_of_row_indices = numpy_array_of_row_indices[
-        (0 <= numpy_array_of_column_indices) * (numpy_array_of_column_indices < 8)
-    ]
-    numpy_array_of_column_indices = numpy_array_of_column_indices[
-        (0 <= numpy_array_of_column_indices) * (numpy_array_of_column_indices < 8)
-    ]
+    is_in_board_mask = (0 <= numpy_array_of_row_indices) and (numpy_array_of_row_indices < 8) and (0 <= numpy_array_of_column_indices) and (numpy_array_of_column_indices < 8)
+
+    numpy_array_of_column_indices = numpy_array_of_column_indices[is_in_board_mask]
+    numpy_array_of_row_indices = numpy_array_of_row_indices[is_in_board_mask]
+
     binary_mat = np.zeros((8, 8), dtype=float)
     binary_mat = fill_indices(
         binary_mat,
@@ -160,7 +142,7 @@ def diagonal_squares_mask(position_row_column, amount=8, slope=-1) -> np.ndarray
         numpy_array_of_column_indices,
         value_to_fill=1,
     )
-    binary_mat[position_row_column[0]][position_row_column[1]] = 0
+    binary_mat[tuple(position_row_column)] = 0
     return binary_mat
 
 
@@ -168,7 +150,7 @@ def horizontal_squares_mask(position_row_column, amount=8) -> np.ndarray:
     binary_mat = np.zeros((8, 8), dtype=float)
     lower_bound, upper_bound = find_bounds(position_row_column[1], amount)
     binary_mat[position_row_column[0]][lower_bound : upper_bound + 1] = 1
-    binary_mat[position_row_column[0]][position_row_column[1]] = 0
+    binary_mat[tuple(position_row_column)] = 0
     return binary_mat
 
 
@@ -176,7 +158,7 @@ def vertical_squares_mask(position_row_column, amount=8) -> np.ndarray:
     binary_mat = np.zeros((8, 8), dtype=float)
     lower_bound, upper_bound = find_bounds(position_row_column[0], amount)
     binary_mat[lower_bound : upper_bound + 1][position_row_column[1]] = 1
-    binary_mat[position_row_column[0]][position_row_column[1]] = 0
+    binary_mat[tuple(position_row_column)] = 0
     return binary_mat
 
 
@@ -202,8 +184,8 @@ def get_straight_path_mask(source_row_column, destination_row_column) -> np.ndar
     binary_mat = fill_indices(
         binary_mat, numpy_array_of_row_indices, numpy_array_of_column_indices, 1
     )
-    binary_mat[destination_row_column[0]][destination_row_column[1]] = 0
-    binary_mat[source_row_column[0]][source_row_column[1]] = 0
+    binary_mat[tuple(destination_row_column)] = 0
+    binary_mat[tuple(source_row_column)] = 0
     return binary_mat
 
 
@@ -223,10 +205,11 @@ def piece_id_to_color(piece_id):
     color = "white" if piece_id <= 7 else "black"
     return color
 
+
 # def piece_type_to_id(piece_type, color):
 
 # def is_alg_not(input):
-    # pass
+# pass
 
 
 # print(horizontal_squares(file_rank_to_row_column("d4"), 1))
