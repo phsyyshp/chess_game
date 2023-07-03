@@ -1,4 +1,5 @@
 import numpy as np
+
 import itertools
 
 def file_rank_to_row_column(position_file_rank):
