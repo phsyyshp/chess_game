@@ -7,10 +7,10 @@ class Pieces:
         self.position_row_column = position_row_column
         self.color = color
         self.type = piece_type
-    
+
     def is_slider(self):
         return self.type in ["rook", "queen", "bishop"]
-        
+
 
 class pawn(Pieces):
     def __init__(self, position_row_column, color):
@@ -52,7 +52,7 @@ class pawn(Pieces):
 class knight(Pieces):
     def __init__(self, position_row_column, color):
         super().__init__(position_row_column, color, "knight")
-        
+
     def moves_in_range(self):
         return L_shaped_squares_mask(self.position_row_column)
 
