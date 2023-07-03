@@ -54,11 +54,14 @@ class board:
     ):
         if self.is_square_empty(destination_row_column):
             return False
-        piece_object_at_new_position = self.get_piece_object_from_position(
+        piece_object_at_destination = self.get_piece_object_from_position(
             destination_row_column
         )
-        is_same_color = piece_object.color() == piece_object_at_new_position.color()
+        is_same_color = piece_object.color() == piece_object_at_destination.color()
         return is_same_color
+
+    def is_in_range(self, piece_object, destination_row_color):
+        return piece_object.is_in_range(destination_row_color)
 
     def is_pawn_path_clear(self, piece_object, destination_row_column):
         if not self.is_square_empty(destination_row_column):
@@ -69,7 +72,7 @@ class board:
             )
         else:
             path = piece_object.get_path(destination_row_column)
-            is_path_clear = 0 == sum(self.board_matrix * path)
+            is_path_clear = not any(self.board_matrix * path)
             return is_path_clear
 
     def is_path_clear(self, piece_object, destination_row_column):
@@ -84,24 +87,37 @@ class board:
             path = piece_object.get_path(destination_row_column)
             is_path_clear = 0 == sum(self.board_matrix * path)
             return is_path_clear
-        elif piece_object.type() == "pawn":
+        if piece_type == "pawn":
             return self.is_pawn_path_clear(piece_object, destination_row_column)
-        else:
-            return True
+        return True
+
+    def is_threat(self, attacker_position_index, position_row_column, piece_id):
+        dummy_piece_object = pct.piece_types(piece_id).create_piece(
+            attacker_position_index
+        )
+        if not self.is_in_range(dummy_piece_object, position_row_column):
+            return False
+        return self.is_path_clear(dummy_piece_object, position_row_column)
+
+    def get_piece_position_mask(self, attacker_piece_type):
+        attacker_piece_id = piece_type_to_id(attacker_piece_type)
+        return self.board_matrix == attacker_piece_id
 
     # do it like is_attacked_by_slider etc
 
     def is_under_attack_by_specific_piece(
         self, position_row_column, attacker_piece_type, attacker_color
     ):
-        attacker_piece_id = piece_type_to_piece_id(attacker_piece_type)
-        positions_of_attacker_pieces_bin_mat = self.get_positions_of_piece_type(
-            attacker_piece_id
-        )
-        attack_bool = [
-            self.is_attack_possible(position_row_column, position_of_attacker_piece)
-            for position_of_attacker_piece in positions_of_attacker_pieces
+        attacker_piece_id = piece_type_to_id(attacker_piece_type, attacker_color)
+        attacker_positions_indices = np.argwhere(self.board_matrix == attacker_piece_id)
+        is_under_attack_boolean = [
+            self.is_threat(
+                attacker_position_index, position_row_column, attacker_piece_id
+            )
+            for attacker_position_index in attacker_positions_indices
         ]
+
+        return any(is_under_attack_boolean)
 
     def is_under_attack_by_any_piece(self, position_row_column, attacker_color):
         is_attacked_by_specific_piece_bool_list = [
