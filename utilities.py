@@ -1,7 +1,6 @@
 import numpy as np
 import itertools
 
-
 def file_rank_to_row_column(position_file_rank):
     return (int(position_file_rank[1]) - 1, ord(position_file_rank[0]) - 97)
 
@@ -223,14 +222,14 @@ def piece_id_to_color(piece_id):
     color = "white" if piece_id <= 7 else "black"
     return color
 
-def piece_type_to_id(piece_type, color):
+# def piece_type_to_id(piece_type, color):
 
-def is_alg_not(input):
-    pass
+# def is_alg_not(input):
+    # pass
 
 
-print(horizontal_squares(file_rank_to_row_column("d4"), 1))
-print(diagonal_squares(file_rank_to_row_column("d7"), 1, 1))
-print(L_shaped_squares(file_rank_to_row_column("d8")))
-print(get_diagonal_path_mask([2, 3], [5, 6]))
-print(get_straight_path_mask([2, 3], [5, 3]))
+# print(horizontal_squares(file_rank_to_row_column("d4"), 1))
+# print(diagonal_squares(file_rank_to_row_column("d7"), 1, 1))
+# print(L_shaped_squares(file_rank_to_row_column("d8")))
+# print(get_diagonal_path_mask([2, 3], [5, 6]))
+# print(get_straight_path_mask([2, 3], [5, 3]))
