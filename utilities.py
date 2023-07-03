@@ -1,7 +1,5 @@
 import numpy as np
 
-import itertools
-
 
 def file_rank_to_row_column(position_file_rank):
     return (int(position_file_rank[1]) - 1, ord(position_file_rank[0]) - 97)
@@ -35,6 +33,18 @@ def is_coordinate_in_board(position_row_column):
         return False
 
 
+def choose_in_board_indices(row_indices, column_indices):
+    is_in_board_mask = (
+        (0 <= row_indices)
+        and (row_indices < 8)
+        and (0 <= column_indices)
+        and (column_indices < 8)
+    )
+    column_indices = column_indices[is_in_board_mask]
+    row_indices = row_indices[is_in_board_mask]
+    return row_indices, column_indices
+
+
 def does_file_change(source_row_column, destination_row_column):
     return source_row_column[1] != destination_row_column[1]
 
@@ -57,13 +67,11 @@ def find_bounds(input_val, amount):
 
 def fill_indices(
     binary_mat,
-    numpy_array_of_row_indices,
-    numpy_array_of_column_indices,
+    row_indices,
+    column_indices,
     value_to_fill=1,
 ) -> np.ndarray:
-    binary_mat[
-        numpy_array_of_row_indices, numpy_array_of_column_indices
-    ] = value_to_fill
+    binary_mat[row_indices, column_indices] = value_to_fill
     return binary_mat
 
 
@@ -99,15 +107,13 @@ def get_column_indices_of_shortest_path(
 
 def get_diagonal_path_mask(source_row_column, destination_row_column) -> np.ndarray:
     binary_mat = np.zeros((8, 8), dtype=float)
-    numpy_array_of_row_indices = get_row_indices_of_shortest_path(
+    row_indices = get_row_indices_of_shortest_path(
         source_row_column, destination_row_column
     )
-    numpy_array_of_column_indices = get_column_indices_of_shortest_path(
+    column_indices = get_column_indices_of_shortest_path(
         source_row_column, destination_row_column
     )
-    binary_mat = fill_indices(
-        binary_mat, numpy_array_of_row_indices, numpy_array_of_column_indices
-    )
+    binary_mat = fill_indices(binary_mat, row_indices, column_indices)
     binary_mat[tuple(destination_row_column)] = 0
     binary_mat[tuple(source_row_column)] = 0
     return binary_mat
@@ -115,10 +121,8 @@ def get_diagonal_path_mask(source_row_column, destination_row_column) -> np.ndar
 
 def diagonal_squares_mask(position_row_column, amount=8, slope=-1) -> np.ndarray:
     "y = slope*x + offset"
-
     offset = position_row_column[0] - slope * position_row_column[1]
-
-    numpy_array_of_row_indices = (
+    row_indices = (
         slope
         * np.arange(
             -amount + position_row_column[1], amount + position_row_column[1] + 1
@@ -126,24 +130,14 @@ def diagonal_squares_mask(position_row_column, amount=8, slope=-1) -> np.ndarray
         + offset
     )
 
-    numpy_array_of_column_indices = np.arange(
+    column_indices = np.arange(
         -amount + position_row_column[1], amount + position_row_column[1] + 1
     )
 
-    is_in_board_mask = (
-        (0 <= numpy_array_of_row_indices)
-        and (numpy_array_of_row_indices < 8)
-        and (0 <= numpy_array_of_column_indices)
-        and (numpy_array_of_column_indices < 8)
-    )
-
-    numpy_array_of_column_indices = numpy_array_of_column_indices[is_in_board_mask]
-    numpy_array_of_row_indices = numpy_array_of_row_indices[is_in_board_mask]
+    row_indices, column_indices = choose_in_board_indices(row_indices, column_indices)
 
     binary_mat = np.zeros((8, 8), dtype=float)
-    binary_mat = fill_indices(
-        binary_mat, numpy_array_of_row_indices, numpy_array_of_column_indices
-    )
+    binary_mat = fill_indices(binary_mat, row_indices, column_indices)
     binary_mat[tuple(position_row_column)] = 0
     return binary_mat
 
@@ -167,25 +161,19 @@ def vertical_squares_mask(position_row_column, amount=8) -> np.ndarray:
 def get_straight_path_mask(source_row_column, destination_row_column) -> np.ndarray:
     binary_mat = np.zeros((8, 8), dtype=float)
     if does_rank_change(source_row_column, destination_row_column):
-        numpy_array_of_row_indices = get_row_indices_of_shortest_path(
+        row_indices = get_row_indices_of_shortest_path(
             source_row_column, destination_row_column
         )
-        numpy_array_of_column_indices = source_row_column[1] * np.ones(
-            numpy_array_of_row_indices.size, dtype="int64"
-        )
+        column_indices = source_row_column[1] * np.ones(row_indices.size, dtype="int64")
     elif does_file_change(source_row_column, destination_row_column):
-        numpy_array_of_column_indices = get_column_indices_of_shortest_path(
+        column_indices = get_column_indices_of_shortest_path(
             source_row_column, destination_row_column
         )
-        numpy_array_of_row_indices = np.ones(
-            numpy_array_of_column_indices.size, dtype="int64"
-        )
+        row_indices = np.ones(column_indices.size, dtype="int64")
     else:
         pass
         # implement error
-    binary_mat = fill_indices(
-        binary_mat, numpy_array_of_row_indices, numpy_array_of_column_indices, 1
-    )
+    binary_mat = fill_indices(binary_mat, row_indices, column_indices, 1)
     binary_mat[tuple(destination_row_column)] = 0
     binary_mat[tuple(source_row_column)] = 0
     return binary_mat
@@ -193,13 +181,16 @@ def get_straight_path_mask(source_row_column, destination_row_column) -> np.ndar
 
 def L_shaped_squares_mask(position_row_column) -> np.ndarray:
     binary_mat = np.zeros((8, 8), dtype=float)
-    for row_jump, column_jump in itertools.product([-1, 1], [-2, 2]):
-        if is_coordinate_in_board(
-            (position_row_column[0] + row_jump, position_row_column[1] + column_jump)
-        ):
-            binary_mat[position_row_column[0] + row_jump][
-                position_row_column[1] + column_jump
-            ] = 1
+    # indices of possible knigth jumps.
+    row_jump = np.array(2 * [-1, 1])
+    column_jump = np.array([-2, -2] + [2, 2])
+
+    row_indices = row_jump + position_row_column[0]
+    column_indices = column_jump + position_row_column[1]
+
+    row_indices, column_indices = choose_in_board_indices(row_indices, column_indices)
+
+    binary_mat[row_indices, column_indices] = 1
     return binary_mat
 
 
