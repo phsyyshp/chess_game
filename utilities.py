@@ -181,7 +181,7 @@ def get_straight_path_mask(source_row_column, destination_row_column) -> np.ndar
 
 def L_shaped_squares_mask(position_row_column) -> np.ndarray:
     binary_mat = np.zeros((8, 8), dtype=float)
-    # indices of possible knigth jumps.
+    # indices of possible knight jumps.
     row_jump = np.array(2 * [-1, 1])
     column_jump = np.array([-2, -2] + [2, 2])
 
