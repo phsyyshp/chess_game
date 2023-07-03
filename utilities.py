@@ -223,6 +223,7 @@ def piece_id_to_color(piece_id):
     color = "white" if piece_id <= 7 else "black"
     return color
 
+def piece_type_to_id(piece_type, color):
 
 def is_alg_not(input):
     pass
