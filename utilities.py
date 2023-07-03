@@ -108,7 +108,7 @@ def get_diagonal_path_mask(source_row_column, destination_row_column) -> np.ndar
     binary_mat = fill_indices(
         binary_mat, numpy_array_of_row_indices, numpy_array_of_column_indices
     )
-    binary_mat[tuple(destination_row_column)]= 0
+    binary_mat[tuple(destination_row_column)] = 0
     binary_mat[tuple(source_row_column)] = 0
     return binary_mat
 
@@ -125,12 +125,17 @@ def diagonal_squares_mask(position_row_column, amount=8, slope=-1) -> np.ndarray
         )
         + offset
     )
-    
+
     numpy_array_of_column_indices = np.arange(
         -amount + position_row_column[1], amount + position_row_column[1] + 1
     )
 
-    is_in_board_mask = (0 <= numpy_array_of_row_indices) and (numpy_array_of_row_indices < 8) and (0 <= numpy_array_of_column_indices) and (numpy_array_of_column_indices < 8)
+    is_in_board_mask = (
+        (0 <= numpy_array_of_row_indices)
+        and (numpy_array_of_row_indices < 8)
+        and (0 <= numpy_array_of_column_indices)
+        and (numpy_array_of_column_indices < 8)
+    )
 
     numpy_array_of_column_indices = numpy_array_of_column_indices[is_in_board_mask]
     numpy_array_of_row_indices = numpy_array_of_row_indices[is_in_board_mask]
