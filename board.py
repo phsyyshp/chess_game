@@ -1,6 +1,7 @@
 import numpy as np
 import piece_types as pct
-from utilities import  *
+import individual_pieces
+from utilities import *
 
 
 [
@@ -119,14 +120,11 @@ class board:
         return any(is_attacked_by_specific_piece_bool_list)
 
     def is_castling_attempt(self, piece_object, destination_row_column):
-        if piece_object.type() == "king":
-            return (
-                abs(piece_object.position_row_column[1] - destination_row_column[0])
-            ) == 2 and not (
-                does_rank_change(
-                    piece_object.position_row_column, destination_row_column
-                )
-            )
+        if not piece_object.type() == "king":
+            return False
+        if does_rank_change(piece_object.position_row_column, destination_row_column):
+            return False
+        return abs(piece_object.position_row_column[1] - destination_row_column[0]) == 2
 
     def is_castling_legal(self, piece_object, destination_row_column):
         castling_type = piece_object.get_castling_type(destination_row_column)
