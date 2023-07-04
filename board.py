@@ -99,9 +99,9 @@ class board:
             return False
         return self.is_path_clear(dummy_piece_object, position_row_column)
 
-    def get_piece_position_mask(self, attacker_piece_type):
-        attacker_piece_id = piece_type_to_id(attacker_piece_type)
-        return self.board_matrix == attacker_piece_id
+    def get_piece_position(self, piece_type, piece_color):
+        piece_id = piece_type_to_id(piece_type, piece_color)
+        return np.argwhere(self.board_matrix == piece_id)
 
     # do it like is_attacked_by_slider etc
 
@@ -151,6 +151,17 @@ class board:
                 return self.is_king_side_castling_legal(piece_object)
 
     # show castling by king movement
+    def is_check(self, color):
+        anti_color = {"white": "black", "black": "white"}
+        king_position_row_column = self.get_piece_position("king", color)
+        return self.is_under_attack_by_any_piece(
+            king_position_row_column, anti_color[color]
+        )
+
+    def is_safe(self, source_row_column, destination_row_column):
+        if is_check(self.board_matrix):
+            return False
+        # add second condition
 
     def is_move_legal(self, source_row_column, destination_row_column):
         piece_object = self.get_piece_object_from_position(source_row_column)

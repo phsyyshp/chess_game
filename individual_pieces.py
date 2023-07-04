@@ -11,6 +11,9 @@ class Pieces:
     def is_slider(self):
         return self.type in ["rook", "queen", "bishop"]
 
+    def is_in_range(self, destination_row_column):
+        return destination_row_column in self.moves_in_range()
+
 
 class pawn(Pieces):
     def __init__(self, position_row_column, color):
@@ -45,9 +48,6 @@ class pawn(Pieces):
         ]
         return squares_in_range
 
-    def is_slider(self):
-        return False
-
 
 class knight(Pieces):
     def __init__(self, position_row_column, color):
@@ -55,9 +55,6 @@ class knight(Pieces):
 
     def moves_in_range(self):
         return L_shaped_squares_mask(self.position_row_column)
-
-    def is_slider(self):
-        return False
 
 
 class bishop(Pieces):
@@ -72,9 +69,6 @@ class bishop(Pieces):
     def get_path(self, destination_row_column):
         return get_diagonal_path_mask(self.position_row_column, destination_row_column)
 
-    def is_slider(self):
-        return True
-
 
 class rook(Pieces):
     def __init__(self, position_row_column, color):
@@ -87,9 +81,6 @@ class rook(Pieces):
 
     def get_path(self, destination_row_column):
         return get_straight_path_mask(self.position_row_column, destination_row_column)
-
-    def is_slider(self):
-        return True
 
 
 class queen(Pieces):
@@ -104,9 +95,6 @@ class queen(Pieces):
             + diagonal_squares_mask(self.position_row_column, amount=8, slope=-1)
         )
 
-    def is_slider(self):
-        return True
-
 
 class king(Pieces):
     def __init__(self, position_row_column, color):
@@ -119,9 +107,6 @@ class king(Pieces):
             + diagonal_squares_mask(self.position_row_column, amount=1, slope=1)
             + diagonal_squares_mask(self.position_row_column, amount=1, slope=-1)
         )
-
-    def is_slider(self):
-        return False
 
     def get_castling_type(self, destination_row_column):
         match self.color:
