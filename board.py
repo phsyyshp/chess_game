@@ -1,23 +1,10 @@
 import numpy as np
-import piece_types as pct
-import individual_pieces
+import Piece as pc
 from utilities import *
+from Constants import *
 
 
-[
-    WHITE_PAWN_PIECE_ID,
-    WHITE_KNIGHT_PIECE_ID,
-    WHITE_BISHOP_PIECE_ID,
-    WHITE_ROOK_PIECE_ID,
-    WHITE_QUEEN_PIECE_ID,
-    WHITE_KING_PIECE_ID,
-    EMPTY_SQUARE_ID,
-] = range(7, -1, -1)
-
-BLACK_PIECE_ID_OFFSET = 6
-
-
-class board:
+class Board:
     def __init__(self):
         self.board_matrix = np.full((8, 8), EMPTY_SQUARE_ID)
 
@@ -44,13 +31,36 @@ class board:
     def is_square_empty(self, position_row_column):
         return self.get_piece_id_from_position(position_row_column) == 0
 
-    def get_piece_object_from_position(self, position_row_column):
+    def create_piece_object(
+        self, position_row_column, piece_type, color
+    ) -> pc.Pawn | pc.Bishop | pc.Knight | pc.King | pc.Queen | pc.Rook:
+        piece_types = {
+            "pawn": pc.Pawn,
+            "king": pc.King,
+            "queen": pc.Queen,
+            "knight": pc.Knight,
+            "bishop": pc.Bishop,
+        }
+        return piece_types[piece_type](position_row_column, color)
+
+    def get_piece_object_from_position(
+        self, position_row_column
+    ) -> pc.Pawn | pc.Bishop | pc.Knight | pc.King | pc.Queen | pc.Rook:
         piece_id = self.get_piece_id_from_position(position_row_column)
-        piece_object = pct.piece_types(piece_id).create_piece(position_row_column)
+        piece_type, piece_color = piece_id_to_type_color(piece_id)
+        piece_object = self.create_piece_object(
+            position_row_column, piece_type, piece_color
+        )
         return piece_object
 
+    def get_piece_positions(self, piece_type, piece_color):
+        piece_id = piece_type_to_id(piece_type, piece_color)
+        return np.argwhere(self.board_matrix == piece_id)
+
     def is_destination_occupied_by_same_color(
-        self, piece_object, destination_row_column
+        self,
+        piece_object: pc.Pawn | pc.Bishop | pc.Knight | pc.King | pc.Queen | pc.Rook,
+        destination_row_column,
     ):
         if self.is_square_empty(destination_row_column):
             return False
@@ -60,10 +70,11 @@ class board:
         is_same_color = piece_object.color() == piece_object_at_destination.color()
         return is_same_color
 
-    def is_in_range(self, piece_object, destination_row_color):
-        return piece_object.is_in_range(destination_row_color)
-
-    def is_pawn_path_clear(self, piece_object, destination_row_column):
+    def is_pawn_path_clear(
+        self,
+        piece_object: pc.Pawn | pc.Bishop | pc.Knight | pc.King | pc.Queen | pc.Rook,
+        destination_row_column,
+    ):
         if not self.is_square_empty(destination_row_column):
             return False
         if piece_object.is_capture_attempt(destination_row_column):
@@ -75,7 +86,11 @@ class board:
             is_path_clear = not any(self.board_matrix * path)
             return is_path_clear
 
-    def is_path_clear(self, piece_object, destination_row_column):
+    def is_path_clear(
+        self,
+        piece_object: pc.Pawn | pc.Bishop | pc.Knight | pc.King | pc.Queen | pc.Rook,
+        destination_row_column,
+    ):
         if self.is_destination_occupied_by_same_color(
             piece_object, destination_row_column
         ):
@@ -92,16 +107,13 @@ class board:
         return True
 
     def is_threat(self, attacker_position_index, position_row_column, piece_id):
-        dummy_piece_object = pct.piece_types(piece_id).create_piece(
-            attacker_position_index
+        piece_type, piece_color = piece_id_to_type_color(piece_id)
+        dummy_piece_object = self.create_piece_object(
+            attacker_position_index, piece_type, piece_color
         )
-        if not self.is_in_range(dummy_piece_object, position_row_column):
+        if not dummy_piece_object.is_in_range(position_row_column):
             return False
         return self.is_path_clear(dummy_piece_object, position_row_column)
-
-    def get_piece_position(self, piece_type, piece_color):
-        piece_id = piece_type_to_id(piece_type, piece_color)
-        return np.argwhere(self.board_matrix == piece_id)
 
     # do it like is_attacked_by_slider etc
 
@@ -135,14 +147,22 @@ class board:
         ]
         return any(is_attacked_by_specific_piece_bool_list)
 
-    def is_castling_attempt(self, piece_object, destination_row_column):
+    def is_castling_attempt(
+        self,
+        piece_object: pc.Pawn | pc.Bishop | pc.Knight | pc.King | pc.Queen | pc.Rook,
+        destination_row_column,
+    ):
         if not piece_object.type() == "king":
             return False
         if does_rank_change(piece_object.position_row_column, destination_row_column):
             return False
         return abs(piece_object.position_row_column[1] - destination_row_column[0]) == 2
 
-    def is_castling_legal(self, piece_object, destination_row_column):
+    def is_castling_legal(
+        self,
+        piece_object: pc.Pawn | pc.Bishop | pc.Knight | pc.King | pc.Queen | pc.Rook,
+        destination_row_column,
+    ):
         castling_type = piece_object.get_castling_type(destination_row_column)
         match castling_type:
             case "queen side":
@@ -153,13 +173,13 @@ class board:
     # show castling by king movement
     def is_check(self, color):
         anti_color = {"white": "black", "black": "white"}
-        king_position_row_column = self.get_piece_position("king", color)
+        king_position_row_column = self.get_piece_positions("king", color)
         return self.is_under_attack_by_any_piece(
             king_position_row_column, anti_color[color]
         )
 
     def is_safe(self, source_row_column, destination_row_column):
-        if is_check(self.board_matrix):
+        if self.is_check(self.board_matrix):
             return False
         # add second condition
 
@@ -169,7 +189,7 @@ class board:
             return False
         if self.is_castling_attempt(piece_object, destination_row_column):
             return self.is_castling_legal(piece_object, destination_row_column)
-        if not self.is_in_range(piece_object, destination_row_column):
+        if not piece_object.is_in_range(destination_row_column):
             return False
         if not self.is_safe(source_row_column, destination_row_column):
             return False
@@ -177,6 +197,9 @@ class board:
         return self.is_path_clear(piece_object, destination_row_column)
 
     def is_pawn_promotion_legal(self, source_row_column, destination_row_column):
+        pass
+
+    def castle(self, side, color):
         pass
 
     def move_general_input(self, movement_str):
@@ -190,7 +213,7 @@ class board:
                 (
                     source_row_column,
                     destination_row_column,
-                ) = self.movement_str_to_old_destination_row_column(movement_str)
+                ) = split_single_file_rank_to_old_new_row_column(movement_str)
                 self.move(source_row_column, destination_row_column)
 
     def move(self, source_row_column, destination_row_column):
@@ -237,7 +260,7 @@ class board:
         print(visual_board_string)
 
 
-gg = board()
+gg = Board()
 gg.set_board_to_initial_configuration()
 gg.show()
 print(" ")

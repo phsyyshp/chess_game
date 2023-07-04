@@ -1,4 +1,5 @@
 import numpy as np
+from Constants import *
 
 
 def file_rank_to_row_column(position_file_rank):
@@ -187,9 +188,7 @@ def L_shaped_squares_mask(position_row_column) -> np.ndarray:
 
     row_indices = row_jump + position_row_column[0]
     column_indices = column_jump + position_row_column[1]
-
     row_indices, column_indices = choose_in_board_indices(row_indices, column_indices)
-
     binary_mat[row_indices, column_indices] = 1
     return binary_mat
 
@@ -199,7 +198,26 @@ def piece_id_to_color(piece_id):
     return color
 
 
-# def piece_type_to_id(piece_type, color):
+def piece_id_to_type_color(piece_id):
+    color = "white" if piece_id <= 7 else "black"
+    normalized_piece_id = piece_id - (color == "black") * BLACK_PIECE_ID_OFFSET
+    if normalized_piece_id == WHITE_PAWN_PIECE_ID:
+        return "pawn", color
+    if normalized_piece_id == WHITE_KNIGHT_PIECE_ID:
+        return "knight", color
+    if normalized_piece_id == WHITE_ROOK_PIECE_ID:
+        return "rook", color
+    if normalized_piece_id == WHITE_QUEEN_PIECE_ID:
+        return "queen", color
+    if normalized_piece_id == WHITE_KING_PIECE_ID:
+        return "king", color
+    if normalized_piece_id == WHITE_BISHOP_PIECE_ID:
+        return "bishop", color
+
+
+def piece_type_to_id(piece_type, color):
+    pass
+
 
 # def is_alg_not(input):
 # pass
