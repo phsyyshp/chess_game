@@ -216,44 +216,18 @@ def piece_id_to_type_color(piece_id):
 
 
 def piece_type_to_id(piece_type, color):
-    if piece_type == "pawn":
-        return (
-            WHITE_PAWN_PIECE_ID
-            if color == "white"
-            else WHITE_PAWN_PIECE_ID + BLACK_PIECE_ID_OFFSET
-        )
-    if piece_type == "knight":
-        return (
-            WHITE_KNIGHT_PIECE_ID
-            if color == "white"
-            else WHITE_KNIGHT_PIECE_ID + BLACK_PIECE_ID_OFFSET
-        )
-    if piece_type == "rook":
-        return (
-            WHITE_ROOK_PIECE_ID
-            if color == "white"
-            else WHITE_ROOK_PIECE_ID + BLACK_PIECE_ID_OFFSET
-        )
-    if piece_type == "queen":
-        return (
-            WHITE_QUEEN_PIECE_ID
-            if color == "white"
-            else WHITE_QUEEN_PIECE_ID + BLACK_PIECE_ID_OFFSET
-        )
-    if piece_type == "king":
-        return (
-            WHITE_KING_PIECE_ID
-            if color == "white"
-            else WHITE_KING_PIECE_ID + BLACK_PIECE_ID_OFFSET
-        )
-    if piece_type == "bishop":
-        return (
-            WHITE_BISHOP_PIECE_ID
-            if color == "white"
-            else WHITE_BISHOP_PIECE_ID + BLACK_PIECE_ID_OFFSET
-        )
-    if piece_type == "empty":
-        return EMPTY_SQUARE_ID
+    piece_ids = {
+        "pawn": WHITE_PAWN_PIECE_ID,
+        "knight": WHITE_KNIGHT_PIECE_ID,
+        "rook": WHITE_ROOK_PIECE_ID,
+        "queen": WHITE_QUEEN_PIECE_ID,
+        "king": WHITE_KING_PIECE_ID,
+        "bishop": WHITE_BISHOP_PIECE_ID,
+        "empty": EMPTY_SQUARE_ID,
+    }
+
+    offset = 0 if color == "white" else BLACK_PIECE_ID_OFFSET
+    return piece_ids.get(piece_type, EMPTY_SQUARE_ID) + offset
 
 
 def fen_piece_letter_to_piece_id(fen_piece_code):
