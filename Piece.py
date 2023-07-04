@@ -1,8 +1,7 @@
 from utilities import *
-import itertools
 
 
-class Pieces:
+class Piece:
     def __init__(self, position_row_column, color, piece_type):
         self.position_row_column = position_row_column
         self.color = color
@@ -15,7 +14,7 @@ class Pieces:
         return destination_row_column in self.moves_in_range()
 
 
-class pawn(Pieces):
+class Pawn(Piece):
     def __init__(self, position_row_column, color):
         super().__init__(position_row_column, color, "pawn")
 
@@ -41,6 +40,7 @@ class pawn(Pieces):
         if not self.is_in_starting_position():
             amounts.pop(1)
             directions.pop(1)
+
         squares_in_range = [
             self.show_forward_squares(amount, direction)
             for amount, direction in zip(amounts, directions)
@@ -49,7 +49,7 @@ class pawn(Pieces):
         return squares_in_range
 
 
-class knight(Pieces):
+class Knight(Piece):
     def __init__(self, position_row_column, color):
         super().__init__(position_row_column, color, "knight")
 
@@ -57,7 +57,7 @@ class knight(Pieces):
         return L_shaped_squares_mask(self.position_row_column)
 
 
-class bishop(Pieces):
+class Bishop(Piece):
     def __init__(self, position_row_column, color):
         super().__init__(position_row_column, color, "bishop")
 
@@ -70,7 +70,7 @@ class bishop(Pieces):
         return get_diagonal_path_mask(self.position_row_column, destination_row_column)
 
 
-class rook(Pieces):
+class Rook(Piece):
     def __init__(self, position_row_column, color):
         super().__init__(position_row_column, color, "rook")
 
@@ -83,7 +83,7 @@ class rook(Pieces):
         return get_straight_path_mask(self.position_row_column, destination_row_column)
 
 
-class queen(Pieces):
+class Queen(Piece):
     def __init__(self, position_row_column, color):
         super().__init__(position_row_column, color, "queen")
 
@@ -96,7 +96,7 @@ class queen(Pieces):
         )
 
 
-class king(Pieces):
+class King(Piece):
     def __init__(self, position_row_column, color):
         super().__init__(position_row_column, color, "king")
 
@@ -120,9 +120,11 @@ class king(Pieces):
             == increment_sign
             else "long"
         )
+        return castling_type
 
 
-pp = pawn("a7", "white")
+pp = Pawn([1, 2], "white")
 print(pp.color)
 
 print(pp.is_slider())
+pp.moves_in_range()
