@@ -7,6 +7,10 @@ from Constants import *
 class Board:
     def __init__(self):
         self.board_matrix = np.full((8, 8), EMPTY_SQUARE_ID)
+        self.can_black_castle_kingside = True
+        self.can_black_castle_queenside = True
+        self.can_white_castle_kingside = True
+        self.can_white_castle_queenside = True
 
     def set_board_to_initial_configuration(self):
         self.board_matrix[1][:] = WHITE_PAWN_PIECE_ID
@@ -152,7 +156,7 @@ class Board:
         piece_object: pc.Pawn | pc.Bishop | pc.Knight | pc.King | pc.Queen | pc.Rook,
         destination_row_column,
     ):
-        if not piece_object.type() == "king":
+        if piece_object.type() != "king":
             return False
         if does_rank_change(piece_object.position_row_column, destination_row_column):
             return False

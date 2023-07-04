@@ -216,7 +216,108 @@ def piece_id_to_type_color(piece_id):
 
 
 def piece_type_to_id(piece_type, color):
-    pass
+    if piece_type == "pawn":
+        return (
+            WHITE_PAWN_PIECE_ID
+            if color == "white"
+            else WHITE_PAWN_PIECE_ID + BLACK_PIECE_ID_OFFSET
+        )
+    if piece_type == "knight":
+        return (
+            WHITE_KNIGHT_PIECE_ID
+            if color == "white"
+            else WHITE_KNIGHT_PIECE_ID + BLACK_PIECE_ID_OFFSET
+        )
+    if piece_type == "rook":
+        return (
+            WHITE_ROOK_PIECE_ID
+            if color == "white"
+            else WHITE_ROOK_PIECE_ID + BLACK_PIECE_ID_OFFSET
+        )
+    if piece_type == "queen":
+        return (
+            WHITE_QUEEN_PIECE_ID
+            if color == "white"
+            else WHITE_QUEEN_PIECE_ID + BLACK_PIECE_ID_OFFSET
+        )
+    if piece_type == "king":
+        return (
+            WHITE_KING_PIECE_ID
+            if color == "white"
+            else WHITE_KING_PIECE_ID + BLACK_PIECE_ID_OFFSET
+        )
+    if piece_type == "bishop":
+        return (
+            WHITE_BISHOP_PIECE_ID
+            if color == "white"
+            else WHITE_BISHOP_PIECE_ID + BLACK_PIECE_ID_OFFSET
+        )
+    if piece_type == "empty":
+        return EMPTY_SQUARE_ID
+
+
+def fen_piece_letter_to_piece_id(fen_piece_code):
+    fen_piece_code_to_piece_type_dictionary = {
+        "P": WHITE_PAWN_PIECE_ID,
+        "N": WHITE_KNIGHT_PIECE_ID,
+        "B": WHITE_BISHOP_PIECE_ID,
+        "R": WHITE_ROOK_PIECE_ID,
+        "Q": WHITE_QUEEN_PIECE_ID,
+        "K": WHITE_KING_PIECE_ID,
+        "p": WHITE_PAWN_PIECE_ID + BLACK_PIECE_ID_OFFSET,
+        "n": WHITE_KNIGHT_PIECE_ID + BLACK_PIECE_ID_OFFSET,
+        "b": WHITE_BISHOP_PIECE_ID + BLACK_PIECE_ID_OFFSET,
+        "r": WHITE_ROOK_PIECE_ID + BLACK_PIECE_ID_OFFSET,
+        "q": WHITE_QUEEN_PIECE_ID + BLACK_PIECE_ID_OFFSET,
+        "k": WHITE_KING_PIECE_ID + BLACK_PIECE_ID_OFFSET,
+        "e": EMPTY_SQUARE_ID,
+    }
+    return fen_piece_code_to_piece_type_dictionary[fen_piece_code]
+
+
+def FEN_to_board_matrix(FEN: str) -> np.ndarray:
+    # refactor it
+    FEN = FEN.partition(" ")
+    FEN = FEN[0]
+    rows = FEN.split("/")
+    FEN_number_to_id_lambda = lambda x: int(x) * "e" if x.isdigit() else x
+    FEN_row_to_piece_id_list = lambda x: list(map(fen_piece_letter_to_piece_id, x))
+    normalized_FEN = "".join(list(map(FEN_number_to_id_lambda, FEN)))
+    print(list(map(FEN_row_to_piece_id_list, normalized_FEN.split("/"))))
+    board_matrix = np.array(
+        list(map(FEN_row_to_piece_id_list, normalized_FEN.split("/")))
+    )
+    board_matrix = np.flipud(board_matrix)
+    return board_matrix
+
+
+def show_board_matrix(board_matrix, point_of_view="white"):
+    vectorized_chr = np.vectorize(chr)
+
+    visual_board = board_matrix + 9810 * (board_matrix != 0)
+    visual_board = (
+        np.flipud(visual_board) if point_of_view == "white" else np.fliplr(visual_board)
+    )
+    visual_board = vectorized_chr(32 * (visual_board == 0) + visual_board).tolist()
+    visual_board = [
+        ["\x1b[26;36;40m" + str(8 - i) + " "]
+        + [
+            "\x1b[26;30;46m " + visual_board[i][j] + " \x1b[0m"
+            if (i + j + 1) % 2 == 0
+            else "\x1b[26;30;47m " + visual_board[i][j] + " \x1b[0m"
+            for j in range(8)
+        ]
+        for i in range(8)
+    ]
+    visual_board_string = "\n".join(["".join(item) for item in visual_board])
+    file_row = (
+        "  ".join("bcdefgh") if point_of_view == "white" else "  ".join("gfedcba")
+    )
+    file_row = (
+        "  a  " + file_row if point_of_view == "white" else "\n   h   " + file_row
+    )
+    visual_board_string += "\n\x1b[26;36;40m " + file_row + " \x1b[0m"
+    print(visual_board_string)
 
 
 # def is_alg_not(input):
@@ -228,3 +329,8 @@ def piece_type_to_id(piece_type, color):
 # print(L_shaped_squares(file_rank_to_row_column("d8")))
 # print(get_diagonal_path_mask([2, 3], [5, 6]))
 # print(get_straight_path_mask([2, 3], [5, 3]))
+show_board_matrix(
+    FEN_to_board_matrix(
+        "r3k1nr/pp2pp1p/nq1p1bpP/2pP4/4P1B1/2P5/PP3PP1/RNBQK2R w KQkq - 1 12"
+    )
+)
