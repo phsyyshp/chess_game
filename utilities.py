@@ -6,7 +6,7 @@ def file_rank_to_row_column(position_file_rank):
     return (int(position_file_rank[1]) - 1, ord(position_file_rank[0]) - 97)
 
 
-def row_column_to_file_rank(position_row_column):
+def row_column_to_file_rank(position_row_column: list):
     return chr(position_row_column[1] + 97) + str(position_row_column[0] + 1)
 
 
@@ -27,14 +27,14 @@ def split_single_file_rank_to_old_new_row_column(old_new_file_rank):
     )
 
 
-def is_coordinate_in_board(position_row_column):
+def is_coordinate_in_board(position_row_column: list):
     if position_row_column[0] in range(8) and position_row_column[1] in range(8):
         return True
     else:
         return False
 
 
-def choose_in_board_indices(row_indices, column_indices):
+def choose_in_board_indices(row_indices: np.ndarray, column_indices: np.ndarray):
     is_in_board_mask = (
         (0 <= row_indices)
         and (row_indices < 8)
@@ -46,11 +46,11 @@ def choose_in_board_indices(row_indices, column_indices):
     return row_indices, column_indices
 
 
-def does_file_change(source_row_column, destination_row_column):
+def does_file_change(source_row_column: list, destination_row_column: list):
     return source_row_column[1] != destination_row_column[1]
 
 
-def does_rank_change(source_row_column, destination_row_column):
+def does_rank_change(source_row_column: list, destination_row_column: list):
     return source_row_column[0] != destination_row_column[0]
 
 
@@ -68,26 +68,26 @@ def find_bounds(input_val, amount):
 
 def fill_indices(
     binary_mat,
-    row_indices,
-    column_indices,
+    row_indices: np.ndarray,
+    column_indices: np.ndarray,
     value_to_fill=1,
 ) -> np.ndarray:
     binary_mat[row_indices, column_indices] = value_to_fill
     return binary_mat
 
 
-def increment_horizontal(source_row_column, destination_row_column):
+def increment_horizontal(source_row_column: list, destination_row_column: list):
     "returns +1 if new_pos_col>old_pos_col"
     return np.sign((destination_row_column[1] - source_row_column[1]))
 
 
-def increment_vertical(source_row_column, destination_row_column):
+def increment_vertical(source_row_column: list, destination_row_column: list):
     "returns +1 if new_pos_row>old_pos_row"
     return np.sign((destination_row_column[0] - source_row_column[0]))
 
 
 def get_row_indices_of_shortest_path(
-    source_row_column, destination_row_column
+    source_row_column: list, destination_row_column: list
 ) -> np.ndarray:
     return np.arange(
         source_row_column[0],
@@ -97,7 +97,7 @@ def get_row_indices_of_shortest_path(
 
 
 def get_column_indices_of_shortest_path(
-    source_row_column, destination_row_column
+    source_row_column: list, destination_row_column: list
 ) -> np.ndarray:
     return np.arange(
         source_row_column[1],
@@ -106,7 +106,9 @@ def get_column_indices_of_shortest_path(
     )
 
 
-def get_diagonal_path_mask(source_row_column, destination_row_column) -> np.ndarray:
+def get_diagonal_path_mask(
+    source_row_column: list, destination_row_column: list
+) -> np.ndarray:
     binary_mat = np.zeros((8, 8), dtype=float)
     row_indices = get_row_indices_of_shortest_path(
         source_row_column, destination_row_column
@@ -120,7 +122,7 @@ def get_diagonal_path_mask(source_row_column, destination_row_column) -> np.ndar
     return binary_mat
 
 
-def diagonal_squares_mask(position_row_column, amount=8, slope=-1) -> np.ndarray:
+def diagonal_squares_mask(position_row_column: list, amount=8, slope=-1) -> np.ndarray:
     "y = slope*x + offset"
     offset = position_row_column[0] - slope * position_row_column[1]
     row_indices = (
@@ -143,7 +145,7 @@ def diagonal_squares_mask(position_row_column, amount=8, slope=-1) -> np.ndarray
     return binary_mat
 
 
-def horizontal_squares_mask(position_row_column, amount=8) -> np.ndarray:
+def horizontal_squares_mask(position_row_column: list, amount=8) -> np.ndarray:
     binary_mat = np.zeros((8, 8), dtype=float)
     lower_bound, upper_bound = find_bounds(position_row_column[1], amount)
     binary_mat[position_row_column[0]][lower_bound : upper_bound + 1] = 1
@@ -151,7 +153,7 @@ def horizontal_squares_mask(position_row_column, amount=8) -> np.ndarray:
     return binary_mat
 
 
-def vertical_squares_mask(position_row_column, amount=8) -> np.ndarray:
+def vertical_squares_mask(position_row_column: list, amount=8) -> np.ndarray:
     binary_mat = np.zeros((8, 8), dtype=float)
     lower_bound, upper_bound = find_bounds(position_row_column[0], amount)
     binary_mat[lower_bound : upper_bound + 1][position_row_column[1]] = 1
@@ -159,7 +161,9 @@ def vertical_squares_mask(position_row_column, amount=8) -> np.ndarray:
     return binary_mat
 
 
-def get_straight_path_mask(source_row_column, destination_row_column) -> np.ndarray:
+def get_straight_path_mask(
+    source_row_column: list, destination_row_column: list
+) -> np.ndarray:
     binary_mat = np.zeros((8, 8), dtype=float)
     if does_rank_change(source_row_column, destination_row_column):
         row_indices = get_row_indices_of_shortest_path(
@@ -180,7 +184,7 @@ def get_straight_path_mask(source_row_column, destination_row_column) -> np.ndar
     return binary_mat
 
 
-def L_shaped_squares_mask(position_row_column) -> np.ndarray:
+def L_shaped_squares_mask(position_row_column: list) -> np.ndarray:
     binary_mat = np.zeros((8, 8), dtype=float)
     # indices of possible knight jumps.
     row_jump = np.array(2 * [-1, 1])

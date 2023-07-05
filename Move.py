@@ -6,7 +6,9 @@ import Piece as pc
 
 
 class Move:
-    def __init__(self, source_row_column, destination_row_column, board: bd.Board):
+    def __init__(
+        self, source_row_column: list, destination_row_column: list, board: bd.Board
+    ):
         self.board = board
         self.piece_object_to_move = board.get_piece_object_from_position(
             source_row_column

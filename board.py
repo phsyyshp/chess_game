@@ -29,14 +29,14 @@ class Board:
         self.board_matrix[6][:] = BLACK_PIECE_ID_OFFSET + self.board_matrix[1][:]
         self.board_matrix[7][:] = BLACK_PIECE_ID_OFFSET + self.board_matrix[0][:]
 
-    def get_piece_id_from_position(self, position_row_column):
+    def get_piece_id_from_position(self, position_row_column: list):
         return self.board_matrix[tuple(position_row_column)]
 
-    def is_square_empty(self, position_row_column):
+    def is_square_empty(self, position_row_column: list):
         return self.get_piece_id_from_position(position_row_column) == 0
 
     def create_piece_object(
-        self, position_row_column, piece_type, color
+        self, position_row_column: list, piece_type, color
     ) -> pc.Pawn | pc.Bishop | pc.Knight | pc.King | pc.Queen | pc.Rook:
         piece_types = {
             "pawn": pc.Pawn,
@@ -49,7 +49,7 @@ class Board:
         return piece_types[piece_type](position_row_column, color)
 
     def get_piece_object_from_position(
-        self, position_row_column
+        self, position_row_column: list
     ) -> pc.Pawn | pc.Bishop | pc.Knight | pc.King | pc.Queen | pc.Rook:
         piece_id = self.get_piece_id_from_position(position_row_column)
         piece_type, piece_color = piece_id_to_type_color(piece_id)
@@ -70,13 +70,13 @@ class Board:
         piece_id = piece_type_to_id(piece_type, piece_color)
         return np.argwhere(self.board_matrix == piece_id)
 
-    def move(self, source_row_column, destination_row_column):
+    def move(self, source_row_column: list, destination_row_column: list):
         self.board_matrix[
             tuple(destination_row_column)
         ] = self.get_piece_id_from_position(source_row_column)
         self.board_matrix[tuple(source_row_column)] = 0
 
-    def pawn_promotion(self, position_row_column, promote_to, color):
+    def pawn_promotion(self, position_row_column: list, promote_to, color):
         self.board_matrix[tuple(position_row_column)] = piece_type_to_id(
             promote_to, color
         )
@@ -105,7 +105,7 @@ class Board:
                 self.can_black_castle_kingside = False
                 self.can_black_castle_queenside = False
 
-    def move_single_file_rank_input(self, old_new_file_rank):
+    def move_single_file_rank_input(self, old_new_file_rank: str):
         (
             source_row_column,
             destination_row_column,
