@@ -169,20 +169,6 @@ class Move:
     def castle(self, side, color):
         pass
 
-    def move_general_input(self, movement_str):
-        "movement_str is in format of file"
-        match self.type_of_movement(movement_str):
-            case "castle":
-                self.castle(movement_str)
-            case "pawn_promotion":
-                self.pawn_promotion(movement_str)
-            case "regular":
-                (
-                    source_row_column,
-                    destination_row_column,
-                ) = split_single_file_rank_to_old_new_row_column(movement_str)
-                self.board.move(source_row_column, destination_row_column)
-
 
 gg = bd.Board()
 gg.set_board_to_initial_configuration()
