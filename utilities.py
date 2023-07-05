@@ -213,6 +213,8 @@ def piece_id_to_type_color(piece_id):
         return "king", color
     if normalized_piece_id == WHITE_BISHOP_PIECE_ID:
         return "bishop", color
+    if normalized_piece_id == EMPTY_SQUARE_ID:
+        return "empty", color
 
 
 def piece_type_to_id(piece_type, color):
