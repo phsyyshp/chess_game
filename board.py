@@ -75,6 +75,20 @@ class Board:
         ) = split_single_file_rank_to_old_new_row_column(old_new_file_rank)
         self.move(source_row_column, destination_row_column)
 
+    def move_general_input(self, movement_str):
+        "movement_str is in format of file"
+        match self.type_of_movement(movement_str):
+            case "castle":
+                self.castle(movement_str)
+            case "pawn_promotion":
+                self.pawn_promotion(movement_str)
+            case "regular":
+                (
+                    source_row_column,
+                    destination_row_column,
+                ) = split_single_file_rank_to_old_new_row_column(movement_str)
+                self.move(source_row_column, destination_row_column)
+
     def show(self, point_of_view="white"):
         vectorized_chr = np.vectorize(chr)
 
