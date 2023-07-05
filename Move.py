@@ -13,6 +13,7 @@ class Move:
         )
         self.destination_row_column = destination_row_column
         self.type = self.get_type()
+
         if self.type == "empty":
             raise ValueError("Can not move an empty square")
 
@@ -75,10 +76,10 @@ class Move:
     def is_under_attack_by_specific_piece(
         self, position_row_column, attacker_piece_type, attacker_color
     ):
-        attacker_piece_id = piece_type_to_id(attacker_piece_type, attacker_color)
-        attacker_positions_indices = np.argwhere(
-            self.board.board_matrix == attacker_piece_id
+        attacker_positions_indices = self.board.get_piece_positions(
+            attacker_piece_type, attacker_color
         )
+        attacker_piece_id = piece_type_to_id(attacker_piece_type, attacker_color)
         is_under_attack_boolean = [
             self.is_threat(
                 attacker_position_index, position_row_column, attacker_piece_id
@@ -104,69 +105,109 @@ class Move:
         ]
         return any(is_attacked_by_specific_piece_bool_list)
 
-    def is_castling_attempt(self, destination_row_column):
+    def is_castling_attempt(self):
         if self.piece_object_to_move.type() != "king":
             return False
         if does_rank_change(
-            self.piece_object_to_move.position_row_column, destination_row_column
+            self.piece_object_to_move.position_row_column, self.destination_row_column
         ):
             return False
         return (
             abs(
                 self.piece_object_to_move.position_row_column[1]
-                - destination_row_column[0]
+                - self.destination_row_column[0]
             )
             == 2
         )
 
-    def is_castling_legal(self, destination_row_column):
+    def is_queen_side_castling_legal(self):
+        color = self.piece_object_to_move.color()
+        if self.is_check():
+            return False
+        is_castling_pieces_moved = (
+            self.board.can_black_castle_queenside
+            if color == "black"
+            else self.board.can_white_castle_queenside
+        )
+        if is_castling_pieces_moved:
+            return False
+        if any(
+            self.is_under_attack_by_any_piece(
+                (self.piece_object_to_move.position_row_column[0], 2), color
+            )
+        ):
+            return False
+        return True
+
+    def is_king_side_castling_legal(self):
+        color = self.piece_object_to_move.color()
+        if self.is_check():
+            return False
+        is_castling_pieces_moved = (
+            self.board.can_black_castle_kingside
+            if color == "black"
+            else self.board.can_white_castle_kingside
+        )
+        if is_castling_pieces_moved:
+            return False
+        if any(
+            self.is_under_attack_by_any_piece(
+                (self.piece_object_to_move.position_row_column[0], 6), color
+            )
+        ):
+            return False
+        return True
+
+    def is_castling_legal(self):
         castling_type = self.piece_object_to_move.get_castling_type(
-            destination_row_column
+            self.destination_row_column
         )
         match castling_type:
             case "queen side":
-                return self.is_queen_side_castling_legal(self.piece_object_to_move)
+                return self.is_queen_side_castling_legal()
             case "king side":
-                return self.is_king_side_castling_legal(self.piece_object_to_move)
+                return self.is_king_side_castling_legal()
 
     # show castling by king movement
-    def is_check(self, color):
+    def is_check(self):
         anti_color = {"white": "black", "black": "white"}
-        king_position_row_column = self.board.get_piece_positions("king", color)
+        king_position_row_column = self.board.get_piece_positions(
+            "king", self.piece_object_to_move.color
+        )
         return self.is_under_attack_by_any_piece(
-            king_position_row_column, anti_color[color]
+            king_position_row_column, anti_color[self.piece_object_to_move.color]
         )
 
-    def is_safe(self, source_row_column, destination_row_column):
+    def is_safe(self):
         if self.is_check(self.board.board_matrix):
             return False
         # add second condition
 
-    def can_king_be_saved(self, color):
+    def get_legal_moves():
         pass
 
-    def is_check_mate(self, color):
-        if not self.is_check(color):
-            return False
-        return self.can_king_be_saved(color)
-
-    def is_move_legal(self, source_row_column, destination_row_column):
-        piece_object = self.board.get_piece_object_from_position(source_row_column)
-        if self.board.is_square_empty(source_row_column):
-            return False
-        if self.is_castling_attempt(piece_object, destination_row_column):
-            return self.is_castling_legal(piece_object, destination_row_column)
-        if not piece_object.is_in_range(destination_row_column):
-            return False
-        if not self.is_safe(source_row_column, destination_row_column):
-            return False
-
-        return self.is_path_clear(piece_object, destination_row_column)
-
-    def is_pawn_promotion_legal(self, source_row_column, destination_row_column):
+    def can_king_be_saved(self):
+        all_possible_moves = self.get_legal_moves()
         pass
 
-    def castle(self, side, color):
+    def is_check_mate(self):
+        if not self.is_check():
+            return False
+        return self.can_king_be_saved()
+
+    def is_move_legal(self):
+        if self.type == "empty":
+            return False
+        if self.type == "castling":
+            return self.is_castling_legal()
+        if not self.piece_object_to_move.is_in_range(self.destination_row_column):
+            return False
+        if not self.is_safe():
+            return False
+
+        return self.is_path_clear()
+
+    def is_pawn_promotion_legal(self):
         pass
 
 

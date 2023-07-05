@@ -68,6 +68,30 @@ class Board:
         ] = self.get_piece_id_from_position(source_row_column)
         self.board_matrix[tuple(source_row_column)] = 0
 
+    def castle(self, side, color):
+        if side == "kingside":
+            if color == "white":
+                self.move((0, 4), (0, 6))
+                self.move((0, 7), (0, 5))
+                self.can_white_castle_kingside = False
+                self.can_white_castle_queenside = False
+            else:
+                self.move((7, 4), (7, 6))
+                self.move((7, 7), (7, 5))
+                self.can_black_castle_kingside = False
+                self.can_black_castle_queenside = False
+        else:
+            if color == "white":
+                self.move((0, 4), (0, 2))
+                self.move((0, 0), (0, 3))
+                self.can_white_castle_kingside = False
+                self.can_white_castle_queenside = False
+            else:
+                self.move((7, 4), (7, 2))
+                self.move((7, 0), (7, 3))
+                self.can_black_castle_kingside = False
+                self.can_black_castle_queenside = False
+
     def move_single_file_rank_input(self, old_new_file_rank):
         (
             source_row_column,
