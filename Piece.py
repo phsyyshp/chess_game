@@ -2,7 +2,7 @@ from utilities import *
 
 
 class Piece:
-    def __init__(self, position_row_column, color, piece_type):
+    def __init__(self, position_row_column: list, color: str, piece_type: str):
         self.position_row_column = position_row_column
         self.color = color
         self.type = piece_type
@@ -11,11 +11,11 @@ class Piece:
         return self.type in ["rook", "queen", "bishop"]
 
     def is_in_range(self, destination_row_column):
-        return destination_row_column in self.moves_in_range()
+        return 1 == self.squares_in_range_mask()[tuple(destination_row_column)]
 
 
 class Pawn(Piece):
-    def __init__(self, position_row_column, color):
+    def __init__(self, position_row_column: list, color):
         super().__init__(position_row_column, color, "pawn")
 
     def is_in_starting_position(self):
@@ -24,70 +24,70 @@ class Pawn(Piece):
         else:
             return self.position_row_column[0] == 6
 
-    def show_forward_squares(self, amount, direction):
+    def show_forward_squares(self, amount, direction) -> list:
         color_to_sign = {"white": 1, "black": -1}
-        return (
+        return [
             self.position_row_column[0] + color_to_sign[self.color] * amount,
             self.position_row_column[1] + direction * amount,
-        )
+        ]
 
-    def is_capture_attempt(self, destination_row_column):
+    def is_capture_attempt(self, destination_row_column: list) -> bool:
         return does_file_change(self.position_row_column, destination_row_column)
 
-    def moves_in_range(self):
+    def squares_in_range_mask(self) -> np.ndarray:
         amounts = [1, 2, 1, 1]
         directions = [0, 0, -1, 1]
         if not self.is_in_starting_position():
             amounts.pop(1)
             directions.pop(1)
 
-        squares_in_range = [
+        squares_in_range_mask = [
             self.show_forward_squares(amount, direction)
             for amount, direction in zip(amounts, directions)
             if is_coordinate_in_board(self.show_forward_squares(amount, direction))
         ]
-        return squares_in_range
+        return np.array(squares_in_range_mask)
 
 
 class Knight(Piece):
-    def __init__(self, position_row_column, color):
+    def __init__(self, position_row_column: list, color):
         super().__init__(position_row_column, color, "knight")
 
-    def moves_in_range(self):
+    def squares_in_range_mask(self):
         return L_shaped_squares_mask(self.position_row_column)
 
 
 class Bishop(Piece):
-    def __init__(self, position_row_column, color):
+    def __init__(self, position_row_column: list, color):
         super().__init__(position_row_column, color, "bishop")
 
-    def moves_in_range(self):
+    def squares_in_range_mask(self):
         return diagonal_squares_mask(
             self.position_row_column, amount=8, slope=1
         ) + diagonal_squares_mask(self.position_row_column, amount=8, slope=-1)
 
-    def get_path_mask(self, destination_row_column):
+    def get_path_mask(self, destination_row_column: list):
         return get_diagonal_path_mask(self.position_row_column, destination_row_column)
 
 
 class Rook(Piece):
-    def __init__(self, position_row_column, color):
+    def __init__(self, position_row_column: list, color):
         super().__init__(position_row_column, color, "rook")
 
-    def moves_in_range(self):
+    def squares_in_range_mask(self):
         return horizontal_squares_mask(
             self.position_row_column
         ) + vertical_squares_mask(self.position_row_column)
 
-    def get_path_mask(self, destination_row_column):
+    def get_path_mask(self, destination_row_column: list):
         return get_straight_path_mask(self.position_row_column, destination_row_column)
 
 
 class Queen(Piece):
-    def __init__(self, position_row_column, color):
+    def __init__(self, position_row_column: list, color):
         super().__init__(position_row_column, color, "queen")
 
-    def moves_in_range(self):
+    def squares_in_range_mask(self):
         return (
             horizontal_squares_mask(self.position_row_column)
             + vertical_squares_mask(self.position_row_column)
@@ -95,17 +95,17 @@ class Queen(Piece):
             + diagonal_squares_mask(self.position_row_column, amount=8, slope=-1)
         )
 
-    def get_path_mask(self, destination_row_column):
+    def get_path_mask(self, destination_row_column: list):
         return get_diagonal_path_mask(
             self.position_row_column, destination_row_column
         ) + get_straight_path_mask(self.position_row_column, destination_row_column)
 
 
 class King(Piece):
-    def __init__(self, position_row_column, color):
+    def __init__(self, position_row_column: list, color):
         super().__init__(position_row_column, color, "king")
 
-    def moves_in_range(self):
+    def squares_in_range_mask(self):
         return (
             horizontal_squares_mask(self.position_row_column, amount=1)
             + vertical_squares_mask(self.position_row_column, amount=1)
@@ -113,7 +113,7 @@ class King(Piece):
             + diagonal_squares_mask(self.position_row_column, amount=1, slope=-1)
         )
 
-    def get_castling_type(self, destination_row_column):
+    def get_castling_type(self, destination_row_column: list):
         match self.color:
             case "black":
                 increment_sign = 1
@@ -129,7 +129,7 @@ class King(Piece):
 
 
 class Empty(Piece):
-    def __init__(self, position_row_column, color):
+    def __init__(self, position_row_column: list, color):
         super().__init__(position_row_column, color, "empty")
 
 
@@ -137,4 +137,4 @@ pp = Pawn([1, 2], "white")
 print(pp.color)
 
 print(pp.is_slider())
-pp.moves_in_range()
+pp.squares_in_range_mask()
