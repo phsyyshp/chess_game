@@ -123,6 +123,11 @@ class King(Piece):
         return castling_type
 
 
+class Empty(Piece):
+    def __init__(self, position_row_column, color):
+        super().__init__(position_row_column, color, "empty")
+
+
 pp = Pawn([1, 2], "white")
 print(pp.color)
 

@@ -6,57 +6,59 @@ import Piece as pc
 
 
 class Move:
-    def __init__(self, board: bd.Board):
+    def __init__(self, source_row_column, destination_row_column, board: bd.Board):
         self.board = board
+        self.piece_object_to_move = board.get_piece_object_from_position(
+            source_row_column
+        )
+        self.destination_row_column = destination_row_column
+        self.type = self.get_type()
+        if self.type == "empty":
+            raise ValueError("Can not move an empty square")
 
-    def is_destination_occupied_by_same_color(
-        self,
-        piece_object: pc.Pawn | pc.Bishop | pc.Knight | pc.King | pc.Queen | pc.Rook,
-        destination_row_column,
-    ):
-        if self.board.is_square_empty(destination_row_column):
+    def is_destination_occupied_by_same_color(self):
+        if self.board.is_square_empty(self.destination_row_column):
             return False
         piece_object_at_destination = self.board.get_piece_object_from_position(
-            destination_row_column
+            self.destination_row_column
         )
-        is_same_color = piece_object.color() == piece_object_at_destination.color()
+        is_same_color = (
+            self.piece_object_to_move.color() == piece_object_at_destination.color()
+        )
         return is_same_color
 
+    def get_type(self):
+        if self.piece_object_to_move.type == "empty":
+            return "empty"
+        if self.is_castling_attempt():
+            return "castling"
+        if self.is_pawn_promotion():
+            return "pawn_promotion"
+        # think about what to add more.
 
-    def is_pawn_path_clear(
-        self,
-        piece_object: pc.Pawn | pc.Bishop | pc.Knight | pc.King | pc.Queen | pc.Rook,
-        destination_row_column,
-    ):
-        if not self.board.is_square_empty(destination_row_column):
+    def is_pawn_path_clear(self):
+        # fix bugs here
+        if not self.board.is_square_empty(self.destination_row_column):
             return False
-        if piece_object.is_capture_attempt(destination_row_column):
-            return not self.is_destination_occupied_by_same_color(
-                piece_object, destination_row_column
-            )
+        if self.piece_object_to_move.is_capture_attempt(self.destination_row_column):
+            return not self.is_destination_occupied_by_same_color()
         else:
-            path = piece_object.get_path(destination_row_column)
+            path = self.piece_object_to_move.get_path(self.destination_row_column)
             is_path_clear = not any(self.board.board_matrix * path)
             return is_path_clear
 
-    def is_path_clear(
-        self,
-        piece_object: pc.Pawn | pc.Bishop | pc.Knight | pc.King | pc.Queen | pc.Rook,
-        destination_row_column,
-    ):
-        if self.is_destination_occupied_by_same_color(
-            piece_object, destination_row_column
-        ):
+    def is_path_clear(self):
+        if self.is_destination_occupied_by_same_color():
             return False
-        piece_type = piece_object.type()
+        piece_type = self.piece_object_to_move.type()
         if piece_type in ["king", "knight"]:
             return True
-        if piece_object.is_slider():
-            path = piece_object.get_path(destination_row_column)
+        if self.piece_object_to_move.is_slider():
+            path = self.piece_object_to_move.get_path(self.destination_row_column)
             is_path_clear = 0 == sum(self.board.board_matrix * path)
             return is_path_clear
         if piece_type == "pawn":
-            return self.is_pawn_path_clear(piece_object, destination_row_column)
+            return self.is_pawn_path_clear()
         return True
 
     def is_threat(self, attacker_position_index, position_row_column, piece_id):
@@ -102,33 +104,35 @@ class Move:
         ]
         return any(is_attacked_by_specific_piece_bool_list)
 
-    def is_castling_attempt(
-        self,
-        piece_object: pc.Pawn | pc.Bishop | pc.Knight | pc.King | pc.Queen | pc.Rook,
-        destination_row_column,
-    ):
-        if piece_object.type() != "king":
+    def is_castling_attempt(self, destination_row_column):
+        if self.piece_object_to_move.type() != "king":
             return False
-        if does_rank_change(piece_object.position_row_column, destination_row_column):
+        if does_rank_change(
+            self.piece_object_to_move.position_row_column, destination_row_column
+        ):
             return False
-        return abs(piece_object.position_row_column[1] - destination_row_column[0]) == 2
+        return (
+            abs(
+                self.piece_object_to_move.position_row_column[1]
+                - destination_row_column[0]
+            )
+            == 2
+        )
 
-    def is_castling_legal(
-        self,
-        piece_object: pc.Pawn | pc.Bishop | pc.Knight | pc.King | pc.Queen | pc.Rook,
-        destination_row_column,
-    ):
-        castling_type = piece_object.get_castling_type(destination_row_column)
+    def is_castling_legal(self, destination_row_column):
+        castling_type = self.piece_object_to_move.get_castling_type(
+            destination_row_column
+        )
         match castling_type:
             case "queen side":
-                return self.is_queen_side_castling_legal(piece_object)
+                return self.is_queen_side_castling_legal(self.piece_object_to_move)
             case "king side":
-                return self.is_king_side_castling_legal(piece_object)
+                return self.is_king_side_castling_legal(self.piece_object_to_move)
 
     # show castling by king movement
     def is_check(self, color):
         anti_color = {"white": "black", "black": "white"}
-        king_position_row_column = self.get_piece_positions("king", color)
+        king_position_row_column = self.board.get_piece_positions("king", color)
         return self.is_under_attack_by_any_piece(
             king_position_row_column, anti_color[color]
         )
@@ -178,3 +182,9 @@ class Move:
                     destination_row_column,
                 ) = split_single_file_rank_to_old_new_row_column(movement_str)
                 self.board.move(source_row_column, destination_row_column)
+
+
+gg = bd.Board()
+gg.set_board_to_initial_configuration()
+gg.show()
+Move([4, 0], [5, 0], gg)

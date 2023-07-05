@@ -44,6 +44,7 @@ class Board:
             "queen": pc.Queen,
             "knight": pc.Knight,
             "bishop": pc.Bishop,
+            "empty": pc.Empty,
         }
         return piece_types[piece_type](position_row_column, color)
 
