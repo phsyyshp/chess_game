@@ -1,43 +1,43 @@
-import board as bd
+import Board as bd
 import numpy as np
-import algebraic_notation as an
 from utilities import *
 
 
-class game:
+class Game:
     def __init__(self):
-        self.board_history = [bd.create_board().board_mat]
-        self.board = bd.create_board()
+        self.board_history = [bd.Board().board_matrix]
+        self.board = bd.Board()
+        self.is_draw = False
 
     def show(self):
-        pass
-
-    def is_alg_not_valid(self, alg_not):
-        return self.board.is_legal_unique_mov(alg_not, self.board_history)
+        self.board.show()
 
     def is_input_valid(self, user_input):
-        alg_not = an.algebraic_notation(user_input, self.turn)
+        (
+            source_row_column,
+            destination_row_column,
+        ) = split_single_file_rank_to_old_new_row_column(user_input)
+        return self.board.is_move_legal(source_row_column, destination_row_column)
 
-        if alg_not.is_alg_not():
-            return self.is_alg_not_valid(alg_not)
-        else:
-            return False
+    def is_game_over(self):
+        return self.board.is_check_mate() or self.board.is_stale_mate() or self.is_draw
 
-    def get_mov_frm_usr(self):
+    def get_move_form_user(self):
         is_input_valid = False
         while not is_input_valid:
             user_input = input("movement:")
             is_input_valid = self.is_input_valid(user_input)
-        return an.algebraic_notation(user_input, self.turn)
+        return user_input
 
-    def update_board(self, mov_alg_not):
-        self.board.move(mov_alg_not)
-        self.board_history.append(self.board.board_mat)
+    def update_board(self, user_input):
+        self.board.move_single_file_rank_input(user_input)
+        self.board_history.append(self.board.board_matrix)
 
     def play_game(self, time_control):
-        while not self.is_over():
+        self.board.set_board_to_initial_configuration()
+        while not self.is_game_over():
             self.show()
-            mov_alg_not = self.get_mov_frm_usr()
-            self.update_time()
-            self.update_board(mov_alg_not)
+            move = self.get_move_form_user()
+            # self.update_time()
+            self.update_board(move)
             self.show()

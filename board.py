@@ -187,6 +187,14 @@ class Board:
             return False
         # add second condition
 
+    def can_king_be_saved(self, color):
+        pass
+
+    def is_check_mate(self, color):
+        if not self.is_check(color):
+            return False
+        return self.can_king_be_saved(color)
+
     def is_move_legal(self, source_row_column, destination_row_column):
         piece_object = self.get_piece_object_from_position(source_row_column)
         if self.is_square_empty(source_row_column):
