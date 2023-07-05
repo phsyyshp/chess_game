@@ -58,6 +58,14 @@ class Board:
         )
         return piece_object
 
+    def get_all_same_color_piece_positions(self, piece_color):
+        piece_color_mask = (
+            (self.board_matrix <= 7) and (self.board_matrix > 0)
+            if piece_color == "white"
+            else self.board_matrix > 7
+        )
+        return np.argwhere(piece_color_mask)
+
     def get_piece_positions(self, piece_type, piece_color):
         piece_id = piece_type_to_id(piece_type, piece_color)
         return np.argwhere(self.board_matrix == piece_id)
@@ -67,6 +75,11 @@ class Board:
             tuple(destination_row_column)
         ] = self.get_piece_id_from_position(source_row_column)
         self.board_matrix[tuple(source_row_column)] = 0
+
+    def pawn_promotion(self, position_row_column, promote_to, color):
+        self.board_matrix[tuple(position_row_column)] = piece_type_to_id(
+            promote_to, color
+        )
 
     def castle(self, side, color):
         if side == "kingside":
@@ -98,20 +111,6 @@ class Board:
             destination_row_column,
         ) = split_single_file_rank_to_old_new_row_column(old_new_file_rank)
         self.move(source_row_column, destination_row_column)
-
-    def move_general_input(self, movement_str):
-        "movement_str is in format of file"
-        match self.type_of_movement(movement_str):
-            case "castle":
-                self.castle(movement_str)
-            case "pawn_promotion":
-                self.pawn_promotion(movement_str)
-            case "regular":
-                (
-                    source_row_column,
-                    destination_row_column,
-                ) = split_single_file_rank_to_old_new_row_column(movement_str)
-                self.move(source_row_column, destination_row_column)
 
     def show(self, point_of_view="white"):
         vectorized_chr = np.vectorize(chr)
@@ -151,3 +150,4 @@ print(" ")
 gg.move_single_file_rank_input("d2d4")
 gg.show()
 # print(gg.is_ambiguous(an.algebraic_notation("4.Qb2")))
+print(gg.get_all_same_color_piece_positions("black"))

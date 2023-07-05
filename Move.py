@@ -38,15 +38,13 @@ class Move:
         # think about what to add more.
 
     def is_pawn_path_clear(self):
-        # fix bugs here
-        if not self.board.is_square_empty(self.destination_row_column):
-            return False
         if self.piece_object_to_move.is_capture_attempt(self.destination_row_column):
             return not self.is_destination_occupied_by_same_color()
-        else:
-            path = self.piece_object_to_move.get_path(self.destination_row_column)
-            is_path_clear = not any(self.board.board_matrix * path)
-            return is_path_clear
+        if not self.board.is_square_empty(self.destination_row_column):
+            return False
+        path = self.piece_object_to_move.get_path(self.destination_row_column)
+        is_path_clear = not any(self.board.board_matrix * path)
+        return is_path_clear
 
     def is_path_clear(self):
         if self.is_destination_occupied_by_same_color():
@@ -55,7 +53,7 @@ class Move:
         if piece_type in ["king", "knight"]:
             return True
         if self.piece_object_to_move.is_slider():
-            path = self.piece_object_to_move.get_path(self.destination_row_column)
+            path = self.piece_object_to_move.get_path_mask(self.destination_row_column)
             is_path_clear = 0 == sum(self.board.board_matrix * path)
             return is_path_clear
         if piece_type == "pawn":
@@ -104,6 +102,14 @@ class Move:
             ]
         ]
         return any(is_attacked_by_specific_piece_bool_list)
+
+    def is_pawn_promotion(self):
+        if self.piece_object_to_move.type() != "pawn":
+            return False
+        if self.piece_object_to_move.color() == "white":
+            return self.destination_row_column[0] == 0
+        else:
+            return self.destination_row_column[0] == 7
 
     def is_castling_attempt(self):
         if self.piece_object_to_move.type() != "king":
@@ -183,8 +189,10 @@ class Move:
             return False
         # add second condition
 
-    def get_legal_moves():
-        pass
+    def get_legal_moves(self):
+        positions_of_pieces = self.board.get_all_same_color_piece_positions(
+            self.piece_object_to_move.color
+        )
 
     def can_king_be_saved(self):
         all_possible_moves = self.get_legal_moves()
