@@ -37,16 +37,13 @@ class Move:
             return "castling"
         if self.is_pawn_promotion():
             return "pawn_promotion"
-        # think about what to add more.
+        # TODO think about what to add more.
 
     def is_pawn_path_clear(self):
         if self.piece_object_to_move.is_capture_attempt(self.destination_row_column):
             return not self.is_destination_occupied_by_same_color()
         if not self.board.is_square_empty(self.destination_row_column):
             return False
-        path = self.piece_object_to_move.get_path(self.destination_row_column)
-        is_path_clear = not any(self.board.board_matrix * path)
-        return is_path_clear
 
     def is_path_clear(self):
         if self.is_destination_occupied_by_same_color():

@@ -24,7 +24,7 @@ class Pawn(Piece):
         else:
             return self.position_row_column[0] == 6
 
-    def show_forward_squares(self, amount, direction) -> list:
+    def forward_squares(self, amount, direction) -> list:
         color_to_sign = {"white": 1, "black": -1}
         return [
             self.position_row_column[0] + color_to_sign[self.color] * amount,
@@ -42,9 +42,9 @@ class Pawn(Piece):
             directions.pop(1)
 
         squares_in_range_mask = [
-            self.show_forward_squares(amount, direction)
+            self.forward_squares(amount, direction)
             for amount, direction in zip(amounts, directions)
-            if is_coordinate_in_board(self.show_forward_squares(amount, direction))
+            if is_coordinate_in_board(self.forward_squares(amount, direction))
         ]
         return np.array(squares_in_range_mask)
 
