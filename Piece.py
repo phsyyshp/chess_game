@@ -66,7 +66,7 @@ class Bishop(Piece):
             self.position_row_column, amount=8, slope=1
         ) + diagonal_squares_mask(self.position_row_column, amount=8, slope=-1)
 
-    def get_path(self, destination_row_column):
+    def get_path_mask(self, destination_row_column):
         return get_diagonal_path_mask(self.position_row_column, destination_row_column)
 
 
@@ -79,7 +79,7 @@ class Rook(Piece):
             self.position_row_column
         ) + vertical_squares_mask(self.position_row_column)
 
-    def get_path(self, destination_row_column):
+    def get_path_mask(self, destination_row_column):
         return get_straight_path_mask(self.position_row_column, destination_row_column)
 
 
@@ -94,6 +94,11 @@ class Queen(Piece):
             + diagonal_squares_mask(self.position_row_column, amount=8, slope=1)
             + diagonal_squares_mask(self.position_row_column, amount=8, slope=-1)
         )
+
+    def get_path_mask(self, destination_row_column):
+        return get_diagonal_path_mask(
+            self.position_row_column, destination_row_column
+        ) + get_straight_path_mask(self.position_row_column, destination_row_column)
 
 
 class King(Piece):
