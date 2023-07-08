@@ -255,6 +255,11 @@ def fen_piece_letter_to_piece_id(fen_piece_code):
     return fen_piece_code_to_piece_type_dictionary[fen_piece_code]
 
 
+def mask_to_row_column(mask):
+    # TODO finish implementing this stuff.
+    pass
+
+
 def FEN_to_board_matrix(FEN: str) -> np.ndarray:
     # refactor it
     FEN = FEN.partition(" ")

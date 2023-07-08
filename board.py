@@ -29,6 +29,9 @@ class Board:
         self.board_matrix[6][:] = BLACK_PIECE_ID_OFFSET + self.board_matrix[1][:]
         self.board_matrix[7][:] = BLACK_PIECE_ID_OFFSET + self.board_matrix[0][:]
 
+    def set_board_to_fen_configuration(self, FEN_string):
+        self.board_matrix = FEN_to_board_matrix(FEN_string)
+
     def get_piece_id_from_position(self, position_row_column: list):
         return self.board_matrix[tuple(position_row_column)]
 
