@@ -188,12 +188,26 @@ class Move:
             return False
         # add second condition
 
-    def get_legal_moves(self):
+    def get_legal_moves(
+        self,
+        piece_object: pc.Pawn | pc.King | pc.Bishop | pc.Queen | pc.Knight | pc.Rook,
+    ):
+        moves = piece_object.squares_in_range_mask()
+        # TODO finish this
+
+    def get_all_legal_moves(self):
+        # TODO finish also this
         positions_of_pieces = self.board.get_all_same_color_piece_positions(
             self.piece_object_to_move.color
         )
+        legal_moves = []
+        for position_of_piece in positions_of_pieces:
+            legal_moves += self.board.get_piece_object_from_position(
+                position_of_piece
+            ).get_legal_moves(self.board.board_matrix)
 
     def can_king_be_saved(self):
+        # TODO there are jobs to do here.
         all_possible_moves = self.get_legal_moves()
         pass
 
@@ -206,8 +220,6 @@ class Move:
         if self.type == "empty":
             return False
         if self.type == "castling":
-            return self.is_castling_legal()
-        if not self.piece_object_to_move.is_in_range(self.destination_row_column):
             return False
         if not self.is_safe():
             return False
