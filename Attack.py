@@ -25,7 +25,6 @@ class Attack:
         return np.array(legal_moves)
 
     def get_all_legal_moves(self, color):
-        # TODO finish also this
         positions_of_pieces = self.board.get_all_same_color_piece_positions(color)
         legal_moves = []
         for position_of_piece in positions_of_pieces:
@@ -37,6 +36,7 @@ class Attack:
     def can_king_be_saved(self):
         # TODO there are jobs to do here.
         all_possible_moves = self.get_legal_moves()
+
         pass
 
     def is_check_mate(self):
