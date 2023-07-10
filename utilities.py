@@ -156,7 +156,7 @@ def horizontal_squares_mask(position_row_column: list, amount=8) -> np.ndarray:
 def vertical_squares_mask(position_row_column: list, amount=8) -> np.ndarray:
     binary_mat = np.zeros((8, 8), dtype=float)
     lower_bound, upper_bound = find_bounds(position_row_column[0], amount)
-    binary_mat[lower_bound : upper_bound + 1][position_row_column[1]] = 1
+    binary_mat[lower_bound : upper_bound + 1, position_row_column[1]] = 1
     binary_mat[tuple(position_row_column)] = 0
     return binary_mat
 
@@ -256,8 +256,7 @@ def fen_piece_letter_to_piece_id(fen_piece_code):
 
 
 def mask_to_row_column(mask):
-    # TODO finish implementing this stuff.
-    pass
+    return np.argwhere(mask == 1)
 
 
 def FEN_to_board_matrix(FEN: str) -> np.ndarray:
@@ -319,3 +318,4 @@ show_board_matrix(
         "r3k1nr/pp2pp1p/nq1p1bpP/2pP4/4P1B1/2P5/PP3PP1/RNBQK2R w KQkq - 1 12"
     )
 )
+# print(vertical_squares_mask([3, 2], amount=8))

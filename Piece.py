@@ -46,7 +46,10 @@ class Pawn(Piece):
             for amount, direction in zip(amounts, directions)
             if is_coordinate_in_board(self.forward_squares(amount, direction))
         ]
-        return np.array(squares_in_range_mask)
+        binary_mat = np.zeros((8, 8))
+        for row_col in np.array(squares_in_range_mask):
+            binary_mat[tuple(row_col)] = 1
+        return binary_mat
 
 
 class Knight(Piece):
@@ -134,7 +137,9 @@ class Empty(Piece):
 
 
 pp = Pawn([1, 2], "white")
-print(pp.color)
+rr = Rook([3, 2], "white")
+# print(pp.color)
 
-print(pp.is_slider())
-pp.squares_in_range_mask()
+# print(pp.is_slider())
+print(pp.squares_in_range_mask())
+# print(rr.squares_in_range_mask())
