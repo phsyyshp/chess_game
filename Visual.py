@@ -1,7 +1,7 @@
 import Board as bd
-from utilities import *
+from utilities.BoardUtilities import *
 import numpy as np
-from Constants import *
+from utilities.Constants import *
 
 
 class Visual:

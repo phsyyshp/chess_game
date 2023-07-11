@@ -1,7 +1,8 @@
 import numpy as np
 import Piece as pc
-from utilities import *
-from Constants import *
+from utilities.FENinterpreter import *
+from utilities.PositionConverter import *
+from utilities.Constants import *
 
 
 class Board:
