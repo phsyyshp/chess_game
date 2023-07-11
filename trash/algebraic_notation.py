@@ -1,4 +1,4 @@
-from utilities import *
+from utilities.utilities import *
 import board as bd
 
 

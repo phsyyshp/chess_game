@@ -2,7 +2,8 @@ import Board as bd
 import numpy as np
 import Move as mv
 import GameState as gs
-from utilities import *
+from utilities.PositionConverter import *
+from utilities.BoardUtilities import *
 import Visual as vs
 
 
