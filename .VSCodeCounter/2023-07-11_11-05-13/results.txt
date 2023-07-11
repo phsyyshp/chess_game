@@ -1,0 +1,40 @@
+Date : 2023-07-11 11:05:13
+Directory : c:\Users\theor\Desktop\chess game
+Total : 14 files,  968 codes, 98 comments, 212 blanks, all 1278 lines
+
+Languages
++----------+------------+------------+------------+------------+------------+
+| language | files      | code       | comment    | blank      | total      |
++----------+------------+------------+------------+------------+------------+
+| Python   |         14 |        968 |         98 |        212 |      1,278 |
++----------+------------+------------+------------+------------+------------+
+
+Directories
++---------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                          | files      | code       | comment    | blank      | total      |
++---------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                             |         14 |        968 |         98 |        212 |      1,278 |
+| . (Files)                                                     |         10 |        876 |         94 |        186 |      1,156 |
+| trash                                                         |          4 |         92 |          4 |         26 |        122 |
++---------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++---------------------------------------------------------------+----------+------------+------------+------------+------------+
+| filename                                                      | language | code       | comment    | blank      | total      |
++---------------------------------------------------------------+----------+------------+------------+------------+------------+
+| c:\Users\theor\Desktop\chess game\Attack.py                   | Python   |         37 |          5 |          9 |         51 |
+| c:\Users\theor\Desktop\chess game\Board.py                    | Python   |        132 |          8 |         19 |        159 |
+| c:\Users\theor\Desktop\chess game\Constants.py                | Python   |         10 |          0 |          2 |         12 |
+| c:\Users\theor\Desktop\chess game\Move.py                     | Python   |        184 |         14 |         25 |        223 |
+| c:\Users\theor\Desktop\chess game\Piece.py                    | Python   |        108 |          8 |         36 |        152 |
+| c:\Users\theor\Desktop\chess game\Pieces.py                   | Python   |          7 |          0 |          5 |         12 |
+| c:\Users\theor\Desktop\chess game\board_test.py               | Python   |        105 |         39 |         13 |        157 |
+| c:\Users\theor\Desktop\chess game\game.py                     | Python   |         45 |          1 |          8 |         54 |
+| c:\Users\theor\Desktop\chess game\main.py                     | Python   |          3 |          0 |          2 |          5 |
+| c:\Users\theor\Desktop\chess game\trash\algebraic_notation.py | Python   |         47 |          4 |         19 |         70 |
+| c:\Users\theor\Desktop\chess game\trash\deneme.py             | Python   |          4 |          0 |          1 |          5 |
+| c:\Users\theor\Desktop\chess game\trash\piece_types.py        | Python   |         20 |          0 |          4 |         24 |
+| c:\Users\theor\Desktop\chess game\trash\pieces.py             | Python   |         21 |          0 |          2 |         23 |
+| c:\Users\theor\Desktop\chess game\utilities.py                | Python   |        245 |         19 |         67 |        331 |
+| Total                                                         |          |        968 |         98 |        212 |      1,278 |
++---------------------------------------------------------------+----------+------------+------------+------------+------------+

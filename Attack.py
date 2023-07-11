@@ -31,7 +31,7 @@ class Attack:
             legal_moves += self.get_legal_moves(
                 self.board.get_piece_object_from_position(position_of_piece)
             )
-            return legal_moves
+        return legal_moves
 
     def can_king_be_saved(self):
         # TODO there are jobs to do here.
