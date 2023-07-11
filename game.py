@@ -36,16 +36,17 @@ class Game:
             ) = split_single_file_rank_to_old_new_row_column(user_input)
             move = mv.Move(source_row_column, destination_row_column, self.board)
             is_input_valid = move.is_legal()
-        return move
+            print(is_input_valid)
+        return source_row_column, destination_row_column
 
-    def update_board(self, user_input):
-        self.board.move_single_file_rank_input(user_input)
+    def update_board(self, source_row_column, destination_row_column):
+        self.board.move(source_row_column, destination_row_column)
         self.board_history.append(self.board.board_matrix)
 
     def play_game(self):
         self.board.set_board_to_initial_configuration()
         while not self.is_game_over():
             self.board.show()
-            move = self.get_move_form_user()
-            self.update_board(move)
+            source_row_column, destination_row_column = self.get_move_form_user()
+            self.update_board(source_row_column, destination_row_column)
             self.board.show()

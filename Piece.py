@@ -14,10 +14,10 @@ class Piece:
         # print(self.squares_in_range_mask())
         squares_in_range_mask = self.squares_in_range_mask()
 
-        print(destination_row_column)
-        print(
-            squares_in_range_mask[destination_row_column[0]][destination_row_column[1]]
-        )
+        # print(destination_row_column)
+        # print(
+        # squares_in_range_mask[destination_row_column[0]][destination_row_column[1]]
+        # )
         return 1 == self.squares_in_range_mask()[tuple(destination_row_column)]
 
 

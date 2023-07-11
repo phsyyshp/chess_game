@@ -26,7 +26,7 @@ class Move:
             self.destination_row_column
         )
         is_same_color = (
-            self.piece_object_to_move.color() == piece_object_at_destination.color()
+            self.piece_object_to_move.color == piece_object_at_destination.color
         )
         return is_same_color
 
@@ -40,10 +40,14 @@ class Move:
         # TODO think about what to add more.
 
     def is_pawn_path_clear(self):
+        # TODO check illegal moves
         if self.piece_object_to_move.is_capture_attempt(self.destination_row_column):
-            return not self.is_destination_occupied_by_same_color()
+            return (
+                not self.board.is_square_empty(self.destination_row_column)
+            ) and not self.is_destination_occupied_by_same_color()
         if not self.board.is_square_empty(self.destination_row_column):
             return False
+        return True
 
     def is_path_clear(self):
         if self.is_destination_occupied_by_same_color():
@@ -199,6 +203,8 @@ class Move:
         if self.type == "castling":
             return False
         if not self.is_safe():
+            return False
+        if not self.piece_object_to_move.is_in_range(self.destination_row_column):
             return False
 
         return self.is_path_clear()
