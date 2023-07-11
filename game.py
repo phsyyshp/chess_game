@@ -41,11 +41,13 @@ class Game:
     def update_board(self, source_row_column, destination_row_column):
         self.board.move(source_row_column, destination_row_column)
         self.board_history.append(self.board.board_matrix)
+        self.board.turn = change_turn(self.board.turn)
 
     def play_game(self):
         self.board.set_board_to_initial_configuration()
+        self.board.turn = "white"
         while not self.is_game_over():
             self.board.show()
             source_row_column, destination_row_column = self.get_move_form_user()
             self.update_board(source_row_column, destination_row_column)
-            self.board.show()
+            # self.board.show()

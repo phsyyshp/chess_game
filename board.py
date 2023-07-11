@@ -7,6 +7,7 @@ from Constants import *
 class Board:
     def __init__(self):
         self.board_matrix = np.full((8, 8), EMPTY_SQUARE_ID)
+        self.turn = "white"
         self.can_black_castle_kingside = True
         self.can_black_castle_queenside = True
         self.can_white_castle_kingside = True

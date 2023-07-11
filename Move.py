@@ -58,7 +58,7 @@ class Move:
         if self.piece_object_to_move.is_slider():
             path = self.piece_object_to_move.get_path_mask(self.destination_row_column)
             is_path_clear = 0 == sum(self.board.board_matrix * path)
-            return is_path_clear
+            return all(is_path_clear)
         if piece_type == "pawn":
             return self.is_pawn_path_clear()
         return True
@@ -200,8 +200,10 @@ class Move:
     def is_legal(self):
         if self.type == "empty":
             return False
+        if not self.piece_object_to_move.color == self.board.turn:
+            return False
         if self.type == "castling":
-            #TODO implement castling check
+            # TODO implement castling check
             return False
         if not self.is_safe():
             return False
