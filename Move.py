@@ -16,8 +16,8 @@ class Move:
         self.destination_row_column = destination_row_column
         self.type = self.get_type()
 
-        if self.type == "empty":
-            raise ValueError("Can not move an empty square")
+        # if self.type == "empty":
+        #     raise ValueError("Can not move an empty square")
 
     def is_destination_occupied_by_same_color(self):
         if self.board.is_square_empty(self.destination_row_column):
@@ -39,7 +39,15 @@ class Move:
             return "pawn_promotion"
         # TODO think about what to add more.
 
+    # def is_pawn_path_clear(self, piece_object_to_move=[], destination_row_column=[]):
+
     def is_pawn_path_clear(self):
+        # TODO refactor it into more elegant form
+        # if piece_object_to_move == []:
+        #     piece_object_to_move = self.piece_object_to_move
+        # if destination_row_column == []:
+        #     destination_row_column = self.destination_row_column
+
         if self.piece_object_to_move.is_capture_attempt(self.destination_row_column):
             return (
                 not self.board.is_square_empty(self.destination_row_column)
@@ -48,7 +56,13 @@ class Move:
             return False
         return True
 
+    # def is_path_clear(self, piece_object_to_move=[], destination_row_column=[]):
+
     def is_path_clear(self):
+        #     piece_object_to_move = self.piece_object_to_move
+        # if destination_row_column == []:
+        #     destination_row_column = self.destination_row_column
+
         if self.is_destination_occupied_by_same_color():
             return False
         piece_type = self.piece_object_to_move.type
@@ -179,19 +193,29 @@ class Move:
                 return self.is_king_side_castling_legal()
 
     # show castling by king movement
-    def is_check(self):
+    def is_new_position_check(self):
         anti_color = {"white": "black", "black": "white"}
+
         king_position_row_column = self.board.get_piece_positions(
             "king", self.piece_object_to_move.color
         )
         # TODO fix [[1,2]] error now it si temporarly fixed by king_position_row_column[0]
         # print(king_position_row_column)
-        return self.is_under_attack_by_any_piece(
+
+        # self.board.move(
+        #     self.piece_object_to_move.position_row_column, self.destination_row_column
+        # )
+        out = self.is_under_attack_by_any_piece(
             king_position_row_column[0], anti_color[self.piece_object_to_move.color]
         )
 
+        # self.board.move(
+        #     self.destination_row_column, self.piece_object_to_move.position_row_column
+        # )
+        return out
+
     def is_safe(self):
-        if self.is_check():
+        if self.is_new_position_check():
             return False
         # TODO add second condition
         return True
