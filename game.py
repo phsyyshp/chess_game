@@ -1,5 +1,4 @@
 import Board as bd
-import numpy as np
 import Move as mv
 import GameState as gs
 from utilities.PositionConverter import *
