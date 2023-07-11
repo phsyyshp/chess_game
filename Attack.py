@@ -43,3 +43,6 @@ class Attack:
         if not self.is_check():
             return False
         return self.can_king_be_saved()
+
+    def is_stale_mate():
+        False
