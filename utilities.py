@@ -313,9 +313,9 @@ def show_board_matrix(board_matrix, point_of_view="white"):
 # print(L_shaped_squares(file_rank_to_row_column("d8")))
 # print(get_diagonal_path_mask([2, 3], [5, 6]))
 # print(get_straight_path_mask([2, 3], [5, 3]))
-show_board_matrix(
-    FEN_to_board_matrix(
-        "r3k1nr/pp2pp1p/nq1p1bpP/2pP4/4P1B1/2P5/PP3PP1/RNBQK2R w KQkq - 1 12"
-    )
-)
+# show_board_matrix(
+# FEN_to_board_matrix(
+# "r3k1nr/pp2pp1p/nq1p1bpP/2pP4/4P1B1/2P5/PP3PP1/RNBQK2R w KQkq - 1 12"
+# )
+# )
 # print(vertical_squares_mask([3, 2], amount=8))

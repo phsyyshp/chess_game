@@ -64,6 +64,7 @@ class Move:
         dummy_piece_object = self.board.create_piece_object(
             attacker_position_index, piece_type, piece_color
         )
+        print(attacker_position_index)
         if not dummy_piece_object.is_in_range(position_row_column):
             return False
         return self.is_path_clear(dummy_piece_object, position_row_column)
@@ -76,6 +77,7 @@ class Move:
         attacker_positions_indices = self.board.get_piece_positions(
             attacker_piece_type, attacker_color
         )
+        print(attacker_positions_indices)
         attacker_piece_id = piece_type_to_id(attacker_piece_type, attacker_color)
         is_under_attack_boolean = [
             self.is_threat(
@@ -103,15 +105,15 @@ class Move:
         return any(is_attacked_by_specific_piece_bool_list)
 
     def is_pawn_promotion(self):
-        if self.piece_object_to_move.type() != "pawn":
+        if self.piece_object_to_move.type != "pawn":
             return False
-        if self.piece_object_to_move.color() == "white":
+        if self.piece_object_to_move.color == "white":
             return self.destination_row_column[0] == 0
         else:
             return self.destination_row_column[0] == 7
 
     def is_castling_attempt(self):
-        if self.piece_object_to_move.type() != "king":
+        if self.piece_object_to_move.type != "king":
             return False
         if does_rank_change(
             self.piece_object_to_move.position_row_column, self.destination_row_column
@@ -179,14 +181,17 @@ class Move:
         king_position_row_column = self.board.get_piece_positions(
             "king", self.piece_object_to_move.color
         )
+        # TODO fix [[1,2]] error now it si temporarly fixed by king_position_row_column[0]
+        print(king_position_row_column)
         return self.is_under_attack_by_any_piece(
-            king_position_row_column, anti_color[self.piece_object_to_move.color]
+            king_position_row_column[0], anti_color[self.piece_object_to_move.color]
         )
 
     def is_safe(self):
-        if self.is_check(self.board.board_matrix):
+        if self.is_check():
             return False
         # TODO add second condition
+        return True
 
     def is_legal(self):
         if self.type == "empty":
@@ -202,7 +207,7 @@ class Move:
         pass
 
 
-gg = bd.Board()
-gg.set_board_to_initial_configuration()
-gg.show()
-Move([4, 0], [5, 0], gg)
+# gg = bd.Board()
+# gg.set_board_to_initial_configuration()
+# gg.show()
+# Move([4, 0], [5, 0], gg)

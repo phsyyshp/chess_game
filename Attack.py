@@ -40,9 +40,11 @@ class Attack:
         pass
 
     def is_check_mate(self):
-        if not self.is_check():
-            return False
-        return self.can_king_be_saved()
+        # if not self.is_check():
+        # return False
+        # return self.can_king_be_saved()
+        return False
+        # TODO lots to do here
 
-    def is_stale_mate():
-        False
+    def is_stale_mate(self):
+        return False

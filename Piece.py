@@ -11,6 +11,13 @@ class Piece:
         return self.type in ["rook", "queen", "bishop"]
 
     def is_in_range(self, destination_row_column):
+        # print(self.squares_in_range_mask())
+        squares_in_range_mask = self.squares_in_range_mask()
+
+        print(destination_row_column)
+        print(
+            squares_in_range_mask[destination_row_column[0]][destination_row_column[1]]
+        )
         return 1 == self.squares_in_range_mask()[tuple(destination_row_column)]
 
 
@@ -136,10 +143,10 @@ class Empty(Piece):
         super().__init__(position_row_column, color, "empty")
 
 
-pp = Pawn([1, 2], "white")
-rr = Rook([3, 2], "white")
-# print(pp.color)
+# pp = Pawn([1, 2], "white")
+# rr = Rook([3, 2], "white")
+# # print(pp.color)
 
-# print(pp.is_slider())
-print(pp.squares_in_range_mask())
-# print(rr.squares_in_range_mask())
+# # print(pp.is_slider())
+# print(pp.squares_in_range_mask())
+# # print(rr.squares_in_range_mask())
