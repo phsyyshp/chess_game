@@ -40,7 +40,6 @@ class Move:
         # TODO think about what to add more.
 
     def is_pawn_path_clear(self):
-        # TODO check illegal moves
         if self.piece_object_to_move.is_capture_attempt(self.destination_row_column):
             return (
                 not self.board.is_square_empty(self.destination_row_column)
@@ -57,8 +56,8 @@ class Move:
             return True
         if self.piece_object_to_move.is_slider():
             path = self.piece_object_to_move.get_path_mask(self.destination_row_column)
-            is_path_clear = 0 == sum(self.board.board_matrix * path)
-            return all(is_path_clear)
+            is_path_clear = all(0 == sum(self.board.board_matrix * path))
+            return is_path_clear
         if piece_type == "pawn":
             return self.is_pawn_path_clear()
         return True

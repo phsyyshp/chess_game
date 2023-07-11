@@ -28,10 +28,7 @@ def split_single_file_rank_to_old_new_row_column(old_new_file_rank):
 
 
 def is_coordinate_in_board(position_row_column: list):
-    if position_row_column[0] in range(8) and position_row_column[1] in range(8):
-        return True
-    else:
-        return False
+    return position_row_column[0] in range(8) and position_row_column[1] in range(8)
 
 
 def choose_in_board_indices(row_indices: np.ndarray, column_indices: np.ndarray):
@@ -97,7 +94,6 @@ def get_row_indices_of_shortest_path(
 
 
 def get_column_indices_of_shortest_path(
-    # TODO check for bugs
     source_row_column: list,
     destination_row_column: list,
 ) -> np.ndarray:
@@ -111,7 +107,6 @@ def get_column_indices_of_shortest_path(
 def get_diagonal_path_mask(
     source_row_column: list, destination_row_column: list
 ) -> np.ndarray:
-    # TODO check for bugs
     binary_mat = np.zeros((8, 8), dtype=float)
     row_indices = get_row_indices_of_shortest_path(
         source_row_column, destination_row_column
