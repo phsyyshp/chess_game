@@ -1,7 +1,7 @@
 import Board as bd
 import numpy as np
 import Move as mv
-import Attack as at
+import GameState as gs
 from utilities import *
 import Visual as vs
 
@@ -22,8 +22,8 @@ class Game:
 
     def is_game_over(self):
         return (
-            at.Attack(self.board).is_check_mate()
-            or at.Attack(self.board).is_stale_mate()
+            gs.GameState(self.board).is_check_mate()
+            or gs.GameState(self.board).is_stale_mate()
             or self.is_draw
         )
 

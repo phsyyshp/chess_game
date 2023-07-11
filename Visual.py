@@ -1,7 +1,5 @@
 import Board as bd
 from utilities import *
-
-
 import numpy as np
 from Constants import *
 
@@ -26,12 +24,10 @@ class Visual:
             self.board.board_matrix != 0
         )
         self.visual_board = vectorized_chr(
-            BLANK_UNICODE * (self.visual_board == 0) + self.visual_board
+            WHITE_SPACE_UNICODE * (self.visual_board == 0) + self.visual_board
         ).tolist()
-        self.set_orientation()
 
-    def show(self):
-        self.put_piece_icons()
+    def colorize_board(self):
         self.visual_board = [
             [colorize_string(str(8 - i), self.color_of_board, "black")]
             + [
@@ -42,7 +38,9 @@ class Visual:
             ]
             for i in range(8)
         ]
-        visual_board_string = "\n".join(["".join(item) for item in self.visual_board])
+
+    def add_file_rank_anotations(self):
+        self.visual_board = "\n".join(["".join(item) for item in self.visual_board])
         file_row = (
             "  ".join("bcdefgh")
             if self.orientation == "white"
@@ -53,7 +51,13 @@ class Visual:
             if self.orientation == "white"
             else "\n   h   " + file_row
         )
-        visual_board_string += "\n " + colorize_string(
+        self.visual_board += "\n " + colorize_string(
             file_row, self.color_of_board, "black"
         )
-        print(visual_board_string)
+
+    def show(self):
+        self.put_piece_icons()
+        self.set_orientation()
+        self.colorize_board()
+        self.add_file_rank_anotations()
+        print(self.visual_board)

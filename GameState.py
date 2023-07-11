@@ -5,7 +5,7 @@ import Board as bd
 import Move as mv
 
 
-class Attack:
+class GameState:
     def __init__(self, board: bd.Board):
         self.board = board
 
