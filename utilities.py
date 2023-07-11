@@ -97,7 +97,9 @@ def get_row_indices_of_shortest_path(
 
 
 def get_column_indices_of_shortest_path(
-    source_row_column: list, destination_row_column: list
+    # TODO check for bugs
+    source_row_column: list,
+    destination_row_column: list,
 ) -> np.ndarray:
     return np.arange(
         source_row_column[1],
@@ -109,6 +111,7 @@ def get_column_indices_of_shortest_path(
 def get_diagonal_path_mask(
     source_row_column: list, destination_row_column: list
 ) -> np.ndarray:
+    # TODO check for bugs
     binary_mat = np.zeros((8, 8), dtype=float)
     row_indices = get_row_indices_of_shortest_path(
         source_row_column, destination_row_column
