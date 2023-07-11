@@ -1,0 +1,41 @@
+Date : 2023-07-11 13:31:18
+Directory : c:\Users\theor\Desktop\chess game
+Total : 15 files,  1022 codes, 94 comments, 223 blanks, all 1339 lines
+
+Languages
++----------+------------+------------+------------+------------+------------+
+| language | files      | code       | comment    | blank      | total      |
++----------+------------+------------+------------+------------+------------+
+| Python   |         15 |      1,022 |         94 |        223 |      1,339 |
++----------+------------+------------+------------+------------+------------+
+
+Directories
++---------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                          | files      | code       | comment    | blank      | total      |
++---------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                             |         15 |      1,022 |         94 |        223 |      1,339 |
+| . (Files)                                                     |         11 |        930 |         90 |        197 |      1,217 |
+| trash                                                         |          4 |         92 |          4 |         26 |        122 |
++---------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++---------------------------------------------------------------+----------+------------+------------+------------+------------+
+| filename                                                      | language | code       | comment    | blank      | total      |
++---------------------------------------------------------------+----------+------------+------------+------------+------------+
+| c:\Users\theor\Desktop\chess game\Attack.py                   | Python   |         37 |          5 |          9 |         51 |
+| c:\Users\theor\Desktop\chess game\Board.py                    | Python   |        104 |          8 |         17 |        129 |
+| c:\Users\theor\Desktop\chess game\Constants.py                | Python   |         32 |          0 |          4 |         36 |
+| c:\Users\theor\Desktop\chess game\Move.py                     | Python   |        184 |         13 |         25 |        222 |
+| c:\Users\theor\Desktop\chess game\Piece.py                    | Python   |        108 |          8 |         36 |        152 |
+| c:\Users\theor\Desktop\chess game\Pieces.py                   | Python   |          7 |          0 |          5 |         12 |
+| c:\Users\theor\Desktop\chess game\Visual.py                   | Python   |         52 |          0 |          8 |         60 |
+| c:\Users\theor\Desktop\chess game\board_test.py               | Python   |        105 |         39 |         13 |        157 |
+| c:\Users\theor\Desktop\chess game\game.py                     | Python   |         46 |          0 |          8 |         54 |
+| c:\Users\theor\Desktop\chess game\main.py                     | Python   |          3 |          0 |          2 |          5 |
+| c:\Users\theor\Desktop\chess game\trash\algebraic_notation.py | Python   |         47 |          4 |         19 |         70 |
+| c:\Users\theor\Desktop\chess game\trash\deneme.py             | Python   |          4 |          0 |          1 |          5 |
+| c:\Users\theor\Desktop\chess game\trash\piece_types.py        | Python   |         20 |          0 |          4 |         24 |
+| c:\Users\theor\Desktop\chess game\trash\pieces.py             | Python   |         21 |          0 |          2 |         23 |
+| c:\Users\theor\Desktop\chess game\utilities.py                | Python   |        252 |         17 |         70 |        339 |
+| Total                                                         |          |      1,022 |         94 |        223 |      1,339 |
++---------------------------------------------------------------+----------+------------+------------+------------+------------+

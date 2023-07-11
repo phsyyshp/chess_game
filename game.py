@@ -3,6 +3,7 @@ import numpy as np
 import Move as mv
 import Attack as at
 from utilities import *
+import Visual as vs
 
 
 class Game:
@@ -47,7 +48,6 @@ class Game:
         self.board.set_board_to_initial_configuration()
         self.board.turn = "white"
         while not self.is_game_over():
-            self.board.show()
+            vs.Visual("white", self.board, "cyan").show()
             source_row_column, destination_row_column = self.get_move_form_user()
             self.update_board(source_row_column, destination_row_column)
-            # self.board.show()

@@ -279,6 +279,19 @@ def FEN_to_board_matrix(FEN: str) -> np.ndarray:
     return board_matrix
 
 
+def colorize_string(string, fg_color, bg_color):
+    color_prefix = (
+        "\x1b[26;"
+        + FOREGROUND_COLOR_TO_ANSII[fg_color]
+        + ";"
+        + BACKGROUND_COLOR_TO_ANSII[bg_color]
+        + "m"
+    )
+    colorized_string = color_prefix + " " + string + " " + "\x1b[0m"
+
+    return colorized_string
+
+
 def show_board_matrix(board_matrix, point_of_view="white"):
     vectorized_chr = np.vectorize(chr)
 

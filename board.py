@@ -117,36 +117,6 @@ class Board:
         ) = split_single_file_rank_to_old_new_row_column(old_new_file_rank)
         self.move(source_row_column, destination_row_column)
 
-    def show(self, point_of_view="white"):
-        vectorized_chr = np.vectorize(chr)
-
-        visual_board = self.board_matrix + 9810 * (self.board_matrix != 0)
-        visual_board = (
-            np.flipud(visual_board)
-            if point_of_view == "white"
-            else np.fliplr(visual_board)
-        )
-        visual_board = vectorized_chr(32 * (visual_board == 0) + visual_board).tolist()
-        visual_board = [
-            ["\x1b[26;36;40m" + str(8 - i) + " "]
-            + [
-                "\x1b[26;30;46m " + visual_board[i][j] + " \x1b[0m"
-                if (i + j + 1) % 2 == 0
-                else "\x1b[26;30;47m " + visual_board[i][j] + " \x1b[0m"
-                for j in range(8)
-            ]
-            for i in range(8)
-        ]
-        visual_board_string = "\n".join(["".join(item) for item in visual_board])
-        file_row = (
-            "  ".join("bcdefgh") if point_of_view == "white" else "  ".join("gfedcba")
-        )
-        file_row = (
-            "  a  " + file_row if point_of_view == "white" else "\n   h   " + file_row
-        )
-        visual_board_string += "\n\x1b[26;36;40m " + file_row + " \x1b[0m"
-        print(visual_board_string)
-
 
 # gg = Board()
 # gg.set_board_to_initial_configuration()
