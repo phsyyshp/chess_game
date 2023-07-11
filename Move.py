@@ -201,6 +201,7 @@ class Move:
         if self.type == "empty":
             return False
         if self.type == "castling":
+            #TODO implement castling check
             return False
         if not self.is_safe():
             return False

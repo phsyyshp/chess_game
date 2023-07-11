@@ -36,7 +36,6 @@ class Game:
             ) = split_single_file_rank_to_old_new_row_column(user_input)
             move = mv.Move(source_row_column, destination_row_column, self.board)
             is_input_valid = move.is_legal()
-            print(is_input_valid)
         return source_row_column, destination_row_column
 
     def update_board(self, source_row_column, destination_row_column):
