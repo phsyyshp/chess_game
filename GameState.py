@@ -1,4 +1,3 @@
-from utilities.Constants import *
 from utilities.BoardUtilities import *
 import numpy as np
 import Piece as pc

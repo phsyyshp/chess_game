@@ -1,9 +1,6 @@
 from utilities.PieceIdentifier import *
 from utilities.BoardUtilities import *
-from utilities.Constants import *
-import numpy as np
 import Board as bd
-import Piece as pc
 
 
 class Move:
