@@ -99,9 +99,13 @@ class Queen(Piece):
         )
 
     def get_path_mask(self, destination_row_column: list):
-        return get_diagonal_path_mask(
-            self.position_row_column, destination_row_column
-        ) + get_straight_path_mask(self.position_row_column, destination_row_column)
+        if (destination_row_column[1] == self.position_row_column[1]) or (
+            destination_row_column[0] == self.position_row_column[0]
+        ):
+            return get_straight_path_mask(
+                self.position_row_column, destination_row_column
+            )
+        return get_diagonal_path_mask(self.position_row_column, destination_row_column)
 
 
 class King(Piece):
@@ -143,3 +147,5 @@ class Empty(Piece):
 # # print(pp.is_slider())
 # print(pp.squares_in_range_mask())
 # # print(rr.squares_in_range_mask())
+# N = Knight([3, 2], "white")
+# print(N.squares_in_range_mask())

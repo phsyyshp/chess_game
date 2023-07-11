@@ -190,8 +190,8 @@ def get_straight_path_mask(
 def L_shaped_squares_mask(position_row_column: list) -> np.ndarray:
     binary_mat = np.zeros((8, 8), dtype=float)
     # indices of possible knight jumps.
-    row_jump = np.array(2 * [-1, 1])
-    column_jump = np.array([-2, -2] + [2, 2])
+    row_jump = np.array(2 * [-1, 1] + 2 * [-2, 2])
+    column_jump = np.array([-2, -2] + [2, 2] + [-1, -1] + [1, 1])
 
     row_indices = row_jump + position_row_column[0]
     column_indices = column_jump + position_row_column[1]
@@ -262,11 +262,17 @@ def mask_to_row_column(mask):
     return np.argwhere(mask == 1)
 
 
+def change_turn(turn):
+    if turn == "white":
+        return "black"
+    return "white"
+
+
 def FEN_to_board_matrix(FEN: str) -> np.ndarray:
     # refactor it
     FEN = FEN.partition(" ")
     FEN = FEN[0]
-    rows = FEN.split("/")
+    # rows = FEN.split("/")
     FEN_number_to_id_lambda = lambda x: int(x) * "e" if x.isdigit() else x
     FEN_row_to_piece_id_list = lambda x: list(map(fen_piece_letter_to_piece_id, x))
     normalized_FEN = "".join(list(map(FEN_number_to_id_lambda, FEN)))
