@@ -37,9 +37,9 @@ def is_coordinate_in_board(position_row_column: list):
 def choose_in_board_indices(row_indices: np.ndarray, column_indices: np.ndarray):
     is_in_board_mask = (
         (0 <= row_indices)
-        and (row_indices < 8)
-        and (0 <= column_indices)
-        and (column_indices < 8)
+        * (row_indices < 8)
+        * (0 <= column_indices)
+        * (column_indices < 8)
     )
     column_indices = column_indices[is_in_board_mask]
     row_indices = row_indices[is_in_board_mask]
