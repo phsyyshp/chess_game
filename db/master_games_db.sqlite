@@ -1,0 +1,14 @@
+CREATE TABLE games(
+    id INTEGER  PRIMARY KEY AUTOINCREMENT,
+    event TEXT,
+    site TEXT,
+    date DATE,
+    round INTEGER,
+    white TEXT,
+    black TEXT,
+    result TEXT,
+    WhiteELo INTEGER,
+    BlackElo INTEGER,
+    ECO TEXT,
+    moves TEXT
+);
