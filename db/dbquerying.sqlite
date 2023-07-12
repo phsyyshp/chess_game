@@ -1,4 +1,4 @@
 SELECT *
 FROM games
-limit 50
+limit 3
 ;
