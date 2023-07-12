@@ -12,6 +12,13 @@ BLACK_PIECE_ID_OFFSET = 6
 UNICODE_OFFSET = 9810
 WHITE_SPACE_UNICODE = 32
 
+LETTER_TO_PIECE_TYPE = {
+    "N": "knight",
+    "B": "bishop",
+    "Q": "queen",
+    "K": "king",
+    "R": "rook",
+}
 BACKGROUND_COLOR_TO_ANSII = {
     "black": "40",
     "red": "41",

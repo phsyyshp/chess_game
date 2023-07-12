@@ -111,6 +111,10 @@ class Board:
                 self.can_black_castle_kingside = False
                 self.can_black_castle_queenside = False
 
+    # def get_fen(self):
+    #     white_pov_board_matrix = np.flipud(self.board_matrix)
+    #     board_matrix_list = white_pov_board_matrix.tolist()
+
     def move_single_file_rank_input(self, old_new_file_rank: str):
         (
             source_row_column,
@@ -119,9 +123,10 @@ class Board:
         self.move(source_row_column, destination_row_column)
 
 
-# gg = Board()
-# gg.set_board_to_initial_configuration()
+gg = Board()
+gg.set_board_to_initial_configuration()
 # gg.show()
+# print(gg.get_fen())
 # print(" ")
 # gg.move_single_file_rank_input("d2d4")
 # gg.show()
