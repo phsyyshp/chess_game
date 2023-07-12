@@ -68,7 +68,12 @@ def pgn_to_sql(pgn_file):
     vec_get_sql_command(game_info_array, moves)
 
 
-pgn_to_sql("SemiSlavMeran.pgn")
+pgn_to_sql("pgn_files\Caro-Kann4Nd7.pgn")
+
+pgn_to_sql("pgn_files\RetiKIA.pgn")
+pgn_to_sql("pgn_files\SicilianAccelDragon.pgn")
+pgn_to_sql("pgn_files\SicilianRichter-Rauzer.pgn")
+pgn_to_sql("pgn_files\SicilianRossolimo.pgn")
 
 sqliteConnection.commit()
 sqliteConnection.close()

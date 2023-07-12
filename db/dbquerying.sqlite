@@ -1,4 +1,0 @@
-SELECT *
-FROM games
-limit 3
-;
