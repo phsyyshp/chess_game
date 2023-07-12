@@ -52,8 +52,9 @@ def pgn_to_sql(pgn_file):
     Converts a pgn file to a sql file.
     """
     with open(pgn_file, "r") as f:
-        listed_pgn = f.readlines()
-    arrayed_pgn = np.array(listed_pgn)
+        listed_pgn = f.readlines(1000)
+    print(listed_pgn)
+    arrayed_pgn = np.array(listed_pgn, dtype=str)
     arrayed_pgn = remove_double_empty_lines(arrayed_pgn)
     arrayed_pgn = replace_game_seperator(arrayed_pgn)
     vec_tidy_up = np.vectorize(tidy_up)
@@ -68,12 +69,13 @@ def pgn_to_sql(pgn_file):
     vec_get_sql_command(game_info_array, moves)
 
 
-pgn_to_sql("pgn_files\Caro-Kann4Nd7.pgn")
+# pgn_to_sql("pgn_files\Caro-Kann4Nd7.pgn")
+pgn_to_sql("pgn_files\ichess_db_standard_rated_2015-11.pgn")
 
-pgn_to_sql("pgn_files\RetiKIA.pgn")
-pgn_to_sql("pgn_files\SicilianAccelDragon.pgn")
-pgn_to_sql("pgn_files\SicilianRichter-Rauzer.pgn")
-pgn_to_sql("pgn_files\SicilianRossolimo.pgn")
+# pgn_to_sql("pgn_files\RetiKIA.pgn")
+# pgn_to_sql("pgn_files\SicilianAccelDragon.pgn")
+# pgn_to_sql("pgn_files\SicilianRichter-Rauzer.pgn")
+# pgn_to_sql("pgn_files\SicilianRossolimo.pgn")
 
 sqliteConnection.commit()
 sqliteConnection.close()
