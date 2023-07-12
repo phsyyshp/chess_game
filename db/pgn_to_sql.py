@@ -1,7 +1,7 @@
 import sqlite3
 
-sqliteConnection = sqlite3.connect("master_games.db")
-cursor = sqliteConnection.cursor()
+# sqliteConnection = sqlite3.connect("master_games.db")
+# cursor = sqliteConnection.cursor()
 
 
 def clean_game(current_game: list):
@@ -45,10 +45,10 @@ def pgn_to_sql(pgn_file):
             + values
         )
 
-        cursor.execute(sql_command)
+        # cursor.execute(sql_command)
         # print(current_game_info + current_game)
-    sqliteConnection.commit()
-    sqliteConnection.close()
+    # sqliteConnection.commit()
+    # sqliteConnection.close()
 
 
 pgn_to_sql("PircOtherBlack3.pgn")
