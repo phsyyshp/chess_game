@@ -1,5 +1,6 @@
 import sqlite3
 import numpy as np
+import os
 
 sqliteConnection = sqlite3.connect("master_games.db")
 cursor = sqliteConnection.cursor()
@@ -14,6 +15,46 @@ def extract_str_between_apost(field: str):
     if "[" in field:
         return field.rsplit('"', 2)[1].replace("'", "") + "$"
     return field
+
+
+def is_contain_bracket(field: str):
+    return "[" in field
+
+
+vec_does_contain_bracket = np.vectorize(is_contain_bracket)
+
+
+def add_blank_lines_if_missing(arrayed_pgn):
+    bracket_mask = vec_does_contain_bracket(arrayed_pgn)
+    slided_bracket_mask = np.append(bracket_mask[1:], False)
+    last_bracket_mask = bracket_mask * (False == slided_bracket_mask)
+    # add False in front of array
+    slided_last_bracket_mask = np.append(False, last_bracket_mask[:-1])
+    missing_line_mask = (arrayed_pgn != "\n") * slided_last_bracket_mask
+
+    slided_missing_line_mask = np.append(missing_line_mask[1:], False)
+    indices = np.nonzero(slided_missing_line_mask == True)[0].tolist()
+    if len(indices) == 0:
+        return arrayed_pgn
+    return np.insert(arrayed_pgn, indices, "\n")
+    # arrayed_pgn[slided_missing_line_mask ] = "\n"
+
+
+def add_blank_lines_if_missing_ab(arrayed_pgn):
+    bracket_mask = vec_does_contain_bracket(arrayed_pgn)
+    slided_bracket_mask = np.append(False, bracket_mask[:-1])
+    last_bracket_mask = bracket_mask * (False == slided_bracket_mask)
+    # add False in front of array
+    slided_last_bracket_mask = np.append(last_bracket_mask[1:], False)
+    missing_line_mask = (arrayed_pgn != "\n") * slided_last_bracket_mask
+
+    slided_missing_line_mask = np.append(False, missing_line_mask[:-1])
+    indices = np.nonzero(slided_missing_line_mask == True)[0].tolist()
+    # print(indices)
+    if len(indices) == 0:
+        return arrayed_pgn
+    return np.insert(arrayed_pgn, indices, "\n")
+    # arrayed_pgn[slided_missing_line_mask ] = "\n"
 
 
 def tidy_up(item):
@@ -39,7 +80,6 @@ def get_sql_command(game_info: str, move):
 
     values = "VALUES('" + "', '".join(game_info_list[:10]) + "', '" + move + "')" + ";"
     # print(game_info)
-
     sql_command = (
         """INSERT INTO games(event, site, date, round, white, black, result, WhiteElo, BlackElo, ECO, moves)\n"""
         + values
@@ -51,12 +91,14 @@ def pgn_to_sql(pgn_file):
     """
     Converts a pgn file to a sql file.
     """
-    with open(pgn_file, "r") as f:
-        listed_pgn = f.readlines(1000)
-    print(listed_pgn)
+    with open(pgn_file, "r", encoding="utf8") as f:
+        listed_pgn = f.readlines()
     arrayed_pgn = np.array(listed_pgn, dtype=str)
     arrayed_pgn = remove_double_empty_lines(arrayed_pgn)
+    arrayed_pgn = add_blank_lines_if_missing(arrayed_pgn)
+    arrayed_pgn = add_blank_lines_if_missing_ab(arrayed_pgn)
     arrayed_pgn = replace_game_seperator(arrayed_pgn)
+
     vec_tidy_up = np.vectorize(tidy_up)
     arrayed_pgn = vec_tidy_up(arrayed_pgn)
     string_pgn = "".join(arrayed_pgn)
@@ -69,13 +111,31 @@ def pgn_to_sql(pgn_file):
     vec_get_sql_command(game_info_array, moves)
 
 
-# pgn_to_sql("pgn_files\Caro-Kann4Nd7.pgn")
-pgn_to_sql("pgn_files\ichess_db_standard_rated_2015-11.pgn")
+directory = "pgn_files"
+i = 0
+for file_name in os.listdir(directory):
+    pgn_file = os.path.join(directory, file_name)
+    print("Conversion of {file_name:} is being done".format(file_name=file_name))
+    i += 1
+    pgn_to_sql(pgn_file)
+    total_number_of_filed = len(os.listdir(directory))
+    percentage = i / total_number_of_filed * 100
+    print("Conversion of {file_name:} is finished".format(file_name=file_name))
+    print(
+        "{percentage:3.1f}% ofSELECT COUNT(*) FROM games; all files is done.".format(
+            percentage=percentage
+        )
+    )
+    print(
+        "{i}|{total_number_of_filed}".format(
+            i=i, total_number_of_filed=total_number_of_filed
+        )
+    )
+    print("------------------------------------------------------------")
 
-# pgn_to_sql("pgn_files\RetiKIA.pgn")
-# pgn_to_sql("pgn_files\SicilianAccelDragon.pgn")
-# pgn_to_sql("pgn_files\SicilianRichter-Rauzer.pgn")
-# pgn_to_sql("pgn_files\SicilianRossolimo.pgn")
+
+# pgn_to_sql(pgn_file="pgn_files/KIDOther56.pgn")
+
 
 sqliteConnection.commit()
 sqliteConnection.close()
