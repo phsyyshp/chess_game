@@ -3,3 +3,4 @@ __pycache__/
 .VSCodeCounter/
 db/pgn_files/
 db/master_games.db
+db/pgn.pickle

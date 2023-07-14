@@ -7,7 +7,7 @@ def remove_line_breaks(item: str):
 
 
 def is_contain_bracket(field: str):
-    return "[" in field
+    return '"' in field
 
 
 def extract_str_between_apost(field: str):

@@ -2,6 +2,7 @@ import sqlite3
 import numpy as np
 from dbutilities import *
 import os
+import pickle
 
 
 class SQLjobs:
@@ -20,32 +21,35 @@ class SQLjobs:
 
 
 class PgnFile:
-    def __init__(self, pgn_file) -> None:
-        self.pgn_file = pgn_file
+    def __init__(self, pgn_file_name) -> None:
+        self.pgn_file_name = pgn_file_name
 
     def __enter__(self):
-        self.file = open(self.pgn_file, "r", encoding="latin-1")
+        self.file = open(self.pgn_file_name, "r", encoding="latin-1")
         return self
 
     def __exit__(self, exc_type, exc_value, exc_traceback):
         self.file.close()
 
-    def read_lines(self, nol):
-        return self.file.readlines(nol)
+    def read_lines(self):
+        return self.file.readlines()
+
+    def size(self):
+        return os.path.getsize(self.pgn_file_name)
 
     def get_file(self):
         pass
 
     # def pgn_stuff(self):
-    #     directory = "pgn_files"
+    #     directory = "pgn_file_names"
     #     i = 0
     #     for file_name in os.listdir(directory):
-    #         pgn_file = os.path.join(directory, file_name)
+    #         pgn_file_name = os.path.join(directory, file_name)
     #         print(
     #             "Conversion of {file_name:} is being done".format(file_name=file_name)
     #         )
     #         i += 1
-    #         pgn_to_sql(pgn_file)
+    #         pgn_to_sql(pgn_file_name)
     #         total_number_of_filed = len(os.listdir(directory))
     #         percentage = i / total_number_of_filed * 100
     #         print("Conversion of {file_name:} is finished".format(file_name=file_name))
@@ -60,6 +64,27 @@ class PgnFile:
     #             )
     #         )
     #         print("------------------------------------------------------------")
+
+
+# class PgnPickler:
+#     def __init__(self, pgn_file_name) -> None:
+#         self.pgn_file_name = pgn_file_name
+
+#     def pickle(self):
+#         with PgnFile(self.pgn_file_name) as pgn:
+#             pgn_lines = pgn.read_lines()
+#         with open("pgn.pickle", "wb") as handle:
+#             pickle.dump(pgn_lines, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
+#     def unpickle(self):
+#         with open("pgn.pickle", "rb") as handle:
+#             pgn_lines = pickle.load(handle)
+#         return pgn_lines
+
+
+class PgnPartitioner:
+    def __init__(self, pgn_file_name) -> None:
+        self.pgn_file_name = pgn_file_name
 
 
 class PgnParser:
@@ -120,6 +145,7 @@ class PgnToSQL:
         self.table_name = table_name
 
     def generate_sql_command(self, game_info: str, move):
+        # print(game_info)
         game_info_list = game_info.split("$")
         values = (
             "VALUES('" + "', '".join(game_info_list[:15]) + "', '" + move + "')" + ";"
@@ -132,9 +158,9 @@ class PgnToSQL:
         )
         self.cursor.execute(sql_command)
 
-    def pgn_to_sql(self, pgn_file):
-        with PgnFile(pgn_file) as pgn:
-            pgn_lines = pgn.read_lines(100000)
+    def pgn_to_sql(self, pgn_file_name):
+        with PgnFile(pgn_file_name) as pgn:
+            pgn_lines = pgn.read_lines(50000)
 
         pgn_lines = np.array(pgn_lines)
         pgn_lines = PgnParser(pgn_lines).parse()
@@ -148,12 +174,14 @@ class PgnToSQL:
         vec_generate_sql_command(game_info_array, moves)
 
 
-# pgn_to_sql(pgn_file="pgn_files/KIDOther56.pgn")
+# pgn_to_sql(pgn_file_name="pgn_file_names/KIDOther56.pgn")
 def main():
     sqlhandler = SQLjobs("master_games.db")
     sqlhandler.connect()
-    PgnToSQL(sqlhandler.cursor, "lichess_games").pgn_to_sql("pgn_files/lichess.pgn")
-    # pgn_to_sql("pgn_files/lichess.pgn")
+    PgnToSQL(sqlhandler.cursor, "lichess_games").pgn_to_sql(
+        "pgn_file_names/lichess.pgn"
+    )
+    # pgn_to_sql("pgn_file_names/lichess.pgn")
     sqlhandler.close_commit()
 
 
