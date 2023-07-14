@@ -119,19 +119,6 @@ class PgnToSQL:
         self.cursor = cursor
         self.table_name = table_name
 
-    def generate_sql_command_reg(self, game_info: str, move):
-        game_info_list = game_info.split("$")
-
-        values = (
-            "VALUES('" + "', '".join(game_info_list[:10]) + "', '" + move + "')" + ";"
-        )
-        # print(game_info_list)
-        sql_command = (
-            """INSERT INTO games(event, site, date, round, white, black, result, WhiteElo, BlackElo, ECO, moves)\n"""
-            + values
-        )
-        self.cursor.execute(sql_command)
-
     def generate_sql_command(self, game_info: str, move):
         game_info_list = game_info.split("$")
         values = (
