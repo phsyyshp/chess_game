@@ -66,22 +66,6 @@ class PgnFile:
     #         print("------------------------------------------------------------")
 
 
-# class PgnPickler:
-#     def __init__(self, pgn_file_name) -> None:
-#         self.pgn_file_name = pgn_file_name
-
-#     def pickle(self):
-#         with PgnFile(self.pgn_file_name) as pgn:
-#             pgn_lines = pgn.read_lines()
-#         with open("pgn.pickle", "wb") as handle:
-#             pickle.dump(pgn_lines, handle, protocol=pickle.HIGHEST_PROTOCOL)
-
-#     def unpickle(self):
-#         with open("pgn.pickle", "rb") as handle:
-#             pgn_lines = pickle.load(handle)
-#         return pgn_lines
-
-
 class PgnPartitioner:
     def __init__(self, pgn_file_name) -> None:
         self.pgn_file_name = pgn_file_name
