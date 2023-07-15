@@ -177,7 +177,10 @@ class PgnToSQL:
         self.cursor.execute(sql_command)
 
     def pgn_to_sql(self, pgn_lines):
-        pgn_lines = np.array(pgn_lines)
+        pgn_lines = split_long_lines(
+            pgn_lines,
+        )
+        pgn_lines = np.array(pgn_lines, dtype="U")
         # print(pgn_lines)
         # with open("temp.txt", "w") as f:
         #     f.write("".join(pgn_lines))
@@ -197,7 +200,7 @@ class PgnToSQL:
 def main():
     sql_handler = SQLjobs("master_games.db")
     sql_handler.connect()
-    chunk_size = 9_000_000
+    chunk_size = 40_000_000
     with PgnFile("pgn_files/lichess.pgn") as pgn:
         counter = 0
         total_chunks = pgn.size() // chunk_size

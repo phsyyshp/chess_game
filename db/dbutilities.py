@@ -55,6 +55,22 @@ def game_info_to_dic(game_info: list):
     return dict(zip(field_tag_list, field_value_list))
 
 
+def split_long_lines(input_list, line_len=80):
+    # TODO fix spliting isue
+    item_len = list(map(len, input_list))
+    item_len = np.array(item_len)
+    long_lines_mask = item_len > line_len
+    long_lines_index = np.where(long_lines_mask)[0]
+    counter = 0
+    for index in long_lines_index:
+        temp = input_list[index + counter]
+        input_list[index + counter] = input_list[index + counter][:line_len]
+        input_list.insert(index + counter + 1, input_list[index + counter][line_len:])
+        counter += 1
+    # print(input_list[:50])
+    return input_list
+
+
 vec_does_contain_bracket = np.vectorize(is_contain_bracket)
 
 # def is_same_as_neighbor(array, direction_of_neighbor:int):
