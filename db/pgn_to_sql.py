@@ -1,8 +1,12 @@
+import os
 import sqlite3
+
 import numpy as np
 from dbutilities import *
-import os
-import pickle
+
+# import a module which lets me to show a progress bar
+import tqdm
+import time
 
 
 class SQLjobs:
@@ -15,8 +19,10 @@ class SQLjobs:
         self.connection = sqlite3.connect(self.database_name)
         self.cursor = self.connection.cursor()
 
-    def close_commit(self):
+    def commit(self):
         self.connection.commit()
+
+    def close(self):
         self.connection.close()
 
 
@@ -31,44 +37,26 @@ class PgnFile:
     def __exit__(self, exc_type, exc_value, exc_traceback):
         self.file.close()
 
-    def read_lines(self):
-        return self.file.readlines()
+    def read_lines(self, number_of_lines):
+        return self.file.readlines(number_of_lines)
 
     def size(self):
         return os.path.getsize(self.pgn_file_name)
 
-    def get_file(self):
-        pass
 
-    # def pgn_stuff(self):
-    #     directory = "pgn_file_names"
-    #     i = 0
-    #     for file_name in os.listdir(directory):
-    #         pgn_file_name = os.path.join(directory, file_name)
-    #         print(
-    #             "Conversion of {file_name:} is being done".format(file_name=file_name)
-    #         )
-    #         i += 1
-    #         pgn_to_sql(pgn_file_name)
-    #         total_number_of_filed = len(os.listdir(directory))
-    #         percentage = i / total_number_of_filed * 100
-    #         print("Conversion of {file_name:} is finished".format(file_name=file_name))
-    #         print(
-    #             "{percentage:3.1f}% ofSELECT COUNT(*) FROM games; all files is done.".format(
-    #                 percentage=percentage
-    #             )
-    #         )
-    #         print(
-    #             "{i}|{total_number_of_filed}".format(
-    #                 i=i, total_number_of_filed=total_number_of_filed
-    #             )
-    #         )
-    #         print("------------------------------------------------------------")
+class PgnPartioner:
+    def __init__(self, pgn_file_object: PgnFile) -> None:
+        self.pgn_file_object = pgn_file_object
 
+    def _is_partition_needed(self, max_allowed_size=40_000_000):
+        return self.pgn_file_object.size() >= max_allowed_size
 
-class PgnPartitioner:
-    def __init__(self, pgn_file_name) -> None:
-        self.pgn_file_name = pgn_file_name
+    def read_chunk(self, chunk_size=40_000_000):
+        while True:
+            pgn_lines_chunked = self.pgn_file_object.read_lines(chunk_size)
+            if not pgn_lines_chunked:
+                break
+            yield pgn_lines_chunked
 
 
 class PgnParser:
@@ -96,10 +84,24 @@ class PgnParser:
             self.pgn_lines = np.insert(self.pgn_lines, indices, "\n")
 
     def _rtrim(self):
-        string_pgn = "".join(self.pgn_lines)
-        string_pgn = string_pgn.rsplit("SEPERATOR", 1)[0]
-        self.pgn_lines = np.array(string_pgn.split("SEPERATOR"))
-        self.pgn_lines = np.append(self.pgn_lines, "SEPERATOR")
+        first_empty_line_index = get_first_occurence_index(self.pgn_lines, "SEPERATOR")
+        second_empty_line_index = get_next_to_first_occurence_index(
+            self.pgn_lines, "SEPERATOR"
+        )
+        is_game_info_line = is_contain_bracket(
+            self.pgn_lines[first_empty_line_index + 1]
+        )
+        if is_game_info_line:
+            return
+        else:
+            self.pgn_lines = self.pgn_lines[second_empty_line_index + 1 :]
+
+    def _ltrim(self):
+        does_begin_with_event = "[event" in self.pgn_lines[0].lower()
+        # print(self.pgn_lines[0])
+        while not does_begin_with_event:
+            self.pgn_lines = self.pgn_lines[1:]
+            does_begin_with_event = "[event" in self.pgn_lines[0].lower()
 
     def _replace_blank_lines_with_seperator(self):
         blank_lines_mask = self.pgn_lines == "\n"
@@ -117,9 +119,9 @@ class PgnParser:
         self._add_missing_empty_lines(-1)
         self._add_missing_empty_lines(1)
         self._replace_blank_lines_with_seperator()
+        self._ltrim()
         self._format_each_line()
-        # self._ltrim()
-        self._rtrim()
+        # self._rtrim()
         return self.pgn_lines
 
 
@@ -130,43 +132,120 @@ class PgnToSQL:
 
     def generate_sql_command(self, game_info: str, move):
         # print(game_info)
+        # print(move)
         game_info_list = game_info.split("$")
-        values = (
-            "VALUES('" + "', '".join(game_info_list[:15]) + "', '" + move + "')" + ";"
+        game_info_dict = game_info_to_dic(game_info_list[:-1])
+        game_info_dict["moves"] = move
+        # print(game_info_dict)
+        template_dict = {
+            "Event": "",
+            "Site": "",
+            "Date": "",
+            "Round": "",
+            "White": "",
+            "Black": "",
+            "Result": "",
+            "UTCDate": "",
+            "UTCTime": "",
+            "WhiteElo": "",
+            "BlackElo": "",
+            "WhiteRatingDiff": "",
+            "BlackRatingDiff": "",
+            "WhiteTitle": "",
+            "BlackTitle": "",
+            "ECO": "",
+            "Opening": "",
+            "TimeControl": "",
+            "Termination": "",
+            "moves": "",
+        }
+        template_dict.update(game_info_dict)
+        # print(template_dict)
+        # print(len(game_info_list)).lower()
+        values = "VALUES('{Event}', '{Site}', '{Date}', '{Round}', '{White}', '{Black}', '{Result}', '{UTCDate}', '{UTCTime}', '{WhiteElo}', '{BlackElo}', '{WhiteRatingDiff}', '{BlackRatingDiff}', '{WhiteTitle}', '{BlackTitle}', '{ECO}', '{Opening}', '{TimeControl}', '{Termination}', '{moves}');".format(
+            **template_dict
         )
         sql_command = (
-            """INSERT INTO {table_name:}(event, site, white, black, result, utcdate, utctime, WhiteElo, BlackElo, whiteRatingDiff, blackRatingDiff, ECO, opening, timeControl, termination, moves)\n""".format(
+            """INSERT INTO {table_name:}(Event, Site, Date, Round, White, Black, Result, UTCDate, UTCTime, WhiteElo, BlackElo, WhiteRatingDiff, BlackRatingDiff, WhiteTitle, BlackTitle, ECO, Opening, TimeControl, Termination, moves)\n""".format(
                 table_name=self.table_name
             )
             + values
         )
+        # if len(game_info_list) != 16:
+        # print(len(game_info_list))
+        # print(game_info_list)
         self.cursor.execute(sql_command)
 
-    def pgn_to_sql(self, pgn_file_name):
-        with PgnFile(pgn_file_name) as pgn:
-            pgn_lines = pgn.read_lines(50000)
-
+    def pgn_to_sql(self, pgn_lines):
         pgn_lines = np.array(pgn_lines)
+        # print(pgn_lines)
+        # with open("temp.txt", "w") as f:
+        #     f.write("".join(pgn_lines))
         pgn_lines = PgnParser(pgn_lines).parse()
+        string_pgn = "".join(pgn_lines)
+        pgn_lines = np.array(string_pgn.split("SEPERATOR"))
+        # print(pgn_lines[0:3])
         upper_bound_slice = (len(pgn_lines) // 2) * 2
-        game_info_array = pgn_lines[0 : upper_bound_slice - 10 : 2]
-        moves = pgn_lines[1 : upper_bound_slice - 9 : 2]
+        game_info_array = pgn_lines[0 : upper_bound_slice - 100 : 2]
+        moves = pgn_lines[1 : upper_bound_slice - 99 : 2]
         vec_generate_sql_command = np.vectorize(self.generate_sql_command)
-
         # print(game_info_array)
-        # print(moves)
         vec_generate_sql_command(game_info_array, moves)
 
 
 # pgn_to_sql(pgn_file_name="pgn_file_names/KIDOther56.pgn")
 def main():
-    sqlhandler = SQLjobs("master_games.db")
-    sqlhandler.connect()
-    PgnToSQL(sqlhandler.cursor, "lichess_games").pgn_to_sql(
-        "pgn_file_names/lichess.pgn"
-    )
-    # pgn_to_sql("pgn_file_names/lichess.pgn")
-    sqlhandler.close_commit()
+    sql_handler = SQLjobs("master_games.db")
+    sql_handler.connect()
+    chunk_size = 9_000_000
+    with PgnFile("pgn_files/lichess.pgn") as pgn:
+        counter = 0
+        total_chunks = pgn.size() // chunk_size
+        print(" ----------------------------------")
+        print("| Uploading to database is started |")
+        print(" ----------------------------------")
+        with tqdm.tqdm(total=total_chunks) as pbar:
+            for chunks in PgnPartioner(pgn).read_chunk(chunk_size):
+                PgnToSQL(sql_handler.cursor, "lichess_games").pgn_to_sql(chunks)
+
+                pbar.set_postfix(
+                    {
+                        "Uploaded": "{:.1f}MB/{:.1f}GB".format(
+                            counter * chunk_size / 1_000_000, pgn.size() / 1_000_000_000
+                        )
+                    }
+                )
+                pbar.update(1)
+
+                counter += 1
+                sql_handler.commit()
+
+    sql_handler.close()
 
 
 main()
+
+# def pgn_stuff(self):
+#     directory = "pgn_file_names"
+#     i = 0
+#     for file_name in os.listdir(directory):
+#         pgn_file_name = os.path.join(directory, file_name)
+#         print(
+#             "Conversion of {file_name:} is being done".format(file_name=file_name)
+#         )
+#         i += 1
+#         pgn_to_sql(pgn_file_name)
+#         total_number_of_filed = len(os.listdir(directory))
+#         percentage = i / total_number_of_filed * 100
+#         print("Conversion of {file_name:} is finished".format(file_name=file_name))
+#         print(
+#             "{percentage:3.1f}% ofSELECT COUNT(*) FROM games; all files is done.".format(
+#                 percentage=percentage
+#             )
+#         )
+#         print(
+#             "{i}|{total_number_of_filed}".format(
+#                 i=i, total_number_of_filed=total_number_of_filed
+#             )
+#         )
+#         print("------------------------------------------------------------")
