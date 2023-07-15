@@ -19,6 +19,9 @@ class SQLjobs:
         self.connection = sqlite3.connect(self.database_name)
         self.cursor = self.connection.cursor()
 
+    def begin_transaction(self):
+        self.cursor.execute("BEGIN TRANSACTION;")
+
     def commit(self):
         self.connection.commit()
 
@@ -65,7 +68,6 @@ class PgnParser:
 
     def _remove_double_empty_lines(self):
         blank_lines_mask = self.pgn_lines == "\n"
-        # print(blank_lines_mask)
         blank_lines_mask_left_shifted = shift(blank_lines_mask, -1)
         double_blank_lines_mask = blank_lines_mask_left_shifted * blank_lines_mask
         self.pgn_lines = self.pgn_lines[0 == double_blank_lines_mask]
@@ -98,7 +100,6 @@ class PgnParser:
 
     def _ltrim(self):
         does_begin_with_event = "[event" in self.pgn_lines[0].lower()
-        # print(self.pgn_lines[0])
         while not does_begin_with_event:
             self.pgn_lines = self.pgn_lines[1:]
             does_begin_with_event = "[event" in self.pgn_lines[0].lower()
@@ -121,7 +122,6 @@ class PgnParser:
         self._replace_blank_lines_with_seperator()
         self._ltrim()
         self._format_each_line()
-        # self._rtrim()
         return self.pgn_lines
 
 
@@ -131,12 +131,9 @@ class PgnToSQL:
         self.table_name = table_name
 
     def generate_sql_command(self, game_info: str, move):
-        # print(game_info)
-        # print(move)
         game_info_list = game_info.split("$")
         game_info_dict = game_info_to_dic(game_info_list[:-1])
         game_info_dict["moves"] = move
-        # print(game_info_dict)
         template_dict = {
             "Event": "",
             "Site": "",
@@ -160,8 +157,6 @@ class PgnToSQL:
             "moves": "",
         }
         template_dict.update(game_info_dict)
-        # print(template_dict)
-        # print(len(game_info_list)).lower()
         values = "VALUES('{Event}', '{Site}', '{Date}', '{Round}', '{White}', '{Black}', '{Result}', '{UTCDate}', '{UTCTime}', '{WhiteElo}', '{BlackElo}', '{WhiteRatingDiff}', '{BlackRatingDiff}', '{WhiteTitle}', '{BlackTitle}', '{ECO}', '{Opening}', '{TimeControl}', '{Termination}', '{moves}');".format(
             **template_dict
         )
@@ -171,59 +166,109 @@ class PgnToSQL:
             )
             + values
         )
-        # if len(game_info_list) != 16:
-        # print(len(game_info_list))
-        # print(game_info_list)
         self.cursor.execute(sql_command)
 
-    def pgn_to_sql(self, pgn_lines):
-        pgn_lines = split_long_lines(
-            pgn_lines,
-        )
-        pgn_lines = np.array(pgn_lines, dtype="U")
-        # print(pgn_lines)
-        # with open("temp.txt", "w") as f:
-        #     f.write("".join(pgn_lines))
-        pgn_lines = PgnParser(pgn_lines).parse()
+    def split_to_info_moves(self, pgn_lines):
         string_pgn = "".join(pgn_lines)
         pgn_lines = np.array(string_pgn.split("SEPERATOR"))
-        # print(pgn_lines[0:3])
         upper_bound_slice = (len(pgn_lines) // 2) * 2
         game_info_array = pgn_lines[0 : upper_bound_slice - 100 : 2]
         moves = pgn_lines[1 : upper_bound_slice - 99 : 2]
+        return game_info_array, moves
+
+    def pgn_to_sql(self, pgn_lines):
+        pgn_lines = split_long_lines_numba(pgn_lines, 80)
+        pgn_lines = np.array(pgn_lines, dtype="U")
+        pgn_lines = PgnParser(pgn_lines).parse()
+        game_info_array, moves = self.split_to_info_moves(pgn_lines)
         vec_generate_sql_command = np.vectorize(self.generate_sql_command)
-        # print(game_info_array)
         vec_generate_sql_command(game_info_array, moves)
 
+        # print("uploading to sql time", time.time() - a)
 
-# pgn_to_sql(pgn_file_name="pgn_file_names/KIDOther56.pgn")
-def main():
-    sql_handler = SQLjobs("master_games.db")
-    sql_handler.connect()
-    chunk_size = 40_000_000
-    with PgnFile("pgn_files/lichess.pgn") as pgn:
-        counter = 0
-        total_chunks = pgn.size() // chunk_size
-        print(" ----------------------------------")
-        print("| Uploading to database is started |")
-        print(" ----------------------------------")
-        with tqdm.tqdm(total=total_chunks) as pbar:
-            for chunks in PgnPartioner(pgn).read_chunk(chunk_size):
-                PgnToSQL(sql_handler.cursor, "lichess_games").pgn_to_sql(chunks)
 
+class MultiPgnToSQL:
+    def __init__(self, path_to_pgn_files, sql_handler: SQLjobs, table_name) -> None:
+        self.path_to_pgn_files = path_to_pgn_files
+        self.sql_handler = sql_handler
+        self.table_name = table_name
+
+    def single_pgn_uploader(self, path_to_pgn_file, chunk_size=40_000_000):
+        # selfsql_handler.begin_transaction()
+        with PgnFile(path_to_pgn_file) as pgn:
+            counter = 0
+            total_chunks = pgn.size() // chunk_size
+            # print(" ----------------------------------")
+            # print("| Uploading to database is started |")
+            # print(" ----------------------------------")
+            with tqdm.tqdm(total=total_chunks) as pbar:
+                for chunks in PgnPartioner(pgn).read_chunk(chunk_size):
+                    PgnToSQL(self.sql_handler.cursor, self.table_name).pgn_to_sql(
+                        chunks
+                    )
+
+                    pbar.set_postfix(
+                        {
+                            "Uploaded": "{:.1f}MB/{:.1f}GB".format(
+                                counter * chunk_size / 1_000_000,
+                                pgn.size() / 1_000_000_000,
+                            )
+                        }
+                    )
+                    pbar.update(1)
+
+                    counter += 1
+                    self.sql_handler.commit()
+
+    def multi_pgn_uploader(self):
+        directory = self.path_to_pgn_files
+        total = len(os.listdir(directory))
+        with tqdm.tqdm(total=total) as pbar:
+            for file_name in os.listdir(directory):
+                pgn_file_name = os.path.join(directory, file_name)
+                self.single_pgn_uploader(pgn_file_name)
                 pbar.set_postfix(
-                    {
-                        "Uploaded": "{:.1f}MB/{:.1f}GB".format(
-                            counter * chunk_size / 1_000_000, pgn.size() / 1_000_000_000
-                        )
-                    }
+                    {"Uploading": "{file_name:}".format(file_name=file_name)}
                 )
                 pbar.update(1)
 
-                counter += 1
-                sql_handler.commit()
 
+def main():
+    sql_handler = SQLjobs("master_games.db")
+    sql_handler.connect()
+    sql_handler.begin_transaction()
+    MultiPgnToSQL("pgn_files", sql_handler, "lichess_games").multi_pgn_uploader()
     sql_handler.close()
+
+
+# def main():
+#     sql_handler = SQLjobs("master_games.db")
+#     sql_handler.connect()
+#     sql_handler.begin_transaction()
+#     chunk_size = 40_000_000
+#     with PgnFile("pgn_files/lichess.pgn") as pgn:
+#         counter = 0
+#         total_chunks = pgn.size() // chunk_size
+#         print(" ----------------------------------")
+#         print("| Uploading to database is started |")
+#         print(" ----------------------------------")
+#         with tqdm.tqdm(total=total_chunks) as pbar:
+#             for chunks in PgnPartioner(pgn).read_chunk(chunk_size):
+#                 PgnToSQL(sql_handler.cursor, "lichess_games").pgn_to_sql(chunks)
+
+#                 pbar.set_postfix(
+#                     {
+#                         "Uploaded": "{:.1f}MB/{:.1f}GB".format(
+#                             counter * chunk_size / 1_000_000, pgn.size() / 1_000_000_000
+#                         )
+#                     }
+#                 )
+#                 pbar.update(1)
+
+#                 counter += 1
+#                 sql_handler.commit()
+
+#     sql_handler.close()
 
 
 main()
