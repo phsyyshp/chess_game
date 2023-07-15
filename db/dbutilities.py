@@ -1,4 +1,5 @@
 import numpy as np
+from numba import njit
 
 
 def remove_line_breaks(item: str):
@@ -69,6 +70,21 @@ def split_long_lines(input_list, line_len=80):
         counter += 1
     # print(input_list[:50])
     return input_list
+
+
+# @njit
+def split_long_lines_numba(input_list, len_trsh):
+    # new_list = []
+    # for word in input_list:
+    #     new_list.extend([word[i : i + len_trsh] for i in range(0, len(word), len_trsh)])
+    # return new_list
+    new_list = []
+    for word in input_list:
+        i = 0
+        while i < len(word):
+            new_list.append(word[i : i + len_trsh])
+            i += len_trsh
+    return new_list
 
 
 vec_does_contain_bracket = np.vectorize(is_contain_bracket)
