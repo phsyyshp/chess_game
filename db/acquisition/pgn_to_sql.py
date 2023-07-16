@@ -129,5 +129,6 @@ def main():
     MultiPgnConverter("pgn_files", sql_handler, "lichess_games").single_pgn_uploader(
         "pgn_files/lichess.pgn"
     )
+    sql_handler.close()
 if __name__ == "__main__":
     main()
