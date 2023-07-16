@@ -59,14 +59,17 @@ class PgnConverter:
     def __init__(self, pgn_str: str) -> None:
         self.pgn_str = pgn_str
 
+    def _replace(self, old, new):
+        self.pgn_str = self.pgn_str.replace(old, new)
+
     def to_json(self):
-        self.pgn_str = self.pgn_str.replace(' "]', '"]')
-        self.pgn_str = self.pgn_str.replace("\n\n", "SEPARATOR")
-        self.pgn_str = self.pgn_str.replace("]SEPARATOR", '][moves "')
-        self.pgn_str = self.pgn_str.replace("SEPARATOR[", "\"}, {\"")
-        self.pgn_str = self.pgn_str.replace(' "', '": "')
-        self.pgn_str = self.pgn_str.replace("\n", "")
-        self.pgn_str = self.pgn_str.replace('"][', '", "')
+        self._replace(' "]', '"]')
+        self._replace("\n\n", "SEPARATOR")
+        self._replace("]SEPARATOR", '][moves "')
+        self._replace("SEPARATOR[", "\"}, {\"")
+        self._replace(' "', '": "')
+        self._replace("\n", "")
+        self._replace('"][', '", "')
         self.pgn_str = self.pgn_str.rsplit('}, {"Event', 1)[0]
         # print(self.pgn_str)
         self.pgn_str = self.pgn_str.split('}, {"Event"', 1)[1]
