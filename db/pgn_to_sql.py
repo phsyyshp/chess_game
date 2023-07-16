@@ -1,6 +1,8 @@
 import os
 import sqlite3
 
+
+import csv
 import numpy as np
 from dbutilities import *
 
@@ -125,6 +127,70 @@ class PgnParser:
         return self.pgn_lines
 
 
+class PgnToCSV:
+    def __init__(self, pgn_lines):
+        self.pgn_lines = pgn_lines
+
+    def fields(self):
+        fields = [
+            "Event",
+            "Site",
+            "Date",
+            "Round",
+            "White",
+            "Black",
+            "Result",
+            "UTCDate",
+            "UTCTime",
+            "WhiteElo",
+            "BlackElo",
+            "WhiteRatingDiff",
+            "BlackRatingDiff",
+            "WhiteTitle",
+            "BlackTitle",
+            "ECO",
+            "Opening",
+            "TimeControl",
+            "Termination",
+            "moves",
+        ]
+        return fields
+
+    def _format_line_to_row(self, line:str):
+        
+        if line[0] != "[":
+            field = "moves"
+        else:
+
+            field = line[1:-1].split(" ",1)
+#         row[]
+        
+#         [Event "Leningrad"]
+# [Site "Leningrad"]
+# [Date "1936.??.??"]
+# [Round "8"]
+# [White "Rauzer, Vsevolod"]
+# [Black "Chekhover, Vitaly"]
+# [Result "1/2-1/2"]
+# [WhiteElo ""]
+# [BlackElo ""]
+# [ECO "B76"]
+    def convert_pgn_to_csv(self):
+        csv.register_dialect = ("myreg", escapechar='$')
+        with open("temp.csv", "w", newline="") as temp:
+            writer = csv.DictWriter(temp, fieldnames=self.fields() )
+            writer.writeheader()
+            for line in self.pgn_lines:
+                line = line.strip()
+                if not line:
+                    continue
+                row = self._format_line_to_row(line)
+                writer.writerow(row)
+inputstr ='araba\nmemek\n\n\nbljablja\n\nskdfjh\ndspf\nsdlkj\n\nsdjkfh'  
+inputstr = "\n\n".join(inputstr.split("\n\n\n"))
+inputstr.splitlines()
+
+
 class PgnToSQL:
     def __init__(self, cursor: sqlite3.Cursor, table_name) -> None:
         self.cursor = cursor
@@ -177,6 +243,8 @@ class PgnToSQL:
         return game_info_array, moves
 
     def pgn_to_sql(self, pgn_lines):
+        PgnToCSV(pgn_lines)
+        csv_to_sql()
         pgn_lines = split_long_lines_numba(pgn_lines, 90)
         pgn_lines = np.array(pgn_lines, dtype="U")
         pgn_lines = PgnParser(pgn_lines).parse()
@@ -191,7 +259,7 @@ class MultiPgnToSQL:
         self.sql_handler = sql_handler
         self.table_name = table_name
 
-    def single_pgn_uploader(self, path_to_pgn_file, chunk_size=100_000):
+    def single_pgn_uploader(self, path_to_pgn_file, chunk_size=100_000_000):
         with PgnFile(path_to_pgn_file) as pgn:
             counter = 0
             total_chunks = pgn.size() // chunk_size
