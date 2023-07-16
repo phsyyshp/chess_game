@@ -177,14 +177,12 @@ class PgnToSQL:
         return game_info_array, moves
 
     def pgn_to_sql(self, pgn_lines):
-        pgn_lines = split_long_lines_numba(pgn_lines, 80)
+        pgn_lines = split_long_lines_numba(pgn_lines, 90)
         pgn_lines = np.array(pgn_lines, dtype="U")
         pgn_lines = PgnParser(pgn_lines).parse()
         game_info_array, moves = self.split_to_info_moves(pgn_lines)
         vec_generate_sql_command = np.vectorize(self.generate_sql_command)
         vec_generate_sql_command(game_info_array, moves)
-
-        # print("uploading to sql time", time.time() - a)
 
 
 class MultiPgnToSQL:
@@ -193,14 +191,10 @@ class MultiPgnToSQL:
         self.sql_handler = sql_handler
         self.table_name = table_name
 
-    def single_pgn_uploader(self, path_to_pgn_file, chunk_size=40_000_000):
-        # selfsql_handler.begin_transaction()
+    def single_pgn_uploader(self, path_to_pgn_file, chunk_size=100_000):
         with PgnFile(path_to_pgn_file) as pgn:
             counter = 0
             total_chunks = pgn.size() // chunk_size
-            # print(" ----------------------------------")
-            # print("| Uploading to database is started |")
-            # print(" ----------------------------------")
             with tqdm.tqdm(total=total_chunks) as pbar:
                 for chunks in PgnPartioner(pgn).read_chunk(chunk_size):
                     PgnToSQL(self.sql_handler.cursor, self.table_name).pgn_to_sql(
@@ -209,10 +203,9 @@ class MultiPgnToSQL:
 
                     pbar.set_postfix(
                         {
-                            "Uploaded": "{:.1f}MB/{:.1f}GB".format(
-                                counter * chunk_size / 1_000_000,
-                                pgn.size() / 1_000_000_000,
-                            )
+                            "Uploaded": file_size_byte_to_pretty(counter * chunk_size)
+                            + "/"
+                            + file_size_byte_to_pretty(pgn.size())
                         }
                     )
                     pbar.update(1)
@@ -226,11 +219,11 @@ class MultiPgnToSQL:
         with tqdm.tqdm(total=total) as pbar:
             for file_name in os.listdir(directory):
                 pgn_file_name = os.path.join(directory, file_name)
-                self.single_pgn_uploader(pgn_file_name)
                 pbar.set_postfix(
                     {"Uploading": "{file_name:}".format(file_name=file_name)}
                 )
                 pbar.update(1)
+                self.single_pgn_uploader(pgn_file_name)
 
 
 def main():

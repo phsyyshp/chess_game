@@ -4,3 +4,4 @@ __pycache__/
 db/pgn_files/
 db/master_games.db
 db/pgn.pickle
+db/lichess_db_standard_rated_2013-12.pgn.zst
