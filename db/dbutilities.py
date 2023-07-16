@@ -56,7 +56,7 @@ def game_info_to_dic(game_info: list):
     return dict(zip(field_tag_list, field_value_list))
 
 
-def split_long_lines(input_list, line_len=80):
+def split_long_lines(input_list, line_len=90):
     # TODO fix spliting isue
     item_len = list(map(len, input_list))
     item_len = np.array(item_len)
@@ -81,13 +81,29 @@ def split_long_lines_numba(input_list, len_trsh):
     new_list = []
     for word in input_list:
         i = 0
-        while i < len(word):
+        while i < len(word) or i == 0:
             new_list.append(word[i : i + len_trsh])
             i += len_trsh
     return new_list
 
 
 vec_does_contain_bracket = np.vectorize(is_contain_bracket)
+
+
+def file_size_byte_to_pretty(bytes):
+    if bytes < 1024:
+        return f"{bytes} B"
+    elif bytes < 1024**2:
+        return f"{bytes / 1024:.2f} KB"
+    elif bytes < 1024**3:
+        return f"{bytes / 1024 ** 2:.2f} MB"
+    elif bytes < 1024**4:
+        return f"{bytes / 1024 ** 3:.2f} GB"
+    elif bytes < 1024**5:
+        return f"{bytes / 1024 ** 4:.2f} TB"
+    else:
+        return f"{bytes / 1024 ** 5:.2f} PB"
+
 
 # def is_same_as_neighbor(array, direction_of_neighbor:int):
 #     shifted_array = shift(array,direction_of_neighbor)
