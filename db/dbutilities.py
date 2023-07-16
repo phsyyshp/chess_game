@@ -90,7 +90,7 @@ def split_long_lines_numba(input_list, len_trsh):
 vec_does_contain_bracket = np.vectorize(is_contain_bracket)
 
 
-def file_size_byte_to_pretty(bytes):
+def units(bytes):
     if bytes < 1024:
         return f"{bytes} B"
     elif bytes < 1024**2:
