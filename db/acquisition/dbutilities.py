@@ -1,5 +1,4 @@
 import numpy as np
-from numba import njit
 
 
 def remove_line_breaks(item: str):
