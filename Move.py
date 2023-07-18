@@ -104,6 +104,8 @@ class Move:
         return any(is_under_attack_boolean)
 
     def is_under_attack_by_any_piece(self, position_row_column, attacker_color):
+        is_attacked_by_specific_piece = list(map())
+        result = list(map(lambda x: func(x[0], x[1], x[2], d1), [(a, b, c), (ab, c, d)]))
         is_attacked_by_specific_piece_bool_list = [
             self.is_under_attack_by_specific_piece(
                 position_row_column, attacker_piece_type, attacker_color
