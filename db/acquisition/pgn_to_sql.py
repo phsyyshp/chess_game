@@ -91,16 +91,18 @@ class MultiPgnConverter:
         self.sql_handler = sql_handler
         self.table_name = table_name
 
-    def single_pgn_uploader(self, path_to_pgn_file, chunk_size=100_000_000):
+    def single_pgn_uploader(self, path_to_pgn_file, chunk_size=100_000_000, number_of_chunks=100):
         with PgnFile(path_to_pgn_file) as pgn:
-            total_chunks = pgn.size() // chunk_size
+            total_chunks = min(number_of_chunks, pgn.size() // chunk_size)
             pbar = tqdm.tqdm(total=total_chunks, postfix={"Uploaded": "0/0"})
 
             for counter, chunks in enumerate(PgnPartioner(pgn).read_chunk(chunk_size)):
+                if counter == number_of_chunks:
+                    break
                 PgnConverter(chunks).to_sql(self.table_name, self.sql_handler)
 
                 uploaded = units(counter * chunk_size)
-                total_size = units(pgn.size())
+                total_size = units(total_chunks * chunk_size)
                 pbar.set_postfix({"Uploaded": f"{uploaded}/{total_size}"})
                 pbar.update(1)
 
@@ -119,16 +121,16 @@ class MultiPgnConverter:
                     {"Uploading": "{file_name:}".format(file_name=file_name)}
                 )
                 pbar.update(1)
-                self.single_pgn_uploader(pgn_file_name)
+                self.single_pgn_uploader(pgn_file_name, 100_000_000, 100)
 
 
 def main():
-    sql_handler = SQLjobs("master_games.db")
+    sql_handler = SQLjobs("D:/db/games.db")
     sql_handler.connect()
     sql_handler.begin_transaction()
     MultiPgnConverter("pgn_files", sql_handler, "lichess_games").single_pgn_uploader(
-        "pgn_files/lichess.pgn"
-    )
+        "D:/db/pgn_files/lcgames.pgn",
+    100_000_000, 10)
     sql_handler.close()
 if __name__ == "__main__":
     main()
