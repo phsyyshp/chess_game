@@ -74,7 +74,7 @@ class Move:
             return self.is_pawn_path_clear()
         return True
 
-    def is_threat(self, attacker_position_index, position_row_column, piece_id):
+    def is_under_attack_by_square(self, attacker_position_index, position_row_column, piece_id):
         piece_type, piece_color = piece_id_to_type_color(piece_id)
         dummy_piece_object = self.board.create_piece_object(
             attacker_position_index, piece_type, piece_color
@@ -86,39 +86,25 @@ class Move:
 
     # do it like is_attacked_by_slider etc
 
-    def is_under_attack_by_specific_piece(
+    def is_under_attack_by_specific_piece_type(
         self, position_row_column, attacker_piece_type, attacker_color
     ):
         attacker_positions_indices = self.board.get_piece_positions(
             attacker_piece_type, attacker_color
         )
-        # print(attacker_positions_indices)
         attacker_piece_id = piece_type_to_id(attacker_piece_type, attacker_color)
-        is_under_attack_boolean = [
-            self.is_threat(
-                attacker_position_index, position_row_column, attacker_piece_id
-            )
-            for attacker_position_index in attacker_positions_indices
-        ]
-
+        is_under_attack_boolean = list(map(
+            lambda x: self.is_under_attack_by_square(
+                x, position_row_column, attacker_piece_id
+            ), attacker_positions_indices
+        ))
         return any(is_under_attack_boolean)
 
-    def is_under_attack_by_any_piece(self, position_row_column, attacker_color):
-        is_attacked_by_specific_piece = list(map())
-        result = list(map(lambda x: func(x[0], x[1], x[2], d1), [(a, b, c), (ab, c, d)]))
-        is_attacked_by_specific_piece_bool_list = [
-            self.is_under_attack_by_specific_piece(
-                position_row_column, attacker_piece_type, attacker_color
-            )
-            for attacker_piece_type in [
-                "pawn",
-                "queen",
-                "king",
-                "bishop",
-                "rook",
-                "knight",
-            ]
-        ]
+    def is_under_attack_by_any_piece_type(self, position_row_column, attacker_color):
+        is_attacked_by_specific_piece_bool_list = list(map(
+            lambda x: self.is_under_attack_by_specific_piece_type(position_row_column, x, attacker_color),
+            ["pawn", "queen", "king", "bishop", "rook", "knight"]
+        ))
         return any(is_attacked_by_specific_piece_bool_list)
 
     def is_pawn_promotion(self):
