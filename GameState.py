@@ -15,14 +15,10 @@ class GameState:
     ):
         moves_mask = piece_object.squares_in_range_mask()
         moves_row_column = mask_to_row_column(moves_mask)
-        legal_moves = []
-        for move_row_column in moves_row_column:
-            move = mv.Move(
-                piece_object.position_row_column, move_row_column, self.board
-            )
-            if move.is_legal():
-                legal_moves.append([piece_object.position_row_column, move_row_column])
-        return np.array(legal_moves)
+        legal_moves = np.array(list(map(
+            lambda x: mv.Move(piece_object.position_row_column, x, self.board).is_legal(), moves_row_column
+        )))
+        return moves_row_column[legal_moves]
 
     def get_all_legal_moves(self, color):
         positions_of_pieces = self.board.get_all_same_color_piece_positions(color)
