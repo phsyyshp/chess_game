@@ -79,7 +79,6 @@ class Move:
         dummy_piece_object = self.board.create_piece_object(
             attacker_position_index, piece_type, piece_color
         )
-        # print(attacker_position_index)
         if not dummy_piece_object.is_in_range(position_row_column):
             return False
         return self.is_path_clear(dummy_piece_object, position_row_column)
@@ -142,7 +141,7 @@ class Move:
         if is_castling_pieces_moved:
             return False
         if any(
-            self.is_under_attack_by_any_piece(
+            self.is_under_attack_by_any_piece_type(
                 (self.piece_object_to_move.position_row_column[0], 2), color
             )
         ):
@@ -161,7 +160,7 @@ class Move:
         if is_castling_pieces_moved:
             return False
         if any(
-            self.is_under_attack_by_any_piece(
+            self.is_under_attack_by_any_piece_type(
                 (self.piece_object_to_move.position_row_column[0], 6), color
             )
         ):
@@ -191,7 +190,7 @@ class Move:
         # self.board.move(
         #     self.piece_object_to_move.position_row_column, self.destination_row_column
         # )
-        out = self.is_under_attack_by_any_piece(
+        out = self.is_under_attack_by_any_piece_type(
             king_position_row_column[0], anti_color[self.piece_object_to_move.color]
         )
 
