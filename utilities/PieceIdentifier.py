@@ -41,19 +41,4 @@ def piece_type_to_id(piece_type, color):
 
 
 def fen_piece_letter_to_piece_id(fen_piece_code):
-    fen_piece_code_to_piece_type_dictionary = {
-        "P": WHITE_PAWN_PIECE_ID,
-        "N": WHITE_KNIGHT_PIECE_ID,
-        "B": WHITE_BISHOP_PIECE_ID,
-        "R": WHITE_ROOK_PIECE_ID,
-        "Q": WHITE_QUEEN_PIECE_ID,
-        "K": WHITE_KING_PIECE_ID,
-        "p": WHITE_PAWN_PIECE_ID + BLACK_PIECE_ID_OFFSET,
-        "n": WHITE_KNIGHT_PIECE_ID + BLACK_PIECE_ID_OFFSET,
-        "b": WHITE_BISHOP_PIECE_ID + BLACK_PIECE_ID_OFFSET,
-        "r": WHITE_ROOK_PIECE_ID + BLACK_PIECE_ID_OFFSET,
-        "q": WHITE_QUEEN_PIECE_ID + BLACK_PIECE_ID_OFFSET,
-        "k": WHITE_KING_PIECE_ID + BLACK_PIECE_ID_OFFSET,
-        "e": EMPTY_SQUARE_ID,
-    }
-    return fen_piece_code_to_piece_type_dictionary[fen_piece_code]
+    return FEN_PIECE_CODE_TO_PIECE_TYPE_DICTIONARY[fen_piece_code]
