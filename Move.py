@@ -80,6 +80,9 @@ class Move:
             attacker_position_index, piece_type, piece_color
         )
         if not dummy_piece_object.is_in_range(position_row_column):
+ 
+            print(piece_type, piece_color)
+
             return False
         return self.is_path_clear(dummy_piece_object, position_row_column)
 
