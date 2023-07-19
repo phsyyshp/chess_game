@@ -60,4 +60,5 @@ class Visual:
         self.set_orientation()
         self.colorize_board()
         self.add_file_rank_anotations()
-        print(self.visual_board)
+        # print(self.visual_board)
+        return self.visual_board

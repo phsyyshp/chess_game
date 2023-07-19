@@ -13,7 +13,24 @@ class Board:
         self.can_black_castle_queenside = True
         self.can_white_castle_kingside = True
         self.can_white_castle_queenside = True
+    
+    def change_turn(self):
 
+        if self.turn == "white":
+            self.turn = "black"
+        else:
+            self.turn = "white"
+
+    def copy(self):
+        board_copy = Board()
+        board_copy.board_matrix = self.board_matrix.copy()
+        board_copy.turn = self.turn
+        board_copy.can_black_castle_kingside = self.can_black_castle_kingside
+        board_copy.can_black_castle_queenside = self.        can_black_castle_queenside
+        board_copy.can_white_castle_kingside = self.can_white_castle_kingside
+        board_copy.can_white_castle_queenside = self.can_white_castle_queenside
+        # print(board_copy)
+        return board_copy
     def set_board_to_initial_configuration(self):
         self.board_matrix[1][:] = WHITE_PAWN_PIECE_ID
         self.board_matrix[0][:] = np.array(
@@ -66,7 +83,7 @@ class Board:
 
     def get_all_same_color_piece_positions(self, piece_color):
         piece_color_mask = (
-            (self.board_matrix <= 7) and (self.board_matrix > 0)
+            (self.board_matrix <= 7) * (self.board_matrix > 0)
             if piece_color == "white"
             else self.board_matrix > 7
         )
