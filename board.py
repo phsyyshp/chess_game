@@ -7,15 +7,26 @@ from utilities.Constants import *
 
 class Board:
     def __init__(self):
-        self.board_matrix = np.full((8, 8), EMPTY_SQUARE_ID)
+        self.pawns_white = 1
+        self.knight_white = 1
+        self.rooks_white = 1
+        self.bishops_white = 1
+        self.queen_white = 1
+        self.king_white = 1
+        self.pawns_black = 1
+        self.rooks_black = 1
+        self.knight_black = 1
+        self.queen_black = 1
+        self.bishops_black = 1
+        self.king_black = 1
+
         self.turn = "white"
         self.can_black_castle_kingside = True
         self.can_black_castle_queenside = True
         self.can_white_castle_kingside = True
         self.can_white_castle_queenside = True
-    
-    def change_turn(self):
 
+    def change_turn(self):
         if self.turn == "white":
             self.turn = "black"
         else:
@@ -26,27 +37,51 @@ class Board:
         board_copy.board_matrix = self.board_matrix.copy()
         board_copy.turn = self.turn
         board_copy.can_black_castle_kingside = self.can_black_castle_kingside
-        board_copy.can_black_castle_queenside = self.        can_black_castle_queenside
+        board_copy.can_black_castle_queenside = self.can_black_castle_queenside
         board_copy.can_white_castle_kingside = self.can_white_castle_kingside
         board_copy.can_white_castle_queenside = self.can_white_castle_queenside
         # print(board_copy)
         return board_copy
-    def set_board_to_initial_configuration(self):
-        self.board_matrix[1][:] = WHITE_PAWN_PIECE_ID
-        self.board_matrix[0][:] = np.array(
-            [
-                WHITE_ROOK_PIECE_ID,
-                WHITE_KNIGHT_PIECE_ID,
-                WHITE_BISHOP_PIECE_ID,
-                WHITE_QUEEN_PIECE_ID,
-                WHITE_KING_PIECE_ID,
-                WHITE_BISHOP_PIECE_ID,
-                WHITE_KNIGHT_PIECE_ID,
-                WHITE_ROOK_PIECE_ID,
-            ]
+
+    def set_white_pieces_to_initial_configurations(self):
+        self.rooks_white = 0b1 | 0b1 << 7
+        self.knight_white = 0b1 << 6 | 0b1 << 1
+        self.bishops_white = 0b1 << 5 | 0b1 << 2
+        self.queen_white = 0b1 << 4
+        self.king_white = 0b1 << 3
+
+        self.pawns_white = 0b11111111 << 8
+        # self.pawns_white |= 1 << (8 + i)
+        self.white_pieces = (
+            self.rooks_white
+            | self.knight_white
+            | self.bishops_white
+            | self.queen_white
+            | self.king_white
+            | self.pawns_white
         )
-        self.board_matrix[6][:] = BLACK_PIECE_ID_OFFSET + self.board_matrix[1][:]
-        self.board_matrix[7][:] = BLACK_PIECE_ID_OFFSET + self.board_matrix[0][:]
+
+    def set_black_pieces_to_initial_configurations(self):
+        self.rooks_black = 0b1 << 8 * 7 | 0b1 << 7 + 8 * 7
+        self.knight_black = 0b1 << 6 + 8 * 7 | 0b1 << 1 + 8 * 7
+        self.bishops_black = 0b1 << 5 + 8 * 7 | 0b1 << 2 + 8 * 7
+        self.queen_black = 0b1 << 4 + 8 * 7
+        self.king_black = 0b1 << 3 + 8 * 7
+
+        self.pawns_black |= 0b11111111 << 8 * 6
+        self.black_pieces = (
+            self.rooks_black
+            | self.knight_black
+            | self.bishops_black
+            | self.queen_black
+            | self.king_black
+            | self.pawns_black
+        )
+
+    def set_board_to_initial_configuration(self):
+        self.set_black_pieces_to_initial_configurations()
+        self.set_white_pieces_to_initial_configurations()
+        self.all_pieces = self.white_pieces | self.black_pieces
 
     def set_board_to_fen_configuration(self, FEN_string):
         self.board_matrix = FEN_to_board_matrix(FEN_string)
@@ -54,8 +89,8 @@ class Board:
     def get_piece_id_from_position(self, position_row_column: list):
         return self.board_matrix[tuple(position_row_column)]
 
-    def is_square_empty(self, position_row_column: list):
-        return self.get_piece_id_from_position(position_row_column) == 0
+    def is_square_empty(self, linear_position):
+        return (self.all_pieces & (1 << linear_position)) == 0
 
     def create_piece_object(
         self, position_row_column: list, piece_type, color
@@ -149,3 +184,15 @@ gg.set_board_to_initial_configuration()
 # gg.show()
 # # print(gg.is_ambiguous(an.algebraic_notation("4.Qb2")))
 # print(gg.get_all_same_color_piece_positions("black"))
+print(f"{gg.rooks_white:064b}")
+print(f"{gg.white_pieces:064b}")
+print(f"{gg.black_pieces:064b}")
+print(f"{gg.rooks_white:064b}")
+bit_board_str = bin(gg.black_pieces | gg.white_pieces)
+print(bit_board_str)
+b = ""
+for i, char in enumerate(bit_board_str):
+    line = char if (i - 1) % 8 != 0 else char + "\n"
+    b += line
+
+print(b)
