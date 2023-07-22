@@ -4,19 +4,6 @@
 #include <string>
 #include <vector>
 
-// std::vector<uint64_t> factor_mask(uint64_t mask) {
-// std::vector<uint64_t> out_vec(__builtin_popcount(mask));
-// int i = 0;
-// int counter = 1;
-// while (counter != 0) {
-//   counter = ((mask) & (mask - 1));
-//   // std::cout << counter << std::endl;
-//   out_vec[i] = mask ^ counter;
-//   mask = counter;
-//   i++;
-// }
-// return out_vec;
-// }
 void print(uint64_t mask) {
   uint64_t n = mask;
   for (int i = 63; i >= 0; i--) {
