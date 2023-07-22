@@ -9,7 +9,7 @@ set(SOURCES
 )
 
 # Set the output directory for the executable
-set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/test/output)
+set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/tests/output)
 
 # Create the executable
 add_executable(move_generation_test ${SOURCES})
