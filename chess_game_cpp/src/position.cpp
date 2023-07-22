@@ -45,7 +45,6 @@ void Position::print_board() {
   }
   std::cout << "\n";
 }
-
 void Position::change_turn() {
   if (turn == "white") {
     turn = "black";
@@ -53,10 +52,6 @@ void Position::change_turn() {
     turn = "white";
   }
 }
-// TODO implement those
-//  void Position::move_piece(int from_square, int to_square) {}
-//  void Position::pawn_promotion(int square, char piece) {}
-//  void Position::print_board();
 bool Position::is_square_empty(int square) {
   uint64_t pieces = white_pieces.all | black_pieces.all;
   uint64_t square_mask = 1ULL << square;
@@ -70,46 +65,3 @@ bool Position::is_destination_occupied_by_same_color(int source,
     return (black_pieces.all & (1ULL << destination)) != 0;
   }
 }
-
-// TODO implement these
-//  bool Position::is_pawn_path_clear(int source, int destination);
-// bool Position::is_path_clear(int source, int destination) {
-// if is_destination_occupied_by_same_color (source, destination) {
-// return false;
-// }
-// if piece_type (source)
-// }
-// bool Position::is_under_attack_by_slider(int position, int attacker_color);
-// bool Position::is_under_attack_by_pawn(int position, int attacker_color);
-// bool Position::is_under_attack_by_specific_piece_type(int position,
-//                                                       int attacker_color,
-//                                                       int piece_type);
-// bool Position::is_under_attack_by_any_piece_type(int position,
-//  int attacker_color);
-// bool Position::is_pawn_promotion(self);
-// bool Position::is_castling_attempt(self);
-// bool Position::is_queen_side_castling_legal();
-// bool Position::is_king_side_castling_legal();
-// bool Position::is_castling_legal();
-// bool Position::is_new_position_check(self);
-// bool Position::is_safe();
-// bool Position::is_legal(int position, int destination);
-// // bool is_pawn_promotion_legal(int position, int destination);
-// void Position::print_board() {
-//   std::cout << "  +---+---+---+---+---+---+---+---+" << std::endl;
-//   for (int i = 0; i < 8; i++) {
-//     std::cout << 8 - i << " |";
-//     for (int j = 0; j < 8; j++) {
-//       if (white_pieces & (1ULL << (i * 8 + j))) {
-//         std::cout << " W |";
-//       } else if (black_pieces & (1ULL << (i * 8 + j))) {
-//         std::cout << " B |";
-//       } else {
-//         std::cout << "   |";
-//       }
-//     }
-//     std::cout << std::endl;
-//     std::cout << "  +---+---+---+---+---+---+---+---+" << std::endl;
-//   }
-//   std::cout << "    a   b   c   d   e   f   g   h  " << std::endl;
-// }

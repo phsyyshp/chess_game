@@ -15,8 +15,8 @@ std::vector<uint64_t> MoveGeneration::factor_mask(uint64_t mask) {
   }
   return out_vec;
 }
-uint64_t MoveGeneration::generate_single_pawn_pushes(Position position,
-                                                     int color) {
+int64_t MoveGeneration::generate_single_pawn_pushes(Position position,
+                                                    int color) {
   // TODO add promotions
   if (color == 0) {
     uint64_t pawns = position.white_pieces.pawns;
@@ -27,9 +27,25 @@ uint64_t MoveGeneration::generate_single_pawn_pushes(Position position,
   }
   return pawns_single_pushed;
 }
-uint64_t MoveGeneration::generate_double_pawn_pushes(Position position) {}
-uint64_t MoveGeneration::generate_pawn_pushes(Position position) {}
+uint64_t MoveGeneration::generate_double_pawn_pushes(Position position,
+                                                     int color) {
+  if (color == 1) {
+    uint64_t pawns = position.white_pieces.pawns;
+    uint64_t pawns_at_initial_config = pawns & ((01bULL << 2 * 8) - 1);
+    uint64_t out = pawns_at_initial_config << 2 * 8;
+  } else {
+    pawns = position.black_pieces.pawns;
+    uint64_t = pawns_at_initial_config = pawns & ((01bULL << 8 * 8) - 1);
+    uint64_t out = pawns_at_initial_config >> 2 * 8;
+  }
 
-// void MoveGeneration::generate_legal_moves_of_specific_piece(Position
-// position,
-// int piece_type) {}
+  return out;
+}
+uint64_t MoveGeneration::generate_pawn_pushes(Position position) {
+  uint64_t single_pawn_pushes = generate_single_pawn_pushes(position);
+  uint64_t double_pawn_pushes = generate_double_pawn_pushes(position);
+  return single_pawn_pushes | double_pawn_pushes;
+}
+// uint64_t generate_pawn_captures(Position position){
+//   uint64_t pawns =
+// }
