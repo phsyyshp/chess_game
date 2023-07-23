@@ -18,6 +18,8 @@ void print(uint64_t mask) {
 
 int main() {
   MoveGeneration move_generator;
+  std::cout << "factor mask test"
+            << "\n";
   uint64_t mask = 0b10101010;
   std::vector<uint64_t> factors = move_generator.factor_mask(mask);
   for (auto factor : factors) {
@@ -29,6 +31,7 @@ int main() {
 
   uint64_t pushed_pawns =
       move_generator.generate_single_pawn_pushes(position, 1);
+  std::cout << "pushed pawn test";
   print(pushed_pawns);
 
   return 0;
