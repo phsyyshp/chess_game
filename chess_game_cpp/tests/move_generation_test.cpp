@@ -29,9 +29,16 @@ int main() {
   Position position;
   position.set_board_to_initial_configuration();
 
+  position.print_board();
+
+  // white pawn test
   uint64_t pushed_pawns =
-      move_generator.generate_single_pawn_pushes(position, 1);
-  std::cout << "pushed pawn test";
+      move_generator.generate_single_pawn_pushes(position, 0);
+  std::cout << "pushed white pawn test";
+  print(pushed_pawns);
+  // black pawn test
+  pushed_pawns = move_generator.generate_single_pawn_pushes(position, 1);
+  std::cout << "pushed black pawn test";
   print(pushed_pawns);
 
   return 0;
