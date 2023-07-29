@@ -20,7 +20,7 @@ int main() {
   MoveGeneration move_generator;
   std::cout << "factor mask test"
             << "\n";
-  uint64_t mask = 0b10101010;
+  uint64_t mask = 0b10101010LL;
   std::vector<uint64_t> factors = move_generator.factor_mask(mask);
   for (auto factor : factors) {
     std::cout << factor << " ";

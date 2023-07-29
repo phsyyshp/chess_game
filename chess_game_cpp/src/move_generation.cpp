@@ -4,9 +4,9 @@
 #include <vector>
 
 std::vector<uint64_t> MoveGeneration::factor_mask(uint64_t mask) {
-  std::vector<uint64_t> out_vec(__builtin_popcount(mask));
+  std::vector<uint64_t> out_vec(__builtin_popcountll(mask));
   int i = 0;
-  int counter = 1;
+  uint64_t counter = 1;
   while (counter != 0) {
     counter = ((mask) & (mask - 1));
     out_vec[i] = mask ^ counter;
