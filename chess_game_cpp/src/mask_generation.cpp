@@ -1,13 +1,14 @@
 #include "move_generation.hpp"
 #include <bitset>
 #include <cstdint>
+#include <fstream>
 #include <iostream>
 #include <math.h>
 #include <vector>
 
 using namespace std;
 #include <iostream>
-
+#include <sstream>
 void print_board(uint64_t pieces) {
   for (int i = 7; i >= 0; i--) {
     for (int j = 0; j < 8; j++) {
@@ -106,7 +107,6 @@ vector<uint64_t> generate_relevant_rook_occupancy_masks(uint64_t position) {
 }
 
 uint64_t generate_rook_attack_mask(uint64_t occupancy_mask, uint64_t position) {
-  MoveGeneration move_generator;
   int linear_position = __builtin_ctzll(position);
   int column = linear_position % 8;
   int row = floor(linear_position / 8);
@@ -121,7 +121,6 @@ uint64_t generate_rook_attack_mask(uint64_t occupancy_mask, uint64_t position) {
       break;
     }
   }
-
   i = 0;
   while (((column - i) >= 0)) {
     if ((occupancy_mask & (0b1uLL << (row * 8 + column - i))) == 0) {
@@ -132,18 +131,25 @@ uint64_t generate_rook_attack_mask(uint64_t occupancy_mask, uint64_t position) {
       break;
     }
   }
-
   i = 0;
-  while (((occupancy_mask & (0b1uLL << (row * 8 + column + i * 8))) == 0) &
-         ((row + i) <= 7)) {
-    attack_mask |= 0b1uLL << (row * 8 + column + i * 8);
-    i++;
+  while (((row + i) <= 7)) {
+    if ((occupancy_mask & (0b1uLL << (row * 8 + column + i * 8))) == 0) {
+      attack_mask |= 0b1uLL << (row * 8 + column + i * 8);
+      i++;
+    } else {
+      attack_mask |= 0b1uLL << (row * 8 + column + i * 8);
+      break;
+    }
   }
   i = 0;
-  while (((occupancy_mask & (0b1uLL << (row * 8 + column - i * 8))) == 0) &
-         ((row - i) >= 0)) {
-    attack_mask |= 0b1uLL << (row * 8 + column - i * 8);
-    i++;
+  while (((row - i) >= 0)) {
+    if ((occupancy_mask & (0b1uLL << (row * 8 + column - i * 8))) == 0) {
+      attack_mask |= 0b1uLL << (row * 8 + column - i * 8);
+      i++;
+    } else {
+      attack_mask |= 0b1uLL << (row * 8 + column - i * 8);
+      break;
+    }
   }
   attack_mask = remove_bit(attack_mask, linear_position);
   return attack_mask;
@@ -157,15 +163,33 @@ vector<uint64_t> generate_rook_attack_masks(uint64_t position) {
   }
   return attack_masks;
 }
+vector<vector<uint64_t>> generate_entire_rook_attack_masks() {
+  vector<vector<uint64_t>> masks;
+  for (int i = 0; i <= 63; i++) {
+    masks.push_back(generate_rook_attack_masks(0b1ULL << i));
+  }
+  return masks;
+}
+void save_rook_attacks_cache() {
+  vector<vector<uint64_t>> rook_attacks = generate_entire_rook_attack_masks();
+
+  ofstream outFile("rook_attacks.txt");
+  if (!outFile) {
+    cerr << "Failed to open rook_attacks.txt for writing\n";
+    throw runtime_error("Failed to open file");
+  }
+
+  for (const auto &inner_vector : rook_attacks) {
+    for (const auto &bitboard : inner_vector) {
+      outFile << bitboard << ' ';
+      // cout << bitboard << endl;
+    }
+    outFile << '\n'; // new line for each inner vector
+  }
+
+  outFile.close();
+}
 int main() {
-  // uint64_t position = (1ULL << 33);
-  // print_board(position);
-  // uint64_t out = generate_bishop_mask(position, 1, 5);
-  // out |= generate_bishop_mask(position, -1, 5);
-  // std::bitset<64> binary_out(out);
-  // std::cout << binary_out << "\n";
-  uint64_t out = 0b1ULL << 21;
-  // print_board(out);
   vector<uint64_t> out2 = generate_bishop_masks();
   vector<uint64_t> out3 = generate_rook_masks();
   vector<uint64_t> out4 = generate_queen_masks();
@@ -179,16 +203,17 @@ int main() {
   cout << "attack_mask" << endl;
   print_board(generate_rook_attack_mask(out5[10], 0b1ULL << 21));
   int i = 0;
-  for (auto mask : out6) {
-    cout << "relevant rook occ" << endl;
-    print_board(out5[i]);
-    cout << "attack mask" << endl;
+  save_rook_attacks_cache();
+  // for (auto mask : out6) {
+  //   cout << "relevant rook occ" << endl;
+  //   print_board(out5[i]);
+  //   cout << "attack mask" << endl;
 
-    print_board(mask);
-    // cout << mask << endl;
-    cout << "\n";
-    i++;
-  }
+  //   print_board(mask);
+  //   // cout << mask << endl;
+  //   cout << "\n";
+  //   i++;
+  // }
   // for (auto mask : out2) {
   //   print_board(mask);
   //   cout << "\n";
