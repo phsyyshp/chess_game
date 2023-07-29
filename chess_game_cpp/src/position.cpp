@@ -29,10 +29,10 @@ void Position::set_board_to_initial_configuration() {
   set_white_pieces_to_initial_configuration();
   set_black_pieces_to_initial_configuration();
   turn = "white";
-  can_white_castle_kingside = true;
-  can_white_castle_queenside = true;
-  can_black_castle_kingside = true;
-  can_black_castle_queenside = true;
+  can_white_castle.king_side = true;
+  can_white_castle.queen_side = true;
+  can_black_castle.king_side = true;
+  can_black_castle.queen_side = true;
 }
 void Position::print_board() {
   uint64_t n = white_pieces.all | black_pieces.all;
