@@ -4,6 +4,7 @@
 #include <fstream>
 #include <iostream>
 #include <math.h>
+#include <random>
 #include <vector>
 
 using namespace std;
@@ -181,11 +182,107 @@ void save_rook_attacks_cache() {
 
   for (const auto &inner_vector : rook_attacks) {
     for (const auto &bitboard : inner_vector) {
-      outFile << bitboard << ' ';
+      // outFile << bitboard << ' ';
+      outFile << std::bitset<64>(bitboard).to_string() << ' ';
       // cout << bitboard << endl;
     }
     outFile << '\n'; // new line for each inner vector
   }
+
+  outFile.close();
+}
+uint64_t generate_magic_index(uint64_t bitboard, uint64_t magic_number,
+                              int shiftBits) {
+  return (bitboard * magic_number) >> shiftBits;
+}
+
+uint64_t generate_magic_number(uint64_t position) {
+  vector<uint64_t> relevant_rook_occupancy_masks =
+      generate_relevant_rook_occupancy_masks(position);
+  vector<uint64_t> rook_attack_masks = generate_rook_attack_masks(position);
+  int bits = log2(relevant_rook_occupancy_masks.size());
+  int shiftBits = 64 - bits;
+  vector<uint64_t> lookup_table(1ull << bits,
+                                0); // Size of lookup table should be 2^bits
+  uint64_t magic_number;
+
+  while (true) {
+    random_device rd;
+    mt19937_64 rng(rd());
+    uniform_int_distribution<uint64_t> distribution;
+    magic_number =
+        distribution(rng) & distribution(rng) &
+        distribution(
+            rng); // This generates a number with a few random bits set.
+
+    bool failed = false;
+    lookup_table.assign(lookup_table.size(), 0); // Reset the lookup table
+
+    for (size_t i = 0; i < relevant_rook_occupancy_masks.size(); i++) {
+      uint64_t index = generate_magic_index(relevant_rook_occupancy_masks[i],
+                                            magic_number, shiftBits);
+
+      if (lookup_table[index] == 0) {
+        lookup_table[index] = rook_attack_masks[i];
+        // cout << "looking" << endl;
+      } else if (lookup_table[index] != rook_attack_masks[i]) {
+        failed = true; // collision
+        // cout << "failed" << endl;
+        break;
+      }
+    }
+
+    if (!failed) {
+      break;
+    }
+  }
+
+  return magic_number;
+}
+
+vector<uint64_t> generate_rook_lookup_table(uint64_t magic_number,
+                                            uint64_t position) {
+
+  vector<uint64_t> relevant_rook_occupancy_masks =
+      generate_relevant_rook_occupancy_masks(position);
+  vector<uint64_t> rook_attack_masks = generate_rook_attack_masks(position);
+  int bits = log2(relevant_rook_occupancy_masks.size());
+  int shiftBits = 64 - bits;
+  vector<uint64_t> lookup_table(1ull << bits,
+                                0); // Size of lookup table should be 2^bits
+
+  lookup_table.assign(lookup_table.size(), 0); // Reset the lookup table
+
+  for (size_t i = 0; i < relevant_rook_occupancy_masks.size(); i++) {
+    uint64_t index = generate_magic_index(relevant_rook_occupancy_masks[i],
+                                          magic_number, shiftBits);
+
+    lookup_table[index] = rook_attack_masks[i];
+  }
+  return lookup_table;
+}
+vector<uint64_t> generate_all_magic_numbers() {
+
+  vector<uint64_t> out(64, 0);
+  uint64_t position;
+  for (int i = 0; i < 64; i++) {
+    position = 0b1ULL << i;
+    out[i] = generate_magic_number(position);
+  }
+  return out;
+}
+void save_magic_numbers() {
+  vector<uint64_t> out = generate_all_magic_numbers();
+  ofstream outFile("rook_magic_numbers.txt");
+  if (!outFile) {
+    cerr << "Failed to open rook_magic_numbers.txt for writing\n";
+    throw runtime_error("Failed to open file");
+  }
+
+  for (const auto &bitboard : out) {
+    outFile << bitboard << '\n';
+  }
+  cout << "it works" << endl;
 
   outFile.close();
 }
@@ -195,6 +292,9 @@ int main() {
   vector<uint64_t> out4 = generate_queen_masks();
   vector<uint64_t> out5 = generate_relevant_rook_occupancy_masks(0b1ULL << 21);
   vector<uint64_t> out6 = generate_rook_attack_masks(0b1ULL << 21);
+  // save_magic_numbers();
+  vector<uint64_t> out7 =
+      generate_rook_lookup_table(3459047088391718912, 0b1ULL << 21);
   cout << "inmasks" << endl;
   cout << out5.size() << endl;
   // cout << generate_rook_mask(0b1ULL, 8) << endl;
@@ -203,17 +303,18 @@ int main() {
   cout << "attack_mask" << endl;
   print_board(generate_rook_attack_mask(out5[10], 0b1ULL << 21));
   int i = 0;
-  save_rook_attacks_cache();
-  // for (auto mask : out6) {
-  //   cout << "relevant rook occ" << endl;
-  //   print_board(out5[i]);
-  //   cout << "attack mask" << endl;
+  // save_rook_attacks_cache();
+  cout << generate_magic_number(0b1ULL << 21) << endl;
+  for (auto mask : out7) {
+    // cout << "relevant rook occ" << endl;
+    // print_board(out5[i]);
+    // cout << "attack mask" << endl;
 
-  //   print_board(mask);
-  //   // cout << mask << endl;
-  //   cout << "\n";
-  //   i++;
-  // }
+    print_board(mask);
+    // cout << mask << endl;
+    // cout << "\n";
+    // i++;
+  }
   // for (auto mask : out2) {
   //   print_board(mask);
   //   cout << "\n";
