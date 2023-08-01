@@ -7,3 +7,4 @@ db/pgn.pickle
 db/lichess_db_standard_rated_2013-12.pgn.zst
 chess_game_cpp/build
 chess_game_cpp/build_ninja
+chess_game_cpp/src/a.exe

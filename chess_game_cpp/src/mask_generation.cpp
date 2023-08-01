@@ -271,6 +271,42 @@ vector<uint64_t> generate_all_magic_numbers() {
   }
   return out;
 }
+vector<vector<uint64_t>> generate_all_rook_lookup_tables() {
+  // open file rook_magic_numbers.txt and save each line to a vector
+  // for each line in the vector, generate the lookup table and save it to a
+  // vector return the vector
+  vector<vector<uint64_t>> out;
+  ifstream inFile("rook_magic_numbers.txt");
+  if (!inFile) {
+    cerr << "Failed to open rook_magic_numbers.txt for reading\n";
+    throw runtime_error("Failed to open file");
+  }
+  string line;
+  while (getline(inFile, line)) {
+    uint64_t magic_number = stoull(line);
+    vector<uint64_t> lookup_table =
+        generate_rook_lookup_table(magic_number, 0b1ULL << out.size());
+    out.push_back(lookup_table);
+  }
+  return out;
+}
+void save_rook_lookup_tables() {
+  vector<vector<uint64_t>> out = generate_all_rook_lookup_tables();
+  ofstream outFile("rook_lookup_tables.txt");
+  if (!outFile) {
+    cerr << "Failed to open rook_lookup_tables.txt for writing\n";
+    throw runtime_error("Failed to open file");
+  }
+
+  for (const auto &inner_vector : out) {
+    for (const auto &bitboard : inner_vector) {
+      outFile << bitboard << ' ';
+    }
+    outFile << '\n'; // new line for each inner vector
+  }
+
+  outFile.close();
+}
 void save_magic_numbers() {
   vector<uint64_t> out = generate_all_magic_numbers();
   ofstream outFile("rook_magic_numbers.txt");
@@ -295,6 +331,7 @@ int main() {
   // save_magic_numbers();
   vector<uint64_t> out7 =
       generate_rook_lookup_table(3459047088391718912, 0b1ULL << 21);
+  save_rook_lookup_tables();
   cout << "inmasks" << endl;
   cout << out5.size() << endl;
   // cout << generate_rook_mask(0b1ULL, 8) << endl;
@@ -305,16 +342,16 @@ int main() {
   int i = 0;
   // save_rook_attacks_cache();
   cout << generate_magic_number(0b1ULL << 21) << endl;
-  for (auto mask : out7) {
-    // cout << "relevant rook occ" << endl;
-    // print_board(out5[i]);
-    // cout << "attack mask" << endl;
+  // for (auto mask : out7) {
+  //   // cout << "relevant rook occ" << endl;
+  //   // print_board(out5[i]);
+  //   // cout << "attack mask" << endl;
 
-    print_board(mask);
-    // cout << mask << endl;
-    // cout << "\n";
-    // i++;
-  }
+  //   print_board(mask);
+  //   // cout << mask << endl;
+  //   // cout << "\n";
+  //   // i++;
+  // }
   // for (auto mask : out2) {
   //   print_board(mask);
   //   cout << "\n";
