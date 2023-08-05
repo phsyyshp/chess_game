@@ -10,3 +10,4 @@ chess_game_cpp/build_ninja
 chess_game_cpp/src/a.exe
 chess_game_cpp/src/output/a.exe
 chess_game_cpp/bin/move_generation_test.exe
+build_ninja/

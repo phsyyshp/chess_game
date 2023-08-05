@@ -8,7 +8,9 @@ border-spacing: 30px;
 
 background-color : rgb(64, 64, 66);
 }
-
+.openingsDropDown td{
+padding: 50px 10px;
+}
 a{
     color : white;
     font-weight: normal;
