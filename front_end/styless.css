@@ -1,0 +1,16 @@
+.headMenu{
+background-color : rgb(64, 64, 66);
+font-size: 15px;
+color:white;
+border-spacing: 30px;
+}
+.body{
+
+background-color : rgb(64, 64, 66);
+}
+
+a{
+    color : white;
+    font-weight: normal;
+    text-decoration: none;
+}
