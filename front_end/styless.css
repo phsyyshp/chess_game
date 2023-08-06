@@ -1,22 +1,47 @@
-.headMenu{
-background-color : rgb(64, 64, 66);
-font-size: 15px;
-color:white;
-border-spacing: 30px;
+.top-menu-box {
+  background-color: rgb(64, 64, 66);
+  font-size: 15px;
+  color: white;
+  margin: 0px;
 }
-.body{
-
-background-color : rgb(64, 64, 66);
+.body {
+  background-color: rgb(64, 64, 66);
 }
-
-a{
-    color : white;
-    font-weight: normal;
-    text-decoration: none;
+#footer {
+  font-size: small;
+  color: white;
+  text-align: center;
 }
+.top-menu-elements {
+  padding: 13px;
+  border-left: 3px rgb(64, 64, 66) solid;
+  font-weight: normal;
+}
+.top-menu-elements:hover {
+  background-color: rgb(74, 74, 77);
+  /* border-radius: 5px; */
 
- #footer{
-    font-size: small;
-    color:white ;
-text-align: center;
-} 
+  border-left: 3px rgb(115, 115, 115) solid;
+  /* padding:10px; */
+}
+#chess_board_box {
+  resize: both;
+  overflow: hidden;
+  display: inline-block;
+}
+#chess_board {
+  border-collapse: collapse;
+  margin: 20px;
+  width: 50%;
+  height: 50%;
+}
+.whiteCells {
+  background-color: rgb(204, 183, 152);
+  border: 1px black solid;
+  padding: 8px;
+}
+.blackCells {
+  background-color: rgb(134, 103, 9);
+  border: 1px black solid;
+  padding: 8px;
+}
