@@ -6,6 +6,8 @@
   background-color: rgb(64, 64, 66);
   font-size: 15px;
   color: white;
+  padding-top: 3px;
+  /* display: inline; */
 }
 .top-menu-elements {
   padding: 13px;
