@@ -38,9 +38,9 @@
 .whiteCells {
   background-color: rgb(204, 183, 152);
   /* border: 1px black solid; */
-  width: 45px;
-  height: 45px;
-  padding: 8px;
+  width: 55px;
+  height: 55px;
+  padding: 2px;
   text-align: center;
   font-size: xxx-large;
   font-family: "MyCustomFont";
@@ -48,9 +48,9 @@
 .blackCells {
   background-color: rgb(134, 103, 9);
   /* border: 1px black solid; */
-  width: 45px;
-  height: 45px;
-  padding: 8px;
+  width: 55px;
+  height: 55px;
+  padding: 2px;
   text-align: center;
   font-size: xxx-large;
   font-family: "MyCustomFont";
