@@ -6,7 +6,6 @@
   background-color: rgb(64, 64, 66);
   font-size: 15px;
   color: white;
-  margin: 0px;
 }
 .top-menu-elements {
   padding: 13px;
@@ -28,6 +27,7 @@
   overflow: hidden;
   /* display: inline-block; */
   float: left;
+  /* margin-left: 30px; */
 }
 #chess_board {
   border-collapse: collapse;
