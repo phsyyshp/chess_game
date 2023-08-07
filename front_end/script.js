@@ -17,23 +17,17 @@ for (let i = 0; i < 8; i++) {
     }
     // Rooks
     if (i === 0 || i === 7) {
-      if (j === 0 || j === 7) {
-        cell.innerHTML = i === 0 ? "♜" : "♖";
-      }
+      cell.innerHTML = i === 0 ? "♜" : "♖";
     }
 
     // Knights
-    if (i === 0 || i === 7) {
-      if (j === 1 || j === 6) {
-        cell.innerHTML = i === 0 ? "♞" : "♘";
-      }
+    if ((i === 0 || i === 7) & (j === 1 || j === 6)) {
+      cell.innerHTML = i === 0 ? "♞" : "♘";
     }
 
     // Bishops
-    if (i === 0 || i === 7) {
-      if (j === 2 || j === 5) {
-        cell.innerHTML = i === 0 ? "♝" : "♗";
-      }
+    if ((i === 0 || i === 7) && (j === 2 || j === 5)) {
+      cell.innerHTML = i === 0 ? "♝" : "♗";
     }
 
     // Queens
