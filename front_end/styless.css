@@ -2,6 +2,10 @@
   font-family: "MyCustomFont";
   src: url("fontFile.ttf") format("truetype");
 }
+.unselectable {
+  user-select: none;
+}
+
 .top-menu-box {
   background-color: rgb(64, 64, 66);
   font-size: 15px;
@@ -19,6 +23,7 @@
 
   border-left: 3px rgb(115, 115, 115) solid;
   /* padding:10px; */
+  cursor: default;
 }
 .body {
   background-color: rgb(64, 64, 66);
@@ -32,11 +37,13 @@
 #chess_board {
   border-collapse: collapse;
   margin: 20px;
+  /* margin: 0px; */
   /* width: 600px;
   height: 600px; */
 }
 .whiteCells {
   background-color: rgb(204, 183, 152);
+  /* background-color: #d6ed17ff; */
   /* border: 1px black solid; */
   width: 55px;
   height: 55px;
@@ -44,9 +51,11 @@
   text-align: center;
   font-size: xxx-large;
   font-family: "MyCustomFont";
+  cursor: default;
 }
 .blackCells {
   background-color: rgb(134, 103, 9);
+  background-color: #606060ff;
   /* border: 1px black solid; */
   width: 55px;
   height: 55px;
@@ -54,11 +63,11 @@
   text-align: center;
   font-size: xxx-large;
   font-family: "MyCustomFont";
+  cursor: default;
 }
-
 #moves_box {
   width: 300px;
-  height: 400px;
+  height: 473px;
   background-color: rgb(69, 69, 72);
   margin-left: 5px;
   margin-top: 20px;
@@ -68,21 +77,60 @@
 #control_panel_of_moves {
   /* display: inline-block; */
   background-color: rgb(64, 64, 66);
-  margin-top: 380px;
-  height: 20px;
-  padding: 5px;
+  margin-top: 423px;
+  /* margin-left: 50px; */
+  position: relative;
 }
-#control_panel_of_moves,
-ul {
+
+#control_panel_of_moves ul li {
   display: inline-block;
-  list-style-type: none;
-  margin-top: 380px;
+  padding-top: 0px;
+  padding-right: 16px;
+  padding-left: 0px;
+  /* background: blue; */
+  margin: 0px;
+}
+
+#control_panel_of_moves ul {
+  padding-left: 0px;
+  /* padding-right: 0px; */
+  margin-top: 3px;
+  padding-top: 1px;
+  /* text-align: center; */
+  color: rgb(115, 115, 132);
+  text-align: center;
+}
+
+#control_panel_of_moves ul li:hover {
+  color: rgb(182, 182, 188);
+  cursor: default;
+}
+#game-decision {
+  margin-top: 5px;
+  position: relative;
+  /* font-size: xx-large; */
+}
+#game-decision ul li {
+  display: inline-block;
+  margin: 20px;
+  margin-top: 0px;
+  /* font-size: xxx-large; */
+  color: rgb(184, 181, 181);
+}
+.resign:hover {
+  color: rgb(192, 44, 11);
+}
+.draw-offer:hover {
+  color: rgb(185, 158, 5);
+}
+.undo:hover {
+  color: rgb(115, 115, 132);
 }
 
 #footer {
   font-size: small;
   color: white;
   text-align: center;
-  margin: 500px;
+  margin: 600px;
   position: fixed;
 }
