@@ -5,7 +5,6 @@
 .unselectable {
   user-select: none;
 }
-
 .top-menu-box {
   background-color: rgb(64, 64, 66);
   font-size: 15px;
@@ -24,6 +23,33 @@
   border-left: 3px rgb(115, 115, 115) solid;
   /* padding:10px; */
   cursor: default;
+}
+.top-menu-drop-down {
+  visibility: hidden;
+  /* display: inline-block; */
+  position: absolute;
+  list-style: none;
+  /* width: fit-content; */
+  text-align: left;
+  font-size: 14px;
+  background-color: rgb(74, 74, 77);
+  color: rgb(229, 229, 229);
+  border-left: 3px rgb(92, 86, 217) solid;
+  padding: 13px;
+  overflow: visible;
+  /* margin:50px; */
+}
+.top-menu-drop-down ul li {
+  /* padding: 19px; */
+  /* margin: 5px; */
+}
+.top-menu-elements:hover .top-menu-drop-down {
+  visibility: visible;
+}
+.top-menu-drop-down li:hover {
+  margin: 0px;
+  /* padding: 0px 10px 10px 0px; */
+  background-color: rgb(139, 145, 108);
 }
 .body {
   background-color: rgb(64, 64, 66);
@@ -65,50 +91,20 @@
   font-family: "MyCustomFont";
   cursor: default;
 }
-#moves_box {
+#side-hub {
   width: 300px;
-  height: 473px;
+  height: 496px;
   background-color: rgb(69, 69, 72);
   margin-left: 5px;
   margin-top: 20px;
   border-radius: 1px;
+  position: relative;
   float: left;
 }
-#control_panel_of_moves {
-  /* display: inline-block; */
-  background-color: rgb(64, 64, 66);
-  margin-top: 423px;
-  /* margin-left: 50px; */
-  position: relative;
-}
-
-#control_panel_of_moves ul li {
-  display: inline-block;
-  padding-top: 0px;
-  padding-right: 16px;
-  padding-left: 0px;
-  /* background: blue; */
-  margin: 0px;
-}
-
-#control_panel_of_moves ul {
-  padding-left: 0px;
-  /* padding-right: 0px; */
-  margin-top: 3px;
-  padding-top: 1px;
-  /* text-align: center; */
-  color: rgb(115, 115, 132);
-  text-align: center;
-}
-
-#control_panel_of_moves ul li:hover {
-  color: rgb(182, 182, 188);
-  cursor: default;
-}
 #game-decision {
-  margin-top: 5px;
-  position: relative;
-  /* font-size: xx-large; */
+  position: absolute;
+  bottom: 5%;
+  padding-bottom: 5px;
 }
 #game-decision ul li {
   display: inline-block;
@@ -126,7 +122,42 @@
 .undo:hover {
   color: rgb(115, 115, 132);
 }
-
+#player-info {
+  position: absolute;
+  bottom: 10px;
+  padding: 15px;
+  text-align: justify-all;
+  margin: 5px;
+  font-weight: lighter;
+  font-family: Arial;
+  color: aliceblue;
+}
+#player-info ul li {
+  display: inline-block;
+  padding-right: 30px;
+}
+#control_panel_of_moves {
+  background-color: rgb(64, 64, 66);
+  position: absolute;
+  bottom: 0px;
+  width: 100%;
+}
+#control_panel_of_moves ul {
+  padding-left: 0px;
+  margin: 0px;
+  padding-top: 1px;
+  color: rgb(115, 115, 132);
+  text-align: center;
+}
+#control_panel_of_moves ul li {
+  display: inline-block;
+  padding: 0px;
+  padding-right: 16px;
+}
+#control_panel_of_moves ul li:hover {
+  color: rgb(182, 182, 188);
+  cursor: default;
+}
 #footer {
   font-size: small;
   color: white;
