@@ -55,6 +55,7 @@
   font-size: xxx-large;
   font-family: "MyCustomFont";
 }
+
 #moves_box {
   width: 300px;
   height: 400px;
@@ -64,15 +65,24 @@
   border-radius: 1px;
   float: left;
 }
-#moves_box #opponent_time {
-  width: 50px;
-  height: 50px;
-  background-color: aqua;
-  position: relative;
+#control_panel_of_moves {
+  /* display: inline-block; */
+  background-color: rgb(64, 64, 66);
+  margin-top: 380px;
+  height: 20px;
+  padding: 5px;
 }
+#control_panel_of_moves,
+ul {
+  display: inline-block;
+  list-style-type: none;
+  margin-top: 380px;
+}
+
 #footer {
   font-size: small;
   color: white;
   text-align: center;
-  position: relative;
+  margin: 500px;
+  position: fixed;
 }
