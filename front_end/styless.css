@@ -39,10 +39,6 @@
   overflow: visible;
   /* margin:50px; */
 }
-.top-menu-drop-down ul li {
-  /* padding: 19px; */
-  /* margin: 5px; */
-}
 .top-menu-elements:hover .top-menu-drop-down {
   visibility: visible;
 }
@@ -92,25 +88,21 @@
   cursor: default;
 }
 #side-hub {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
   width: 300px;
   height: 496px;
   background-color: rgb(69, 69, 72);
   margin-left: 5px;
   margin-top: 20px;
   border-radius: 1px;
-  position: relative;
+  /* position: relative; */
   float: left;
 }
 #game-decision {
-  position: absolute;
-  bottom: 5%;
-  padding-bottom: 5px;
-}
-#game-decision ul li {
-  display: inline-block;
-  margin: 20px;
-  margin-top: 0px;
-  /* font-size: xxx-large; */
+  display: flex;
+  justify-content: space-around;
   color: rgb(184, 181, 181);
 }
 .resign:hover {
@@ -122,23 +114,18 @@
 .undo:hover {
   color: rgb(115, 115, 132);
 }
-#player-info {
-  position: absolute;
-  bottom: 10px;
-  padding: 15px;
-  text-align: justify-all;
-  margin: 5px;
+#player-info-container {
   font-weight: lighter;
   font-family: Arial;
   color: aliceblue;
+  display: flex;
+  justify-content: space-between;
+  padding: 20px 10px;
 }
-#player-info ul li {
-  display: inline-block;
-  padding-right: 30px;
-}
+
 #control_panel_of_moves {
   background-color: rgb(64, 64, 66);
-  position: absolute;
+  /* position: absolute; */
   bottom: 0px;
   width: 100%;
 }
