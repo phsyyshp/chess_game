@@ -11,6 +11,28 @@ $dropdown-border-color:rgb(92, 86, 217);
   font-family: "MyCustomFont";
   src: url("fontFile.ttf") format("truetype");
 }
+@mixin dropDown(){
+  visibility: hidden;
+  position: absolute;
+  left: 2px;
+  list-style: none;
+  font-size: 14px;
+  background-color: $top-menu-highlight-color;
+  color: $main-font-color;
+  border-left: 3px $dropdown-border-color solid;
+  padding: 0px;
+  overflow: visible;
+  li {
+    padding: 9px;
+    width: 100%;
+    background-color: $top-menu-highlight-color;
+    &:hover {
+      padding: 9px;
+      background-color: $dropdown-highlight-color;
+      width: 100%;
+    }
+  }
+}
 .unselectable {
   user-select: none;
 }
@@ -44,26 +66,7 @@ $dropdown-border-color:rgb(92, 86, 217);
   }
 }
 .top-menu-drop-down {
-  visibility: hidden;
-  position: absolute;
-  left: 2px;
-  list-style: none;
-  font-size: 14px;
-  background-color: $top-menu-highlight-color;
-  color: $main-font-color;
-  border-left: 3px $dropdown-border-color solid;
-  padding: 0px;
-  overflow: visible;
-  li {
-    padding: 9px;
-    width: 100%;
-    background-color: $top-menu-highlight-color;
-    &:hover {
-      padding: 9px;
-      background-color: $dropdown-highlight-color;
-      width: 100%;
-    }
-  }
+  @include dropDown();
 }
 .top-menu-elements:hover .top-menu-drop-down {
   visibility: visible;
