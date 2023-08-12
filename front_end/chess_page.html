@@ -9,29 +9,32 @@
   <meta charset="UTF-8" />
 </head>
 <body class="body unselectable">
-  <div>
-    <table class="top-menu-box">
-      <thead>
-        <tr>
-          <th id="openings" class="top-menu-elements">
-            OPENINGS
-            <ul class="top-menu-drop-down">
-              <li>TRAINER</li>
-              <li>EXPLORE</li>
-            </ul>
-          </th>
-          <th id="play-engine" class="top-menu-elements">
-            PLAY WITH THE ENGINE
-          </th>
-          <th id="about" class="top-menu-elements">ABOUT</th>
-          <th id="my-profile" class="top-menu-elements">MY PROFILE</th>
-          <th id="play_with_others" class="top-menu-elements">
-            PLAY WITH OTHERS
-          </th>
-          <th id="contribute" class="top-menu-elements">CONTRIBUTE</th>
-        </tr>
-      </thead>
-    </table>
+  <div id="main-container">
+    <!-- <div id="general-info"></div> -->
+    <div id="top-menu-container">
+      <table class="top-menu-box">
+        <thead>
+          <tr>
+            <th id="openings" class="top-menu-elements">
+              OPENINGS
+              <ul class="top-menu-drop-down">
+                <li>TRAINER</li>
+                <li>EXPLORE</li>
+              </ul>
+            </th>
+            <th id="play-engine" class="top-menu-elements">
+              PLAY WITH THE ENGINE
+            </th>
+            <th id="about" class="top-menu-elements">ABOUT</th>
+            <th id="my-profile" class="top-menu-elements">MY PROFILE</th>
+            <th id="play_with_others" class="top-menu-elements">
+              PLAY WITH OTHERS
+            </th>
+            <th id="contribute" class="top-menu-elements">CONTRIBUTE</th>
+          </tr>
+        </thead>
+      </table>
+    </div>
     <div id="chess_board_box">
       <table id="chess_board"></table>
     </div>
@@ -63,10 +66,12 @@
         </ul>
       </div>
     </div>
+    <div>
+      <footer id="footer">
+        All rights reserved. Chess engines united. 2023 USA
+      </footer>
+    </div>
   </div>
   <div id="opponent_time"></div>
   <script src="./script.js"></script>
-  <footer id="footer">
-    All rights reserved. Chess engines united. 2023 USA
-  </footer>
 </body>
