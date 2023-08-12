@@ -1,3 +1,12 @@
+$main-background-color: rgb(64, 64, 66);
+$top-menu-highlight-color: rgb(74, 74, 77);
+$top-menu-border-color:rgb(115, 115, 115);
+$dropdown-highlight-color:rgb(141, 160, 162);
+$side-hub-background-color:rgb(69,69,77);
+$game-decision-button-color:rgb(184, 181, 181);
+$main-font-color: white;
+$main-font-size: 15px;
+$dropdown-border-color:rgb(92, 86, 217);
 @font-face {
   font-family: "MyCustomFont";
   src: url("fontFile.ttf") format("truetype");
@@ -7,92 +16,65 @@
 }
 #main-container {
   display: grid;
-  grid-template: repeat(3, 1fr) / 5px, 50px;
-  border: blue 1px solid;
+  grid-template: repeat(3, 1fr) / 5px, 50px, 20px;
   gap: 20px;
 }
-#general-info {
+.box {
   border: blue 1px solid;
 }
 #top-menu-container {
   grid-row: 1;
   grid-column: 1 / span 3;
-  border: 1px solid blue;
 }
 .top-menu-box {
-  background-color: rgb(64, 64, 66);
-  font-size: 15px;
-  color: white;
+  background-color: $main-background-color;
+  font-size: $main-font-size;
+  color: $main-font-color;
   margin: 0px;
   position: relative;
 }
 .top-menu-elements {
   padding: 13px;
-  border-left: 3px rgb(64, 64, 66) solid;
+  border-left: 3px $main-background-color solid;
   font-weight: normal;
-}
-.top-menu-elements:hover {
-  background-color: rgb(74, 74, 77);
-  /* border-radius: 5px; */
-
-  border-left: 3px rgb(115, 115, 115) solid;
-  /* padding:10px; */
-  cursor: default;
+  &:hover {
+    background-color: $top-menu-highlight-color;
+    border-left: 3px $top-menu-border-color solid;
+    cursor: default;
+  }
 }
 .top-menu-drop-down {
   visibility: hidden;
-  /* display: inline-block; */
   position: absolute;
   left: 2px;
   list-style: none;
-  /* width: fit-content; */
-  /* text-align: left; */
   font-size: 14px;
-  background-color: rgb(74, 74, 77);
-  color: rgb(229, 229, 229);
-  border-left: 3px rgb(92, 86, 217) solid;
+  background-color: $top-menu-highlight-color;
+  color: $main-font-color;
+  border-left: 3px $dropdown-border-color solid;
   padding: 0px;
   overflow: visible;
-  /* margin:50px; */
+  li {
+    padding: 9px;
+    width: 100%;
+    background-color: $top-menu-highlight-color;
+    &:hover {
+      padding: 9px;
+      background-color: $dropdown-highlight-color;
+      width: 100%;
+    }
+  }
 }
 .top-menu-elements:hover .top-menu-drop-down {
   visibility: visible;
 }
-.top-menu-drop-down li {
-  padding: 9px;
-  width: 100%;
-
-  background-color: rgb(74, 74, 77);
-}
-.top-menu-drop-down li:hover {
-  /* margin: 10px; */
-  /* padding: 0px 10px 10px 0px; */
-  padding: 9px;
-  background-color: rgb(141, 160, 162);
-  width: 100%;
-}
 .body {
-  background-color: rgb(64, 64, 66);
-}
-#chess_board_box {
-  /* resize: both; */
-  /* overflow: hidden; */
-  /* display: inline-block; */
-  /* float: left; */
-  /* width: 100px; */
-  border: 1px solid blue;
+  background-color: $main-background-color;
 }
 #chess_board {
   border-collapse: collapse;
-  /* margin: 20px; */
-  /* margin: 1px; */
-  /* width: 600px;
-  height: 600px; */
 }
-.whiteCells {
-  background-color: rgb(204, 183, 152);
-  /* background-color: #d6ed17ff; */
-  /* border: 1px black solid; */
+.cells{
   width: 55px;
   height: 55px;
   padding: 2px;
@@ -100,37 +82,25 @@
   font-size: xxx-large;
   font-family: "MyCustomFont";
   cursor: default;
+}
+.whiteCells {
+  background-color: rgb(204, 183, 152);
 }
 .blackCells {
   background-color: rgb(134, 103, 9);
   background-color: #606060ff;
-  /* border: 1px black solid; */
-  width: 55px;
-  height: 55px;
-  padding: 2px;
-  text-align: center;
-  font-size: xxx-large;
-  font-family: "MyCustomFont";
-  cursor: default;
 }
 #side-hub {
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
   width: 300px;
-  /* height: 496px; */
-  background-color: rgb(69, 69, 72);
-  /* margin-left: 5px; */
-  /* margin-top: 20px; */
-  /* border-radius: 1px; */
-  /* position: relative; */
-  /* float: left; */
-  border: 1px solid blue;
+  background-color: $side-hub-background-color;
 }
 #game-decision {
   display: flex;
   justify-content: space-around;
-  color: rgb(184, 181, 181);
+  color:$game-decision-button-color;
 }
 .resign:hover {
   color: rgb(192, 44, 11);
@@ -150,30 +120,33 @@
   padding: 20px 10px;
 }
 #control_panel_of_moves {
-  background-color: rgb(64, 64, 66);
-  /* position: absolute; */
+  background-color: $main-background-color;
   bottom: 0px;
   width: 100%;
+  ul {
+    padding-left: 0px;
+    margin: 0px;
+    padding-top: 1px;
+    color: rgb(115, 115, 132);
+    text-align: center;
+    li {
+      display: inline-block;
+      padding: 0px;
+      padding-right: 16px;
+      &:hover {
+        color: rgb(182, 182, 188);
+        cursor: default;
+      }
+    }
+  }
 }
-#control_panel_of_moves ul {
-  padding-left: 0px;
-  margin: 0px;
-  padding-top: 1px;
-  color: rgb(115, 115, 132);
-  text-align: center;
-}
-#control_panel_of_moves ul li {
-  display: inline-block;
-  padding: 0px;
-  padding-right: 16px;
-}
-#control_panel_of_moves ul li:hover {
-  color: rgb(182, 182, 188);
-  cursor: default;
+#footer-container{
+  grid-row: 3;
+  grid-column: 1 / span 3;
 }
 #footer {
   font-size: small;
-  color: white;
+  color: $main-font-color;
   text-align: center;
   margin: 600px;
   position: fixed;

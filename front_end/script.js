@@ -6,9 +6,9 @@ for (let i = 0; i < 8; i++) {
     let cell = rows[i].insertCell(j);
     cell.innerHTML = "";
     if ((i + j) % 2 === 0) {
-      cell.className = "whiteCells";
+      cell.className = "whiteCells cells";
     } else {
-      cell.className = "blackCells";
+      cell.className = "blackCells cells";
     }
     if (i === 6) {
       cell.innerHTML = "♙";
