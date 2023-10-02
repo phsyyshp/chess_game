@@ -1,12 +1,14 @@
 import numpy as np
 import Piece as pc
-from utilities import *
-from Constants import *
+from utilities.FENinterpreter import *
+from utilities.PositionConverter import *
+from utilities.Constants import *
 
 
 class Board:
     def __init__(self):
         self.board_matrix = np.full((8, 8), EMPTY_SQUARE_ID)
+        self.turn = "white"
         self.can_black_castle_kingside = True
         self.can_black_castle_queenside = True
         self.can_white_castle_kingside = True
@@ -29,6 +31,9 @@ class Board:
         self.board_matrix[6][:] = BLACK_PIECE_ID_OFFSET + self.board_matrix[1][:]
         self.board_matrix[7][:] = BLACK_PIECE_ID_OFFSET + self.board_matrix[0][:]
 
+    def set_board_to_fen_configuration(self, FEN_string):
+        self.board_matrix = FEN_to_board_matrix(FEN_string)
+
     def get_piece_id_from_position(self, position_row_column: list):
         return self.board_matrix[tuple(position_row_column)]
 
@@ -44,6 +49,7 @@ class Board:
             "queen": pc.Queen,
             "knight": pc.Knight,
             "bishop": pc.Bishop,
+            "rook": pc.Rook,
             "empty": pc.Empty,
         }
         return piece_types[piece_type](position_row_column, color)
@@ -105,6 +111,10 @@ class Board:
                 self.can_black_castle_kingside = False
                 self.can_black_castle_queenside = False
 
+    # def get_fen(self):
+    #     white_pov_board_matrix = np.flipud(self.board_matrix)
+    #     board_matrix_list = white_pov_board_matrix.tolist()
+
     def move_single_file_rank_input(self, old_new_file_rank: str):
         (
             source_row_column,
@@ -112,42 +122,13 @@ class Board:
         ) = split_single_file_rank_to_old_new_row_column(old_new_file_rank)
         self.move(source_row_column, destination_row_column)
 
-    def show(self, point_of_view="white"):
-        vectorized_chr = np.vectorize(chr)
-
-        visual_board = self.board_matrix + 9810 * (self.board_matrix != 0)
-        visual_board = (
-            np.flipud(visual_board)
-            if point_of_view == "white"
-            else np.fliplr(visual_board)
-        )
-        visual_board = vectorized_chr(32 * (visual_board == 0) + visual_board).tolist()
-        visual_board = [
-            ["\x1b[26;36;40m" + str(8 - i) + " "]
-            + [
-                "\x1b[26;30;46m " + visual_board[i][j] + " \x1b[0m"
-                if (i + j + 1) % 2 == 0
-                else "\x1b[26;30;47m " + visual_board[i][j] + " \x1b[0m"
-                for j in range(8)
-            ]
-            for i in range(8)
-        ]
-        visual_board_string = "\n".join(["".join(item) for item in visual_board])
-        file_row = (
-            "  ".join("bcdefgh") if point_of_view == "white" else "  ".join("gfedcba")
-        )
-        file_row = (
-            "  a  " + file_row if point_of_view == "white" else "\n   h   " + file_row
-        )
-        visual_board_string += "\n\x1b[26;36;40m " + file_row + " \x1b[0m"
-        print(visual_board_string)
-
 
 gg = Board()
 gg.set_board_to_initial_configuration()
-gg.show()
-print(" ")
-gg.move_single_file_rank_input("d2d4")
-gg.show()
-# print(gg.is_ambiguous(an.algebraic_notation("4.Qb2")))
-print(gg.get_all_same_color_piece_positions("black"))
+# gg.show()
+# print(gg.get_fen())
+# print(" ")
+# gg.move_single_file_rank_input("d2d4")
+# gg.show()
+# # print(gg.is_ambiguous(an.algebraic_notation("4.Qb2")))
+# print(gg.get_all_same_color_piece_positions("black"))

@@ -1,4 +1,4 @@
-from utilities import *
+from utilities.BoardMaskGenerator import *
 
 
 class Piece:
@@ -46,7 +46,10 @@ class Pawn(Piece):
             for amount, direction in zip(amounts, directions)
             if is_coordinate_in_board(self.forward_squares(amount, direction))
         ]
-        return np.array(squares_in_range_mask)
+        binary_mat = np.zeros((8, 8))
+        for row_col in np.array(squares_in_range_mask):
+            binary_mat[tuple(row_col)] = 1
+        return binary_mat
 
 
 class Knight(Piece):
@@ -96,9 +99,13 @@ class Queen(Piece):
         )
 
     def get_path_mask(self, destination_row_column: list):
-        return get_diagonal_path_mask(
-            self.position_row_column, destination_row_column
-        ) + get_straight_path_mask(self.position_row_column, destination_row_column)
+        if (destination_row_column[1] == self.position_row_column[1]) or (
+            destination_row_column[0] == self.position_row_column[0]
+        ):
+            return get_straight_path_mask(
+                self.position_row_column, destination_row_column
+            )
+        return get_diagonal_path_mask(self.position_row_column, destination_row_column)
 
 
 class King(Piece):
@@ -133,8 +140,12 @@ class Empty(Piece):
         super().__init__(position_row_column, color, "empty")
 
 
-pp = Pawn([1, 2], "white")
-print(pp.color)
+# pp = Pawn([1, 2], "white")
+# rr = Rook([3, 2], "white")
+# # print(pp.color)
 
-print(pp.is_slider())
-pp.squares_in_range_mask()
+# # print(pp.is_slider())
+# print(pp.squares_in_range_mask())
+# # print(rr.squares_in_range_mask())
+# N = Knight([3, 2], "white")
+# print(N.squares_in_range_mask())

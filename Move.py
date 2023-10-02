@@ -1,8 +1,6 @@
-from utilities import *
-from Constants import *
-import numpy as np
+from utilities.PieceIdentifier import *
+from utilities.BoardUtilities import *
 import Board as bd
-import Piece as pc
 
 
 class Move:
@@ -16,8 +14,8 @@ class Move:
         self.destination_row_column = destination_row_column
         self.type = self.get_type()
 
-        if self.type == "empty":
-            raise ValueError("Can not move an empty square")
+        # if self.type == "empty":
+        #     raise ValueError("Can not move an empty square")
 
     def is_destination_occupied_by_same_color(self):
         if self.board.is_square_empty(self.destination_row_column):
@@ -26,7 +24,7 @@ class Move:
             self.destination_row_column
         )
         is_same_color = (
-            self.piece_object_to_move.color() == piece_object_at_destination.color()
+            self.piece_object_to_move.color == piece_object_at_destination.color
         )
         return is_same_color
 
@@ -39,21 +37,38 @@ class Move:
             return "pawn_promotion"
         # TODO think about what to add more.
 
+    # def is_pawn_path_clear(self, piece_object_to_move=[], destination_row_column=[]):
+
     def is_pawn_path_clear(self):
+        # TODO refactor it into more elegant form
+        # if piece_object_to_move == []:
+        #     piece_object_to_move = self.piece_object_to_move
+        # if destination_row_column == []:
+        #     destination_row_column = self.destination_row_column
+
         if self.piece_object_to_move.is_capture_attempt(self.destination_row_column):
-            return not self.is_destination_occupied_by_same_color()
+            return (
+                not self.board.is_square_empty(self.destination_row_column)
+            ) and not self.is_destination_occupied_by_same_color()
         if not self.board.is_square_empty(self.destination_row_column):
             return False
+        return True
+
+    # def is_path_clear(self, piece_object_to_move=[], destination_row_column=[]):
 
     def is_path_clear(self):
+        #     piece_object_to_move = self.piece_object_to_move
+        # if destination_row_column == []:
+        #     destination_row_column = self.destination_row_column
+
         if self.is_destination_occupied_by_same_color():
             return False
-        piece_type = self.piece_object_to_move.type()
+        piece_type = self.piece_object_to_move.type
         if piece_type in ["king", "knight"]:
             return True
         if self.piece_object_to_move.is_slider():
             path = self.piece_object_to_move.get_path_mask(self.destination_row_column)
-            is_path_clear = 0 == sum(self.board.board_matrix * path)
+            is_path_clear = all(0 == sum(self.board.board_matrix * path))
             return is_path_clear
         if piece_type == "pawn":
             return self.is_pawn_path_clear()
@@ -64,6 +79,7 @@ class Move:
         dummy_piece_object = self.board.create_piece_object(
             attacker_position_index, piece_type, piece_color
         )
+        # print(attacker_position_index)
         if not dummy_piece_object.is_in_range(position_row_column):
             return False
         return self.is_path_clear(dummy_piece_object, position_row_column)
@@ -76,6 +92,7 @@ class Move:
         attacker_positions_indices = self.board.get_piece_positions(
             attacker_piece_type, attacker_color
         )
+        # print(attacker_positions_indices)
         attacker_piece_id = piece_type_to_id(attacker_piece_type, attacker_color)
         is_under_attack_boolean = [
             self.is_threat(
@@ -103,15 +120,15 @@ class Move:
         return any(is_attacked_by_specific_piece_bool_list)
 
     def is_pawn_promotion(self):
-        if self.piece_object_to_move.type() != "pawn":
+        if self.piece_object_to_move.type != "pawn":
             return False
-        if self.piece_object_to_move.color() == "white":
+        if self.piece_object_to_move.color == "white":
             return self.destination_row_column[0] == 0
         else:
             return self.destination_row_column[0] == 7
 
     def is_castling_attempt(self):
-        if self.piece_object_to_move.type() != "king":
+        if self.piece_object_to_move.type != "king":
             return False
         if does_rank_change(
             self.piece_object_to_move.position_row_column, self.destination_row_column
@@ -174,42 +191,44 @@ class Move:
                 return self.is_king_side_castling_legal()
 
     # show castling by king movement
-    def is_check(self):
+    def is_new_position_check(self):
         anti_color = {"white": "black", "black": "white"}
+
         king_position_row_column = self.board.get_piece_positions(
             "king", self.piece_object_to_move.color
         )
-        return self.is_under_attack_by_any_piece(
-            king_position_row_column, anti_color[self.piece_object_to_move.color]
+        # TODO fix [[1,2]] error now it si temporarly fixed by king_position_row_column[0]
+        # print(king_position_row_column)
+
+        # self.board.move(
+        #     self.piece_object_to_move.position_row_column, self.destination_row_column
+        # )
+        out = self.is_under_attack_by_any_piece(
+            king_position_row_column[0], anti_color[self.piece_object_to_move.color]
         )
+
+        # self.board.move(
+        #     self.destination_row_column, self.piece_object_to_move.position_row_column
+        # )
+        return out
 
     def is_safe(self):
-        if self.is_check(self.board.board_matrix):
+        if self.is_new_position_check():
             return False
-        # add second condition
+        # TODO add second condition
+        return True
 
-    def get_legal_moves(self):
-        positions_of_pieces = self.board.get_all_same_color_piece_positions(
-            self.piece_object_to_move.color
-        )
-
-    def can_king_be_saved(self):
-        all_possible_moves = self.get_legal_moves()
-        pass
-
-    def is_check_mate(self):
-        if not self.is_check():
-            return False
-        return self.can_king_be_saved()
-
-    def is_move_legal(self):
+    def is_legal(self):
         if self.type == "empty":
             return False
+        if not self.piece_object_to_move.color == self.board.turn:
+            return False
         if self.type == "castling":
-            return self.is_castling_legal()
-        if not self.piece_object_to_move.is_in_range(self.destination_row_column):
+            # TODO implement castling check
             return False
         if not self.is_safe():
+            return False
+        if not self.piece_object_to_move.is_in_range(self.destination_row_column):
             return False
 
         return self.is_path_clear()
@@ -218,7 +237,7 @@ class Move:
         pass
 
 
-gg = bd.Board()
-gg.set_board_to_initial_configuration()
-gg.show()
-Move([4, 0], [5, 0], gg)
+# gg = bd.Board()
+# gg.set_board_to_initial_configuration()
+# gg.show()
+# Move([4, 0], [5, 0], gg)
