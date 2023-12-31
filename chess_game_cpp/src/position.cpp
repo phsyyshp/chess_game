@@ -2,7 +2,6 @@
 #include <cstdint>
 #include <iostream>
 
-Position::Position() {}
 void Position::set_white_pieces_to_initial_configuration() {
   white_pieces.rooks = 0b1ULL | 0b1ULL << 7;
   white_pieces.knights = 0b1ULL << 6 | 0b1ULL << 1;
