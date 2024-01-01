@@ -37,8 +37,8 @@ include_directories(${CMAKE_SOURCE_DIR}/src)
 #                    POST_BUILD
 #                    COMMAND ${EXECUTABLE_OUTPUT_PATH}/move_generation_test
 # )
-add_custom_command(TARGET loader_test
-                   POST_BUILD
-                   COMMAND ${EXECUTABLE_OUTPUT_PATH}/loader_test
-)
+# add_custom_command(TARGET loader_test
+#                    POST_BUILD
+#                    COMMAND ${EXECUTABLE_OUTPUT_PATH}/loader_test
+# )
  

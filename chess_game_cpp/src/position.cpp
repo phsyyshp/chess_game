@@ -1,6 +1,12 @@
 #include "position.hpp"
-#include <cstdint>
-#include <iostream>
+// #include "loader.hpp"
+// #include <cstdint>
+// #include <iostream>
+
+const std::vector<uint64_t> rook_magic_numbers =
+    read_magic_numbers_to_vec("rook");
+const std::vector<std::vector<uint64_t>> rook_look_up_tables =
+    read_look_up_tables("rook");
 
 void Position::set_white_pieces_to_initial_configuration() {
   white_pieces.rooks = 0b1ULL | 0b1ULL << 7;
@@ -33,7 +39,7 @@ void Position::set_board_to_initial_configuration() {
   can_black_castle.king_side = true;
   can_black_castle.queen_side = true;
 }
-void Position::print_board() {
+void Position::print_board() const {
   uint64_t n = white_pieces.all | black_pieces.all;
   for (int i = 63; i >= 0; i--) {
     if (i % 8 == 7) {
@@ -51,13 +57,13 @@ void Position::change_turn() {
     turn = "white";
   }
 }
-bool Position::is_square_empty(int square) {
+bool Position::is_square_empty(int square) const {
   uint64_t pieces = white_pieces.all | black_pieces.all;
   uint64_t square_mask = 1ULL << square;
   return pieces & square_mask == 0;
 }
 bool Position::is_destination_occupied_by_same_color(int source,
-                                                     int destination) {
+                                                     int destination) const {
   if (turn == "white") {
     return (white_pieces.all & (1ULL << destination)) != 0;
   } else {
