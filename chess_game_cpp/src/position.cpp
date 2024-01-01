@@ -8,6 +8,9 @@ const std::vector<uint64_t> rook_magic_numbers =
 const std::vector<std::vector<uint64_t>> rook_look_up_tables =
     read_look_up_tables("rook");
 
+Position::Pieces Position::get_white_pieces() const { return white_pieces; }
+Position::Pieces Position::get_black_pieces() const { return black_pieces; }
+
 void Position::set_white_pieces_to_initial_configuration() {
   white_pieces.rooks = 0b1ULL | 0b1ULL << 7;
   white_pieces.knights = 0b1ULL << 6 | 0b1ULL << 1;
@@ -57,16 +60,91 @@ void Position::change_turn() {
     turn = "white";
   }
 }
-bool Position::is_square_empty(int square) const {
+bool Position::is_square_empty(const int &square) const {
   uint64_t pieces = white_pieces.all | black_pieces.all;
   uint64_t square_mask = 1ULL << square;
   return pieces & square_mask == 0;
 }
-bool Position::is_destination_occupied_by_same_color(int source,
-                                                     int destination) const {
+bool Position::is_destination_occupied_by_same_color(
+    const int &source, const int &destination) const {
   if (turn == "white") {
     return (white_pieces.all & (1ULL << destination)) != 0;
   } else {
     return (black_pieces.all & (1ULL << destination)) != 0;
+  }
+}
+bool Position::is_sliding_move(const std::string &piecetype) const {
+  return piecetype == "bishop" || piecetype == "queen" || piecetype == "rook";
+}
+std::string Position ::get_piece_color(const uint64_t &position) const {
+
+  if (position | black_pieces.all) {
+    return "black";
+  } else if (position | white_pieces.all) {
+    return "white";
+  } else {
+    std::cerr << "empty square";
+  }
+}
+std::string Position::get_piece_type(const uint64_t &position) const {
+  std::string piece_color = get_piece_color(position);
+  std::string piece_type;
+  if (piece_color == "white") {
+    if (position & white_pieces.rooks) {
+      piece_type = "rook";
+    } else if (position & white_pieces.pawns) {
+      piece_type = "pawn";
+    } else if (position & white_pieces.queens) {
+
+      piece_type = "queen";
+    } else if (position & white_pieces.knights) {
+
+      piece_type = "knight";
+    } else if (position & white_pieces.king) {
+
+      piece_type = "king";
+    } else if (position & white_pieces.bishops) {
+
+      piece_type = "bishop";
+    }
+  } else if (piece_color == "black") {
+    if (position & black_pieces.rooks) {
+      piece_type = "rook";
+    } else if (position & black_pieces.pawns) {
+      piece_type = "pawn";
+    } else if (position & black_pieces.queens) {
+
+      piece_type = "queen";
+    } else if (position & black_pieces.knights) {
+
+      piece_type = "knight";
+    } else if (position & black_pieces.king) {
+
+      piece_type = "king";
+    } else if (position & black_pieces.bishops) {
+
+      piece_type = "bishop";
+    }
+  }
+  return piece_type;
+}
+bool Position::is_pseudo_legal_move(const int &source,
+                                    const int &destination) const {
+  if (is_square_empty(source)) {
+    return false;
+  };
+  uint64_t source_position = 0b1uLL << source;
+  std::string piece_type = get_piece_type(source_position);
+  std::string piece_color = get_piece_color(source_position);
+  if (turn != piece_color) {
+    return false;
+  } else if (is_destination_occupied_by_same_color(source, destination)) {
+    return false;
+  } else if (is_sliding_move(piece_type)) {
+    uint64_t all = white_pieces.all | black_pieces.all;
+    if (piece_type == "bishop") {
+      return get_attack_mask(source_position, all, bishop_magic_numbers,
+                             bishop_look_up_tables, piece_type);
+    } else if (piece)
   }
 }
