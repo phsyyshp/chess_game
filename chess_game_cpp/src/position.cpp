@@ -143,8 +143,10 @@ bool Position::is_pseudo_legal_move(const int &source,
   } else if (is_sliding_move(piece_type)) {
     uint64_t all = white_pieces.all | black_pieces.all;
     if (piece_type == "bishop") {
+      // /TODO fix it
       return get_attack_mask(source_position, all, bishop_magic_numbers,
                              bishop_look_up_tables, piece_type);
-    } else if (piece)
+    } else if (piece == "rook") {
+    }
   }
 }
