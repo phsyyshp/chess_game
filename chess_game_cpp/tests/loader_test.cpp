@@ -25,7 +25,7 @@ int main() {
   //     }
   //   }
   uint64_t attack_mask =
-      get_attack_mask(0b1ULL << 25 - 8, 0b1ULL << (3 * 8 - 9 + 25), rook_vec,
+      get_attack_mask(0b1ULL << 25 - 8, 0b1ULL << (3 * 8 - 9 + 26), rook_vec,
                       rook_vec_vec, "rook");
   std::cout << "attack_mask" << std::endl;
   print_board(attack_mask);
@@ -34,7 +34,7 @@ int main() {
   print_board(0b1ULL << 25 - 8);
   std::cout << "pos of obstacle" << std::endl;
 
-  print_board(0b1ULL << 3 * 8 - 9 + 25);
+  print_board(0b1ULL << 3 * 8 - 9 + 26);
   std::vector<uint64_t> bishop_vec = read_magic_numbers_to_vec("bishop");
   //   for (auto i : rook_vec) {
   //     std::cout << i << std::endl;

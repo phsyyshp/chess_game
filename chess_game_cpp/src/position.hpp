@@ -5,14 +5,19 @@
 
 class Position {
 public:
+  struct colored {
+    uint64_t white;
+    uint64_t black;
+  };
+
   struct Pieces {
-    uint64_t queens;
-    uint64_t bishops;
-    uint64_t knights;
-    uint64_t rooks;
-    uint64_t pawns;
-    uint64_t king;
-    uint64_t all;
+    colored queens;
+    colored bishops;
+    colored knights;
+    colored rooks;
+    colored pawns;
+    colored king;
+    colored all;
   };
   struct canCastle {
     bool king_side;
@@ -46,7 +51,7 @@ private:
   static const std::vector<std::vector<uint64_t>> bishop_look_up_tables;
 
   std::string turn;
-  Pieces white_pieces;
+  Pieces pieces;
   Pieces black_pieces;
   canCastle can_white_castle;
   canCastle can_black_castle;
