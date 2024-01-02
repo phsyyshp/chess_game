@@ -38,8 +38,13 @@ public:
   std::string get_piece_type(const uint64_t &position) const;
   bool is_pseudo_legal_move(const int &source, const int &destination) const;
 
-  Pieces get_white_pieces() const;
-  Pieces get_black_pieces() const;
+  bool is_sliding_move_legal(const uint64_t &source_mask,
+                             const uint64_t &destination_mask,
+                             const uint64_t &all_pieces,
+                             const std::string &piece_type) const;
+
+  Pieces get_pieces() const;
+  // Pieces get_black_pieces() const;
 
 private:
   void set_white_pieces_to_initial_configuration();
@@ -52,7 +57,7 @@ private:
 
   std::string turn;
   Pieces pieces;
-  Pieces black_pieces;
+  // Pieces black_pieces;
   canCastle can_white_castle;
   canCastle can_black_castle;
 };
