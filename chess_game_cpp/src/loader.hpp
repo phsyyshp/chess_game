@@ -5,6 +5,7 @@
 std::vector<uint64_t> line_to_nums_vec(const std::string &line);
 std::vector<uint64_t> read_magic_numbers_to_vec(std::string piece);
 std::vector<std::vector<uint64_t>> read_look_up_tables(std::string piece);
+std::vector<u_int64_t> read_knight_look_up_table();
 int get_linear_position(const uint64_t &position);
 std::vector<int> position_to_row_col(const uint64_t &position);
 int rook_relevant_bits(const uint64_t &position);

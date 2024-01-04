@@ -48,6 +48,25 @@ std::vector<std::vector<uint64_t>> read_look_up_tables(std::string piece) {
   in.close();
   return look_up_tables;
 }
+std::vector<u_int64_t> read_knight_look_up_table() {
+
+  std::string piece_type = "knight";
+  std::string file_name = "mask_cache/" + piece_type + "_look_up_tables.txt";
+  std::string line;
+  std::fstream in(file_name);
+  std::vector<uint64_t> look_up_table;
+  std::string number;
+  if (in) {
+    while (getline(in, line)) {
+      look_up_table.push_back(stoll(line));
+    }
+  } else {
+    std::cerr << "the " << file_name << " can not be opened" << std::endl;
+  }
+  in.close();
+  return look_up_table;
+};
+
 int get_linear_position(const uint64_t &position) {
   // Warning!! it starts from 0, i.e. a1 square is 0;
   return __builtin_ctzll(position);
@@ -113,9 +132,12 @@ get_attack_mask(const u_int64_t &position, const u_int64_t &bitboard,
   if (piece_type == "rook") {
 
     shiftBits = 64 - rook_relevant_bits(position);
-  } else {
+  } else if (piece_type == "bishop") {
 
     shiftBits = 64 - bishop_relevant_bits(position);
+  } else {
+    std::cerr << "wrong piece type";
+    return 0;
   }
   int linear_position = get_linear_position(position);
   uint64_t magic_index =
