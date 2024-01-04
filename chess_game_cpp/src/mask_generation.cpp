@@ -1,4 +1,3 @@
-#include "move_generation.hpp"
 #include <bitset>
 #include <cstdint>
 #include <fstream>
@@ -26,6 +25,18 @@ void print_board_os(std::ofstream &os, uint64_t pieces) {
     os << "\n";
   }
   os << "\n";
+}
+std::vector<uint64_t> factor_mask(uint64_t mask) {
+  std::vector<uint64_t> out_vec(__builtin_popcountll(mask));
+  int i = 0;
+  uint64_t counter = 1;
+  while (counter != 0) {
+    counter = ((mask) & (mask - 1));
+    out_vec[i] = mask ^ counter;
+    mask = counter;
+    i++;
+  }
+  return out_vec;
 }
 
 uint64_t remove_bit(uint64_t input, int bit) {
@@ -93,7 +104,6 @@ vector<uint64_t> generate_queen_masks() {
 }
 
 vector<uint64_t> generate_relevant_rook_occupancy_masks(uint64_t position) {
-  MoveGeneration move_generator;
   int linear_position = __builtin_ctzll(position);
   int column = linear_position % 8;
   int row = floor(linear_position / 8); // - (row * 8);
@@ -101,7 +111,7 @@ vector<uint64_t> generate_relevant_rook_occupancy_masks(uint64_t position) {
   uint64_t attack_mask = generate_rook_mask(position, 8);
   attack_mask = remove_bit(attack_mask, linear_position);
 
-  vector<uint64_t> individual_squares = move_generator.factor_mask(attack_mask);
+  vector<uint64_t> individual_squares = factor_mask(attack_mask);
 
   vector<uint64_t> out;
   int n = individual_squares.size();
@@ -117,7 +127,6 @@ vector<uint64_t> generate_relevant_rook_occupancy_masks(uint64_t position) {
   return out;
 }
 vector<uint64_t> generate_relevant_bishop_occupancy_masks(uint64_t position) {
-  MoveGeneration move_generator;
   int linear_position = __builtin_ctzll(position);
   int column = linear_position % 8;
   int row = floor(linear_position / 8); // - (row * 8);
@@ -126,7 +135,7 @@ vector<uint64_t> generate_relevant_bishop_occupancy_masks(uint64_t position) {
                          generate_bishop_mask(position, -1, 8);
   attack_mask = remove_bit(attack_mask, linear_position);
 
-  vector<uint64_t> individual_squares = move_generator.factor_mask(attack_mask);
+  vector<uint64_t> individual_squares = factor_mask(attack_mask);
 
   vector<uint64_t> out;
   int n = individual_squares.size();
@@ -588,6 +597,106 @@ void save_bishop_magic_numbers() {
 
   outFile.close();
 }
+uint64_t generate_knight_attack_mask(int position) {
+  /*        noNoWe    noNoEa
+            +15  +17
+             |     |
+noWeWe  +6 __|     |__+10  noEaEa
+              \   /
+               >0<
+           __ /   \ __
+soWeWe -10   |     |   -6  soEaEa
+             |     |
+            -17  -15
+        soSoWe    soSoEa
+        */
+  uint64_t attack_mask = 0;
+  uint64_t position_mask = 0b1uLL << position;
+  uint64_t noNoWe = position_mask << 15;
+  uint64_t noNoEa = position_mask << 17;
+  uint64_t noWeWe = position_mask << 6;
+  uint64_t noEaEa = position_mask << 10;
+  uint64_t soSoEa = position_mask >> 15;
+  uint64_t soSoWe = position_mask >> 17;
+  uint64_t soEaEa = position_mask >> 6;
+  uint64_t soWeWe = position_mask >> 10;
+
+  int linear_position = position;
+  int column = linear_position % 8;
+  int row = linear_position / 8;
+
+  if (column < 1) {
+    noNoWe = soSoWe = 0; // left edge
+  }
+  if (column < 2) {
+    noWeWe = soWeWe = 0; // left edge
+  }
+  if (column > 6) {
+    noNoEa = soSoEa = 0;
+  }
+
+  if (column > 5) {
+    noEaEa = soEaEa = 0; // right edge
+  }
+  if (row < 2) {
+    soSoWe = soSoEa = 0; // bottom edge
+  }
+  if (row < 1) {
+    soWeWe = soEaEa = 0;
+  }
+  if (row > 5) {
+    noNoWe = noNoEa = 0; // top edge
+  }
+  if (row > 6) {
+    noWeWe = noEaEa = 0;
+  }
+  attack_mask =
+      noNoWe | noNoEa | noWeWe | noEaEa | soSoEa | soSoWe | soEaEa | soWeWe;
+  return attack_mask;
+}
+
+std::vector<uint64_t> generate_knight_look_up_table() {
+  std::vector<uint64_t> look_up_table;
+  uint64_t attack_mask;
+  for (int i = 0; i < 64; i++) {
+    attack_mask = generate_knight_attack_mask(i);
+    look_up_table.push_back(attack_mask);
+  }
+  return look_up_table;
+}
+void save_knight_look_up_table() {
+
+  vector<uint64_t> out = generate_knight_look_up_table();
+  ofstream outFile("knight_lookup_table.txt");
+  if (!outFile) {
+    cerr << "Failed to open knight_lookup_tables.txt for writing\n";
+    throw runtime_error("Failed to open file");
+  }
+
+  for (const auto &attack : out) {
+    outFile << attack << '\n';
+  }
+
+  outFile.close();
+}
+void save_knight_attacks_cache() {
+  vector<uint64_t> knight_attacks = generate_knight_look_up_table();
+  ofstream outFile("knight_attacks.txt");
+  if (!outFile) {
+    cerr << "Failed to open knight_attacks.txt for writing\n";
+    throw runtime_error("Failed to open file");
+  }
+
+  for (const auto &attack : knight_attacks) {
+    // outFile << bitboard << ' ';
+    // outFile << std::bitset<64>(bitboard).to_string() << ' ';
+    print_board_os(outFile, attack);
+    // cout << bitboard << endl;
+    // outFile << '\n'; // new line for each inner vector
+  }
+
+  outFile.close();
+}
 
 int main() {
   // vector<uint64_t> out2 = generate_bishop_masks();
@@ -623,8 +732,12 @@ int main() {
   //   print_board(mask);
   //   cout << "\n";
   // }
+  /*
   save_bishop_magic_numbers();
   save_bishop_attacks_cache();
   save_bishop_lookup_tables();
+*/
+  save_knight_attacks_cache();
+  save_knight_look_up_table();
   return 0;
 }
