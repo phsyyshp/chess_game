@@ -17,7 +17,7 @@ Position::Pieces Position::get_pieces() const { return pieces; }
 // Position::Pieces Position::get_black_pieces() const { return pieces; }.black
 
 void Position::set_white_pieces_to_initial_configuration() {
-  pieces.rooks.white = 0b1ULL | 0b1ULL << 7;
+  pieces[color::white][piece_types::rooks] = 0b1ULL | 0b1ULL << 7;
   pieces.knights.white = 0b1ULL << 6 | 0b1ULL << 1;
   pieces.bishops.white = 0b1ULL << 5 | 0b1ULL << 2;
   pieces.queens.white = 0b1ULL << 4;
