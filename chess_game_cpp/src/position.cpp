@@ -15,6 +15,12 @@ const std::vector<std::vector<uint64_t>> Position::bishop_look_up_tables =
     read_look_up_tables("bishop");
 const std::vector<uint64_t> Position::knight_look_up_table =
     read_knight_look_up_table();
+const std::vector<uint64_t> Position::white_pawn_look_up_table =
+    read_white_pawn_look_up_table();
+
+const std::vector<uint64_t> Position::black_pawn_look_up_table =
+    read_white_pawn_look_up_table();
+
 // Setters
 void Position::set_white_pieces_to_initial_configuration() {
   pieces.rooks.white = 0b1ULL | 0b1ULL << 7;
@@ -102,9 +108,8 @@ void Position::change_turn() {
   }
 }
 // boleans
-bool Position::is_square_empty(const int &square) const {
+bool Position::is_square_empty(const uint64_t &square_mask) const {
   uint64_t all_pieces = pieces.all.white | pieces.all.black;
-  uint64_t square_mask = 1ULL << square;
   return all_pieces & square_mask == 0;
 }
 bool Position::is_destination_occupied_by_same_color(
@@ -143,34 +148,88 @@ bool Position::is_sliding_move_legal(const uint64_t &source_mask,
     return false;
   }
 }
-bool Position::is_knight_move(const std::string &piece_type) const {
-  return piece_type == "knight";
-}
 bool Position::is_knight_move_legal(const int &source,
                                     const uint64_t &destination_mask) const {
 
   return destination_mask & knight_look_up_table[source];
 };
+// bool Position::is_en_passant(const uint64_t &source_mask,
+//                              const uint64_t &destination_mask) const {
+
+// };
+bool Position::is_single_pawn_move_legal(
+    const uint64_t &source_mask, const uint64_t &destination_mask) const {
+  bool is_legal_push;
+  uint64_t legal_captures;
+  // TODO: there may be potential bugs regarding out of bound
+  if (turn == color::white) {
+    if (pieces.pawns.black &
+        white_pawn_look_up_table[__builtin_ctzll(source_mask)]) {
+      return true;
+    }
+    is_legal_push = (source_mask == (destination_mask >> 8));
+  } else if (turn == color::black) {
+    if (pieces.pawns.white &
+        black_pawn_look_up_table[__builtin_ctzll(source_mask)]) {
+      return true;
+    }
+
+    is_legal_push = (source_mask == (destination_mask << 8));
+  }
+  return is_legal_push && is_square_empty(destination_mask);
+};
+bool Position::is_double_pawn_move_legal(
+    const uint64_t &source_mask, const uint64_t &destination_mask) const {
+  // TODO: there may be potential bugs regarding out of bound
+  bool is_legal_double_push;
+  if (turn == color::white) {
+    is_legal_double_push = is_square_empty(destination_mask << 8) &&
+                           (source_mask == (destination_mask >> 16)) &&
+                           (source_mask / 8 == 1);
+  } else if (turn == color::black) {
+    is_legal_double_push = (source_mask == (destination_mask << 16)) &&
+                           (source_mask / 8 == 6) &&
+                           is_square_empty(destination_mask >> 8);
+  }
+  return is_legal_double_push && is_square_empty(destination_mask);
+};
+
+bool Position::is_pawn_move_legal(const uint64_t &source_mask,
+                                  const uint64_t &destination_mask,
+                                  const u_int64_t &all_pieces) const {
+  if (is_en_passant(source_mask, destination_mask)) {
+    return is_en_passant_legal(source_mask, destination_mask, all_pieces);
+  }
+  return is_single_pawn_move_legal(source_mask, destination_mask) ||
+         is_double_pawn_move_legal(source_mask, destination_mask);
+}
 bool Position::is_pseudo_legal_move(const int &source,
                                     const int &destination) const {
-  if (is_square_empty(source)) {
+  uint64_t source_mask = 0b1uLL << source;
+  if (is_square_empty(source_mask)) {
     return false;
   };
-  uint64_t source_mask = 0b1uLL << source;
   uint64_t destination_mask = 0b1uLL << destination;
   std::string piece_type = get_piece_type(source_mask);
   color piece_color = get_piece_color(source_mask);
+  uint64_t all_pieces = pieces.all.white | pieces.all.black;
+
   if (turn != piece_color) {
     return false;
-  } else if (is_destination_occupied_by_same_color(source, destination)) {
+  };
+  if (piece_type == "pawn") {
+    return is_pawn_move_legal(source_mask, destination_mask, all_pieces);
+  }
+  if (is_destination_occupied_by_same_color(source, destination)) {
     return false;
-  } else if (is_sliding_move(piece_type)) {
-    uint64_t all_pieces = pieces.all.white | pieces.all.black;
+  };
+  if (is_sliding_move(piece_type)) {
     return is_sliding_move_legal(source_mask, destination_mask, all_pieces,
                                  piece_type);
-  } else if (is_knight_move(piece_type)) {
+  };
+  if (piece_type == "knight") {
     return is_knight_move_legal(source_mask, destination_mask);
-  }
+  };
   // } else if (is_pawn_move(piece_type)) {
   // return is_pawn_move_legal(piece_type);
   // } else if (is_king_move())

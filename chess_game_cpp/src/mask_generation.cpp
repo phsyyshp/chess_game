@@ -597,6 +597,120 @@ void save_bishop_magic_numbers() {
 
   outFile.close();
 }
+uint64_t generate_white_pawn_attacks(int position) {
+  uint64_t position_mask = 0b1uLL << position;
+  uint64_t not_A_file = 0b1uLL;
+  uint64_t not_H_file = 0b1uLL << 7;
+  for (int i = 0; i < 8; i++) {
+    not_A_file |= 0b1uLL << (i * 8);
+  }
+  not_A_file = ~(not_A_file);
+  uint64_t h1 = 0b1uLL << 7;
+  for (int i = 0; i < 8; i++) {
+    not_H_file |= h1 << (i * 8);
+  }
+  not_H_file = ~(not_H_file);
+
+  return ((position_mask << 9) & (not_A_file)) |
+         ((position_mask << 7) & (not_H_file));
+}
+uint64_t generate_black_pawn_attacks(int position) {
+  uint64_t position_mask = 0b1uLL << position;
+  uint64_t not_A_file = 0b1uLL;
+  uint64_t not_H_file = 0b1uLL << 7;
+  for (int i = 0; i < 8; i++) {
+    not_A_file |= 0b1uLL << (i * 8);
+  }
+  not_A_file = ~(not_A_file);
+  uint64_t h1 = 0b1uLL << 7;
+  for (int i = 0; i < 8; i++) {
+    not_H_file |= h1 << (i * 8);
+  }
+  not_H_file = ~(not_H_file);
+
+  return ((position_mask >> 9) & (not_H_file)) |
+         ((position_mask >> 7) & (not_A_file));
+}
+std::vector<uint64_t> generate_all_white_pawn_attacks() {
+  std::vector<uint64_t> out;
+  for (int i = 8; i <= 8 * 7; i++) {
+    out.push_back(generate_white_pawn_attacks(i));
+  }
+  return out;
+}
+
+std::vector<uint64_t> generate_all_black_pawn_attacks() {
+  std::vector<uint64_t> out;
+  for (int i = 8; i <= 8 * 7; i++) {
+    out.push_back(generate_black_pawn_attacks(i));
+  }
+  return out;
+}
+
+void save_white_pawn_attack_look_up_table() {
+
+  vector<uint64_t> out = generate_all_white_pawn_attacks();
+  ofstream outFile("all_white_pawn_attacks.txt");
+  if (!outFile) {
+    cerr << "Failed to open all_white_pawn_attacks.txt for writing\n";
+    throw runtime_error("Failed to open file");
+  }
+
+  for (const auto &attack : out) {
+    outFile << attack << '\n';
+  }
+
+  outFile.close();
+}
+void save_white_pawn_attacks_cache() {
+  vector<uint64_t> white_pawn_attacks = generate_all_white_pawn_attacks();
+  ofstream outFile("white_pawn_attacks.txt");
+  if (!outFile) {
+    cerr << "Failed to open white_pawn_attacks.txt for writing\n";
+    throw runtime_error("Failed to open file");
+  }
+
+  for (const auto &attack : white_pawn_attacks) {
+    // outFile << bitboard << ' ';
+    // outFile << std::bitset<64>(bitboard).to_string() << ' ';
+    print_board_os(outFile, attack);
+    // cout << bitboard << endl;
+    // outFile << '\n'; // new line for each inner vector
+  }
+
+  outFile.close();
+}
+void save_black_pawn_attack_look_up_table() {
+  vector<uint64_t> out = generate_all_black_pawn_attacks();
+  ofstream outFile("all_black_pawn_attacks.txt");
+  if (!outFile) {
+    cerr << "Failed to open all_black_pawn_attacks.txt for writing\n";
+    throw runtime_error("Failed to open file");
+  }
+
+  for (const auto &attack : out) {
+    outFile << attack << '\n';
+  }
+
+  outFile.close();
+}
+void save_black_pawn_attacks_cache() {
+  vector<uint64_t> black_pawn_attacks = generate_all_black_pawn_attacks();
+  ofstream outFile("black_pawn_attacks.txt");
+  if (!outFile) {
+    cerr << "Failed to open black_pawn_attacks.txt for writing\n";
+    throw runtime_error("Failed to open file");
+  }
+  for (const auto &attack : black_pawn_attacks) {
+    // outFile << bitboard << ' ';
+    // outFile << std::bitset<64>(bitboard).to_string() << ' ';
+    print_board_os(outFile, attack);
+    // cout << bitboard << endl;
+    // outFile << '\n'; // new line for each inner vector
+  }
+
+  outFile.close();
+}
 uint64_t generate_knight_attack_mask(int position) {
   /*        noNoWe    noNoEa
             +15  +17
@@ -654,7 +768,11 @@ soWeWe -10   |     |   -6  soEaEa
       noNoWe | noNoEa | noWeWe | noEaEa | soSoEa | soSoWe | soEaEa | soWeWe;
   return attack_mask;
 }
+// uint64_t generate_king_attack_mask(int position){
+// /*
 
+// */
+// }
 std::vector<uint64_t> generate_knight_look_up_table() {
   std::vector<uint64_t> look_up_table;
   uint64_t attack_mask;
@@ -737,7 +855,12 @@ int main() {
   save_bishop_attacks_cache();
   save_bishop_lookup_tables();
 */
-  save_knight_attacks_cache();
-  save_knight_look_up_table();
+  // save_knight_attacks_cache();
+  // save_knight_look_up_table();
+  save_black_pawn_attacks_cache();
+  save_white_pawn_attacks_cache();
+  save_white_pawn_attack_look_up_table();
+  save_black_pawn_attack_look_up_table();
+
   return 0;
 }
