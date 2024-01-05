@@ -80,7 +80,6 @@ public:
     uint64_t white;
     uint64_t black;
   };
-
   struct Pieces {
     colored queens;
     colored bishops;
@@ -117,16 +116,21 @@ public:
   bool isDoublePawnMoveLegal(const uint64_t &sourceMask,
                              const uint64_t &destinationMask) const;
   bool isPawnMoveLegal(const uint64_t &sourceMask,
-                       const uint64_t &destinationMask,
-                       const uint64_t &allPieces) const;
+                       const uint64_t &destinationMask) const;
   bool isPseudoLegalMove(const int &source, const int &destination) const;
 
   bool isSlidingMoveLegal(const uint64_t &sourceMask,
                           const uint64_t &destinationMask,
                           const uint64_t &allPieces,
                           const std::string &pieceType) const;
-
+  bool isKingMoveLegal(const int &source,
+                       const uint64_t &destinationMask) const;
+  bool isAttackedBySlider(const uint64_t &sourceMask) const;
+  bool isAttackedByPawn(const int &source) const;
+  bool isAttackedByKing(const int &source) const;
+  bool isAttackedByKnight(const int &source) const;
   // Pieces getBlackPieces() const;
+  bool isCheck() const;
 
 private:
   void setWhitePiecesToInitialConfiguration();
@@ -140,7 +144,7 @@ private:
   static const std::vector<uint64_t> knightLookUpTable;
   static const std::vector<uint64_t> whitePawnLookUpTable;
   static const std::vector<uint64_t> blackPawnLookUpTable;
-
+  static const std::vector<uint64_t> kingLookUpTable;
   color turn;
   Pieces pieces;
   canCastle canWhiteCastle;

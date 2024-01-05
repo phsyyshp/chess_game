@@ -633,7 +633,7 @@ uint64_t generate_black_pawn_attacks(int position) {
 }
 std::vector<uint64_t> generate_all_white_pawn_attacks() {
   std::vector<uint64_t> out;
-  for (int i = 8; i <= 8 * 7; i++) {
+  for (int i = 0; i <= 63; i++) {
     out.push_back(generate_white_pawn_attacks(i));
   }
   return out;
@@ -641,7 +641,7 @@ std::vector<uint64_t> generate_all_white_pawn_attacks() {
 
 std::vector<uint64_t> generate_all_black_pawn_attacks() {
   std::vector<uint64_t> out;
-  for (int i = 8; i <= 8 * 7; i++) {
+  for (int i = 0; i <= 63; i++) {
     out.push_back(generate_black_pawn_attacks(i));
   }
   return out;
@@ -816,6 +816,68 @@ void save_knight_attacks_cache() {
   outFile.close();
 }
 
+u_int64_t generate_king_attack(int position) {
+  uint64_t position_mask = 0b1uLL << position;
+  std::vector<int> row_col = position_to_row_col(position_mask);
+  int row = row_col[0];
+  int col = row_col[1];
+
+  uint64_t we = position_mask >> 1;
+  uint64_t ea = position_mask << 1;
+  uint64_t no = position_mask << 8;
+  uint64_t so = position_mask >> 8;
+  uint64_t noWe = position_mask << 7;
+  uint64_t noEa = position_mask << 9;
+  uint64_t soWe = position_mask >> 9;
+  uint64_t soEa = position_mask >> 7;
+  if (col == 0) {
+    we = noWe = soWe = 0;
+  }
+  if (col == 7) {
+    ea = noEa = soEa = 0;
+  }
+  if (row == 7) {
+    no = noWe = noEa = 0;
+  }
+  if (row == 0) {
+    so = soWe = soEa = 0;
+  }
+  return we | ea | no | so | noWe | noEa | soWe | soEa;
+}
+std::vector<uint64_t> generate_king_look_up_table() {
+  std::vector<uint64_t> king_look_up_table;
+  for (int i; i < 64; i++) {
+    king_look_up_table.push_back(generate_king_attack(i));
+  }
+  return king_look_up_table;
+}
+void save_king_look_up_table() {
+  std::string file_name = "king_look_up_table.txt";
+  std::ofstream out(file_name);
+  std::vector<uint64_t> king_look_up_table = generate_king_look_up_table();
+  if (out) {
+    for (auto attack : king_look_up_table) {
+      out << attack << std::endl;
+    }
+  } else {
+    std::cerr << "the file can not be opened";
+  }
+  out.close();
+}
+void save_king_attacks() {
+  std::string file_name = "king_atacks.txt";
+  std::ofstream out(file_name);
+  std::vector<uint64_t> king_look_up_table = generate_king_look_up_table();
+  if (out) {
+    for (auto attack : king_look_up_table) {
+      print_board_os(out, attack);
+    }
+  } else {
+    std::cerr << "the file can not be opened";
+  }
+  out.close();
+}
+
 int main() {
   // vector<uint64_t> out2 = generate_bishop_masks();
   // vector<uint64_t> out3 = generate_rook_masks();
@@ -861,6 +923,7 @@ int main() {
   save_white_pawn_attacks_cache();
   save_white_pawn_attack_look_up_table();
   save_black_pawn_attack_look_up_table();
-
+  // save_king_look_up_table();
+  // save_king_attacks();
   return 0;
 }

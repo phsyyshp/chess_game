@@ -75,7 +75,7 @@ std::vector<uint64_t> readWhitePawnLookUpTable() {
   std::fstream in(fileName);
   std::vector<uint64_t> lookUpTable(64);
   std::string number;
-  int i = 8;
+  int i = 0;
   if (in) {
 
     while (getline(in, line)) {
@@ -105,6 +105,22 @@ std::vector<uint64_t> readBlackPawnLookUpTable() {
   in.close();
   return lookUpTable;
 };
+std::vector<uint64_t> readKingLookUpTable() {
+  std::string file_name = "mask_cache/king_look_up_table.txt";
+  std::ifstream in(file_name);
+  std::vector<uint64_t> kingLookUptable;
+  std::string line;
+  if (in) {
+    while (getline(in, line)) {
+      kingLookUptable.push_back(stoll(line));
+    }
+  } else {
+    std::cerr << "file " + file_name + "is not found";
+  }
+  in.close();
+  return kingLookUptable;
+};
+
 int getLinearPosition(const uint64_t &position) {
   // Warning!! it starts from 0, i.e. a1 square is 0;
   return __builtin_ctzll(position);
