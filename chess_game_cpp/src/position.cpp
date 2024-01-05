@@ -21,6 +21,8 @@ const std::vector<uint64_t> Position::whitePawnLookUpTable =
 const std::vector<uint64_t> Position::blackPawnLookUpTable =
     readWhitePawnLookUpTable();
 
+const std::vector<uint64_t> Position::kingLookUpTable = readKingLookUpTable();
+
 // Setters
 void Position::setWhitePiecesToInitialConfiguration() {
   pieces.rooks.white = 0b1ULL | 0b1ULL << 7;
@@ -195,14 +197,89 @@ bool Position::isDoublePawnMoveLegal(const uint64_t &sourceMask,
 };
 
 bool Position::isPawnMoveLegal(const uint64_t &sourceMask,
-                               const uint64_t &destinationMask,
-                               const uint64_t &allPieces) const {
-  if (isEnPassant(sourceMask, destinationMask)) {
-    return isEnPassantLegal(sourceMask, destinationMask, allPieces);
-  }
+                               const uint64_t &destinationMask) const {
+  // if (isEnPassant(sourceMask, destinationMask)) {
+  //   return isEnPassantLegal(sourceMask, destinationMask, allPieces);
+  // }
   return isSinglePawnMoveLegal(sourceMask, destinationMask) ||
          isDoublePawnMoveLegal(sourceMask, destinationMask);
 }
+bool Position::isKingMoveLegal(const int &source,
+                               const uint64_t &destinationMask) const {
+  return destinationMask & kingLookUpTable[source];
+};
+
+bool Position::isAttackedBySlider(const uint64_t &sourceMask) const {
+
+  uint64_t allPieces = pieces.all.black | pieces.all.white;
+  if (turn == color::white) {
+    return (pieces.bishops.black &
+            getAttackMask(sourceMask, allPieces, bishopMagicNumbers,
+                          bishopLookUpTables, "bishop")) |
+           (pieces.rooks.black & getAttackMask(sourceMask, allPieces,
+                                               rookMagicNumbers,
+                                               rookLookUpTables, "rook")) |
+           (pieces.queens.black &
+            (getAttackMask(sourceMask, allPieces, bishopMagicNumbers,
+                           bishopLookUpTables, "bishop") |
+             getAttackMask(sourceMask, allPieces, rookMagicNumbers,
+                           rookLookUpTables, "rook")));
+  } else if (turn == color::black) {
+
+    return (pieces.bishops.white &
+            getAttackMask(sourceMask, allPieces, bishopMagicNumbers,
+                          bishopLookUpTables, "bishop")) |
+           (pieces.rooks.white & getAttackMask(sourceMask, allPieces,
+                                               rookMagicNumbers,
+                                               rookLookUpTables, "rook")) |
+           (pieces.queens.white &
+            (getAttackMask(sourceMask, allPieces, bishopMagicNumbers,
+                           bishopLookUpTables, "bishop") |
+             getAttackMask(sourceMask, allPieces, rookMagicNumbers,
+                           rookLookUpTables, "rook")));
+  }
+}
+bool Position::isAttackedByPawn(const int &source) const {
+
+  if (turn == color::white) {
+    return pieces.pawns.black & whitePawnLookUpTable[source];
+  } else if (turn == color::black) {
+    return pieces.pawns.white & blackPawnLookUpTable[source];
+  }
+}
+bool Position::isAttackedByKnight(const int &source) const {
+  if (turn == color::white) {
+    return pieces.knights.black & knightLookUpTable[source];
+  } else if (turn == color::black) {
+
+    return pieces.knights.white & knightLookUpTable[source];
+  }
+}
+bool Position::isAttackedByKing(const int &source) const {
+  if (turn == color::white) {
+    return pieces.king.black & kingLookUpTable[source];
+  } else if (turn == color::black) {
+
+    return pieces.king.white & kingLookUpTable[source];
+  }
+}
+bool Position::isCheck() const {
+  uint64_t kingPositionMask;
+  uint64_t kingPosition;
+
+  if (turn == color::white) {
+
+    kingPositionMask = pieces.king.white;
+    kingPosition = __builtin_ctzll(kingPositionMask);
+  } else {
+
+    kingPositionMask = pieces.king.black;
+    kingPosition = __builtin_ctzll(kingPositionMask);
+  }
+  return isAttackedBySlider(kingPositionMask) ||
+         isAttackedByPawn(kingPosition) || isAttackedByKing(kingPosition) ||
+         isAttackedByKnight(kingPosition);
+};
 bool Position::isPseudoLegalMove(const int &source,
                                  const int &destination) const {
   uint64_t sourceMask = 0b1uLL << source;
@@ -230,6 +307,9 @@ bool Position::isPseudoLegalMove(const int &source,
   if (pieceType == "knight") {
     return isKnightMoveLegal(sourceMask, destinationMask);
   };
+  if (pieceType == "king") {
+    return isKingMoveLegal(source, destinationMask);
+  }
   // } else if (isPawnMove(pieceType)) {
   // return isPawnMoveLegal(pieceType);
   // } else if (isKingMove())
