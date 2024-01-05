@@ -109,7 +109,6 @@ void Position::changeTurn() {
     turn = color::white;
   }
 }
-// boleans
 bool Position::isSquareEmpty(const uint64_t &squareMask) const {
   uint64_t allPieces = pieces.all.white | pieces.all.black;
   return allPieces & squareMask == 0;
@@ -117,7 +116,7 @@ bool Position::isSquareEmpty(const uint64_t &squareMask) const {
 bool Position::isDestinationOccupiedBySameColor(const int &source,
                                                 const int &destination) const {
   if (turn == color::white) {
-    return (pieces.all.white & (1ULL << destination)) != 0;
+    return (pieces.all.white & (0b1ULL << destination)) != 0;
   } else {
     return (pieces.all.black & (1ULL << destination)) != 0;
   }
@@ -162,8 +161,8 @@ bool Position::isKnightMoveLegal(const int &source,
 bool Position::isSinglePawnMoveLegal(const uint64_t &sourceMask,
                                      const uint64_t &destinationMask) const {
   bool isLegalPush;
-  uint64_t legalCaptures;
-  // TODO: there may be potential bugs regarding out of bound
+  uint64_t legalCaptures; // TODO: there may be potential bugs regarding out of
+                          // bound;
   if (turn == color::white) {
     if (pieces.pawns.black &
         whitePawnLookUpTable[__builtin_ctzll(sourceMask)]) {
@@ -295,7 +294,7 @@ bool Position::isPseudoLegalMove(const int &source,
     return false;
   };
   if (pieceType == "pawn") {
-    return isPawnMoveLegal(sourceMask, destinationMask, allPieces);
+    return isPawnMoveLegal(sourceMask, destinationMask);
   }
   if (isDestinationOccupiedBySameColor(source, destination)) {
     return false;
