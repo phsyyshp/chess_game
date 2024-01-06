@@ -14,9 +14,9 @@ std::vector<uint64_t> readKingLookUpTable();
 int getLinearPosition(const uint64_t &position);
 std::vector<int> positionToRowCol(const uint64_t &position);
 int rookRelevantBits(const uint64_t &position);
-int bishopRelevantBits(const uint64_t &position);
-uint64_t generateMagicIndex(const uint64_t &bitboard,
-                            const uint64_t &magicNumber, int shiftBits);
+// int bishopRelevantBits(const uint64_t &position);
+int generateMagicIndex(const uint64_t &bitboard, const uint64_t &magicNumber,
+                       int shiftBits);
 
 uint64_t getAttackMask(const uint64_t &position, const uint64_t &bitboard,
                        const std::vector<uint64_t> &magicNumbers,
