@@ -2,6 +2,30 @@
 // #include <fstream>
 // #include <iostream>
 // #include <vector>
+std::string pieceToStr(piece pieceType) {
+  switch (pieceType) {
+  case bishop:
+    return "bishop";
+    break;
+  case queen:
+    return "queen";
+    break;
+  case king:
+    return "king";
+    break;
+  case pawn:
+    return "pawn";
+    break;
+  case knight:
+    return "knight";
+    break;
+  case rook:
+    return "rook";
+    break;
+  default:
+    break;
+  }
+}
 std::vector<uint64_t> lineToNumsVec(const std::string &line) {
   std::vector<uint64_t> out;
   std::string number;
@@ -15,8 +39,9 @@ std::vector<uint64_t> lineToNumsVec(const std::string &line) {
   }
   return out;
 }
-std::vector<uint64_t> readMagicNumbersToVec(std::string piece) {
-  std::string fileName = "maskCache/" + piece + "MagicNumbers.txt";
+std::vector<uint64_t> readMagicNumbersToVec(piece pieceType) {
+  std::string pieceTypeStr = pieceToStr(pieceType);
+  std::string fileName = "mask_cache/" + pieceTypeStr + "_magic_numbers.txt";
   std::vector<uint64_t> out;
   std::string temp;
   std::fstream in(fileName);
@@ -30,8 +55,10 @@ std::vector<uint64_t> readMagicNumbersToVec(std::string piece) {
   in.close();
   return out;
 }
-std::vector<std::vector<uint64_t>> readLookUpTables(std::string piece) {
-  std::string fileName = "maskCache/" + piece + "LookUpTables.txt";
+std::vector<std::vector<uint64_t>> readLookUpTables(piece pieceType) {
+  std::string pieceTypeStr = pieceToStr(pieceType);
+
+  std::string fileName = "mask_cache/" + pieceTypeStr + "_look_up_tables.txt";
   std::vector<std::vector<uint64_t>> lookUpTables;
   std::string line;
   std::fstream in(fileName);
@@ -50,15 +77,15 @@ std::vector<std::vector<uint64_t>> readLookUpTables(std::string piece) {
 }
 std::vector<u_int64_t> readKnightLookUpTable() {
 
-  std::string pieceType = "knight";
-  std::string fileName = "maskCache/" + pieceType + "LookUpTables.txt";
+  std::string pieceTypeStr = "knight";
+  std::string fileName = "mask_cache/" + pieceTypeStr + "_look_up_table.txt";
   std::string line;
   std::fstream in(fileName);
   std::vector<uint64_t> lookUpTable;
   std::string number;
   if (in) {
     while (getline(in, line)) {
-      lookUpTable.push_back(stoll(line));
+      lookUpTable.push_back(stoull(line));
     }
   } else {
     std::cerr << "the " << fileName << " can not be opened" << std::endl;
@@ -66,11 +93,10 @@ std::vector<u_int64_t> readKnightLookUpTable() {
   in.close();
   return lookUpTable;
 };
-
 std::vector<uint64_t> readWhitePawnLookUpTable() {
 
-  std::string pieceType = "whitePawn";
-  std::string fileName = "maskCache/" + pieceType + "LookUpTables.txt";
+  std::string pieceTypeStr = "white_pawn";
+  std::string fileName = "mask_cache/" + pieceTypeStr + "_look_up_table.txt";
   std::string line;
   std::fstream in(fileName);
   std::vector<uint64_t> lookUpTable(64);
@@ -79,7 +105,7 @@ std::vector<uint64_t> readWhitePawnLookUpTable() {
   if (in) {
 
     while (getline(in, line)) {
-      lookUpTable[i] = stoll(line);
+      lookUpTable[i] = stoull(line);
     }
   } else {
     std::cerr << "the " << fileName << " can not be opened" << std::endl;
@@ -89,15 +115,15 @@ std::vector<uint64_t> readWhitePawnLookUpTable() {
 };
 std::vector<uint64_t> readBlackPawnLookUpTable() {
 
-  std::string pieceType = "blackPawn";
-  std::string fileName = "maskCache/" + pieceType + "LookUpTables.txt";
+  std::string pieceTypeStr = "black_pawn";
+  std::string fileName = "mask_cache/" + pieceTypeStr + "_look_up_table.txt";
   std::string line;
   std::fstream in(fileName);
   std::vector<uint64_t> lookUpTable;
   std::string number;
   if (in) {
     while (getline(in, line)) {
-      lookUpTable.push_back(stoll(line));
+      lookUpTable.push_back(stoull(line));
     }
   } else {
     std::cerr << "the " << fileName << " can not be opened" << std::endl;
@@ -112,7 +138,7 @@ std::vector<uint64_t> readKingLookUpTable() {
   std::string line;
   if (in) {
     while (getline(in, line)) {
-      kingLookUptable.push_back(stoll(line));
+      kingLookUptable.push_back(stoull(line));
     }
   } else {
     std::cerr << "file " + file_name + "is not found";
@@ -120,13 +146,11 @@ std::vector<uint64_t> readKingLookUpTable() {
   in.close();
   return kingLookUptable;
 };
-
 int getLinearPosition(const uint64_t &position) {
   // Warning!! it starts from 0, i.e. a1 square is 0;
   return __builtin_ctzll(position);
 }
 std::vector<int> positionToRowCol(const uint64_t &position) {
-
   int linearPosition = getLinearPosition(position);
   int column = linearPosition % 8;
   int row = (linearPosition / 8);
@@ -148,9 +172,8 @@ int rookRelevantBits(const uint64_t &position) {
   }
   return relevantBits;
 }
-
-int bishopRelevantBits(const uint64_t &position) {
-  std::vector<int> rowColVec = positionToRowCol(position);
+int bishopRelevantBits(const uint64_t &positionMask) {
+  std::vector<int> rowColVec = positionToRowCol(positionMask);
   int row = rowColVec[0];
   int column = rowColVec[1];
 
@@ -163,34 +186,46 @@ int bishopRelevantBits(const uint64_t &position) {
   // Maximum distance to the edge in any diagonal direction
   int maxDiagonalDistance = std::max({distNESW, distNWSE, distSENW, distSWNE});
 
-  // Total number of squares on the longest diagonal minus the square the bishop
-  // is on
+  // Total number of squares on the longest diagonal minus the square the
+  // bishop is on
   int relevantBits = 2 * maxDiagonalDistance + 1;
 
+  // Count top left squares
+  int topLeft = std::min(row, column) - 1;
+
+  // Count bottom right squares
+  int bottomRight = 8 - std::max(row, column);
+
+  // Count top right squares
+  int topRight = std::min(row, 9 - column) - 1;
+
+  // Count bottom left squares
+  int bottomLeft = 8 - std::max(row, 9 - column);
+
+  // Return total count
   return relevantBits;
 }
-
 uint64_t generateMagicIndex(const uint64_t &bitboard,
                             const uint64_t &magicNumber, int shiftBits) {
   return (bitboard * magicNumber) >> shiftBits;
 }
-uint64_t getAttackMask(const u_int64_t &position, const u_int64_t &bitboard,
+uint64_t getAttackMask(const uint64_t &positionMask, const uint64_t &bitboard,
                        const std::vector<uint64_t> &magicNumbers,
                        const std::vector<std::vector<uint64_t>> &lookUpTables,
-                       std::string pieceType) {
+                       piece pieceType) {
   // TODO: dont forget to generalize this to bishop;
   int shiftBits;
-  if (pieceType == "rook") {
+  if (pieceType == piece::rook) {
 
-    shiftBits = 64 - rookRelevantBits(position);
-  } else if (pieceType == "bishop") {
+    shiftBits = 64 - rookRelevantBits(positionMask);
+  } else if (pieceType == piece::bishop) {
 
-    shiftBits = 64 - bishopRelevantBits(position);
+    shiftBits = 64 - bishopRelevantBits(positionMask);
   } else {
     std::cerr << "wrong piece type";
     return 0;
   }
-  int linearPosition = getLinearPosition(position);
+  int linearPosition = getLinearPosition(positionMask);
   uint64_t magicIndex =
       generateMagicIndex(bitboard, magicNumbers[linearPosition], shiftBits);
   return lookUpTables[linearPosition][magicIndex];
