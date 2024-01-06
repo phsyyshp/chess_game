@@ -284,7 +284,6 @@ bool Position::isPseudoLegalMove(const int &source,
     return isKingMoveLegal(source, destinationMask);
   }
 }
-
 bool Position::isLegalMove(const int &source, const int &destination) const {
   std::vector<std::vector<uint64_t>> piecesTemp =
       makeSoftMove(source, destination);
