@@ -13,7 +13,6 @@ int rookRelevantBits(const uint64_t &position);
 // int bishopRelevantBits(const uint64_t &position);
 int generateMagicIndex(const uint64_t &bitboard, const uint64_t &magicNumber,
                        int shiftBits);
-
 uint64_t getAttackMask(const uint64_t &position, const uint64_t &bitboard,
                        const std::vector<uint64_t> &magicNumbers,
                        const std::vector<std::vector<uint64_t>> &lookUpTables,

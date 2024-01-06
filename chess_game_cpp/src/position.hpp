@@ -2,7 +2,11 @@
 #include <cstdint>
 #include <iostream>
 #include <string>
-
+struct lookUps {
+  uint64_t mask;
+  int shiftBit;
+  uint64_t magicNum;
+};
 class Position {
 public:
   struct canCastle {
@@ -58,7 +62,7 @@ private:
   void setWhitePiecesToInitialConfiguration();
   void setBlackPiecesToInitialConfiguration();
   // slider cache
-  static const std::vector<uint64_t> rookMagicNumbers;
+  static const std::vector<lookUps> rookTbls;
   static const std::vector<std::vector<uint64_t>> rookLookUpTables;
   static const std::vector<uint64_t> bishopMagicNumbers;
   static const std::vector<std::vector<uint64_t>> bishopLookUpTables;
