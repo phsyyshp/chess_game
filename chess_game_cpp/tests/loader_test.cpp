@@ -12,21 +12,11 @@ void print_board(uint64_t pieces) {
 }
 
 int main() {
-  std::vector<uint64_t> rook_vec = read_magic_numbers_to_vec("rook");
-  //   for (auto i : rook_vec) {
-  //     std::cout << i << std::endl;
-  //   }
-  std::vector<std::vector<uint64_t>> rook_vec_vec = read_look_up_tables("rook");
-
-  //   for (auto i : rook_vec_vec) {
-  //     std::cout << std::endl;
-  //     for (auto c : i) {
-  //       std::cout << c << ' ';
-  //     }
-  //   }
+  std::vector<uint64_t> rook_vec = readMagicNumbersToVec(rook);
+  std::vector<std::vector<uint64_t>> rook_vec_vec = readLookUpTables(rook);
   uint64_t attack_mask =
-      get_attack_mask(0b1ULL << 25 - 8, 0b1ULL << (3 * 8 - 9 + 26), rook_vec,
-                      rook_vec_vec, "rook");
+      getAttackMask(0b1ULL << 25 - 8, 0b1ULL << (3 * 8 - 9 + 26), rook_vec,
+                    rook_vec_vec, rook);
   std::cout << "attack_mask" << std::endl;
   print_board(attack_mask);
   std::cout << "pos of piece" << std::endl;
@@ -35,22 +25,14 @@ int main() {
   std::cout << "pos of obstacle" << std::endl;
 
   print_board(0b1ULL << 3 * 8 - 9 + 26);
-  std::vector<uint64_t> bishop_vec = read_magic_numbers_to_vec("bishop");
-  //   for (auto i : rook_vec) {
-  //     std::cout << i << std::endl;
-  //   }
-  std::vector<std::vector<uint64_t>> bishop_vec_vec =
-      read_look_up_tables("bishop");
-
-  //   for (auto i : rook_vec_vec) {
-  //     std::cout << std::endl;
-  //     for (auto c : i) {
-  //       std::cout << c << ' ';
-  //     }
-  //   }
+  std::vector<uint64_t> bishop_vec = readMagicNumbersToVec(bishop);
+  std::vector<std::vector<uint64_t>> bishop_vec_vec = readLookUpTables(bishop);
   uint64_t bishop_attack_mask =
-      get_attack_mask(0b1ULL << 25 - 8, 0b1ULL << (3 * 8 - 9 + 25), bishop_vec,
-                      bishop_vec_vec, "bishop");
+      getAttackMask(0b1ULL << 25 - 8, 0b1ULL << (3 * 8 - 9 + 25), bishop_vec,
+                    bishop_vec_vec, bishop);
+  std::cout << "___------------------------------------------" << std::endl;
+
+  std::cout << "bishop stuff" << std::endl;
   std::cout << "attack_mask" << std::endl;
   print_board(bishop_attack_mask);
   std::cout << "pos of piece" << std::endl;

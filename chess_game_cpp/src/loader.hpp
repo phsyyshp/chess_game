@@ -1,10 +1,11 @@
+#include "constants.hpp"
 #include <algorithm>
 #include <fstream>
 #include <iostream>
 #include <vector>
 std::vector<uint64_t> lineToNumsVec(const std::string &line);
-std::vector<uint64_t> readMagicNumbersToVec(std::string piece);
-std::vector<std::vector<uint64_t>> readLookUpTables(std::string piece);
+std::vector<uint64_t> readMagicNumbersToVec(piece pieceType);
+std::vector<std::vector<uint64_t>> readLookUpTables(piece pieceType);
 std::vector<uint64_t> readKnightLookUpTable();
 std::vector<uint64_t> readWhitePawnLookUpTable();
 std::vector<uint64_t> readBlackPawnLookUpTable();
@@ -20,4 +21,4 @@ uint64_t generateMagicIndex(const uint64_t &bitboard,
 uint64_t getAttackMask(const uint64_t &position, const uint64_t &bitboard,
                        const std::vector<uint64_t> &magicNumbers,
                        const std::vector<std::vector<uint64_t>> &lookUpTables,
-                       std::string pieceType);
+                       piece pieceType);
