@@ -816,7 +816,7 @@ void save_knight_attacks_cache() {
   outFile.close();
 }
 
-u_int64_t generate_king_attack(int position) {
+uint64_t generate_king_attack(int position) {
   uint64_t position_mask = 0b1uLL << position;
   std::vector<int> row_col = position_to_row_col(position_mask);
   int row = row_col[0];
@@ -877,6 +877,62 @@ void save_king_attacks() {
   }
   out.close();
 }
+void save_rook_masks() {
+  std::string file_name = "rook_mask_table.txt";
+  std::ofstream out(file_name);
+  if (out) {
+    for (int i = 0; i < 64; i++) {
+
+      out << remove_bit(generate_rook_mask(0b1ull << i, 8), i) << std::endl;
+    }
+  } else {
+    std::cerr << "the file can not be opened";
+  }
+  out.close();
+}
+void save_rook_shifts() {
+  std::string file_name = "rook_shifts.txt";
+  std::ofstream out(file_name);
+  if (out) {
+    for (int i = 0; i < 64; i++) {
+
+      out << __builtin_popcountll(
+                 remove_bit(generate_rook_mask(0b1ull << i, 8), i))
+          << std::endl;
+    }
+  } else {
+    std::cerr << "the file can not be opened";
+  }
+  out.close();
+}
+void save_bishop_masks() {
+  std::string file_name = "bishop_masks.txt";
+  std::ofstream out(file_name);
+  std::vector<uint64_t> bishop_masks = generate_bishop_masks();
+  if (out) {
+    for (int i = 0; i < 64; i++) {
+
+      out << remove_bit(bishop_masks[i], i) << std::endl;
+    }
+  } else {
+    std::cerr << "the file can not be opened";
+  }
+  out.close();
+}
+void save_bishop_shifts() {
+  std::string file_name = "bishop_shifts.txt";
+  std::ofstream out(file_name);
+  std::vector<uint64_t> bishop_masks = generate_bishop_masks();
+  if (out) {
+    for (int i = 0; i < 64; i++) {
+
+      out << __builtin_popcountll(remove_bit(bishop_masks[i], i)) << std::endl;
+    }
+  } else {
+    std::cerr << "the file can not be opened";
+  }
+  out.close();
+}
 
 int main() {
   // vector<uint64_t> out2 = generate_bishop_masks();
@@ -919,11 +975,18 @@ int main() {
 */
   // save_knight_attacks_cache();
   // save_knight_look_up_table();
-  save_black_pawn_attacks_cache();
-  save_white_pawn_attacks_cache();
-  save_white_pawn_attack_look_up_table();
-  save_black_pawn_attack_look_up_table();
+  // save_black_pawn_attacks_cache();
+  // save_white_pawn_attacks_cache();
+  // save_white_pawn_attack_look_up_table();
+  // save_black_pawn_attack_look_up_table();
   // save_king_look_up_table();
   // save_king_attacks();
+  save_bishop_masks();
+  save_bishop_shifts();
+  save_rook_masks();
+  save_rook_shifts();
+
+  // uint64_t mask = generate_rook_mask(0b1ULL << 21, 8);
+  // print_board(mask);
   return 0;
 }

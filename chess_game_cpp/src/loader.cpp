@@ -39,6 +39,44 @@ std::vector<uint64_t> lineToNumsVec(const std::string &line) {
   }
   return out;
 }
+
+std::vector<uint64_t> fileToVec(std::string fileName) {
+  // std::string pieceTypeStr = pieceToStr(pieceType);
+  fileName = "mask_cache/" + fileName + "_magic_numbers.txt";
+  std::vector<uint64_t> out;
+  std::string temp;
+  std::fstream in(fileName);
+  if (in) {
+    while (getline(in, temp)) {
+      out.push_back(stoull(temp));
+    }
+  } else {
+    std::cerr << "the " << fileName << " can not be opened" << std::endl;
+  }
+  in.close();
+  return out;
+}
+std::vector<std::vector<uint64_t>> readLookUpTables(piece pieceType) {
+  std::string pieceTypeStr = pieceToStr(pieceType);
+
+  std::string fileName = "mask_cache/" + pieceTypeStr + "_look_up_tables.txt";
+  std::vector<std::vector<uint64_t>> lookUpTables;
+  std::string line;
+  std::fstream in(fileName);
+  std::vector<uint64_t> lookUpTable;
+  std::string number;
+  if (in) {
+    while (getline(in, line)) {
+      lookUpTable = lineToNumsVec(line);
+      lookUpTables.push_back(lookUpTable);
+    }
+  } else {
+    std::cerr << "the " << fileName << " can not be opened" << std::endl;
+  }
+  in.close();
+  return lookUpTables;
+}
+
 std::vector<uint64_t> readMagicNumbersToVec(piece pieceType) {
   std::string pieceTypeStr = pieceToStr(pieceType);
   std::string fileName = "mask_cache/" + pieceTypeStr + "_magic_numbers.txt";
