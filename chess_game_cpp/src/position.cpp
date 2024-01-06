@@ -53,6 +53,30 @@ void Position::changeTurn() {
     turn = color::white;
   }
 }
+// Asuming; non-special moves(!pro|!cast) and valid(des =empt|opColOc) input,
+// use it for temprory changes.
+std::vector<std::vector<uint64_t>>
+Position::makeSoftMove(const int &source, const int &destination) const {
+  uint64_t sourceMask = 0b1ull << source;
+  uint64_t destinationMask = 0b1ull << destination;
+  std::vector<std::vector<uint64_t>> piecesTemp = pieces;
+  piece pieceType = getPieceType(sourceMask);
+  color pieceColor = getPieceColor(sourceMask);
+  int oppositePieceColor = (pieceColor + 1) % 2;
+
+  piecesTemp[pieceColor][pieceType] &= ~sourceMask;
+  piecesTemp[pieceColor][all] &= ~sourceMask;
+
+  if (!isSquareEmpty(destinationMask)) {
+    piece pieceType = getPieceType(destinationMask);
+    piecesTemp[oppositePieceColor][pieceType] &= ~destinationMask;
+    piecesTemp[oppositePieceColor][all] &= ~destinationMask;
+  }
+
+  piecesTemp[pieceColor][pieceType] &= destinationMask;
+  piecesTemp[pieceColor][all] &= destinationMask;
+  return piecesTemp;
+}
 // Getters
 std::vector<std::vector<uint64_t>> Position::getPieces() const {
   return pieces;
@@ -76,6 +100,7 @@ piece Position::getPieceType(const uint64_t &positionMask) const {
     }
   }
 }
+color Position::getTurn() const { return turn; }
 // Misc
 void Position::printBoard() const {
   uint64_t allPieces = pieces[white][all] | pieces[black][all];
@@ -223,7 +248,7 @@ bool Position::isAttackedByKing(const int &source) const {
   return pieces[oppositeTurn][king] & kingLookUpTable[source];
 }
 bool Position::isCheck() const {
-  uint64_t kingPositionMask = pieces[white][king];
+  uint64_t kingPositionMask = pieces[turn][king];
   uint64_t kingPosition = __builtin_ctzll(kingPositionMask);
   return isAttackedBySlider(kingPositionMask) ||
          isAttackedByPawn(kingPosition) || isAttackedByKing(kingPosition) ||
@@ -258,4 +283,14 @@ bool Position::isPseudoLegalMove(const int &source,
   if (pieceType == king) {
     return isKingMoveLegal(source, destinationMask);
   }
+}
+
+bool Position::isLegalMove(const int &source, const int &destination) const {
+  std::vector<std::vector<uint64_t>> piecesTemp =
+      makeSoftMove(source, destination);
+  Position tempPosition = Position(piecesTemp, turn);
+  if (tempPosition.isCheck()) {
+    return false;
+  }
+  return isPseudoLegalMove(source, destination);
 }

@@ -172,61 +172,51 @@ int rookRelevantBits(const uint64_t &position) {
   }
   return relevantBits;
 }
-int bishopRelevantBits(const uint64_t &positionMask) {
-  std::vector<int> rowColVec = positionToRowCol(positionMask);
-  int row = rowColVec[0];
-  int column = rowColVec[1];
+// int bishopRelevantBits(const uint64_t &positionMask) {
+//   std::vector<int> rowColVec = positionToRowCol(positionMask);
+//   int row = rowColVec[0];
+//   int column = rowColVec[1];
 
-  // Diagonal distances: min distance to any corner in each diagonal direction
-  int distNESW = std::min(row, column);         // Northeast-Southwest diagonal
-  int distNWSE = std::min(row, 7 - column);     // Northwest-Southeast diagonal
-  int distSENW = std::min(7 - row, column);     // Southeast-Northwest diagonal
-  int distSWNE = std::min(7 - row, 7 - column); // Southwest-Northeast diagonal
+//   // Diagonal distances: min distance to any corner in each diagonal
+//   direction int distNESW = std::min(row, column);         //
+//   Northeast-Southwest diagonal int distNWSE = std::min(row, 7 - column); //
+//   Northwest-Southeast diagonal int distSENW = std::min(7 - row, column); //
+//   Southeast-Northwest diagonal int distSWNE = std::min(7 - row, 7 - column);
+//   // Southwest-Northeast diagonal
 
-  // Maximum distance to the edge in any diagonal direction
-  int maxDiagonalDistance = std::max({distNESW, distNWSE, distSENW, distSWNE});
+//   // Maximum distance to the edge in any diagonal direction
+//   int maxDiagonalDistance = std::max({distNESW, distNWSE, distSENW,
+//   distSWNE});
 
-  // Total number of squares on the longest diagonal minus the square the
-  // bishop is on
-  int relevantBits = 2 * maxDiagonalDistance + 1;
+//   // Total number of squares on the longest diagonal minus the square the
+//   // bishop is on
+//   int relevantBits = 2 * maxDiagonalDistance + 1;
 
-  // Count top left squares
-  int topLeft = std::min(row, column) - 1;
-
-  // Count bottom right squares
-  int bottomRight = 8 - std::max(row, column);
-
-  // Count top right squares
-  int topRight = std::min(row, 9 - column) - 1;
-
-  // Count bottom left squares
-  int bottomLeft = 8 - std::max(row, 9 - column);
-
-  // Return total count
-  return relevantBits;
-}
-uint64_t generateMagicIndex(const uint64_t &bitboard,
-                            const uint64_t &magicNumber, int shiftBits) {
+//   return relevantBits;
+// }
+int generateMagicIndex(const uint64_t &bitboard, const uint64_t &magicNumber,
+                       int shiftBits) {
   return (bitboard * magicNumber) >> shiftBits;
 }
 uint64_t getAttackMask(const uint64_t &positionMask, const uint64_t &bitboard,
                        const std::vector<uint64_t> &magicNumbers,
                        const std::vector<std::vector<uint64_t>> &lookUpTables,
                        piece pieceType) {
-  // TODO: dont forget to generalize this to bishop;
   int shiftBits;
+  int linearPosition = getLinearPosition(positionMask);
+
   if (pieceType == piece::rook) {
 
     shiftBits = 64 - rookRelevantBits(positionMask);
   } else if (pieceType == piece::bishop) {
+    auto bishopRelevantBits = lookUpTables[linearPosition].size();
 
-    shiftBits = 64 - bishopRelevantBits(positionMask);
+    shiftBits = 64 - bishopRelevantBits;
   } else {
     std::cerr << "wrong piece type";
     return 0;
   }
-  int linearPosition = getLinearPosition(positionMask);
-  uint64_t magicIndex =
+  int magicIndex =
       generateMagicIndex(bitboard, magicNumbers[linearPosition], shiftBits);
   return lookUpTables[linearPosition][magicIndex];
 }
