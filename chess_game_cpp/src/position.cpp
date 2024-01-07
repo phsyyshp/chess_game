@@ -1,6 +1,6 @@
 #include "position.hpp"
 // Initilazers;
-const std::vector<lookUps> Position::rookTbls = readMagicNumbersToVec(rook);
+const std::vector<magicTbls> Position::rookTbls = readMagicNumbersToVec(rook);
 const std::vector<std::vector<uint64_t>> Position::rookLookUpTables =
     fileToVec2("rook_look_up_tables");
 const std::vector<uint64_t> Position::bishopTbls =
