@@ -57,9 +57,9 @@ private:
   void setWhitePiecesToInitialConfiguration();
   void setBlackPiecesToInitialConfiguration();
   // slider cache
-  static const std::vector<lookUps> rookTbls;
+  static const std::vector<magicTbls> rookTbls;
   static const std::vector<std::vector<uint64_t>> rookLookUpTables;
-  static const std::vector<lookUps> bishopTbls;
+  static const std::vector<magicTbls> bishopTbls;
   static const std::vector<std::vector<uint64_t>> bishopLookUpTables;
   // rest cache
   static const std::vector<uint64_t> knightLookUpTable;

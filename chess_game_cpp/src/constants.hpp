@@ -66,7 +66,7 @@ enum square {
   g8,
   h8
 };
-struct lookUps {
+struct magicTbls {
   uint64_t mask;
   uint64_t magicNum;
   int shiftBit;
