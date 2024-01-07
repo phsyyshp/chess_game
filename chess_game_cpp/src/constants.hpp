@@ -1,4 +1,3 @@
-
 enum color { white, black };
 enum piece { pawn, bishop, rook, queen, knight, king, all };
 enum square {
@@ -66,4 +65,9 @@ enum square {
   f8,
   g8,
   h8
+};
+struct lookUps {
+  uint64_t mask;
+  uint64_t magicNum;
+  int shiftBit;
 };

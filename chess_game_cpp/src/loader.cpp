@@ -72,6 +72,24 @@ std::vector<std::vector<uint64_t>> fileToVec2(std::string fileName) {
   in.close();
   return lookUpTables;
 }
+std::vector<lookUps> fileToLookUpsVec(std::string pieceNameStr) {
+  std::string shiftFile = "mask_cache/" + pieceNameStr + "_shifts.txt";
+  std::string masksFile = "mask_cache/" + pieceNameStr + "_masks.txt";
+  std::string magicNumFile =
+      "mask_cache/" + pieceNameStr + "_magic_numbers.txt";
+  std::vector<uint64_t> shiftVec = fileToVec(shiftFile);
+  std::vector<uint64_t> magicNumVec = fileToVec(magicNumFile);
+  std::vector<uint64_t> masksVec = fileToVec(masksFile);
+  std::vector<lookUps> out;
+  lookUps tempLookUp;
+  for (decltype(shiftVec.size()) i = 0; i < shiftVec.size(); i++) {
+    tempLookUp.shiftBit = shiftVec[i];
+    tempLookUp.magicNum = magicNumVec[i];
+    tempLookUp.mask = masksVec[i];
+    out.push_back(tempLookUp);
+  }
+  return out;
+}
 int getLinearPosition(const uint64_t &position) {
   // Warning!! it starts from 0, i.e. a1 square is 0;
   return __builtin_ctzll(position);
