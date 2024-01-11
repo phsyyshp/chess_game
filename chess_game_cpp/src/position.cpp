@@ -90,11 +90,15 @@ piece Position::getPieceType(const uint64_t &positionMask) const {
 color Position::getTurn() const { return turn; }
 uint64_t Position::getRookAttackMask(const square &sq,
                                      const uint64_t &occupancy) const {
-  auto magicIdx =
-      (occupancy * magicTblsIn[sq].magicNum) >> magicTblsIn[sq].shiftBit;
-  return lookUpTables[sq][magicIdx];
+  auto magicIdx = (occupancy * rookTbls[sq].magicNum) >> rookTbls[sq].shiftBit;
+  return rookLookUpTables[sq][magicIdx];
 }
-
+uint64_t Position::getBishopAttackMask(const square &sq,
+                                       const uint64_t &occupancy) const {
+  auto magicIdx =
+      (occupancy * bishopTbls[sq].magicNum) >> bishopTbls[sq].shiftBit;
+  return bishopLookUpTables[sq][magicIdx];
+}
 // Misc
 void Position::printBoard() const {
   uint64_t allPieces = pieces[white][all] | pieces[black][all];
@@ -129,23 +133,17 @@ bool Position::isSlidingMoveLegal(const uint64_t &sourceMask,
                                   const uint64_t &destinationMask,
                                   const uint64_t &allPieces,
                                   const piece &pieceType) const {
+  square from = static_cast<square>(__builtin_ctzll(sourceMask));
   switch (pieceType) {
   case piece::bishop:
-    return destinationMask & getAttackMask(sourceMask, allPieces,
-                                           bishopMagicNumbers,
-                                           bishopLookUpTables, pieceType);
+    return destinationMask & getBishopAttackMask(from, allPieces);
     break;
   case piece::rook:
-    return destinationMask & getAttackMask(sourceMask, allPieces,
-                                           rookMagicNumbers, rookLookUpTables,
-                                           pieceType);
+    return destinationMask & getRookAttackMask(from, allPieces);
     break;
   case piece::queen:
-    return destinationMask &
-           (getAttackMask(sourceMask, allPieces, bishopMagicNumbers,
-                          bishopLookUpTables, pieceType) |
-            getAttackMask(sourceMask, allPieces, rookMagicNumbers,
-                          rookLookUpTables, pieceType));
+    return destinationMask & (getRookAttackMask(from, allPieces) |
+                              getBishopAttackMask(from, allPieces));
 
     break;
   default:
@@ -219,11 +217,10 @@ bool Position::isKingMoveLegal(const int &source,
 bool Position::isAttackedBySlider(const uint64_t &sourceMask) const {
 
   int oppositeTurn = (turn + 1) % 2;
+  auto source = static_cast<square>(__builtin_ctzll(sourceMask));
   uint64_t allPieces = pieces[black][all] | pieces[white][all];
-  uint64_t bishopAttackMask = getAttackMask(
-      sourceMask, allPieces, bishopMagicNumbers, bishopLookUpTables, bishop);
-  uint64_t rookAttackMask = getAttackMask(
-      sourceMask, allPieces, rookMagicNumbers, rookLookUpTables, bishop);
+  uint64_t bishopAttackMask = getBishopAttackMask(source, allPieces);
+  uint64_t rookAttackMask = getRookAttackMask(source, allPieces);
 
   return (pieces[oppositeTurn][bishop] & bishopAttackMask) |
          (pieces[oppositeTurn][rook] & rookAttackMask) |

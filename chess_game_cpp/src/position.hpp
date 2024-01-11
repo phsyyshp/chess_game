@@ -7,7 +7,6 @@ public:
     bool kingSide;
     bool queenSide;
   };
-
   // constructors:
   Position() = default;
   Position(std::vector<std::vector<uint64_t>> piecesInput, color turnInput)
@@ -24,7 +23,6 @@ public:
   uint64_t getRookAttackMask(const square &sq, const uint64_t &occupancy) const;
   uint64_t getBishopAttackMask(const square &sq,
                                const uint64_t &occupancy) const;
-
   color getTurn() const;
   void printBoard() const;
   // validators:
