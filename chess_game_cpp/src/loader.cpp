@@ -72,7 +72,8 @@ std::vector<std::vector<uint64_t>> fileToVec2(std::string fileName) {
   in.close();
   return lookUpTables;
 }
-std::vector<magicTbls> fileToLookUpsVec(std::string pieceNameStr) {
+std::vector<magicTbls> fileToLookUpsVec(piece pieceType) {
+  std::string pieceNameStr = pieceToStr(pieceType);
   std::string shiftFile = "mask_cache/" + pieceNameStr + "_shifts.txt";
   std::string masksFile = "mask_cache/" + pieceNameStr + "_masks.txt";
   std::string magicNumFile =

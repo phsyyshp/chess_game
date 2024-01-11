@@ -4,10 +4,9 @@
 #include <iostream>
 #include <vector>
 std::vector<uint64_t> lineToNumsVec(const std::string &line);
-
 std::vector<uint64_t> fileToVec(std::string fileName);
 std::vector<std::vector<uint64_t>> fileToVec2(std::string fileName);
-std::vector<magicTbls> fileToLookUpsVec(std::string pieceNameStr);
+std::vector<magicTbls> fileToLookUpsVec(piece pieceType);
 int getLinearPosition(const uint64_t &position);
 std::vector<int> positionToRowCol(const uint64_t &position);
 int rookRelevantBits(const uint64_t &position);

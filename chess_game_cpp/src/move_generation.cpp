@@ -1,7 +1,4 @@
 #include "move_generation.hpp"
-// #include "position.hpp"
-#include <cstdint>
-#include <vector>
 
 std::vector<uint64_t> MoveGeneration::factor_mask(uint64_t mask) {
   std::vector<uint64_t> out_vec(__builtin_popcountll(mask));
@@ -53,9 +50,19 @@ uint64_t MoveGeneration::generate_pawn_pushes(Position position, int color) {
 //   uint64_t pawns =
 // }
 void MoveGeneration::generateKnightMoves(Position position, color colorIn) {
+  // int oppositePieceColor = (colorIn + 1) % 2;
+  std::vector<Move> moveList;
+  uint64_t eligibleSquares = ~position.getPieces()[colorIn][all];
   uint64_t remainingKnigths = position.getPieces()[colorIn][knight];
+  int from;
+  int to;
   while (remainingKnigths) {
-    int from = __builtin_ctzll(remainingKnigths);
-    uint64_t generatedMoves = position. : w
+    from = __builtin_ctzll(remainingKnigths);
+    uint64_t generatedMoves = knightLookUpTable[from] & eligibleSquares;
+    while (generatedMoves) {
+      to = __builtin_ctzll(generatedMoves);
+      moveList.push_back(Move{from, to, knight, colorIn});
+      generatedMoves ^= (0b1ull << to);
+    }
   }
 }

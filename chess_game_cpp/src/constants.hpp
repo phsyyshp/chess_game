@@ -66,3 +66,8 @@ enum square {
   g8,
   h8
 };
+struct magicTbls {
+  uint64_t mask;
+  uint64_t magicNum;
+  int shiftBit;
+};

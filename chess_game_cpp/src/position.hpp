@@ -1,13 +1,6 @@
 #include "loader.hpp"
-#include <cstdint>
-#include <iostream>
-#include <string>
 
-struct magicTbls {
-  uint64_t mask;
-  uint64_t magicNum;
-  int shiftBit;
-};
+#include "tables.hpp"
 class Position {
 public:
   struct canCastle {
@@ -66,15 +59,6 @@ public:
 private:
   void setWhitePiecesToInitialConfiguration();
   void setBlackPiecesToInitialConfiguration();
-  // slider cache
-  static const std::vector<magicTbls> rookTbls;
-  static const std::vector<std::vector<uint64_t>> rookLookUpTables;
-  static const std::vector<magicTbls> bishopTbls;
-  static const std::vector<std::vector<uint64_t>> bishopLookUpTables;
-  // rest cache
-  static const std::vector<uint64_t> knightLookUpTable;
-  static const std::vector<std::vector<uint64_t>> pawnLookUpTable;
-  static const std::vector<uint64_t> kingLookUpTable;
   color turn;
   std::vector<std::vector<uint64_t>> pieces{2, std::vector<uint64_t>{13, 0}};
   canCastle canWhiteCastle;
