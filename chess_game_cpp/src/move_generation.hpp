@@ -6,5 +6,8 @@ public:
   uint64_t generate_single_pawn_pushes(Position position, int color);
   uint64_t generate_double_pawn_pushes(Position position, int color);
   uint64_t generate_pawn_pushes(Position position, int color);
-  void generateKnightMoves(Position position, color coloIn);
+  void generateKnightMoves(Position position, const color &coloIn);
+  void generateBishopMoves(Position position, const color &colorIn){};
+  void generateRookMoves(Position position, const color &colorIn){};
+  void generateQueenMoves(Position position, const color &colorIn){};
 };

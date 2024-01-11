@@ -12,7 +12,6 @@ std::vector<uint64_t> MoveGeneration::factor_mask(uint64_t mask) {
   }
   return out_vec;
 }
-
 uint64_t MoveGeneration::generate_single_pawn_pushes(Position position,
                                                      int color) {
   // TODO add promotions
@@ -49,8 +48,8 @@ uint64_t MoveGeneration::generate_pawn_pushes(Position position, int color) {
 // uint64_t generate_pawn_captures(Position position){
 //   uint64_t pawns =
 // }
-void MoveGeneration::generateKnightMoves(Position position, color colorIn) {
-  // int oppositePieceColor = (colorIn + 1) % 2;
+void MoveGeneration::generateKnightMoves(Position position,
+                                         const color &colorIn) {
   std::vector<Move> moveList;
   uint64_t eligibleSquares = ~position.getPieces()[colorIn][all];
   uint64_t remainingKnigths = position.getPieces()[colorIn][knight];
@@ -61,8 +60,15 @@ void MoveGeneration::generateKnightMoves(Position position, color colorIn) {
     uint64_t generatedMoves = knightLookUpTable[from] & eligibleSquares;
     while (generatedMoves) {
       to = __builtin_ctzll(generatedMoves);
-      moveList.push_back(Move{from, to, knight, colorIn});
+      moveList.push_back(Move{from, to, piece::knight, colorIn});
       generatedMoves ^= (0b1ull << to);
     }
   }
+  remainingKnigths ^= (0b1ull << from);
 }
+void MoveGeneration::generateBishopMoves(Position position,
+                                         const color colorIn) {}
+void MoveGeneration::generateRookMoves(Position position, const color colorIn) {
+}
+void MoveGeneration::generateQueenMoves(Position position,
+                                        const color colorIn) {}
