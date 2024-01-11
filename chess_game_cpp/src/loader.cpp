@@ -91,6 +91,7 @@ std::vector<magicTbls> fileToLookUpsVec(piece pieceType) {
   }
   return out;
 }
+
 uint64_t getAttackMask(const square &sq, const uint64_t &occupancy,
                        const std::vector<std::vector<uint64_t>> &lookUpTables,
                        const std::vector<magicTbls> &magicTblsIn) {
