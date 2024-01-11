@@ -88,17 +88,6 @@ piece Position::getPieceType(const uint64_t &positionMask) const {
   }
 }
 color Position::getTurn() const { return turn; }
-uint64_t Position::getRookAttackMask(const square &sq,
-                                     const uint64_t &occupancy) const {
-  auto magicIdx = (occupancy * rookTbls[sq].magicNum) >> rookTbls[sq].shiftBit;
-  return rookLookUpTables[sq][magicIdx];
-}
-uint64_t Position::getBishopAttackMask(const square &sq,
-                                       const uint64_t &occupancy) const {
-  auto magicIdx =
-      (occupancy * bishopTbls[sq].magicNum) >> bishopTbls[sq].shiftBit;
-  return bishopLookUpTables[sq][magicIdx];
-}
 // Misc
 void Position::printBoard() const {
   uint64_t allPieces = pieces[white][all] | pieces[black][all];

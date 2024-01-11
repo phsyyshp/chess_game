@@ -20,9 +20,6 @@ public:
   piece getPieceType(const uint64_t &position) const;
   std::vector<std::vector<uint64_t>> makeSoftMove(const int &source,
                                                   const int &destination) const;
-  uint64_t getRookAttackMask(const square &sq, const uint64_t &occupancy) const;
-  uint64_t getBishopAttackMask(const square &sq,
-                               const uint64_t &occupancy) const;
   color getTurn() const;
   void printBoard() const;
   // validators:
