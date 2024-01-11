@@ -1,19 +1,5 @@
 #include "position.hpp"
 // Initilazers;
-const std::vector<magicTbls> Position::rookTbls = readMagicNumbersToVec(rook);
-const std::vector<std::vector<uint64_t>> Position::rookLookUpTables =
-    fileToVec2("rook_look_up_tables");
-const std::vector<uint64_t> Position::bishopTbls =
-    readMagicNumbersToVec(bishop);
-const std::vector<std::vector<uint64_t>> Position::bishopLookUpTables =
-    fileToVec2("bishop_look_up_tables");
-const std::vector<uint64_t> Position::knightLookUpTable =
-    fileToVec("knight_look_up_table");
-const std::vector<std::vector<uint64_t>> Position::pawnLookUpTable = {
-    fileToVec("white_pawn_look_up_table"),
-    fileToVec("black_pawn_look_up_table")};
-const std::vector<uint64_t> Position::kingLookUpTable =
-    fileToVec("king_look_up_table");
 // Setters
 void Position::setWhitePiecesToInitialConfiguration() {
 

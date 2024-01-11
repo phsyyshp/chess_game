@@ -1,7 +1,5 @@
+#include "Move.hpp"
 #include "position.hpp"
-#include <cstdint>
-#include <vector>
-
 class MoveGeneration {
 public:
   std::vector<uint64_t> factor_mask(uint64_t mask);
