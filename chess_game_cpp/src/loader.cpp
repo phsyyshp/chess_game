@@ -94,6 +94,6 @@ uint64_t getAttackMask(const square &sq, const uint64_t &occupancy,
                        const std::vector<std::vector<uint64_t>> &lookUpTables,
                        const std::vector<magicTbls> &magicTblsIn) {
   auto magicIdx =
-      (occupancy * magicTblsIn[sq].magicNum) >> lookUpsIn[sq].shiftBit;
+      (occupancy * magicTblsIn[sq].magicNum) >> magicTblsIn[sq].shiftBit;
   return lookUpTables[sq][magicIdx];
 }
