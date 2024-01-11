@@ -102,6 +102,13 @@ piece Position::getPieceType(const uint64_t &positionMask) const {
   }
 }
 color Position::getTurn() const { return turn; }
+uint64_t Position::getRookAttackMask(const square &sq,
+                                     const uint64_t &occupancy) const {
+  auto magicIdx =
+      (occupancy * magicTblsIn[sq].magicNum) >> magicTblsIn[sq].shiftBit;
+  return lookUpTables[sq][magicIdx];
+}
+
 // Misc
 void Position::printBoard() const {
   uint64_t allPieces = pieces[white][all] | pieces[black][all];

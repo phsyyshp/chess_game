@@ -52,3 +52,10 @@ uint64_t MoveGeneration::generate_pawn_pushes(Position position, int color) {
 // uint64_t generate_pawn_captures(Position position){
 //   uint64_t pawns =
 // }
+void MoveGeneration::generateKnightMoves(Position position, color colorIn) {
+  uint64_t remainingKnigths = position.getPieces()[colorIn][knight];
+  while (remainingKnigths) {
+    int from = __builtin_ctzll(remainingKnigths);
+    uint64_t generatedMoves = position. : w
+  }
+}

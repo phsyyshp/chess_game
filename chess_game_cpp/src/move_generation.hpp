@@ -8,4 +8,5 @@ public:
   uint64_t generate_single_pawn_pushes(Position position, int color);
   uint64_t generate_double_pawn_pushes(Position position, int color);
   uint64_t generate_pawn_pushes(Position position, int color);
+  void generateKnightMoves(Position position, color coloIn);
 };
