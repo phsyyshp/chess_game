@@ -1,3 +1,6 @@
+#ifndef CONSTANTS_HPP
+#define CONSTANTS_HPP
+#include <iostream>
 enum color { white, black };
 enum piece { pawn, bishop, rook, queen, knight, king, all };
 enum square {
@@ -71,3 +74,8 @@ struct magicTbls {
   uint64_t magicNum;
   int shiftBit;
 };
+const uint64_t A_FILE =
+    0b0000000100000001000000010000000100000001000000010000000100000001ull;
+const uint64_t H_FILE =
+    0b1000000010000000100000001000000010000000100000001000000010000000ull;
+#endif

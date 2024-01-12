@@ -3,6 +3,8 @@
 #include <fstream>
 #include <iostream>
 #include <vector>
+#ifndef LOADER_HPP
+#define LOADER_HPP
 std::vector<uint64_t> lineToNumsVec(const std::string &line);
 std::vector<uint64_t> fileToVec(std::string fileName);
 std::vector<std::vector<uint64_t>> fileToVec2(std::string fileName);
@@ -17,3 +19,5 @@ uint64_t getAttackMask(const uint64_t &position, const uint64_t &bitboard,
                        const std::vector<uint64_t> &magicNumbers,
                        const std::vector<std::vector<uint64_t>> &lookUpTables,
                        piece pieceType);
+
+#endif // LOADER_HPP

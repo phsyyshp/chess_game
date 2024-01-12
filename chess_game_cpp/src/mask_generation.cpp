@@ -5,7 +5,6 @@
 #include <math.h>
 #include <random>
 #include <vector>
-
 using namespace std;
 #include <iostream>
 #include <sstream>
@@ -38,7 +37,6 @@ std::vector<uint64_t> factor_mask(uint64_t mask) {
   }
   return out_vec;
 }
-
 uint64_t remove_bit(uint64_t input, int bit) {
   return input & ~(0b1ULL << bit);
 }
@@ -102,7 +100,6 @@ vector<uint64_t> generate_queen_masks() {
   }
   return masks;
 }
-
 vector<uint64_t> generate_relevant_rook_occupancy_masks(uint64_t position) {
   int linear_position = __builtin_ctzll(position);
   int column = linear_position % 8;
@@ -150,7 +147,6 @@ vector<uint64_t> generate_relevant_bishop_occupancy_masks(uint64_t position) {
   }
   return out;
 }
-
 uint64_t generate_rook_attack_mask(uint64_t occupancy_mask, uint64_t position) {
   int linear_position = __builtin_ctzll(position);
   int column = linear_position % 8;
@@ -199,7 +195,6 @@ uint64_t generate_rook_attack_mask(uint64_t occupancy_mask, uint64_t position) {
   attack_mask = remove_bit(attack_mask, linear_position);
   return attack_mask;
 }
-
 uint64_t generate_bishop_attack_mask(uint64_t occupancy_mask,
                                      uint64_t position) {
   int linear_position = __builtin_ctzll(position);
@@ -259,7 +254,6 @@ uint64_t generate_bishop_attack_mask(uint64_t occupancy_mask,
   attack_mask = remove_bit(attack_mask, linear_position);
   return attack_mask;
 }
-
 vector<uint64_t> generate_rook_attack_masks(uint64_t position) {
   vector<uint64_t> relevant_occupancy_masks =
       generate_relevant_rook_occupancy_masks(position);
@@ -278,7 +272,6 @@ vector<uint64_t> generate_bishop_attack_masks(uint64_t position) {
   }
   return attack_masks;
 }
-
 vector<vector<uint64_t>> generate_entire_rook_attack_masks() {
   vector<vector<uint64_t>> masks;
   for (int i = 0; i <= 63; i++) {
@@ -293,7 +286,6 @@ vector<vector<uint64_t>> generate_entire_bishop_attack_masks() {
   }
   return masks;
 }
-
 void save_rook_attacks_cache() {
   vector<vector<uint64_t>> rook_attacks = generate_entire_rook_attack_masks();
 
@@ -336,12 +328,10 @@ void save_bishop_attacks_cache() {
 
   outFile.close();
 }
-
 uint64_t generate_magic_index(uint64_t bitboard, uint64_t magic_number,
                               int shiftBits) {
   return (bitboard * magic_number) >> shiftBits;
 }
-
 uint64_t generate_magic_number(uint64_t position) {
   vector<uint64_t> relevant_rook_occupancy_masks =
       generate_relevant_rook_occupancy_masks(position);
@@ -428,7 +418,6 @@ uint64_t generate_bishop_magic_number(uint64_t position) {
 
   return magic_number;
 }
-
 vector<uint64_t> generate_rook_lookup_table(uint64_t magic_number,
                                             uint64_t position) {
 
@@ -471,7 +460,6 @@ vector<uint64_t> generate_bishop_lookup_table(uint64_t magic_number,
   }
   return lookup_table;
 }
-
 vector<uint64_t> generate_all_magic_numbers() {
 
   vector<uint64_t> out(64, 0);
@@ -492,7 +480,6 @@ vector<uint64_t> generate_all_bishop_magic_numbers() {
   }
   return out;
 }
-
 vector<vector<uint64_t>> generate_all_rook_lookup_tables() {
   // open file rook_magic_numbers.txt and save each line to a vector
   // for each line in the vector, generate the lookup table and save it to a
@@ -531,7 +518,6 @@ vector<vector<uint64_t>> generate_all_bishop_lookup_tables() {
   }
   return out;
 }
-
 void save_rook_lookup_tables() {
   vector<vector<uint64_t>> out = generate_all_rook_lookup_tables();
   ofstream outFile("rook_lookup_tables.txt");
@@ -566,7 +552,6 @@ void save_bishop_lookup_tables() {
 
   outFile.close();
 }
-
 void save_magic_numbers() {
   vector<uint64_t> out = generate_all_magic_numbers();
   ofstream outFile("rook_magic_numbers.txt");
@@ -638,7 +623,6 @@ std::vector<uint64_t> generate_all_white_pawn_attacks() {
   }
   return out;
 }
-
 std::vector<uint64_t> generate_all_black_pawn_attacks() {
   std::vector<uint64_t> out;
   for (int i = 0; i <= 63; i++) {
@@ -646,7 +630,6 @@ std::vector<uint64_t> generate_all_black_pawn_attacks() {
   }
   return out;
 }
-
 void save_white_pawn_attack_look_up_table() {
 
   vector<uint64_t> out = generate_all_white_pawn_attacks();
@@ -770,7 +753,6 @@ soWeWe -10   |     |   -6  soEaEa
 }
 // uint64_t generate_king_attack_mask(int position){
 // /*
-
 // */
 // }
 std::vector<uint64_t> generate_knight_look_up_table() {
@@ -815,7 +797,6 @@ void save_knight_attacks_cache() {
 
   outFile.close();
 }
-
 uint64_t generate_king_attack(int position) {
   uint64_t position_mask = 0b1uLL << position;
   std::vector<int> row_col = position_to_row_col(position_mask);
@@ -933,7 +914,6 @@ void save_bishop_shifts() {
   }
   out.close();
 }
-
 int main() {
   // vector<uint64_t> out2 = generate_bishop_masks();
   // vector<uint64_t> out3 = generate_rook_masks();
