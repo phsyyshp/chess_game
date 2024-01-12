@@ -6,8 +6,8 @@ void Position::setWhitePiecesToInitialConfiguration() {
   pieces[white][rook] = 0b1ULL << a1 | 0b1ULL << h1;
   pieces[white][knight] = 0b1ULL << g1 | 0b1ULL << b1;
   pieces[white][bishop] = 0b1ULL << f1 | 0b1ULL << c1;
-  pieces[white][queen] = 0b1ULL << e1;
-  pieces[white][king] = 0b1ULL << d1;
+  pieces[white][queen] = 0b1ULL << d1;
+  pieces[white][king] = 0b1ULL << e1;
   pieces[white][pawn] = 0b11111111ULL << 8;
   pieces[white][all] = pieces[white][rook] | pieces[white][knight] |
                        pieces[white][bishop] | pieces[white][queen] |
@@ -17,9 +17,9 @@ void Position::setBlackPiecesToInitialConfiguration() {
   pieces[black][rook] = 0b1ULL << a8 | 0b1ULL << h8;
   pieces[black][knight] = 0b1ULL << g8 | 0b1ULL << b8;
   pieces[black][bishop] = 0b1ULL << f8 | 0b1ULL << c8;
-  pieces[black][queen] = 0b1ULL << e8;
-  pieces[black][king] = 0b1ULL << d8;
-  pieces[black][pawn] = 0b11111111ULL << 6;
+  pieces[black][queen] = 0b1ULL << d8;
+  pieces[black][king] = 0b1ULL << e8;
+  pieces[black][pawn] = 0b11111111ULL << 6 * 8;
   pieces[black][all] = pieces[black][rook] | pieces[black][knight] |
                        pieces[black][bishop] | pieces[black][queen] |
                        pieces[black][king] | pieces[black][pawn];

@@ -1,4 +1,5 @@
 #include "loader.hpp"
+#include "tables.hpp"
 #include <iostream>
 #include <vector>
 void print_board(uint64_t pieces) {
@@ -12,8 +13,8 @@ void print_board(uint64_t pieces) {
 }
 
 int main() {
-  std::vector<uint64_t> rook_vec = readMagicNumbersToVec(rook);
-  std::vector<std::vector<uint64_t>> rook_vec_vec = readLookUpTables(rook);
+  std::vector<uint64_t> rook_vec = fileToVec(rook);
+  std::vector<std::vector<uint64_t>> rook_vec_vec = fileToVec2(rook);
   uint64_t attack_mask =
       getAttackMask(0b1ULL << 25 - 8, 0b1ULL << (3 * 8 - 9 + 26), rook_vec,
                     rook_vec_vec, rook);
