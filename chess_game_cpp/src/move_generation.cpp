@@ -162,15 +162,15 @@ void MoveGeneration::generateKnightMoves(Position position,
       moveList.push_back(Move{from, to, piece::knight, colorIn});
       generatedMoves ^= (0b1ull << to);
     }
+    remainingKnigths ^= (0b1ull << from);
   }
-  remainingKnigths ^= (0b1ull << from);
 }
 void MoveGeneration::generateBishopMoves(Position position,
                                          const color &colorIn) {
   uint64_t eligibleSquares = ~position.getPieces()[colorIn][all];
   uint64_t occupancy =
       position.getPieces()[white][all] | position.getPieces()[black][all];
-  uint64_t remainingBishops = position.getPieces()[colorIn][bishop];
+  int64_t remainingBishops = position.getPieces()[colorIn][bishop];
   uint64_t generatedMoves;
 
   square from;
@@ -184,8 +184,8 @@ void MoveGeneration::generateBishopMoves(Position position,
       moveList.push_back(Move{from, to, piece::bishop, colorIn});
       generatedMoves ^= (0b1ull << to);
     }
+    remainingBishops ^= (0b1ull << from);
   }
-  remainingBishops ^= (0b1ull << from);
 }
 void MoveGeneration::generateRookMoves(Position position,
                                        const color &colorIn) {
@@ -205,8 +205,8 @@ void MoveGeneration::generateRookMoves(Position position,
       moveList.push_back(Move{from, to, piece::rook, colorIn});
       generatedMoves ^= (0b1ull << to);
     }
+    remainingRooks ^= (0b1ull << from);
   }
-  remainingRooks ^= (0b1ull << from);
 }
 void MoveGeneration::generateQueenMoves(Position position,
                                         const color &colorIn) {
@@ -242,14 +242,15 @@ void MoveGeneration::generateKingMoves(Position position,
   }
 }
 void MoveGeneration::generateAllMoves(Position position, const color &colorIn) {
-  generateBishopMoves(position, colorIn);
   generateKnightMoves(position, colorIn);
   generateKingMoves(position, colorIn);
-  generateQueenMoves(position, colorIn);
   generateSinglePawnPushes(position, colorIn);
   generateDoublePawnPushes(position, colorIn);
   generateLeftPawnCaptures(position, colorIn);
   generateRightPawnCaptures(position, colorIn);
+  generateBishopMoves(position, colorIn);
+  generateRookMoves(position, colorIn);
+  generateQueenMoves(position, colorIn);
 }
 
-std::vector<Move> MoveGeneration::getMoves() const { return moveList; };
+std::vector<Move> MoveGeneration::getMoves() const { return moveList; }
