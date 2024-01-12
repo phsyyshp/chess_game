@@ -40,7 +40,7 @@ std::vector<uint64_t> lineToNumsVec(const std::string &line) {
   return out;
 }
 std::vector<uint64_t> fileToVec(std::string fileName) {
-  fileName = "mask_cache/" + fileName + ".txt";
+  // fileName = "mask_cache/" + fileName + ".txt";
   std::vector<uint64_t> out;
   std::string temp;
   std::fstream in(fileName);
