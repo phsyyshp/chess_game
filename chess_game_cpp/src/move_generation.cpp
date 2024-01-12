@@ -16,11 +16,13 @@ void MoveGeneration::generateSinglePawnPushes(Position position,
                                               const color &colorIn) {
   // TODO: add promotions
   uint64_t generatedMoves;
+  uint64_t pawns;
+  int to, from;
+
   switch (colorIn) {
   case color::white:
-    uint64_t pawns = position.getPieces()[white][pawn];
+    pawns = position.getPieces()[white][pawn];
     generatedMoves = (pawns << 8) & (~position.getPieces()[black][all]);
-    int to, from;
     while (generatedMoves) {
       to = __builtin_ctzll(generatedMoves);
       from = to - 8;
@@ -30,9 +32,8 @@ void MoveGeneration::generateSinglePawnPushes(Position position,
     break;
   case color::black:
 
-    uint64_t pawns = position.getPieces()[black][pawn];
+    pawns = position.getPieces()[black][pawn];
     generatedMoves = (pawns >> 8) & ~position.getPieces()[white][all];
-    int to, from;
     while (generatedMoves) {
       to = __builtin_ctzll(generatedMoves);
       from = to + 8;
