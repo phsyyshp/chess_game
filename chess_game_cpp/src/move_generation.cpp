@@ -28,7 +28,7 @@ void MoveGeneration::generateSinglePawnPushes(Position position,
     while (generatedMoves) {
       to = __builtin_ctzll(generatedMoves);
       from = to - 8;
-      moveList.push_back(Move{from, to, piece::pawn, colorIn});
+      moveList.push_back(Move{from, to, piece::pawn, colorIn, false});
       generatedMoves ^= (0b1ull << to);
     }
     break;
@@ -39,7 +39,7 @@ void MoveGeneration::generateSinglePawnPushes(Position position,
     while (generatedMoves) {
       to = __builtin_ctzll(generatedMoves);
       from = to + 8;
-      moveList.push_back(Move{from, to, piece::pawn, colorIn});
+      moveList.push_back(Move{from, to, piece::pawn, colorIn, false});
       generatedMoves ^= (0b1ull << to);
     }
     break;
@@ -61,7 +61,7 @@ void MoveGeneration::generateDoublePawnPushes(Position position,
     while (generatedMoves) {
       to = __builtin_ctzll(generatedMoves);
       from = to - 16;
-      moveList.push_back(Move{from, to, piece::pawn, colorIn});
+      moveList.push_back(Move{from, to, piece::pawn, colorIn, false});
       generatedMoves ^= (0b1ull << to);
     }
     break;
@@ -72,7 +72,7 @@ void MoveGeneration::generateDoublePawnPushes(Position position,
     while (generatedMoves) {
       to = __builtin_ctzll(generatedMoves);
       from = to + 16;
-      moveList.push_back(Move{from, to, piece::pawn, colorIn});
+      moveList.push_back(Move{from, to, piece::pawn, colorIn, false});
       generatedMoves ^= (0b1ull << to);
     }
     break;
@@ -94,7 +94,7 @@ void MoveGeneration::generateLeftPawnCaptures(Position position,
     while (generatedMoves) {
       to = __builtin_ctzll(generatedMoves);
       from = to - 9;
-      moveList.push_back(Move{from, to, piece::pawn, colorIn});
+      moveList.push_back(Move{from, to, piece::pawn, colorIn, true});
       generatedMoves ^= (0b1ull << to);
     }
     break;
@@ -104,7 +104,7 @@ void MoveGeneration::generateLeftPawnCaptures(Position position,
     while (generatedMoves) {
       to = __builtin_ctzll(generatedMoves);
       from = to + 7;
-      moveList.push_back(Move{from, to, piece::pawn, colorIn});
+      moveList.push_back(Move{from, to, piece::pawn, colorIn, true});
       generatedMoves ^= (0b1ull << to);
     }
     break;
@@ -126,7 +126,7 @@ void MoveGeneration::generateRightPawnCaptures(Position position,
     while (generatedMoves) {
       to = __builtin_ctzll(generatedMoves);
       from = to - 7;
-      moveList.push_back(Move{from, to, piece::pawn, colorIn});
+      moveList.push_back(Move{from, to, piece::pawn, colorIn, true});
       generatedMoves ^= (0b1ull << to);
     }
     break;
@@ -136,7 +136,7 @@ void MoveGeneration::generateRightPawnCaptures(Position position,
     while (generatedMoves) {
       to = __builtin_ctzll(generatedMoves);
       from = to + 9;
-      moveList.push_back(Move{from, to, piece::pawn, colorIn});
+      moveList.push_back(Move{from, to, piece::pawn, colorIn, true});
       generatedMoves ^= (0b1ull << to);
     }
     break;
@@ -150,17 +150,21 @@ void MoveGeneration::generateRightPawnCaptures(Position position,
 void MoveGeneration::generateKnightMoves(Position position,
                                          const color &colorIn) {
   uint64_t eligibleSquares = ~position.getPieces()[colorIn][all];
+  uint64_t allPieces =
+      position.getPieces()[black][all] & position.getPieces()[white][all];
   uint64_t remainingKnigths = position.getPieces()[colorIn][knight];
   uint64_t generatedMoves;
 
   int from;
   int to;
+  bool isCapture;
   while (remainingKnigths) {
     from = __builtin_ctzll(remainingKnigths);
     generatedMoves = knightLookUpTable[from] & eligibleSquares;
     while (generatedMoves) {
       to = __builtin_ctzll(generatedMoves);
-      moveList.push_back(Move{from, to, piece::knight, colorIn});
+      isCapture = ((0b1ull << to) & allPieces) != 0;
+      moveList.push_back(Move{from, to, piece::knight, colorIn, isCapture});
       generatedMoves ^= (0b1ull << to);
     }
     remainingKnigths ^= (0b1ull << from);
@@ -176,13 +180,15 @@ void MoveGeneration::generateBishopMoves(Position position,
 
   square from;
   int to;
+  bool isCapture;
   while (remainingBishops) {
     from = static_cast<square>(__builtin_ctzll(remainingBishops));
     generatedMoves = getBishopAttackMask(from, occupancy) & eligibleSquares;
 
     while (generatedMoves) {
       to = __builtin_ctzll(generatedMoves);
-      moveList.push_back(Move{from, to, piece::bishop, colorIn});
+      isCapture = ((0b1ull << to) & occupancy) != 0;
+      moveList.push_back(Move{from, to, piece::bishop, colorIn, isCapture});
       generatedMoves ^= (0b1ull << to);
     }
     remainingBishops ^= (0b1ull << from);
@@ -197,12 +203,14 @@ void MoveGeneration::generateRookMoves(Position position,
   square from;
   int to;
   uint64_t generatedMoves;
+  bool isCapture;
   while (remainingRooks) {
     from = static_cast<square>(__builtin_ctzll(remainingRooks));
     generatedMoves = getRookAttackMask(from, occupancy) & eligibleSquares;
     while (generatedMoves) {
       to = __builtin_ctzll(generatedMoves);
-      moveList.push_back(Move{from, to, piece::rook, colorIn});
+      isCapture = ((0b1ull << to) & occupancy) != 0;
+      moveList.push_back(Move{from, to, piece::rook, colorIn, isCapture});
       generatedMoves ^= (0b1ull << to);
     }
     remainingRooks ^= (0b1ull << from);
@@ -216,15 +224,16 @@ void MoveGeneration::generateQueenMoves(Position position,
   uint64_t queenMask = position.getPieces()[colorIn][queen];
   int to;
   square from = static_cast<square>(__builtin_ctzll(queenMask));
+  bool isCapture;
   if (queenMask) {
-
     uint64_t generatedMoves = (getRookAttackMask(from, occupancy) |
                                getBishopAttackMask(from, occupancy)) &
                               eligibleSquares;
-
     while (generatedMoves) {
       to = __builtin_ctzll(generatedMoves);
-      moveList.push_back(Move{from, to, piece::queen, colorIn});
+
+      isCapture = ((0b1ull << to) & occupancy) != 0;
+      moveList.push_back(Move{from, to, piece::queen, colorIn, isCapture});
       generatedMoves ^= (0b1ull << to);
     }
   }
@@ -235,9 +244,13 @@ void MoveGeneration::generateKingMoves(Position position,
   int to;
   uint64_t eligibleSquares = ~position.getPieces()[colorIn][all];
   uint64_t generatedMoves = kingLookUpTable[from] & eligibleSquares;
+  uint64_t allPieces =
+      position.getPieces()[black][all] & position.getPieces()[white][all];
+  bool isCapture;
   while (generatedMoves) {
     to = __builtin_ctzll(generatedMoves);
-    moveList.push_back(Move{from, to, piece::king, colorIn});
+    isCapture = ((0b1ull << to) & allPieces) != 0;
+    moveList.push_back(Move{from, to, piece::king, colorIn, isCapture});
     generatedMoves ^= (0b1ull << to);
   }
 }

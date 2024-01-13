@@ -22,7 +22,7 @@ public:
   // std::vector<std::vector<uint64_t>> makeSoftMove(const int &source,
   //                                                 const int &destination)
   //                                                 const;
-  void makeMove(const Move &move);
+  void makeMove(Move move);
 
   void printBoard() const;
 

@@ -42,52 +42,47 @@ void Position::changeTurn() {
 }
 // Asuming; non-special moves(!pro|!cast) and valid(des =empt|opColOc) input,
 // use it for temprory changes.
-// FIX IT: make this work.
-// std::vector<std::vector<uint64_t>>
-// Position::makeSoftMove(const int &source, const int &destination) const {
-//   uint64_t sourceMask = 0b1ull << source;
-//   uint64_t destinationMask = 0b1ull << destination;
-//   std::vector<std::vector<uint64_t>> piecesTemp = pieces;
-//   piece pieceType = getPieceType(sourceMask);
-//   color pieceColor = getPieceColor(sourceMask);
-//   int oppositePieceColor = (pieceColor + 1) % 2;
-
-//   piecesTemp[pieceColor][pieceType] &= ~sourceMask;
-//   piecesTemp[pieceColor][all] &= ~sourceMask;
-
-//   if (!isSquareEmpty(destinationMask)) {
-//     piece pieceType = getPieceType(destinationMask);
-//     piecesTemp[oppositePieceColor][pieceType] &= ~destinationMask;
-//     piecesTemp[oppositePieceColor][all] &= ~destinationMask;
-//   }
-
-//   piecesTemp[pieceColor][pieceType] &= destinationMask;
-//   piecesTemp[pieceColor][all] &= destinationMask;
-//   return piecesTemp;
-// }
-// Getters
-void Position::makeMove(const Move &move) {
+// CAUTION: it does not change the turn automatically!
+void Position::makeMove(Move move) {
   int from = move.getFrom();
   int to = move.getTo();
-  int from = move.getColor();
+  int pieceType = move.getPiece();
+  int pieceColor = move.getColor();
+  bool isCapture = move.checkIsCapture();
+  int oppositePieceColor = (pieceColor + 1) % 2;
+  uint64_t toMask = (0b1ull << to);
+  uint64_t notFromMask = ~(0b1ull << from);
+  pieces[pieceColor][pieceType] &= notFromMask;
+  pieces[pieceColor][pieceType] |= toMask;
+
+  if (isCapture) {
+    piece capturedPieceType = getPieceType(toMask);
+    pieces[oppositePieceColor][capturedPieceType] &= (~toMask);
+  }
+  pieces[white][all] = pieces[white][rook] | pieces[white][knight] |
+                       pieces[white][bishop] | pieces[white][queen] |
+                       pieces[white][king] | pieces[white][pawn];
+  pieces[black][all] = pieces[black][rook] | pieces[black][knight] |
+                       pieces[black][bishop] | pieces[black][queen] |
+                       pieces[black][king] | pieces[black][pawn];
 };
 std::vector<std::vector<uint64_t>> Position::getPieces() const {
   return pieces;
 }
-color Position ::getPieceColor(const uint64_t &positionMask) const {
+color Position ::getPieceColor(const uint64_t &sqMask) const {
 
-  if (positionMask & pieces[black][all]) {
+  if (sqMask & pieces[black][all]) {
     return color::black;
-  } else if (positionMask & pieces[white][all]) {
+  } else if (sqMask & pieces[white][all]) {
     return color::white;
   } else {
     std::cerr << "empty square";
   }
 }
-piece Position::getPieceType(const uint64_t &positionMask) const {
+piece Position::getPieceType(const uint64_t &sqMask) const {
   for (int pieceInd = 0; pieceInd < 6; pieceInd++) {
 
-    if (positionMask & (pieces[white][pieceInd] | pieces[black][pieceInd])) {
+    if (sqMask & (pieces[white][pieceInd] | pieces[black][pieceInd])) {
 
       return static_cast<piece>(pieceInd);
     }
