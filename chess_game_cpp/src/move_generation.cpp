@@ -199,7 +199,6 @@ void MoveGeneration::generateRookMoves(Position position,
   while (remainingRooks) {
     from = static_cast<square>(__builtin_ctzll(remainingRooks));
     generatedMoves = getRookAttackMask(from, occupancy) & eligibleSquares;
-
     while (generatedMoves) {
       to = __builtin_ctzll(generatedMoves);
       moveList.push_back(Move{from, to, piece::rook, colorIn});
@@ -248,8 +247,8 @@ void MoveGeneration::generateAllMoves(Position position, const color &colorIn) {
   generateDoublePawnPushes(position, colorIn);
   generateLeftPawnCaptures(position, colorIn);
   generateRightPawnCaptures(position, colorIn);
-  generateBishopMoves(position, colorIn);
   generateRookMoves(position, colorIn);
+  generateBishopMoves(position, colorIn);
   generateQueenMoves(position, colorIn);
 }
 
