@@ -1,3 +1,4 @@
+#include "Move.hpp"
 #include "loader.hpp"
 #include "tables.hpp"
 class Position {
@@ -21,6 +22,8 @@ public:
   // std::vector<std::vector<uint64_t>> makeSoftMove(const int &source,
   //                                                 const int &destination)
   //                                                 const;
+  void makeMove(const Move &move);
+
   void printBoard() const;
 
 private:

@@ -66,6 +66,11 @@ void Position::changeTurn() {
 //   return piecesTemp;
 // }
 // Getters
+void Position::makeMove(const Move &move) {
+  int from = move.getFrom();
+  int to = move.getTo();
+  int from = move.getColor();
+};
 std::vector<std::vector<uint64_t>> Position::getPieces() const {
   return pieces;
 }
