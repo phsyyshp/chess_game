@@ -1,5 +1,5 @@
 #include "move_generation.hpp"
-std::vector<Position> perft(std::vector<Position> positions) {
+std::vector<Position> perftSingle(std::vector<Position> positions) {
   Position tempPosition;
   std::vector<Position> out;
   for (auto position : positions) {
@@ -16,24 +16,37 @@ std::vector<Position> perft(std::vector<Position> positions) {
   }
   return out;
 }
-int main() {
+void perft(int depth) {
+
   Position position;
   position.setBoardToInitialConfiguration();
-  MoveGeneration moveGen;
-  Position tempPosition;
-  moveGen.generateKnightMoves(position, color::white);
-  std::vector<Move> allMoves = moveGen.getMoves();
-  std::vector<Position> out;
 
-  for (auto move : allMoves) {
-    tempPosition = position;
-    tempPosition.makeMove(move);
-    tempPosition.changeTurn();
-    // out.push_back(tempPosition);
-    tempPosition.printBoard();
+  std::vector<Position> positions = {position};
+  int i = 0;
+  while (i != depth) {
+    positions = perftSingle(positions);
 
-    // std::vector<Position> positions = {position};
-    // std::vector<Position> newPoses = perft(positions);
-    // std::cout << newPoses.size() << std::endl;
+    std::cout << positions.size() << std::endl;
+
+    i++;
   }
+}
+int main() {
+  // Position position;
+  // position.setBoardToInitialConfiguration();
+
+  // std::vector<Position> positions = {position};
+  // std::vector<Position> newPoses = perftSingle(positions);
+  // std::cout << newPoses.size() << std::endl;
+
+  // newPoses = perftSingle(newPoses);
+  // newPoses = perftSingle(newPoses);
+  // newPoses = perftSingle(newPoses);
+  // newPoses = perftSingle(newPoses);
+
+  // std::cout << newPoses.size() << std::endl;
+  // // for (auto pos : newPoses) {
+  // //   pos.printBoard();
+  // // }
+  perft(4);
 }
