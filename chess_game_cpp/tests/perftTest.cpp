@@ -1,19 +1,28 @@
 #include "move_generation.hpp"
+std::vector<Position> perft(std::vector<Position> positions) {
+
+  Position tempPosition;
+  std::vector<Position> out;
+  for (auto position : positions) {
+
+    MoveGeneration movGen;
+
+    movGen.generateAllMoves(position, position.getTurn());
+    std::vector<Move> allMoves = movGen.getMoves();
+    for (auto move : allMoves) {
+      tempPosition = position;
+      tempPosition.makeMove(move);
+      tempPosition.changeTurn();
+      out.push_back(tempPosition);
+    }
+  }
+  return out;
+}
+
 int main() {
   Position position;
   position.setBoardToInitialConfiguration();
-  uint64_t allPieces =
-      position.getPieces()[white][all] | position.getPieces()[black][all];
-  std::cout << allPieces;
-  MoveGeneration movGen;
-  movGen.generateAllMoves(position, color::white);
-  // movGen.generateKingMoves(position, color::white);
-  std::vector<Move> allMoves = movGen.getMoves();
-  std::cout << allMoves.size() << std::endl;
-  int i = 0;
-  for (auto move : allMoves) {
-    i++;
-    std::cout << move.getPiece() << std::endl;
-  }
-  std::cout << i << std::endl;
+  std::vector<Position> positions = {position};
+  std::vector<Position> newPoses = perft(positions);
+  std::cout << newPoses.size() << std::endl;
 }
