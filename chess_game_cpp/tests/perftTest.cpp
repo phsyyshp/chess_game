@@ -1,12 +1,10 @@
 #include "move_generation.hpp"
 std::vector<Position> perft(std::vector<Position> positions) {
-
   Position tempPosition;
   std::vector<Position> out;
   for (auto position : positions) {
 
     MoveGeneration movGen;
-
     movGen.generateAllMoves(position, position.getTurn());
     std::vector<Move> allMoves = movGen.getMoves();
     for (auto move : allMoves) {
