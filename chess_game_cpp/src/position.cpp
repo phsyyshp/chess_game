@@ -92,12 +92,11 @@ color Position::getTurn() const { return turn; }
 // Misc
 void Position::printBoard() const {
   uint64_t allPieces = pieces[white][all] | pieces[black][all];
-  for (int i = 63; i >= 0; i--) {
-    if (i % 8 == 7) {
-      std::cout << "\n";
-    } else {
-      std::cout << ((allPieces >> i) & 1);
+  for (int i = 7; i >= 0; i--) {
+    for (int j = 0; j < 8; j++) {
+      std::cout << ((0b1ULL << (j + i * 8)) & allPieces ? '1' : '0');
     }
+    std::cout << "\n";
   }
-  std::cout << "\n";
+  std::cout << std::endl;
 }
