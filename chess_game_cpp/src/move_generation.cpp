@@ -1,6 +1,7 @@
 #include "move_generation.hpp"
 
 std::vector<uint64_t> MoveGeneration::factor_mask(uint64_t mask) {
+  uint64_t occupancy = 0b1ULL << 25 - 8;
   std::vector<uint64_t> out_vec(__builtin_popcountll(mask));
   int i = 0;
   uint64_t counter = 1;
@@ -18,11 +19,12 @@ void MoveGeneration::generateSinglePawnPushes(Position position,
   uint64_t generatedMoves;
   uint64_t pawns;
   int to, from;
-
+  uint64_t ineligibleSquares =
+      position.getPieces()[white][all] | position.getPieces()[black][all];
   switch (colorIn) {
   case color::white:
     pawns = position.getPieces()[white][pawn];
-    generatedMoves = (pawns << 8) & (~position.getPieces()[black][all]);
+    generatedMoves = (pawns << 8) & (~ineligibleSquares);
     while (generatedMoves) {
       to = __builtin_ctzll(generatedMoves);
       from = to - 8;
@@ -33,7 +35,7 @@ void MoveGeneration::generateSinglePawnPushes(Position position,
   case color::black:
 
     pawns = position.getPieces()[black][pawn];
-    generatedMoves = (pawns >> 8) & ~position.getPieces()[white][all];
+    generatedMoves = (pawns >> 8) & (~ineligibleSquares);
     while (generatedMoves) {
       to = __builtin_ctzll(generatedMoves);
       from = to + 8;
@@ -49,12 +51,13 @@ void MoveGeneration::generateDoublePawnPushes(Position position,
                                               const color &colorIn) {
   uint64_t pawns, pawns_at_initial_config, generatedMoves;
   int to, from;
-
+  uint64_t ineligibleSquares =
+      position.getPieces()[white][all] | position.getPieces()[black][all];
   switch (colorIn) {
   case white:
     pawns = position.getPieces()[white][pawn];
     pawns_at_initial_config = pawns & ((0b1ULL << 2 * 8) - 1);
-    generatedMoves = pawns_at_initial_config << 2 * 8;
+    generatedMoves = (pawns_at_initial_config << 2 * 8) & (~ineligibleSquares);
     while (generatedMoves) {
       to = __builtin_ctzll(generatedMoves);
       from = to - 16;
@@ -63,10 +66,9 @@ void MoveGeneration::generateDoublePawnPushes(Position position,
     }
     break;
   case black:
-
     pawns = position.getPieces()[black][pawn];
     pawns_at_initial_config = pawns & (((0b1ULL << 2 * 8) - 1) * 6 * 8);
-    generatedMoves = pawns_at_initial_config >> 2 * 8;
+    generatedMoves = (pawns_at_initial_config >> 2 * 8) & (~ineligibleSquares);
     while (generatedMoves) {
       to = __builtin_ctzll(generatedMoves);
       from = to + 16;
@@ -142,7 +144,6 @@ void MoveGeneration::generateRightPawnCaptures(Position position,
     break;
   }
 }
-
 // uint64_t generate_pawn_captures(Position position){
 //   uint64_t pawns =
 // }
@@ -231,9 +232,9 @@ void MoveGeneration::generateQueenMoves(Position position,
 void MoveGeneration::generateKingMoves(Position position,
                                        const color &colorIn) {
   int from = __builtin_ctzll(position.getPieces()[colorIn][king]);
-
-  uint64_t generatedMoves = kingLookUpTable[from];
   int to;
+  uint64_t eligibleSquares = ~position.getPieces()[colorIn][all];
+  uint64_t generatedMoves = kingLookUpTable[from] & eligibleSquares;
   while (generatedMoves) {
     to = __builtin_ctzll(generatedMoves);
     moveList.push_back(Move{from, to, piece::king, colorIn});

@@ -877,8 +877,8 @@ void save_rook_shifts() {
   if (out) {
     for (int i = 0; i < 64; i++) {
 
-      out << __builtin_popcountll(
-                 remove_bit(generate_rook_mask(0b1ull << i, 8), i))
+      out << 64 - __builtin_popcountll(
+                      remove_bit(generate_rook_mask(0b1ull << i, 8), i))
           << std::endl;
     }
   } else {
@@ -907,7 +907,8 @@ void save_bishop_shifts() {
   if (out) {
     for (int i = 0; i < 64; i++) {
 
-      out << __builtin_popcountll(remove_bit(bishop_masks[i], i)) << std::endl;
+      out << 64 - __builtin_popcountll(remove_bit(bishop_masks[i], i))
+          << std::endl;
     }
   } else {
     std::cerr << "the file can not be opened";
@@ -961,9 +962,9 @@ int main() {
   // save_black_pawn_attack_look_up_table();
   // save_king_look_up_table();
   // save_king_attacks();
-  save_bishop_masks();
+  // save_bishop_masks();
   save_bishop_shifts();
-  save_rook_masks();
+  // save_rook_masks();
   save_rook_shifts();
 
   // uint64_t mask = generate_rook_mask(0b1ULL << 21, 8);

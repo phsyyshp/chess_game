@@ -17,35 +17,38 @@ int main() {
   Position position;
   position.setBoardToInitialConfiguration();
   std::vector<std::vector<uint64_t>> board = position.getPieces();
-  uint64_t occupancy = board[white][all] | board[black][all];
   // TO DO: add here a very well established debugger and finally solve this
   // issue.
-  //  uint64_t attack_mask = getRookAttackMask(c5, occupancy);
-  //  std::cout << "attack_mask" << std::endl;
-  //  print_board(attack_mask);
-  //  std::cout << "pos of piece" << std::endl;
-  //  print_board(0b1ULL << c5);
+
+  // test 1
+  std::cout << "rook magic number tests" << std::endl;
+  uint64_t occupancy = (0b1ull) << b3;
+
   std::cout << "occupancy" << std::endl;
-  int shiftBit = rookTbls[a1].shiftBit;
+  print_board(occupancy);
+
   square sq = a1;
   uint64_t occupancyTemp = occupancy & rookTbls[sq].mask;
   auto magicIdx =
       (occupancyTemp * rookTbls[sq].magicNum) >> rookTbls[sq].shiftBit;
-  print_board(occupancy);
-  // std::cout << rookTbls[sq].magicNum << std::endl;
-  // std::cout << shiftBit << std::endl;
-  // std::cout << magicIdx << std::endl;
+  std::cout << "rook attacks" << std::endl;
   print_board(rookLookUpTables[sq][magicIdx]);
-  // uint64_t bishop_attack_mask = getBishopAttackMask(c5, occupancy);
-  // std::cout << "___------------------------------------------" << std::endl;
 
-  // std::cout << "bishop stuff" << std::endl;
-  // std::cout << "attack_mask" << std::endl;
-  // print_board(bishop_attack_mask);
-  // std::cout << "pos of piece" << std::endl;
+  // test 2
+  std::cout << "rook magic number tests" << std::endl;
+  occupancy = (0b1ull) << d7;
 
-  // print_board(0b1ULL << 25 - 8);
-  // std::cout << "pos of obstacle" << std::endl;
+  std::cout << "occupancy" << std::endl;
+  print_board(occupancy);
+  sq = d5;
+  occupancyTemp = occupancy & rookTbls[sq].mask;
+  std::cout << "occupancy temp " << std::endl;
+  print_board(occupancyTemp);
 
-  // print_board(0b1ULL << 3 * 8 - 9 + 25);
+  magicIdx = (occupancyTemp * rookTbls[sq].magicNum) >> (rookTbls[sq].shiftBit);
+
+  std::cout << "magic index" << std::endl;
+  std::cout << magicIdx << std::endl;
+  std::cout << "rook attacks" << std::endl;
+  print_board(rookLookUpTables[sq][magicIdx]);
 }
