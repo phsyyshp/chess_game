@@ -25,7 +25,7 @@ public:
   //                                                 const int &destination)
   //                                                 const;
   void makeMove(Move move);
-
+  void undoMove(Move move);
   void printBoard() const;
 
 private:
@@ -34,6 +34,7 @@ private:
   color turn;
   std::vector<std::vector<uint64_t>> pieces;
 
+  piece capturedInLastMove;
   canCastle canWhiteCastle;
   canCastle canBlackCastle;
 };
