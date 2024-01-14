@@ -13,7 +13,7 @@ std::vector<uint64_t> MoveGeneration::factor_mask(uint64_t mask) {
   }
   return out_vec;
 }
-void MoveGeneration::generateSinglePawnPushes(Position position,
+void MoveGeneration::generateSinglePawnPushes(const Position &position,
                                               const color &colorIn) {
   // TODO: add promotions
   uint64_t generatedMoves;
@@ -47,7 +47,7 @@ void MoveGeneration::generateSinglePawnPushes(Position position,
     break;
   }
 }
-void MoveGeneration::generateDoublePawnPushes(Position position,
+void MoveGeneration::generateDoublePawnPushes(const Position &position,
                                               const color &colorIn) {
   uint64_t pawns, pawns_at_initial_config, generatedMoves;
   int to, from;
@@ -80,7 +80,7 @@ void MoveGeneration::generateDoublePawnPushes(Position position,
     break;
   }
 }
-void MoveGeneration::generateLeftPawnCaptures(Position position,
+void MoveGeneration::generateLeftPawnCaptures(const Position &position,
                                               const color &colorIn) {
   uint64_t eligibleSquares;
   uint64_t generatedMoves;
@@ -112,7 +112,7 @@ void MoveGeneration::generateLeftPawnCaptures(Position position,
     break;
   }
 }
-void MoveGeneration::generateRightPawnCaptures(Position position,
+void MoveGeneration::generateRightPawnCaptures(const Position &position,
                                                const color &colorIn) {
   uint64_t eligibleSquares;
   uint64_t generatedMoves;
@@ -144,10 +144,10 @@ void MoveGeneration::generateRightPawnCaptures(Position position,
     break;
   }
 }
-// uint64_t generate_pawn_captures(Position position){
+// uint64_t generate_pawn_captures(const Position &position){
 //   uint64_t pawns =
 // }
-void MoveGeneration::generateKnightMoves(Position position,
+void MoveGeneration::generateKnightMoves(const Position &position,
                                          const color &colorIn) {
   uint64_t eligibleSquares = ~position.getPieces()[colorIn][all];
   uint64_t allPieces =
@@ -170,7 +170,7 @@ void MoveGeneration::generateKnightMoves(Position position,
     remainingKnigths ^= (0b1ull << from);
   }
 }
-void MoveGeneration::generateBishopMoves(Position position,
+void MoveGeneration::generateBishopMoves(const Position &position,
                                          const color &colorIn) {
   uint64_t eligibleSquares = ~position.getPieces()[colorIn][all];
   uint64_t occupancy =
@@ -194,7 +194,7 @@ void MoveGeneration::generateBishopMoves(Position position,
     remainingBishops ^= (0b1ull << from);
   }
 }
-void MoveGeneration::generateRookMoves(Position position,
+void MoveGeneration::generateRookMoves(const Position &position,
                                        const color &colorIn) {
   uint64_t eligibleSquares = ~position.getPieces()[colorIn][all];
   uint64_t occupancy =
@@ -216,7 +216,7 @@ void MoveGeneration::generateRookMoves(Position position,
     remainingRooks ^= (0b1ull << from);
   }
 }
-void MoveGeneration::generateQueenMoves(Position position,
+void MoveGeneration::generateQueenMoves(const Position &position,
                                         const color &colorIn) {
   uint64_t eligibleSquares = ~position.getPieces()[colorIn][all];
   uint64_t occupancy =
@@ -238,7 +238,7 @@ void MoveGeneration::generateQueenMoves(Position position,
     }
   }
 }
-void MoveGeneration::generateKingMoves(Position position,
+void MoveGeneration::generateKingMoves(const Position &position,
                                        const color &colorIn) {
   int from = __builtin_ctzll(position.getPieces()[colorIn][king]);
   int to;
@@ -254,7 +254,8 @@ void MoveGeneration::generateKingMoves(Position position,
     generatedMoves ^= (0b1ull << to);
   }
 }
-void MoveGeneration::generateAllMoves(Position position, const color &colorIn) {
+void MoveGeneration::generateAllMoves(const Position &position,
+                                      const color &colorIn) {
   generateKnightMoves(position, colorIn);
   generateKingMoves(position, colorIn);
   generateSinglePawnPushes(position, colorIn);
