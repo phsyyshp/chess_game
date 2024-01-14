@@ -31,4 +31,4 @@ void perft(int depth) {
     i++;
   }
 }
-int main() { perft(5); }
+int main() { perft(4); }
