@@ -78,7 +78,24 @@ void Position::makeMove(Move move) {
     piece capturedPieceType = getPieceType(toMask);
     pieces[oppositePieceColor][capturedPieceType] &= (~toMask);
   }
-};
+}
+void Position::unmakeMove(Move move) {
+  int from = move.getFrom();
+  int to = move.getTo();
+  int pieceType = move.getPiece();
+  int pieceColor = move.getColor();
+  bool isCapture = move.checkIsCapture();
+  int oppositePieceColor = (pieceColor + 1) % 2;
+  uint64_t toMask = (0b1ull << to);
+  uint64_t notFromMask = ~(0b1ull << from);
+  pieces[pieceColor][pieceType] &= notFromMask;
+  pieces[pieceColor][pieceType] |= toMask;
+
+  if (isCapture) {
+    piece capturedPieceType = getPieceType(toMask);
+    pieces[oppositePieceColor][capturedPieceType] &= (~toMask);
+  }
+}
 std::vector<std::vector<uint64_t>> Position::getPieces() const {
   return pieces;
 }
