@@ -8,7 +8,7 @@ public:
     bool queenSide;
   };
   // constructors:
-  Position() : pieces(2, std::vector<uint64_t>(7, 0)) {}
+  Position() : pieces(2, std::vector<uint64_t>(6, 0)) {}
   Position(std::vector<std::vector<uint64_t>> piecesInput, color turnInput)
       : pieces(piecesInput), turn(turnInput) {}
   // setters;
@@ -19,6 +19,8 @@ public:
   color getTurn() const;
   color getPieceColor(const uint64_t &position) const;
   piece getPieceType(const uint64_t &position) const;
+  uint64_t getAllPieces(const color &pieceColor) const;
+
   // std::vector<std::vector<uint64_t>> makeSoftMove(const int &source,
   //                                                 const int &destination)
   //                                                 const;

@@ -1,5 +1,4 @@
 #include "position.hpp"
-// Initilazers;
 // Setters
 void Position::setWhitePiecesToInitialConfiguration() {
 
@@ -9,9 +8,6 @@ void Position::setWhitePiecesToInitialConfiguration() {
   pieces[white][queen] = 0b1ULL << d1;
   pieces[white][king] = 0b1ULL << e1;
   pieces[white][pawn] = 0b11111111ULL << 8;
-  pieces[white][all] = pieces[white][rook] | pieces[white][knight] |
-                       pieces[white][bishop] | pieces[white][queen] |
-                       pieces[white][king] | pieces[white][pawn];
 }
 void Position::setBlackPiecesToInitialConfiguration() {
   pieces[black][rook] = 0b1ULL << a8 | 0b1ULL << h8;
@@ -20,9 +16,6 @@ void Position::setBlackPiecesToInitialConfiguration() {
   pieces[black][queen] = 0b1ULL << d8;
   pieces[black][king] = 0b1ULL << e8;
   pieces[black][pawn] = 0b11111111ULL << 6 * 8;
-  pieces[black][all] = pieces[black][rook] | pieces[black][knight] |
-                       pieces[black][bishop] | pieces[black][queen] |
-                       pieces[black][king] | pieces[black][pawn];
 }
 void Position::setBoardToInitialConfiguration() {
   setWhitePiecesToInitialConfiguration();
@@ -39,6 +32,32 @@ void Position::changeTurn() {
   } else {
     turn = color::white;
   }
+}
+// Getters;
+color Position ::getPieceColor(const uint64_t &sqMask) const {
+
+  if (sqMask & getAllPieces(black)) {
+    return color::black;
+  } else if (sqMask & getAllPieces(white)) {
+    return color::white;
+  } else {
+    std::cerr << "empty square";
+  }
+}
+piece Position::getPieceType(const uint64_t &sqMask) const {
+  for (int pieceInd = 0; pieceInd < 6; pieceInd++) {
+
+    if (sqMask & (pieces[white][pieceInd] | pieces[black][pieceInd])) {
+
+      return static_cast<piece>(pieceInd);
+    }
+  }
+}
+color Position::getTurn() const { return turn; }
+uint64_t Position::getAllPieces(const color &pieceColor) const {
+  return pieces[pieceColor][rook] | pieces[pieceColor][knight] |
+         pieces[pieceColor][bishop] | pieces[pieceColor][queen] |
+         pieces[pieceColor][king] | pieces[pieceColor][pawn];
 }
 // Asuming; non-special moves(!pro|!cast) and valid(des =empt|opColOc) input,
 // use it for temprory changes.
@@ -59,39 +78,13 @@ void Position::makeMove(Move move) {
     piece capturedPieceType = getPieceType(toMask);
     pieces[oppositePieceColor][capturedPieceType] &= (~toMask);
   }
-  pieces[white][all] = pieces[white][rook] | pieces[white][knight] |
-                       pieces[white][bishop] | pieces[white][queen] |
-                       pieces[white][king] | pieces[white][pawn];
-  pieces[black][all] = pieces[black][rook] | pieces[black][knight] |
-                       pieces[black][bishop] | pieces[black][queen] |
-                       pieces[black][king] | pieces[black][pawn];
 };
 std::vector<std::vector<uint64_t>> Position::getPieces() const {
   return pieces;
 }
-color Position ::getPieceColor(const uint64_t &sqMask) const {
-
-  if (sqMask & pieces[black][all]) {
-    return color::black;
-  } else if (sqMask & pieces[white][all]) {
-    return color::white;
-  } else {
-    std::cerr << "empty square";
-  }
-}
-piece Position::getPieceType(const uint64_t &sqMask) const {
-  for (int pieceInd = 0; pieceInd < 6; pieceInd++) {
-
-    if (sqMask & (pieces[white][pieceInd] | pieces[black][pieceInd])) {
-
-      return static_cast<piece>(pieceInd);
-    }
-  }
-}
-color Position::getTurn() const { return turn; }
 // Misc
 void Position::printBoard() const {
-  uint64_t allPieces = pieces[white][all] | pieces[black][all];
+  uint64_t allPieces = getAllPieces(white) | getAllPieces(black);
   for (int i = 7; i >= 0; i--) {
     for (int j = 0; j < 8; j++) {
       std::cout << ((0b1ULL << (j + i * 8)) & allPieces ? '1' : '0');
