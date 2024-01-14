@@ -2,25 +2,24 @@
 std::vector<Position> perftSingle(std::vector<Position> positions) {
   Position tempPosition;
   std::vector<Position> out;
-  for (const auto &position : positions) {
+  for (auto position : positions) {
 
     MoveGeneration movGen;
     movGen.generateAllMoves(position, position.getTurn());
     std::vector<Move> allMoves = movGen.getMoves();
     for (const auto &move : allMoves) {
-      tempPosition = position;
-      tempPosition.makeMove(move);
-      tempPosition.changeTurn();
-      out.push_back(tempPosition);
+      position.makeMove(move);
+      position.changeTurn();
+      out.push_back(position);
+      position.undoMove(move);
+      position.changeTurn();
     }
   }
   return out;
 }
 void perft(int depth) {
-
   Position position;
   position.setBoardToInitialConfiguration();
-
   std::vector<Position> positions;
   positions.reserve(10000000);
   positions.push_back(position);
