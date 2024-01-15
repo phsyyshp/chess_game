@@ -15,24 +15,23 @@ public:
       // FIX IT: do undo;
       tempPosition = position;
       position.makeMove(move);
-      position.changeTurn();
 
       nodes += perftRec(depth - 1);
       // position = tempPosition;
-      position.changeTurn();
 
       position.undoMove(move);
-      if (position.getPieces() != tempPosition.getPieces()) {
-        std::cout << "wrong"
-                  << "\n";
-        position.printBoard();
-        std::cout << "correct"
-                  << "\n";
+      // if (position.getPieces() != tempPosition.getPieces()) {
+      //   std::cout << "wrong"
+      //             << "\n";
+      //   position.printBoard();
+      //   std::cout << "correct"
+      //             << "\n";
 
-        tempPosition.printBoard();
-        std::cout << nodes << "\n";
-        break;
-      }
+      //   tempPosition.printBoard();
+      //   std::cout << nodes << "\n";
+      //   std::cout << position.capturedInLastMove << "\n";
+      //   break;
+      // }
     }
     return nodes;
   }
@@ -45,5 +44,5 @@ int main() {
   position.setBoardToInitialConfiguration();
   test.position = position;
 
-  std::cout << test.perftRec(3);
+  std::cout << test.perftRec(5);
 }

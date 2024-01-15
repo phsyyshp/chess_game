@@ -63,7 +63,7 @@ uint64_t Position::getAllPieces(const color &pieceColor) const {
 }
 // Asuming; non-special moves(!pro|!cast) and valid(des =empt|opColOc) input,
 // use it for temprory changes.
-// CAUTION: it does not change the turn automatically!
+// It changes turns automatically for now.
 void Position::makeMove(Move move) {
   int from = move.getFrom();
   int to = move.getTo();
@@ -74,13 +74,14 @@ void Position::makeMove(Move move) {
   uint64_t toMask = (0b1ull << to);
   uint64_t notFromMask = ~(0b1ull << from);
   pieces[pieceColor][pieceType] &= notFromMask;
-  pieces[pieceColor][pieceType] |= toMask;
-
   if (isCapture) {
     piece capturedPieceType = getPieceType(toMask);
     pieces[oppositePieceColor][capturedPieceType] &= (~toMask);
     capturedInLastMove = capturedPieceType;
   }
+  pieces[pieceColor][pieceType] |= toMask;
+
+  changeTurn();
 }
 // FIX IT: sth is wrong here fix me!
 void Position::undoMove(Move move) {
@@ -92,7 +93,7 @@ void Position::undoMove(Move move) {
   int oppositePieceColor = (pieceColor + 1) % 2;
   uint64_t toMask = (0b1ull << to);
   uint64_t notFromMask = ~(0b1ull << from);
-
+  changeTurn();
   pieces[pieceColor][pieceType] &= ~toMask;
   pieces[pieceColor][pieceType] |= ~notFromMask;
 
@@ -117,7 +118,7 @@ void Position::printBoard() const {
       if ((i + j + 1) % 2 == 0) {
         pieceIcon = colorizeString(pieceIcon, "30", "46");
       } else {
-        pieceIcon = colorizeString(pieceIcon, "30", "37");
+        pieceIcon = colorizeString(pieceIcon, "30", "40");
       }
       std::cout << pieceIcon;
     }

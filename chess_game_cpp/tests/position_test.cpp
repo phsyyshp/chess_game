@@ -5,12 +5,19 @@ int main() {
   Position newPos;
   newPos.setBoardToInitialConfiguration();
   newPos.printBoard();
-  Move move = Move(a2, a7, piece::pawn, color::white, true);
+  Move move = Move(d2, d3, piece::pawn, color::white, false);
   newPos.makeMove(move);
-  newPos.changeTurn();
   newPos.printBoard();
-  newPos.changeTurn();
 
+  move = Move(g8, h6, piece::knight, color::black, false);
+
+  newPos.makeMove(move);
+  newPos.printBoard();
+  move = Move(c8, h6, piece::bishop, color::white, true);
+
+  newPos.makeMove(move);
+
+  newPos.printBoard();
   newPos.undoMove(move);
 
   newPos.printBoard();
