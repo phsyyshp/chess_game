@@ -113,21 +113,12 @@ void Position::printBoard() const {
     for (int j = 0; j < 8; j++) {
       pieceType = getPieceType(0b1ull << (j + i * 8));
       pieceColor = getPieceColor(0b1ull << (j + i * 8));
-      // if (pieceColor == white || pieceColor == black) {
-
       pieceIcon = getPieceIcon(pieceType, pieceColor);
-      // } else {
-      //   pieceIcon = "\u0030";
-      // }
       if ((i + j + 1) % 2 == 0) {
-
         pieceIcon = colorizeString(pieceIcon, "30", "46");
       } else {
-
         pieceIcon = colorizeString(pieceIcon, "30", "37");
       }
-      // std::cout << ((0b1ULL << (j + i * 8)) & allPieces ? pieceIcon :
-      // "\u0030");
       std::cout << pieceIcon;
     }
     std::cout << "\n";
