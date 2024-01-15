@@ -65,6 +65,7 @@ uint64_t Position::getAllPieces(const color &pieceColor) const {
 // use it for temprory changes.
 // It changes turns automatically for now.
 void Position::makeMove(Move move) {
+  piece nulity;
   int from = move.getFrom();
   int to = move.getTo();
   int pieceType = move.getPiece();
@@ -72,12 +73,15 @@ void Position::makeMove(Move move) {
   bool isCapture = move.checkIsCapture();
   int oppositePieceColor = (pieceColor + 1) % 2;
   uint64_t toMask = (0b1ull << to);
-  uint64_t notFromMask = ~(0b1ull << from);
-  pieces[pieceColor][pieceType] &= notFromMask;
+  uint64_t fromMask = (0b1ull << from);
+  pieces[pieceColor][pieceType] &= ~fromMask;
   if (isCapture) {
     piece capturedPieceType = getPieceType(toMask);
     pieces[oppositePieceColor][capturedPieceType] &= (~toMask);
     capturedInLastMove = capturedPieceType;
+  } else {
+    // capturedInLastMove = nulity;
+    ;
   }
   pieces[pieceColor][pieceType] |= toMask;
 

@@ -2,7 +2,7 @@
 #define CONSTANTS_HPP
 #include <iostream>
 enum color { white, black, invalid };
-enum piece { pawn, bishop, rook, queen, knight, king, all };
+enum piece { pawn, bishop, rook, queen, knight, king, noPiece };
 enum square {
   a1,
   b1,
