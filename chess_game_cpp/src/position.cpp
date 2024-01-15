@@ -41,7 +41,9 @@ color Position ::getPieceColor(const uint64_t &sqMask) const {
   } else if (sqMask & getAllPieces(white)) {
     return color::white;
   } else {
-    std::cerr << "empty square";
+
+    // std::cerr << "empty square";
+    return color::invalid;
   }
 }
 piece Position::getPieceType(const uint64_t &sqMask) const {
@@ -80,6 +82,7 @@ void Position::makeMove(Move move) {
     capturedInLastMove = capturedPieceType;
   }
 }
+// FIX IT: sth is wrong here fix me!
 void Position::undoMove(Move move) {
   int from = move.getFrom();
   int to = move.getTo();
@@ -94,19 +97,62 @@ void Position::undoMove(Move move) {
   pieces[pieceColor][pieceType] |= ~notFromMask;
 
   if (isCapture) {
-    piece capturedPieceType = capturedInLastMove;
-    pieces[oppositePieceColor][capturedPieceType] |= (toMask);
+    pieces[oppositePieceColor][capturedInLastMove] |= (toMask);
   }
 }
 std::vector<std::vector<uint64_t>> Position::getPieces() const {
   return pieces;
 }
 // Misc
+std::string Position::getPieceIcon(piece pieceType, color pieceColor) const {
+  if (pieceColor == white) {
+    switch (pieceType) {
+    case pawn:
+      return "\u2659";
+    case bishop:
+      return "\u2657";
+    case rook:
+      return "\u2656";
+    case queen:
+      return "\u2655";
+    case knight:
+      return "\u2658";
+    case king:
+      return "\u2654";
+    }
+  } else { // black
+    switch (pieceType) {
+    case pawn:
+      return "\u265F";
+    case bishop:
+      return "\u265D";
+    case rook:
+      return "\u265C";
+    case queen:
+      return "\u265B";
+    case knight:
+      return "\u265E";
+    case king:
+      return "\u265A";
+    }
+  }
+}
 void Position::printBoard() const {
   uint64_t allPieces = getAllPieces(white) | getAllPieces(black);
+  piece pieceType;
+  color pieceColor;
+  std::string pieceIcon;
   for (int i = 7; i >= 0; i--) {
     for (int j = 0; j < 8; j++) {
-      std::cout << ((0b1ULL << (j + i * 8)) & allPieces ? '1' : '0');
+      pieceType = getPieceType(0b1ull << (j + i * 8));
+      pieceColor = getPieceColor(0b1ull << (j + i * 8));
+      if (pieceColor == white || pieceColor == black) {
+
+        pieceIcon = getPieceIcon(pieceType, pieceColor);
+      } else {
+        pieceIcon = "\u0030";
+      }
+      std::cout << ((0b1ULL << (j + i * 8)) & allPieces ? pieceIcon : "\u0030");
     }
     std::cout << "\n";
   }

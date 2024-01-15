@@ -41,9 +41,7 @@ set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/bin)
 # Create the main executable
 # add_executable(move_generation_test ${SOURCES})
 # add_executable(loader_test ${SOURCES})
-# add_executable(perftTest ${SOURCES})
 add_executable(perftTest ${SOURCES})
- 
 # add_executable(position_test ${SOURCES})
  
  
