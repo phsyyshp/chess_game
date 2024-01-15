@@ -104,39 +104,6 @@ std::vector<std::vector<uint64_t>> Position::getPieces() const {
   return pieces;
 }
 // Misc
-std::string Position::getPieceIcon(piece pieceType, color pieceColor) const {
-  if (pieceColor == white) {
-    switch (pieceType) {
-    case pawn:
-      return "\u2659";
-    case bishop:
-      return "\u2657";
-    case rook:
-      return "\u2656";
-    case queen:
-      return "\u2655";
-    case knight:
-      return "\u2658";
-    case king:
-      return "\u2654";
-    }
-  } else { // black
-    switch (pieceType) {
-    case pawn:
-      return "\u265F";
-    case bishop:
-      return "\u265D";
-    case rook:
-      return "\u265C";
-    case queen:
-      return "\u265B";
-    case knight:
-      return "\u265E";
-    case king:
-      return "\u265A";
-    }
-  }
-}
 void Position::printBoard() const {
   uint64_t allPieces = getAllPieces(white) | getAllPieces(black);
   piece pieceType;
@@ -146,13 +113,22 @@ void Position::printBoard() const {
     for (int j = 0; j < 8; j++) {
       pieceType = getPieceType(0b1ull << (j + i * 8));
       pieceColor = getPieceColor(0b1ull << (j + i * 8));
-      if (pieceColor == white || pieceColor == black) {
+      // if (pieceColor == white || pieceColor == black) {
 
-        pieceIcon = getPieceIcon(pieceType, pieceColor);
+      pieceIcon = getPieceIcon(pieceType, pieceColor);
+      // } else {
+      //   pieceIcon = "\u0030";
+      // }
+      if ((i + j + 1) % 2 == 0) {
+
+        pieceIcon = colorizeString(pieceIcon, "30", "46");
       } else {
-        pieceIcon = "\u0030";
+
+        pieceIcon = colorizeString(pieceIcon, "30", "37");
       }
-      std::cout << ((0b1ULL << (j + i * 8)) & allPieces ? pieceIcon : "\u0030");
+      // std::cout << ((0b1ULL << (j + i * 8)) & allPieces ? pieceIcon :
+      // "\u0030");
+      std::cout << pieceIcon;
     }
     std::cout << "\n";
   }
