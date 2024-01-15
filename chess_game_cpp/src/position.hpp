@@ -1,6 +1,7 @@
 #include "Move.hpp"
 #include "loader.hpp"
 #include "tables.hpp"
+#include "utilities.hpp"
 class Position {
 public:
   struct canCastle {
@@ -26,7 +27,6 @@ public:
   //                                                 const;
   void makeMove(Move move);
   void undoMove(Move move);
-  std::string getPieceIcon(piece pieceType, color pieceColor) const;
 
   void printBoard() const;
 
