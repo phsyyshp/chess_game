@@ -26,6 +26,8 @@ public:
   //                                                 const;
   void makeMove(Move move);
   void undoMove(Move move);
+  std::string getPieceIcon(piece pieceType, color pieceColor) const;
+
   void printBoard() const;
 
 private:

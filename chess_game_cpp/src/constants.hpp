@@ -1,7 +1,7 @@
 #ifndef CONSTANTS_HPP
 #define CONSTANTS_HPP
 #include <iostream>
-enum color { white, black };
+enum color { white, black, invalid };
 enum piece { pawn, bishop, rook, queen, knight, king, all };
 enum square {
   a1,

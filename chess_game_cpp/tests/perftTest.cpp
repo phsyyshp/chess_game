@@ -1,33 +1,49 @@
 #include "move_generation.hpp"
-std::vector<Position> perftSingle(std::vector<Position> positions) {
-  Position tempPosition;
-  std::vector<Position> out;
-  for (auto position : positions) {
+class perftTest {
 
+public:
+  int perftRec(int depth) {
+    Position tempPosition;
+    if (depth == 0) {
+      return 1;
+    }
+    int nodes = 0;
     MoveGeneration movGen;
     movGen.generateAllMoves(position, position.getTurn());
     std::vector<Move> allMoves = movGen.getMoves();
     for (const auto &move : allMoves) {
+      // FIX IT: do undo;
+      tempPosition = position;
       position.makeMove(move);
       position.changeTurn();
-      out.push_back(position);
-      position.undoMove(move);
+
+      nodes += perftRec(depth - 1);
+      // position = tempPosition;
       position.changeTurn();
+
+      position.undoMove(move);
+      if (position.getPieces() != tempPosition.getPieces()) {
+        std::cout << "wrong"
+                  << "\n";
+        position.printBoard();
+        std::cout << "correct"
+                  << "\n";
+
+        tempPosition.printBoard();
+        std::cout << nodes << "\n";
+        break;
+      }
     }
+    return nodes;
   }
-  return out;
-}
-void perft(int depth) {
+
+  Position position;
+};
+int main() {
+  perftTest test;
   Position position;
   position.setBoardToInitialConfiguration();
-  std::vector<Position> positions;
-  positions.reserve(10000000);
-  positions.push_back(position);
-  int i = 0;
-  while (i != depth) {
-    positions = perftSingle(positions);
-    std::cout << positions.size() << std::endl;
-    i++;
-  }
+  test.position = position;
+
+  std::cout << test.perftRec(3);
 }
-int main() { perft(4); }
