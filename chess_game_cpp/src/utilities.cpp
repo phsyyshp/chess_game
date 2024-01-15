@@ -1,5 +1,4 @@
 #include "utilities.hpp"
-
 std::string colorizeString(std::string str, std::string fgASCII,
                            std::string bgASCII) {
 
