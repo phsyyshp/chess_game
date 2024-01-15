@@ -13,7 +13,7 @@ int main() {
 
   newPos.makeMove(move);
   newPos.printBoard();
-  move = Move(c8, h6, piece::bishop, color::white, true);
+  move = Move(c1, h6, piece::bishop, color::white, true);
 
   newPos.makeMove(move);
 

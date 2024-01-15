@@ -20,18 +20,20 @@ public:
       // position = tempPosition;
 
       position.undoMove(move);
-      // if (position.getPieces() != tempPosition.getPieces()) {
-      //   std::cout << "wrong"
-      //             << "\n";
-      //   position.printBoard();
-      //   std::cout << "correct"
-      //             << "\n";
+      if (position.getPieces() != tempPosition.getPieces()) {
+        std::cout << "wrong"
+                  << "\n";
+        position.printBoard();
+        std::cout << "correct"
+                  << "\n";
 
-      //   tempPosition.printBoard();
-      //   std::cout << nodes << "\n";
-      //   std::cout << position.capturedInLastMove << "\n";
-      //   break;
-      // }
+        tempPosition.printBoard();
+        std::cout << nodes << "\n";
+        std::cout << position.capturedInLastMove << "\n";
+        std::cout << position.getTurn() << "\n";
+
+        break;
+      }
     }
     return nodes;
   }
@@ -44,5 +46,5 @@ int main() {
   position.setBoardToInitialConfiguration();
   test.position = position;
 
-  std::cout << test.perftRec(5);
+  std::cout << test.perftRec(4);
 }
