@@ -27,6 +27,7 @@ set(SOURCES
     src/loader.cpp
     src/Move.cpp
     src/tables.cpp
+    src/utilities.cpp
     # src/constants.hpp
     # tests/move_generation_test.cpp
     # tests/loader_test.cpp
