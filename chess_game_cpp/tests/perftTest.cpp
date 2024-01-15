@@ -18,22 +18,6 @@ public:
 
       nodes += perftRec(depth - 1);
       // position = tempPosition;
-
-      position.undoMove(move);
-      if (position.getPieces() != tempPosition.getPieces()) {
-        std::cout << "wrong"
-                  << "\n";
-        position.printBoard();
-        std::cout << "correct"
-                  << "\n";
-
-        tempPosition.printBoard();
-        std::cout << nodes << "\n";
-        std::cout << position.capturedInLastMove << "\n";
-        std::cout << position.getTurn() << "\n";
-
-        break;
-      }
     }
     return nodes;
   }
