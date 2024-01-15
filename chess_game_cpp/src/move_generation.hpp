@@ -4,7 +4,6 @@ class MoveGeneration {
 
 public:
   MoveGeneration() = default;
-  std::vector<uint64_t> factor_mask(uint64_t mask);
   void generateSinglePawnPushes(const Position &position, const color &coloIn);
   void generateDoublePawnPushes(const Position &position, const color &coloIn);
   void generateLeftPawnCaptures(const Position &position, const color &colorIn);
