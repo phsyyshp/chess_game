@@ -10,14 +10,14 @@ public:
     int nodes = 0;
     MoveGeneration movGen;
     movGen.generateAllMoves(position, position.getTurn());
-    std::vector<Move> allMoves = movGen.getMoves();
-    for (const auto &move : allMoves) {
+    // std::vector<Move> allMoves = movGen.getMoves();
+    for (const auto &move : movGen.getMoves()) {
       // FIX IT: do undo;
       tempPosition = position;
       position.makeMove(move);
 
       nodes += perftRec(depth - 1);
-      // position = tempPosition;
+      position = tempPosition;
     }
     return nodes;
   }
@@ -30,5 +30,5 @@ int main() {
   position.setBoardToInitialConfiguration();
   test.position = position;
 
-  std::cout << test.perftRec(4);
+  std::cout << test.perftRec(5);
 }

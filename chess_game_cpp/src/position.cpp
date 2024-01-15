@@ -65,7 +65,6 @@ uint64_t Position::getAllPieces(const color &pieceColor) const {
 // use it for temprory changes.
 // It changes turns automatically for now.
 void Position::makeMove(Move move) {
-  piece nulity;
   int from = move.getFrom();
   int to = move.getTo();
   int pieceType = move.getPiece();
@@ -105,7 +104,7 @@ void Position::undoMove(Move move) {
     pieces[oppositePieceColor][capturedInLastMove] |= (toMask);
   }
 }
-std::vector<std::vector<uint64_t>> Position::getPieces() const {
+std::array<std::array<uint64_t, 6>, 2> Position::getPieces() const {
   return pieces;
 }
 // Misc
