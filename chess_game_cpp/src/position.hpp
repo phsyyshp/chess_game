@@ -21,13 +21,10 @@ public:
   color getPieceColor(const uint64_t &position) const;
   piece getPieceType(const uint64_t &position) const;
   uint64_t getAllPieces(const color &pieceColor) const;
-
-  // std::vector<std::vector<uint64_t>> makeSoftMove(const int &source,
-  //                                                 const int &destination)
-  //                                                 const;
+  // movers:
   void makeMove(Move move);
   void undoMove(Move move);
-
+  // visualizers;
   void printBoard() const;
 
 private:
@@ -36,6 +33,7 @@ private:
   color turn;
   std::vector<std::vector<uint64_t>> pieces;
 
+public:
   piece capturedInLastMove;
   canCastle canWhiteCastle;
   canCastle canBlackCastle;
