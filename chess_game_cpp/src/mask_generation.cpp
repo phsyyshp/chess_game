@@ -915,6 +915,53 @@ void save_bishop_shifts() {
   }
   out.close();
 }
+uint64_t generateNeighbourFiles(uint64_t position) {
+  std::vector<int> rowCol = position_to_row_col(position);
+  int row = rowCol[0];
+  int column = rowCol[1];
+  uint64_t mask = 0;
+  for (int i = 0; i < 64; i++) {
+
+    std::vector<int> rowColTemp = position_to_row_col(0b1ull << i);
+    int rowTemp = rowColTemp[0];
+    int columnTemp = rowColTemp[1];
+    if ((columnTemp == (column + 1)) || (columnTemp == (column - 1))) {
+
+      mask |= (0b1ull << i);
+    }
+  }
+  return mask;
+}
+void saveNeighbourFilesPretty() {
+  std::string file_name = "adjacentFilesPretty.txt";
+  std::ofstream out(file_name);
+  if (out) {
+    for (int i = 0; i < 64; i++) {
+      uint64_t tempIn = 0b1ull << i;
+
+      print_board_os(out, generateNeighbourFiles(tempIn));
+    }
+  } else {
+    std::cerr << "the file can not be opened";
+  }
+  out.close();
+}
+
+void saveNeighbourFiles() {
+
+  std::string file_name = "adjacentFiles.txt";
+  std::ofstream out(file_name);
+  std::vector<uint64_t> bishop_masks;
+  if (out) {
+    for (int i = 0; i < 64; i++) {
+      uint64_t tempIn = 0b1ull << i;
+      out << generateNeighbourFiles(tempIn) << std::endl;
+    }
+  } else {
+    std::cerr << "the file can not be opened";
+  }
+  out.close();
+}
 int main() {
   // vector<uint64_t> out2 = generate_bishop_masks();
   // vector<uint64_t> out3 = generate_rook_masks();
@@ -963,9 +1010,12 @@ int main() {
   // save_king_look_up_table();
   // save_king_attacks();
   // save_bishop_masks();
-  save_bishop_shifts();
+  // save_bishop_shifts();
   // save_rook_masks();
-  save_rook_shifts();
+  // save_rook_shifts();
+  saveNeighbourFiles();
+  saveNeighbourFilesPretty();
+  // generateNeighbourFiles(0b1ull << 34);
 
   // uint64_t mask = generate_rook_mask(0b1ULL << 21, 8);
   // print_board(mask);
