@@ -2,7 +2,7 @@
 class perftTest {
 
 public:
-  int perftRec(int depth) {
+  int perft(int depth) {
     Position tempPosition;
     if (depth == 0) {
       return 1;
@@ -16,7 +16,7 @@ public:
       tempPosition = position;
       position.makeMove(move);
 
-      nodes += perftRec(depth - 1);
+      nodes += perft(depth - 1);
       position = tempPosition;
     }
     return nodes;
@@ -30,5 +30,5 @@ int main() {
   position.setBoardToInitialConfiguration();
   test.position = position;
 
-  std::cout << test.perftRec(5);
+  std::cout << test.perft(6);
 }
