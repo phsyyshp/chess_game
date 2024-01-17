@@ -9,11 +9,12 @@ int Evaluation::getDoubledPawnCount(const color &pieceColor) const {}
 int Evaluation::getBlockedPawnCount(const color &pieceColor) const {}
 int Evaluation::getIsolatedPawnCount(const color &pieceColor) const {
   uint64_t remainingPawns = position.getPieces()[pieceColor][pawn];
-  int tempsq;
+  square tempsq;
   while (remainingPawns) {
-    tempsq = __builtin_ctzll(remainingPawns);
-    if (~isPawnIsolated(tempsq)) {
-      remainingPawns &
+    tempsq = static_cast<square>((remainingPawns));
+    if (~isPawnIsolated(tempsq, pieceColor)) {
+      remainingPawns =
+          remainingPawns & adjacentFiles[tempsq] & sqToFiles[tempsq];
     }
   }
 }
