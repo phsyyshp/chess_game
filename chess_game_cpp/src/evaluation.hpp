@@ -1,4 +1,6 @@
+#include "bitoperations.hpp"
 #include "position.hpp"
+
 class Evaluation {
 public:
   // setters;
