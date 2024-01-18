@@ -1,0 +1,9 @@
+#include "evaluation.hpp"
+
+int main() {
+  std::string FEN = "r1bq1rk1/p2n1ppp/2pbpn2/1p6/3P4/2N1PN2/PPQ1BPPP/R1B2RK1/";
+  Position position(FENtoPieces(FEN), white);
+  Evaluation eval(position);
+  int out = eval.getIsolatedPawnCount(white);
+  std::cout << out << "\n";
+}

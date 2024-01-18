@@ -8,15 +8,7 @@ int Evaluation::getPieceCount(const piece &pieceType,
 int Evaluation::getDoubledPawnCount(const color &pieceColor) const {}
 int Evaluation::getBlockedPawnCount(const color &pieceColor) const {}
 int Evaluation::getIsolatedPawnCount(const color &pieceColor) const {
-  uint64_t remainingPawns = position.getPieces()[pieceColor][pawn];
-  square tempsq;
-  while (remainingPawns) {
-    tempsq = static_cast<square>((remainingPawns));
-    if (~isPawnIsolated(tempsq, pieceColor)) {
-      remainingPawns =
-          remainingPawns & adjacentFiles[tempsq] & sqToFiles[tempsq];
-    }
-  }
+  return __builtin_popcountll(isolanis(position.getPieces()[pieceColor][pawn]));
 }
 int Evaluation::getMobility(const color &pieceColor) const {}
 bool Evaluation::isPawnDoubled(square sq) const {};
