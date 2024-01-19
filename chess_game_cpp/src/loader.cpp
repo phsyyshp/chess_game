@@ -40,7 +40,7 @@ std::vector<uint64_t> lineToNumsVec(const std::string &line) {
   return out;
 }
 std::vector<uint64_t> fileToVec(std::string fileName) {
-  fileName = "mask_cache/" + fileName + ".txt";
+  // fileName = "mask_cache/" + fileName + ".txt";
   std::vector<uint64_t> out;
   std::string temp;
   std::fstream in(fileName);
@@ -72,55 +72,22 @@ std::vector<std::vector<uint64_t>> fileToVec2(std::string fileName) {
   in.close();
   return lookUpTables;
 }
-int getLinearPosition(const uint64_t &position) {
-  // Warning!! it starts from 0, i.e. a1 square is 0;
-  return __builtin_ctzll(position);
-}
-std::vector<int> positionToRowCol(const uint64_t &position) {
-  int linearPosition = getLinearPosition(position);
-  int column = linearPosition % 8;
-  int row = (linearPosition / 8);
-  return {row, column};
-}
-int rookRelevantBits(const uint64_t &position) {
-  std::vector<int> rowColVec = positionToRowCol(position);
-  int row = rowColVec[0];
-  int column = rowColVec[1];
-  int relevantBits;
-  bool isAtSides = (column == 0 || column == 7);
-  bool isAtTopbot = (row == 0 || row == 7);
-  if ((isAtTopbot && !isAtSides) || (!isAtTopbot && isAtSides)) {
-    relevantBits = 11;
-  } else if (!isAtTopbot && !isAtSides) {
-    relevantBits = 10;
-  } else {
-    relevantBits = 12;
+std::vector<magicTbls> fileToLookUpsVec(piece pieceType) {
+  std::string pieceNameStr = pieceToStr(pieceType);
+  std::string shiftFile = "mask_cache/" + pieceNameStr + "_shifts.txt";
+  std::string masksFile = "mask_cache/" + pieceNameStr + "_masks.txt";
+  std::string magicNumFile =
+      "mask_cache/" + pieceNameStr + "_magic_numbers.txt";
+  std::vector<uint64_t> shiftVec = fileToVec(shiftFile);
+  std::vector<uint64_t> magicNumVec = fileToVec(magicNumFile);
+  std::vector<uint64_t> masksVec = fileToVec(masksFile);
+  std::vector<magicTbls> out;
+  magicTbls tempLookUp;
+  for (decltype(shiftVec.size()) i = 0; i < shiftVec.size(); i++) {
+    tempLookUp.shiftBit = shiftVec[i];
+    tempLookUp.magicNum = magicNumVec[i];
+    tempLookUp.mask = masksVec[i];
+    out.push_back(tempLookUp);
   }
-  return relevantBits;
-}
-int generateMagicIndex(const uint64_t &bitboard, const uint64_t &magicNumber,
-                       int shiftBits) {
-  return (bitboard * magicNumber) >> shiftBits;
-}
-uint64_t getAttackMask(const uint64_t &positionMask, const uint64_t &bitboard,
-                       const std::vector<uint64_t> &magicNumbers,
-                       const std::vector<std::vector<uint64_t>> &lookUpTables,
-                       piece pieceType) {
-  int shiftBits;
-  int linearPosition = getLinearPosition(positionMask);
-
-  if (pieceType == piece::rook) {
-
-    shiftBits = 64 - rookRelevantBits(positionMask);
-  } else if (pieceType == piece::bishop) {
-    auto bishopRelevantBits = lookUpTables[linearPosition].size();
-
-    shiftBits = 64 - bishopRelevantBits;
-  } else {
-    std::cerr << "wrong piece type";
-    return 0;
-  }
-  int magicIndex =
-      generateMagicIndex(bitboard, magicNumbers[linearPosition], shiftBits);
-  return lookUpTables[linearPosition][magicIndex];
+  return out;
 }
