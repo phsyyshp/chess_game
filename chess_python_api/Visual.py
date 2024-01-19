@@ -11,14 +11,14 @@ class Visual:
         self.visual_board = []
         self.color_of_board = color_of_board
 
-    def set_orientation(self):
+    def __set_orientation(self):
         self.visual_board = (
             np.flipud(self.visual_board)
             if self.orientation == "white"
             else np.fliplr(self.visual_board)
         )
 
-    def put_piece_icons(self):
+    def __put_piece_icons(self):
         vectorized_chr = np.vectorize(chr)
         self.visual_board = self.board.board_matrix + UNICODE_OFFSET * (
             self.board.board_matrix != 0
@@ -27,7 +27,7 @@ class Visual:
             WHITE_SPACE_UNICODE * (self.visual_board == 0) + self.visual_board
         ).tolist()
 
-    def colorize_board(self):
+    def __colorize_board(self):
         self.visual_board = [
             [colorize_string(str(8 - i), self.color_of_board, "black")]
             + [
@@ -39,7 +39,7 @@ class Visual:
             for i in range(8)
         ]
 
-    def add_file_rank_anotations(self):
+    def __add_file_rank_anotations(self):
         self.visual_board = "\n".join(["".join(item) for item in self.visual_board])
         file_row = (
             "  ".join("bcdefgh")
@@ -56,9 +56,9 @@ class Visual:
         )
 
     def show(self):
-        self.put_piece_icons()
-        self.set_orientation()
-        self.colorize_board()
-        self.add_file_rank_anotations()
+        self.__put_piece_icons()
+        self.__set_orientation()
+        self.__colorize_board()
+        self.__add_file_rank_anotations()
         # print(self.visual_board)
         return self.visual_board
