@@ -40,7 +40,7 @@ std::vector<uint64_t> lineToNumsVec(const std::string &line) {
   return out;
 }
 std::vector<uint64_t> fileToVec(std::string fileName) {
-  fileName = "mask_cache/" + fileName + ".txt";
+  // fileName = "mask_cache/" + fileName + ".txt";
   std::vector<uint64_t> out;
   std::string temp;
   std::fstream in(fileName);
@@ -72,7 +72,8 @@ std::vector<std::vector<uint64_t>> fileToVec2(std::string fileName) {
   in.close();
   return lookUpTables;
 }
-std::vector<magicTbls> fileToLookUpsVec(std::string pieceNameStr) {
+std::vector<magicTbls> fileToLookUpsVec(piece pieceType) {
+  std::string pieceNameStr = pieceToStr(pieceType);
   std::string shiftFile = "mask_cache/" + pieceNameStr + "_shifts.txt";
   std::string masksFile = "mask_cache/" + pieceNameStr + "_masks.txt";
   std::string magicNumFile =
@@ -89,11 +90,4 @@ std::vector<magicTbls> fileToLookUpsVec(std::string pieceNameStr) {
     out.push_back(tempLookUp);
   }
   return out;
-}
-uint64_t getAttackMask(const square &sq, const uint64_t &occupancy,
-                       const std::vector<std::vector<uint64_t>> &lookUpTables,
-                       const std::vector<magicTbls> &magicTblsIn) {
-  auto magicIdx =
-      (occupancy * magicTblsIn[sq].magicNum) >> magicTblsIn[sq].shiftBit;
-  return lookUpTables[sq][magicIdx];
 }
