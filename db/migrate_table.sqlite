@@ -1,0 +1,62 @@
+--SELECT COUNT(DISTINCT White) FROM lichess_games
+--LIMIT 200;
+
+--INSERT INTO players (name)
+--SELECT DISTINCT name FROM (
+--  SELECT White as name FROM lichess_games 
+--   UNION ALL
+--   SELECT Black  FROM lichess_games
+-- );
+
+INSERT INTO events (name)
+SELECT DISTINCT Event FROM lichess_games as name;
+
+INSERT INTO openings (name)
+SELECT DISTINCT Opening FROM lichess_games as name;
+
+INSERT INTO results (name)
+SELECT DISTINCT Result FROM lichess_games as name;
+
+INSERT INTO terminations (name)
+SELECT DISTINCT Termination FROM lichess_games as name;
+
+INSERT INTO players (name, title)
+SELECT DISTINCT White, WhiteTitle FROM lichess_games
+UNION
+SELECT DISTINCT Black, BlackTitle FROM lichess_games;
+
+
+INSERT INTO games (
+  id, 
+  event_id, 
+  site, 
+  date, 
+  round, 
+  white_player_id, 
+  black_player_id, 
+  result_id, 
+  utc_date, 
+  utc_time, 
+  eco, 
+  opening_id, 
+  time_control, 
+  termination_id, 
+  moves
+)
+SELECT 
+  id, 
+  (SELECT events.id FROM events WHERE events.name = lichess_games.Event), 
+  Site, 
+  Date, 
+  Round,
+  (SELECT players.id FROM players WHERE players.name = lichess_games.White),
+  (SELECT players.id FROM players WHERE players.name = lichess_games.Black),
+  (SELECT results.id FROM results WHERE results.name = lichess_games.Result),
+  UTCDate, 
+  UTCTime, 
+  ECO, 
+  (SELECT openings.id FROM openings WHERE openings.name = lichess_games.Opening),
+  TimeControl, 
+  (SELECT terminations.id FROM terminations WHERE terminations.name = lichess_games.Termination),
+  moves
+FROM lichess_games;
