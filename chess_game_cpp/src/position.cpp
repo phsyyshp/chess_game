@@ -1,152 +1,131 @@
 #include "position.hpp"
-// #include "loader.hpp"
-// #include <cstdint>
-// #include <iostream>
+// Setters
+void Position::setWhitePiecesToInitialConfiguration() {
 
-const std::vector<uint64_t> rook_magic_numbers =
-    read_magic_numbers_to_vec("rook");
-const std::vector<std::vector<uint64_t>> rook_look_up_tables =
-    read_look_up_tables("rook");
-
-Position::Pieces Position::get_white_pieces() const { return white_pieces; }
-Position::Pieces Position::get_black_pieces() const { return black_pieces; }
-
-void Position::set_white_pieces_to_initial_configuration() {
-  white_pieces.rooks = 0b1ULL | 0b1ULL << 7;
-  white_pieces.knights = 0b1ULL << 6 | 0b1ULL << 1;
-  white_pieces.bishops = 0b1ULL << 5 | 0b1ULL << 2;
-  white_pieces.queens = 0b1ULL << 4;
-  white_pieces.king = 0b1ULL << 3;
-  white_pieces.pawns = 0b11111111ULL << 8;
-  white_pieces.all = white_pieces.rooks | white_pieces.knights |
-                     white_pieces.bishops | white_pieces.queens |
-                     white_pieces.king | white_pieces.pawns;
+  pieces[white][rook] = 0b1ULL << a1 | 0b1ULL << h1;
+  pieces[white][knight] = 0b1ULL << g1 | 0b1ULL << b1;
+  pieces[white][bishop] = 0b1ULL << f1 | 0b1ULL << c1;
+  pieces[white][queen] = 0b1ULL << d1;
+  pieces[white][king] = 0b1ULL << e1;
+  pieces[white][pawn] = 0b11111111ULL << 8;
 }
-void Position::set_black_pieces_to_initial_configuration() {
-  black_pieces.rooks = 0b1ULL << (8 * 7) | 0b1ULL << (7 + 8 * 7);
-  black_pieces.knights = 0b1ULL << (6 + 8 * 7) | 0b1ULL << (1 + 8 * 7);
-  black_pieces.bishops = 0b1ULL << (5 + 8 * 7) | 0b1ULL << (2 + 8 * 7);
-  black_pieces.queens = 0b1ULL << (4 + 8 * 7);
-  black_pieces.king = 0b1ULL << (3 + 8 * 7);
-  black_pieces.pawns = 0b11111111ULL << (8 * 6);
-  black_pieces.all = black_pieces.rooks | black_pieces.knights |
-                     black_pieces.bishops | black_pieces.queens |
-                     black_pieces.king | black_pieces.pawns;
+void Position::setBlackPiecesToInitialConfiguration() {
+  pieces[black][rook] = 0b1ULL << a8 | 0b1ULL << h8;
+  pieces[black][knight] = 0b1ULL << g8 | 0b1ULL << b8;
+  pieces[black][bishop] = 0b1ULL << f8 | 0b1ULL << c8;
+  pieces[black][queen] = 0b1ULL << d8;
+  pieces[black][king] = 0b1ULL << e8;
+  pieces[black][pawn] = 0b11111111ULL << 6 * 8;
 }
-void Position::set_board_to_initial_configuration() {
-  set_white_pieces_to_initial_configuration();
-  set_black_pieces_to_initial_configuration();
-  turn = "white";
-  can_white_castle.king_side = true;
-  can_white_castle.queen_side = true;
-  can_black_castle.king_side = true;
-  can_black_castle.queen_side = true;
+void Position::setBoardToInitialConfiguration() {
+  setWhitePiecesToInitialConfiguration();
+  setBlackPiecesToInitialConfiguration();
+  turn = color::white;
+  canWhiteCastle.kingSide = true;
+  canWhiteCastle.queenSide = true;
+  canBlackCastle.kingSide = true;
+  canBlackCastle.queenSide = true;
 }
-void Position::print_board() const {
-  uint64_t n = white_pieces.all | black_pieces.all;
-  for (int i = 63; i >= 0; i--) {
-    if (i % 8 == 7) {
-      std::cout << "\n";
-    } else {
-      std::cout << ((n >> i) & 1);
-    }
-  }
-  std::cout << "\n";
-}
-void Position::change_turn() {
-  if (turn == "white") {
-    turn = "black";
+void Position::changeTurn() {
+  if (turn == color::white) {
+    turn = color::black;
   } else {
-    turn = "white";
+    turn = color::white;
   }
 }
-bool Position::is_square_empty(const int &square) const {
-  uint64_t pieces = white_pieces.all | black_pieces.all;
-  uint64_t square_mask = 1ULL << square;
-  return pieces & square_mask == 0;
-}
-bool Position::is_destination_occupied_by_same_color(
-    const int &source, const int &destination) const {
-  if (turn == "white") {
-    return (white_pieces.all & (1ULL << destination)) != 0;
+// Getters;
+color Position ::getPieceColor(const uint64_t &sqMask) const {
+
+  if (sqMask & getAllPieces(black)) {
+    return color::black;
+  } else if (sqMask & getAllPieces(white)) {
+    return color::white;
   } else {
-    return (black_pieces.all & (1ULL << destination)) != 0;
+
+    // std::cerr << "empty square";
+    return color::invalid;
   }
 }
-bool Position::is_sliding_move(const std::string &piecetype) const {
-  return piecetype == "bishop" || piecetype == "queen" || piecetype == "rook";
-}
-std::string Position ::get_piece_color(const uint64_t &position) const {
+piece Position::getPieceType(const uint64_t &sqMask) const {
+  for (int pieceInd = 0; pieceInd < 6; pieceInd++) {
 
-  if (position | black_pieces.all) {
-    return "black";
-  } else if (position | white_pieces.all) {
-    return "white";
+    if (sqMask & (pieces[white][pieceInd] | pieces[black][pieceInd])) {
+
+      return static_cast<piece>(pieceInd);
+    }
+  }
+}
+color Position::getTurn() const { return turn; }
+uint64_t Position::getAllPieces(const color &pieceColor) const {
+  return pieces[pieceColor][rook] | pieces[pieceColor][knight] |
+         pieces[pieceColor][bishop] | pieces[pieceColor][queen] |
+         pieces[pieceColor][king] | pieces[pieceColor][pawn];
+}
+// Asuming; non-special moves(!pro|!cast) and valid(des =empt|opColOc) input,
+// use it for temprory changes.
+// It changes turns automatically for now.
+void Position::makeMove(Move move) {
+  int from = move.getFrom();
+  int to = move.getTo();
+  int pieceType = move.getPiece();
+  int pieceColor = move.getColor();
+  bool isCapture = move.checkIsCapture();
+  int oppositePieceColor = (pieceColor + 1) % 2;
+  uint64_t toMask = (0b1ull << to);
+  uint64_t fromMask = (0b1ull << from);
+  pieces[pieceColor][pieceType] &= ~fromMask;
+  if (isCapture) {
+    piece capturedPieceType = getPieceType(toMask);
+    pieces[oppositePieceColor][capturedPieceType] &= (~toMask);
+    capturedInLastMove = capturedPieceType;
   } else {
-    std::cerr << "empty square";
+    // capturedInLastMove = nulity;
+    ;
+  }
+  pieces[pieceColor][pieceType] |= toMask;
+
+  changeTurn();
+}
+// FIX IT: sth is wrong here fix me!
+void Position::undoMove(Move move) {
+  int from = move.getFrom();
+  int to = move.getTo();
+  int pieceType = move.getPiece();
+  int pieceColor = move.getColor();
+  bool isCapture = move.checkIsCapture();
+  int oppositePieceColor = (pieceColor + 1) % 2;
+  uint64_t toMask = (0b1ull << to);
+  uint64_t notFromMask = ~(0b1ull << from);
+  changeTurn();
+  pieces[pieceColor][pieceType] &= ~toMask;
+  pieces[pieceColor][pieceType] |= ~notFromMask;
+
+  if (isCapture) {
+    pieces[oppositePieceColor][capturedInLastMove] |= (toMask);
   }
 }
-std::string Position::get_piece_type(const uint64_t &position) const {
-  std::string piece_color = get_piece_color(position);
-  std::string piece_type;
-  if (piece_color == "white") {
-    if (position & white_pieces.rooks) {
-      piece_type = "rook";
-    } else if (position & white_pieces.pawns) {
-      piece_type = "pawn";
-    } else if (position & white_pieces.queens) {
-
-      piece_type = "queen";
-    } else if (position & white_pieces.knights) {
-
-      piece_type = "knight";
-    } else if (position & white_pieces.king) {
-
-      piece_type = "king";
-    } else if (position & white_pieces.bishops) {
-
-      piece_type = "bishop";
-    }
-  } else if (piece_color == "black") {
-    if (position & black_pieces.rooks) {
-      piece_type = "rook";
-    } else if (position & black_pieces.pawns) {
-      piece_type = "pawn";
-    } else if (position & black_pieces.queens) {
-
-      piece_type = "queen";
-    } else if (position & black_pieces.knights) {
-
-      piece_type = "knight";
-    } else if (position & black_pieces.king) {
-
-      piece_type = "king";
-    } else if (position & black_pieces.bishops) {
-
-      piece_type = "bishop";
-    }
-  }
-  return piece_type;
+std::array<std::array<uint64_t, 6>, 2> Position::getPieces() const {
+  return pieces;
 }
-bool Position::is_pseudo_legal_move(const int &source,
-                                    const int &destination) const {
-  if (is_square_empty(source)) {
-    return false;
-  };
-  uint64_t source_position = 0b1uLL << source;
-  std::string piece_type = get_piece_type(source_position);
-  std::string piece_color = get_piece_color(source_position);
-  if (turn != piece_color) {
-    return false;
-  } else if (is_destination_occupied_by_same_color(source, destination)) {
-    return false;
-  } else if (is_sliding_move(piece_type)) {
-    uint64_t all = white_pieces.all | black_pieces.all;
-    if (piece_type == "bishop") {
-      // /TODO fix it
-      return get_attack_mask(source_position, all, bishop_magic_numbers,
-                             bishop_look_up_tables, piece_type);
-    } else if (piece == "rook") {
+// Misc
+void Position::printBoard() const {
+  uint64_t allPieces = getAllPieces(white) | getAllPieces(black);
+  piece pieceType;
+  color pieceColor;
+  std::string pieceIcon;
+  for (int i = 7; i >= 0; i--) {
+    for (int j = 0; j < 8; j++) {
+      pieceType = getPieceType(0b1ull << (j + i * 8));
+      pieceColor = getPieceColor(0b1ull << (j + i * 8));
+      pieceIcon = getPieceIcon(pieceType, pieceColor);
+      if ((i + j + 1) % 2 == 0) {
+        pieceIcon = colorizeString(pieceIcon, "30", "46");
+      } else {
+        pieceIcon = colorizeString(pieceIcon, "30", "40");
+      }
+      std::cout << pieceIcon;
     }
+    std::cout << "\n";
   }
+  std::cout << std::endl;
 }

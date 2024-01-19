@@ -1,4 +1,6 @@
 #include "loader.hpp"
+#include "position.hpp"
+#include "tables.hpp"
 #include <iostream>
 #include <vector>
 void print_board(uint64_t pieces) {
@@ -12,51 +14,41 @@ void print_board(uint64_t pieces) {
 }
 
 int main() {
-  std::vector<uint64_t> rook_vec = read_magic_numbers_to_vec("rook");
-  //   for (auto i : rook_vec) {
-  //     std::cout << i << std::endl;
-  //   }
-  std::vector<std::vector<uint64_t>> rook_vec_vec = read_look_up_tables("rook");
+  Position position;
+  position.setBoardToInitialConfiguration();
+  std::vector<std::vector<uint64_t>> board = position.getPieces();
+  // TO DO: add here a very well established debugger and finally solve this
+  // issue.
 
-  //   for (auto i : rook_vec_vec) {
-  //     std::cout << std::endl;
-  //     for (auto c : i) {
-  //       std::cout << c << ' ';
-  //     }
-  //   }
-  uint64_t attack_mask =
-      get_attack_mask(0b1ULL << 25 - 8, 0b1ULL << (3 * 8 - 9 + 25), rook_vec,
-                      rook_vec_vec, "rook");
-  std::cout << "attack_mask" << std::endl;
-  print_board(attack_mask);
-  std::cout << "pos of piece" << std::endl;
+  // test 1
+  std::cout << "rook magic number tests" << std::endl;
+  uint64_t occupancy = (0b1ull) << b3;
 
-  print_board(0b1ULL << 25 - 8);
-  std::cout << "pos of obstacle" << std::endl;
+  std::cout << "occupancy" << std::endl;
+  print_board(occupancy);
 
-  print_board(0b1ULL << 3 * 8 - 9 + 25);
-  std::vector<uint64_t> bishop_vec = read_magic_numbers_to_vec("bishop");
-  //   for (auto i : rook_vec) {
-  //     std::cout << i << std::endl;
-  //   }
-  std::vector<std::vector<uint64_t>> bishop_vec_vec =
-      read_look_up_tables("bishop");
+  square sq = a1;
+  uint64_t occupancyTemp = occupancy & rookTbls[sq].mask;
+  auto magicIdx =
+      (occupancyTemp * rookTbls[sq].magicNum) >> rookTbls[sq].shiftBit;
+  std::cout << "rook attacks" << std::endl;
+  print_board(rookLookUpTables[sq][magicIdx]);
 
-  //   for (auto i : rook_vec_vec) {
-  //     std::cout << std::endl;
-  //     for (auto c : i) {
-  //       std::cout << c << ' ';
-  //     }
-  //   }
-  uint64_t bishop_attack_mask =
-      get_attack_mask(0b1ULL << 25 - 8, 0b1ULL << (3 * 8 - 9 + 25), bishop_vec,
-                      bishop_vec_vec, "bishop");
-  std::cout << "attack_mask" << std::endl;
-  print_board(bishop_attack_mask);
-  std::cout << "pos of piece" << std::endl;
+  // test 2
+  std::cout << "rook magic number tests" << std::endl;
+  occupancy = (0b1ull) << d7;
 
-  print_board(0b1ULL << 25 - 8);
-  std::cout << "pos of obstacle" << std::endl;
+  std::cout << "occupancy" << std::endl;
+  print_board(occupancy);
+  sq = d5;
+  occupancyTemp = occupancy & rookTbls[sq].mask;
+  std::cout << "occupancy temp " << std::endl;
+  print_board(occupancyTemp);
 
-  print_board(0b1ULL << 3 * 8 - 9 + 25);
+  magicIdx = (occupancyTemp * rookTbls[sq].magicNum) >> (rookTbls[sq].shiftBit);
+
+  std::cout << "magic index" << std::endl;
+  std::cout << magicIdx << std::endl;
+  std::cout << "rook attacks" << std::endl;
+  print_board(rookLookUpTables[sq][magicIdx]);
 }
