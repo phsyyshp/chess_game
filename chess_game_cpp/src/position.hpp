@@ -1,3 +1,5 @@
+#ifndef POSITION_HPP
+#define POSITION_HPP
 #include "Move.hpp"
 #include "loader.hpp"
 #include "tables.hpp"
@@ -38,3 +40,4 @@ public:
   canCastle canWhiteCastle;
   canCastle canBlackCastle;
 };
+#endif
