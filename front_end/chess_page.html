@@ -9,36 +9,48 @@
   <meta charset="UTF-8" />
 </head>
 <body class="body unselectable">
-  <div id="main-container">
-    <!-- <div id="general-info"></div> -->
-    <div id="top-menu-container">
-      <table class="top-menu-box">
+  <div id="main-container" class="box">
+    <div id="general-info" class="box">
+      <ul>
+        <li>
+          <span class="material-symbols-outlined"> chat_bubble </span>
+        </li>
+        <li>
+          <span class="material-symbols-outlined"> account_circle </span>
+        </li>
+        <li><span class="material-symbols-outlined"> logout </span></li>
+      </ul>
+    </div>
+    <div id="top-menu-container" class="box">
+      <table>
         <thead>
           <tr>
-            <th id="openings" class="top-menu-elements">
+            <th id="openings" class="elements">
               OPENINGS
-              <ul class="top-menu-drop-down">
+              <ul class="drop-down">
                 <li>TRAINER</li>
                 <li>EXPLORE</li>
               </ul>
             </th>
-            <th id="play-engine" class="top-menu-elements">
-              PLAY WITH THE ENGINE
-            </th>
-            <th id="about" class="top-menu-elements">ABOUT</th>
-            <th id="my-profile" class="top-menu-elements">MY PROFILE</th>
-            <th id="play_with_others" class="top-menu-elements">
+            <th id="play-engine" class="elements">PLAY WITH THE ENGINE</th>
+            <th id="about" class="elements">ABOUT</th>
+            <th id="my-profile" class="elements">MY PROFILE</th>
+            <th id="play_with_others" class="elements">
               PLAY WITH OTHERS
+              <ul class="drop-down">
+                <li>FIND OPPONENT</li>
+                <li>PLAY WITH YOUR FRIEND</li>
+              </ul>
             </th>
-            <th id="contribute" class="top-menu-elements">CONTRIBUTE</th>
+            <th id="contribute" class="elements">CONTRIBUTE</th>
           </tr>
         </thead>
       </table>
     </div>
-    <div id="chess_board_box">
-      <table id="chess_board"></table>
+    <div id="chess-board" class="box">
+      <table id="chess-board-table"></table>
     </div>
-    <div id="side-hub">
+    <div id="side-hub" class="box">
       <div id="moves"></div>
       <div id="game-decision">
         <div><span class="material-symbols-outlined undo"> undo </span></div>
@@ -66,10 +78,8 @@
         </ul>
       </div>
     </div>
-    <div>
-      <footer id="footer">
-        All rights reserved. Chess engines united. 2023 USA
-      </footer>
+    <div id="footer-container" class="box">
+      All rights reserved. Chess engines united. 2023 USA
     </div>
   </div>
   <div id="opponent_time"></div>

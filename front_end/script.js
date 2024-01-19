@@ -1,4 +1,4 @@
-let chessBoard = document.getElementById("chess_board");
+let chessBoard = document.getElementById("chess-board-table");
 const rows = [];
 for (let i = 0; i < 8; i++) {
   rows[i] = chessBoard.insertRow(i);
@@ -6,9 +6,9 @@ for (let i = 0; i < 8; i++) {
     let cell = rows[i].insertCell(j);
     cell.innerHTML = "";
     if ((i + j) % 2 === 0) {
-      cell.className = "whiteCells";
+      cell.className = "whiteCells cells";
     } else {
-      cell.className = "blackCells";
+      cell.className = "blackCells cells";
     }
     if (i === 6) {
       cell.innerHTML = "♙";
