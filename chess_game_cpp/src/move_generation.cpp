@@ -255,3 +255,4 @@ void MoveGeneration::generateAllMoves(const Position &position,
 }
 
 std::vector<Move> MoveGeneration::getMoves() const { return moveList; }
+auto MoveGeneration::getNumberOfMoves() const { return moveList.size(); }

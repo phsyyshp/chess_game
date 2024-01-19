@@ -28,7 +28,7 @@ set(SOURCES
     src/Move.cpp
     src/tables.cpp
     src/utilities.cpp
-    src/bitboardoperations.cpp
+    src/bitoperations.cpp
     src/evaluation.cpp
     # src/constants.hpp
     # tests/move_generation_test.cpp
@@ -37,6 +37,7 @@ set(SOURCES
     # tests/moveTest.cpp
     # tests/potsition_test.cpp
     # tests/utilTest.cpp
+    tests/evaluationTest.cpp
 )
 
 # Set the output directory for the executable

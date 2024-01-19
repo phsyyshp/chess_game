@@ -17,6 +17,7 @@ public:
   void generateAllMoves(const Position &position, const color &colorIn);
   // getters
   std::vector<Move> getMoves() const;
+  auto getNumberOfMoves() const;
 
 private:
   std::vector<Move> moveList;
