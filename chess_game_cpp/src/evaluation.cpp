@@ -22,14 +22,14 @@ int Evaluation::getBlockedPawnCount(const color &pieceColor) const {}
 int Evaluation::getIsolatedPawnCount(const color &pieceColor) const {
   return __builtin_popcountll(isolanis(position.getPieces()[pieceColor][pawn]));
 }
-int Evaluation::getMobility(const color &pieceColor) const {
+size_t Evaluation::getMobility(const color &pieceColor) const {
 
   MoveGeneration movgen;
   movgen.generateAllMoves(position, pieceColor);
   return movgen.getNumberOfMoves();
 };
 
-int Evaluation::evaluate(const color colorToEval) const {
+float Evaluation::evaluate() const {
 
   int kingDiff = getPieceCount(king, white) - getPieceCount(king, black);
   int queenDiff = getPieceCount(queen, white) - getPieceCount(queen, black);
@@ -39,7 +39,7 @@ int Evaluation::evaluate(const color colorToEval) const {
   int pawnDiff = getPieceCount(pawn, white) - getPieceCount(pawn, black);
   int doubledPawnDiff = getDoubledPawnCount(white) - getDoubledPawnCount(black);
   int isolinDiff = getIsolatedPawnCount(white) - getIsolatedPawnCount(black);
-  int mobilityDiff = getMobility(white) - getMobility(black);
+  size_t mobilityDiff = getMobility(white) - getMobility(black);
   return 200 * kingDiff + 9 * queenDiff + 5 * rookDiff +
          3 * (bishopDiff + knightDiff) + pawnDiff -
          0.5 * (isolinDiff + doubledPawnDiff) + 0.1 * (mobilityDiff);

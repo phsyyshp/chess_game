@@ -14,8 +14,8 @@ public:
   int getBlockedPawnCount(const color &) const;
   int getIsolatedPawnCount(const color &) const;
 
-  int getMobility(const color &) const;
-  int evaluate(const color colorToEval) const;
+  size_t getMobility(const color &) const;
+  float evaluate() const;
 
 private:
   Position position;
