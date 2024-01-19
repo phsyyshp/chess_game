@@ -30,6 +30,7 @@ set(SOURCES
     src/utilities.cpp
     src/bitoperations.cpp
     src/evaluation.cpp
+    src/search.cpp
     # src/constants.hpp
     # tests/move_generation_test.cpp
     # tests/loader_test.cpp
@@ -37,7 +38,8 @@ set(SOURCES
     # tests/moveTest.cpp
     # tests/potsition_test.cpp
     # tests/utilTest.cpp
-    tests/evaluationTest.cpp
+    # tests/evaluationTest.cpp
+    tests/searchTest.cpp
 )
 
 # Set the output directory for the executable
@@ -49,7 +51,9 @@ set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/bin)
 # add_executable(perftTest ${SOURCES})
 # add_executable(position_test ${SOURCES})
 # add_executable(utilTest ${SOURCES})
-add_executable(evaluationTest ${SOURCES})
+# add_executable(evaluationTest ${SOURCES})
+add_executable(searchTest ${SOURCES})
+ 
 
 # Include directories
 include_directories(${CMAKE_SOURCE_DIR}/src)
