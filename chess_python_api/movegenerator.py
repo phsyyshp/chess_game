@@ -1,3 +1,4 @@
+import os
 import GameState as gs
 import sys
 import Board as bd
@@ -68,12 +69,11 @@ board_tree = mg.generate_all_moves_in_depth(1)
 #         f.write("\n")
 import time
 
-# for board in board_tree:
+for board in board_tree:
+    os.system("cls||clear")
+    # print(board)
 
-#     os.system('cls||clear')
-#     # print(board)
-
-#     b = vs.Visual("white", board).show()
-#     print(b)
-#     # time.sleep(1)
+    b = vs.Visual("white", board).show()
+    print(b)
+    # time.sleep(1)
 print(len(board_tree))
