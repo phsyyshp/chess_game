@@ -1,0 +1,23 @@
+CREATE TABLE lichess_games(
+    id INTEGER  PRIMARY KEY AUTOINCREMENT,
+    Event TEXT,
+    Site TEXT,
+    Date DATE,
+    Round INTEGER,
+    White TEXT,
+    Black TEXT,
+    Result TEXT,
+    UTCDate DATE,
+    UTCTime TIME ,
+    WhiteElo INTEGER,
+    BlackElo INTEGER,
+    WhiteRatingDiff INTEGER,
+    BlackRatingDiff INTEGER,
+    WhiteTitle TEXT,
+    BlackTitle TEXT,
+    ECO TEXT,
+    Opening TEXT,
+    TimeControl TEXT,
+    Termination TEXT,
+    moves TEXT
+);
