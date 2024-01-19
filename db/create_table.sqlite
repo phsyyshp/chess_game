@@ -1,0 +1,58 @@
+CREATE TABLE players (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT UNIQUE,
+  title TEXT
+);
+
+CREATE TABLE events (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT UNIQUE
+);
+CREATE TABLE results(
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT UNIQUE
+);
+CREATE TABLE openings (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT UNIQUE
+);
+
+CREATE TABLE terminations (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  name TEXT UNIQUE
+);
+CREATE TABLE games (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  event_id INTEGER,
+  site TEXT,
+  date DATE,
+  round INTEGER,
+  white_player_id INTEGER,
+  black_player_id INTEGER,
+  result_id TEXT,
+  utc_date DATE,
+  utc_time TIME,
+  eco TEXT,
+  opening_id TEXT,
+  time_control TEXT,
+  termination_id TEXT,
+  moves TEXT,
+  FOREIGN KEY (white_player_id) REFERENCES players (id),
+  FOREIGN KEY (black_player_id) REFERENCES players (id),
+  FOREIGN KEY (event_id) REFERENCES events (id)
+  FOREIGN KEY (result_id) REFERENCES results (id),
+  FOREIGN KEY (opening_id) REFERENCES openings (id),
+  FOREIGN KEY (termination_id) REFERENCES terminations (id)
+);
+
+
+CREATE TABLE game_player_stats (
+  game_id INTEGER,
+  player_id INTEGER,
+  elo INTEGER,
+  rating_diff INTEGER,
+  FOREIGN KEY (game_id) REFERENCES games (id),
+  FOREIGN KEY (player_id) REFERENCES players (id),
+  PRIMARY KEY (game_id, player_id)
+);
+
