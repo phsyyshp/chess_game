@@ -1,18 +1,5 @@
 #include "move_generation.hpp"
 
-std::vector<uint64_t> MoveGeneration::factor_mask(uint64_t mask) {
-  uint64_t occupancy = 0b1ULL << 25 - 8;
-  std::vector<uint64_t> out_vec(__builtin_popcountll(mask));
-  int i = 0;
-  uint64_t counter = 1;
-  while (counter != 0) {
-    counter = ((mask) & (mask - 1));
-    out_vec[i] = mask ^ counter;
-    mask = counter;
-    i++;
-  }
-  return out_vec;
-}
 void MoveGeneration::generateSinglePawnPushes(const Position &position,
                                               const color &colorIn) {
   // TODO: add promotions
@@ -268,3 +255,4 @@ void MoveGeneration::generateAllMoves(const Position &position,
 }
 
 std::vector<Move> MoveGeneration::getMoves() const { return moveList; }
+size_t MoveGeneration::getNumberOfMoves() const { return moveList.size(); }
