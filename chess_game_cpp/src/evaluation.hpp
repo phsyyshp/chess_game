@@ -1,6 +1,6 @@
 #include "bitoperations.hpp"
+#include "move_generation.hpp"
 #include "position.hpp"
-
 class Evaluation {
 public:
   // setters;
@@ -8,15 +8,14 @@ public:
   Evaluation(Position pos) : position(pos) {}
   // getters;
   Position getPosition() const;
-  int getPieceCount(const piece &, const piece &) const;
+  int getPieceCount(const piece &, const color &) const;
+  // pawn operations;
   int getDoubledPawnCount(const color &) const;
   int getBlockedPawnCount(const color &) const;
   int getIsolatedPawnCount(const color &) const;
+
   int getMobility(const color &) const;
-  // bools;
-  bool isPawnDoubled(square sq) const;
-  bool isPawnIsolated(square, const color &) const;
-  bool isPawnBlocked(square, const color &) const;
+  int evaluate(const color colorToEval) const;
 
 private:
   Position position;
