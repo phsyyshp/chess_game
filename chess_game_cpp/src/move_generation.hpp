@@ -1,3 +1,6 @@
+#ifndef MOVEGENERATION_HPP
+#define MOVEGENERATION_HPP
+
 #include "Move.hpp"
 #include "position.hpp"
 class MoveGeneration {
@@ -22,3 +25,4 @@ public:
 private:
   std::vector<Move> moveList;
 };
+#endif

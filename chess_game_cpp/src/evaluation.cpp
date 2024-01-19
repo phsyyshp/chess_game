@@ -40,7 +40,12 @@ float Evaluation::evaluate() const {
   int doubledPawnDiff = getDoubledPawnCount(white) - getDoubledPawnCount(black);
   int isolinDiff = getIsolatedPawnCount(white) - getIsolatedPawnCount(black);
   size_t mobilityDiff = getMobility(white) - getMobility(black);
-  return 200 * kingDiff + 9 * queenDiff + 5 * rookDiff +
-         3 * (bishopDiff + knightDiff) + pawnDiff -
-         0.5 * (isolinDiff + doubledPawnDiff) + 0.1 * (mobilityDiff);
+  // return (200 * kingDiff + 9 * queenDiff + 5 * rookDiff +
+  //         3 * (bishopDiff + knightDiff) + pawnDiff -
+  //         0.5 * (isolinDiff + doubledPawnDiff) + 0.1 * (mobilityDiff)) *
+  //        whoToMove[position.getTurn()];
+  return (200 * kingDiff + 9 * queenDiff + 5 * rookDiff +
+          3 * (bishopDiff + knightDiff) + pawnDiff -
+          0.5 * (isolinDiff + doubledPawnDiff)) *
+         whoToMove[position.getTurn()];
 };
