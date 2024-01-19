@@ -1,4 +1,3 @@
-#include "move_generation.hpp"
 #include <bitset>
 #include <cstdint>
 #include <fstream>
@@ -6,7 +5,6 @@
 #include <math.h>
 #include <random>
 #include <vector>
-
 using namespace std;
 #include <iostream>
 #include <sstream>
@@ -27,7 +25,18 @@ void print_board_os(std::ofstream &os, uint64_t pieces) {
   }
   os << "\n";
 }
-
+std::vector<uint64_t> factor_mask(uint64_t mask) {
+  std::vector<uint64_t> out_vec(__builtin_popcountll(mask));
+  int i = 0;
+  uint64_t counter = 1;
+  while (counter != 0) {
+    counter = ((mask) & (mask - 1));
+    out_vec[i] = mask ^ counter;
+    mask = counter;
+    i++;
+  }
+  return out_vec;
+}
 uint64_t remove_bit(uint64_t input, int bit) {
   return input & ~(0b1ULL << bit);
 }
@@ -91,9 +100,7 @@ vector<uint64_t> generate_queen_masks() {
   }
   return masks;
 }
-
 vector<uint64_t> generate_relevant_rook_occupancy_masks(uint64_t position) {
-  MoveGeneration move_generator;
   int linear_position = __builtin_ctzll(position);
   int column = linear_position % 8;
   int row = floor(linear_position / 8); // - (row * 8);
@@ -101,7 +108,7 @@ vector<uint64_t> generate_relevant_rook_occupancy_masks(uint64_t position) {
   uint64_t attack_mask = generate_rook_mask(position, 8);
   attack_mask = remove_bit(attack_mask, linear_position);
 
-  vector<uint64_t> individual_squares = move_generator.factor_mask(attack_mask);
+  vector<uint64_t> individual_squares = factor_mask(attack_mask);
 
   vector<uint64_t> out;
   int n = individual_squares.size();
@@ -117,7 +124,6 @@ vector<uint64_t> generate_relevant_rook_occupancy_masks(uint64_t position) {
   return out;
 }
 vector<uint64_t> generate_relevant_bishop_occupancy_masks(uint64_t position) {
-  MoveGeneration move_generator;
   int linear_position = __builtin_ctzll(position);
   int column = linear_position % 8;
   int row = floor(linear_position / 8); // - (row * 8);
@@ -126,7 +132,7 @@ vector<uint64_t> generate_relevant_bishop_occupancy_masks(uint64_t position) {
                          generate_bishop_mask(position, -1, 8);
   attack_mask = remove_bit(attack_mask, linear_position);
 
-  vector<uint64_t> individual_squares = move_generator.factor_mask(attack_mask);
+  vector<uint64_t> individual_squares = factor_mask(attack_mask);
 
   vector<uint64_t> out;
   int n = individual_squares.size();
@@ -141,7 +147,6 @@ vector<uint64_t> generate_relevant_bishop_occupancy_masks(uint64_t position) {
   }
   return out;
 }
-
 uint64_t generate_rook_attack_mask(uint64_t occupancy_mask, uint64_t position) {
   int linear_position = __builtin_ctzll(position);
   int column = linear_position % 8;
@@ -190,7 +195,6 @@ uint64_t generate_rook_attack_mask(uint64_t occupancy_mask, uint64_t position) {
   attack_mask = remove_bit(attack_mask, linear_position);
   return attack_mask;
 }
-
 uint64_t generate_bishop_attack_mask(uint64_t occupancy_mask,
                                      uint64_t position) {
   int linear_position = __builtin_ctzll(position);
@@ -250,7 +254,6 @@ uint64_t generate_bishop_attack_mask(uint64_t occupancy_mask,
   attack_mask = remove_bit(attack_mask, linear_position);
   return attack_mask;
 }
-
 vector<uint64_t> generate_rook_attack_masks(uint64_t position) {
   vector<uint64_t> relevant_occupancy_masks =
       generate_relevant_rook_occupancy_masks(position);
@@ -269,7 +272,6 @@ vector<uint64_t> generate_bishop_attack_masks(uint64_t position) {
   }
   return attack_masks;
 }
-
 vector<vector<uint64_t>> generate_entire_rook_attack_masks() {
   vector<vector<uint64_t>> masks;
   for (int i = 0; i <= 63; i++) {
@@ -284,7 +286,6 @@ vector<vector<uint64_t>> generate_entire_bishop_attack_masks() {
   }
   return masks;
 }
-
 void save_rook_attacks_cache() {
   vector<vector<uint64_t>> rook_attacks = generate_entire_rook_attack_masks();
 
@@ -327,12 +328,10 @@ void save_bishop_attacks_cache() {
 
   outFile.close();
 }
-
 uint64_t generate_magic_index(uint64_t bitboard, uint64_t magic_number,
                               int shiftBits) {
   return (bitboard * magic_number) >> shiftBits;
 }
-
 uint64_t generate_magic_number(uint64_t position) {
   vector<uint64_t> relevant_rook_occupancy_masks =
       generate_relevant_rook_occupancy_masks(position);
@@ -419,7 +418,6 @@ uint64_t generate_bishop_magic_number(uint64_t position) {
 
   return magic_number;
 }
-
 vector<uint64_t> generate_rook_lookup_table(uint64_t magic_number,
                                             uint64_t position) {
 
@@ -462,7 +460,6 @@ vector<uint64_t> generate_bishop_lookup_table(uint64_t magic_number,
   }
   return lookup_table;
 }
-
 vector<uint64_t> generate_all_magic_numbers() {
 
   vector<uint64_t> out(64, 0);
@@ -483,7 +480,6 @@ vector<uint64_t> generate_all_bishop_magic_numbers() {
   }
   return out;
 }
-
 vector<vector<uint64_t>> generate_all_rook_lookup_tables() {
   // open file rook_magic_numbers.txt and save each line to a vector
   // for each line in the vector, generate the lookup table and save it to a
@@ -522,7 +518,6 @@ vector<vector<uint64_t>> generate_all_bishop_lookup_tables() {
   }
   return out;
 }
-
 void save_rook_lookup_tables() {
   vector<vector<uint64_t>> out = generate_all_rook_lookup_tables();
   ofstream outFile("rook_lookup_tables.txt");
@@ -557,7 +552,6 @@ void save_bishop_lookup_tables() {
 
   outFile.close();
 }
-
 void save_magic_numbers() {
   vector<uint64_t> out = generate_all_magic_numbers();
   ofstream outFile("rook_magic_numbers.txt");
@@ -588,7 +582,423 @@ void save_bishop_magic_numbers() {
 
   outFile.close();
 }
+uint64_t generate_white_pawn_attacks(int position) {
+  uint64_t position_mask = 0b1uLL << position;
+  uint64_t not_A_file = 0b1uLL;
+  uint64_t not_H_file = 0b1uLL << 7;
+  for (int i = 0; i < 8; i++) {
+    not_A_file |= 0b1uLL << (i * 8);
+  }
+  not_A_file = ~(not_A_file);
+  uint64_t h1 = 0b1uLL << 7;
+  for (int i = 0; i < 8; i++) {
+    not_H_file |= h1 << (i * 8);
+  }
+  not_H_file = ~(not_H_file);
 
+  return ((position_mask << 9) & (not_A_file)) |
+         ((position_mask << 7) & (not_H_file));
+}
+uint64_t generate_black_pawn_attacks(int position) {
+  uint64_t position_mask = 0b1uLL << position;
+  uint64_t not_A_file = 0b1uLL;
+  uint64_t not_H_file = 0b1uLL << 7;
+  for (int i = 0; i < 8; i++) {
+    not_A_file |= 0b1uLL << (i * 8);
+  }
+  not_A_file = ~(not_A_file);
+  uint64_t h1 = 0b1uLL << 7;
+  for (int i = 0; i < 8; i++) {
+    not_H_file |= h1 << (i * 8);
+  }
+  not_H_file = ~(not_H_file);
+
+  return ((position_mask >> 9) & (not_H_file)) |
+         ((position_mask >> 7) & (not_A_file));
+}
+std::vector<uint64_t> generate_all_white_pawn_attacks() {
+  std::vector<uint64_t> out;
+  for (int i = 0; i <= 63; i++) {
+    out.push_back(generate_white_pawn_attacks(i));
+  }
+  return out;
+}
+std::vector<uint64_t> generate_all_black_pawn_attacks() {
+  std::vector<uint64_t> out;
+  for (int i = 0; i <= 63; i++) {
+    out.push_back(generate_black_pawn_attacks(i));
+  }
+  return out;
+}
+void save_white_pawn_attack_look_up_table() {
+
+  vector<uint64_t> out = generate_all_white_pawn_attacks();
+  ofstream outFile("all_white_pawn_attacks.txt");
+  if (!outFile) {
+    cerr << "Failed to open all_white_pawn_attacks.txt for writing\n";
+    throw runtime_error("Failed to open file");
+  }
+
+  for (const auto &attack : out) {
+    outFile << attack << '\n';
+  }
+
+  outFile.close();
+}
+void save_white_pawn_attacks_cache() {
+  vector<uint64_t> white_pawn_attacks = generate_all_white_pawn_attacks();
+  ofstream outFile("white_pawn_attacks.txt");
+  if (!outFile) {
+    cerr << "Failed to open white_pawn_attacks.txt for writing\n";
+    throw runtime_error("Failed to open file");
+  }
+
+  for (const auto &attack : white_pawn_attacks) {
+    // outFile << bitboard << ' ';
+    // outFile << std::bitset<64>(bitboard).to_string() << ' ';
+    print_board_os(outFile, attack);
+    // cout << bitboard << endl;
+    // outFile << '\n'; // new line for each inner vector
+  }
+
+  outFile.close();
+}
+void save_black_pawn_attack_look_up_table() {
+  vector<uint64_t> out = generate_all_black_pawn_attacks();
+  ofstream outFile("all_black_pawn_attacks.txt");
+  if (!outFile) {
+    cerr << "Failed to open all_black_pawn_attacks.txt for writing\n";
+    throw runtime_error("Failed to open file");
+  }
+
+  for (const auto &attack : out) {
+    outFile << attack << '\n';
+  }
+
+  outFile.close();
+}
+void save_black_pawn_attacks_cache() {
+  vector<uint64_t> black_pawn_attacks = generate_all_black_pawn_attacks();
+  ofstream outFile("black_pawn_attacks.txt");
+  if (!outFile) {
+    cerr << "Failed to open black_pawn_attacks.txt for writing\n";
+    throw runtime_error("Failed to open file");
+  }
+  for (const auto &attack : black_pawn_attacks) {
+    // outFile << bitboard << ' ';
+    // outFile << std::bitset<64>(bitboard).to_string() << ' ';
+    print_board_os(outFile, attack);
+    // cout << bitboard << endl;
+    // outFile << '\n'; // new line for each inner vector
+  }
+
+  outFile.close();
+}
+uint64_t generate_knight_attack_mask(int position) {
+  /*        noNoWe    noNoEa
+            +15  +17
+             |     |
+noWeWe  +6 __|     |__+10  noEaEa
+              \   /
+               >0<
+           __ /   \ __
+soWeWe -10   |     |   -6  soEaEa
+             |     |
+            -17  -15
+        soSoWe    soSoEa
+        */
+  uint64_t attack_mask = 0;
+  uint64_t position_mask = 0b1uLL << position;
+  uint64_t noNoWe = position_mask << 15;
+  uint64_t noNoEa = position_mask << 17;
+  uint64_t noWeWe = position_mask << 6;
+  uint64_t noEaEa = position_mask << 10;
+  uint64_t soSoEa = position_mask >> 15;
+  uint64_t soSoWe = position_mask >> 17;
+  uint64_t soEaEa = position_mask >> 6;
+  uint64_t soWeWe = position_mask >> 10;
+
+  int linear_position = position;
+  int column = linear_position % 8;
+  int row = linear_position / 8;
+
+  if (column < 1) {
+    noNoWe = soSoWe = 0; // left edge
+  }
+  if (column < 2) {
+    noWeWe = soWeWe = 0; // left edge
+  }
+  if (column > 6) {
+    noNoEa = soSoEa = 0;
+  }
+
+  if (column > 5) {
+    noEaEa = soEaEa = 0; // right edge
+  }
+  if (row < 2) {
+    soSoWe = soSoEa = 0; // bottom edge
+  }
+  if (row < 1) {
+    soWeWe = soEaEa = 0;
+  }
+  if (row > 5) {
+    noNoWe = noNoEa = 0; // top edge
+  }
+  if (row > 6) {
+    noWeWe = noEaEa = 0;
+  }
+  attack_mask =
+      noNoWe | noNoEa | noWeWe | noEaEa | soSoEa | soSoWe | soEaEa | soWeWe;
+  return attack_mask;
+}
+// uint64_t generate_king_attack_mask(int position){
+// /*
+// */
+// }
+std::vector<uint64_t> generate_knight_look_up_table() {
+  std::vector<uint64_t> look_up_table;
+  uint64_t attack_mask;
+  for (int i = 0; i < 64; i++) {
+    attack_mask = generate_knight_attack_mask(i);
+    look_up_table.push_back(attack_mask);
+  }
+  return look_up_table;
+}
+void save_knight_look_up_table() {
+
+  vector<uint64_t> out = generate_knight_look_up_table();
+  ofstream outFile("knight_lookup_table.txt");
+  if (!outFile) {
+    cerr << "Failed to open knight_lookup_tables.txt for writing\n";
+    throw runtime_error("Failed to open file");
+  }
+
+  for (const auto &attack : out) {
+    outFile << attack << '\n';
+  }
+
+  outFile.close();
+}
+void save_knight_attacks_cache() {
+  vector<uint64_t> knight_attacks = generate_knight_look_up_table();
+  ofstream outFile("knight_attacks.txt");
+  if (!outFile) {
+    cerr << "Failed to open knight_attacks.txt for writing\n";
+    throw runtime_error("Failed to open file");
+  }
+
+  for (const auto &attack : knight_attacks) {
+    // outFile << bitboard << ' ';
+    // outFile << std::bitset<64>(bitboard).to_string() << ' ';
+    print_board_os(outFile, attack);
+    // cout << bitboard << endl;
+    // outFile << '\n'; // new line for each inner vector
+  }
+
+  outFile.close();
+}
+uint64_t generate_king_attack(int position) {
+  uint64_t position_mask = 0b1uLL << position;
+  std::vector<int> row_col = position_to_row_col(position_mask);
+  int row = row_col[0];
+  int col = row_col[1];
+
+  uint64_t we = position_mask >> 1;
+  uint64_t ea = position_mask << 1;
+  uint64_t no = position_mask << 8;
+  uint64_t so = position_mask >> 8;
+  uint64_t noWe = position_mask << 7;
+  uint64_t noEa = position_mask << 9;
+  uint64_t soWe = position_mask >> 9;
+  uint64_t soEa = position_mask >> 7;
+  if (col == 0) {
+    we = noWe = soWe = 0;
+  }
+  if (col == 7) {
+    ea = noEa = soEa = 0;
+  }
+  if (row == 7) {
+    no = noWe = noEa = 0;
+  }
+  if (row == 0) {
+    so = soWe = soEa = 0;
+  }
+  return we | ea | no | so | noWe | noEa | soWe | soEa;
+}
+std::vector<uint64_t> generate_king_look_up_table() {
+  std::vector<uint64_t> king_look_up_table;
+  for (int i; i < 64; i++) {
+    king_look_up_table.push_back(generate_king_attack(i));
+  }
+  return king_look_up_table;
+}
+void save_king_look_up_table() {
+  std::string file_name = "king_look_up_table.txt";
+  std::ofstream out(file_name);
+  std::vector<uint64_t> king_look_up_table = generate_king_look_up_table();
+  if (out) {
+    for (auto attack : king_look_up_table) {
+      out << attack << std::endl;
+    }
+  } else {
+    std::cerr << "the file can not be opened";
+  }
+  out.close();
+}
+void save_king_attacks() {
+  std::string file_name = "king_atacks.txt";
+  std::ofstream out(file_name);
+  std::vector<uint64_t> king_look_up_table = generate_king_look_up_table();
+  if (out) {
+    for (auto attack : king_look_up_table) {
+      print_board_os(out, attack);
+    }
+  } else {
+    std::cerr << "the file can not be opened";
+  }
+  out.close();
+}
+void save_rook_masks() {
+  std::string file_name = "rook_mask_table.txt";
+  std::ofstream out(file_name);
+  if (out) {
+    for (int i = 0; i < 64; i++) {
+
+      out << remove_bit(generate_rook_mask(0b1ull << i, 8), i) << std::endl;
+    }
+  } else {
+    std::cerr << "the file can not be opened";
+  }
+  out.close();
+}
+void save_rook_shifts() {
+  std::string file_name = "rook_shifts.txt";
+  std::ofstream out(file_name);
+  if (out) {
+    for (int i = 0; i < 64; i++) {
+
+      out << 64 - __builtin_popcountll(
+                      remove_bit(generate_rook_mask(0b1ull << i, 8), i))
+          << std::endl;
+    }
+  } else {
+    std::cerr << "the file can not be opened";
+  }
+  out.close();
+}
+void save_bishop_masks() {
+  std::string file_name = "bishop_masks.txt";
+  std::ofstream out(file_name);
+  std::vector<uint64_t> bishop_masks = generate_bishop_masks();
+  if (out) {
+    for (int i = 0; i < 64; i++) {
+
+      out << remove_bit(bishop_masks[i], i) << std::endl;
+    }
+  } else {
+    std::cerr << "the file can not be opened";
+  }
+  out.close();
+}
+void save_bishop_shifts() {
+  std::string file_name = "bishop_shifts.txt";
+  std::ofstream out(file_name);
+  std::vector<uint64_t> bishop_masks = generate_bishop_masks();
+  if (out) {
+    for (int i = 0; i < 64; i++) {
+
+      out << 64 - __builtin_popcountll(remove_bit(bishop_masks[i], i))
+          << std::endl;
+    }
+  } else {
+    std::cerr << "the file can not be opened";
+  }
+  out.close();
+}
+uint64_t generateNeighbourFiles(uint64_t position) {
+  std::vector<int> rowCol = position_to_row_col(position);
+  int row = rowCol[0];
+  int column = rowCol[1];
+  uint64_t mask = 0;
+  for (int i = 0; i < 64; i++) {
+
+    std::vector<int> rowColTemp = position_to_row_col(0b1ull << i);
+    int rowTemp = rowColTemp[0];
+    int columnTemp = rowColTemp[1];
+    if ((columnTemp == (column + 1)) || (columnTemp == (column - 1))) {
+
+      mask |= (0b1ull << i);
+    }
+  }
+  return mask;
+}
+void saveNeighbourFilesPretty() {
+  std::string file_name = "adjacentFilesPretty.txt";
+  std::ofstream out(file_name);
+  if (out) {
+    for (int i = 0; i < 64; i++) {
+      uint64_t tempIn = 0b1ull << i;
+
+      print_board_os(out, generateNeighbourFiles(tempIn));
+    }
+  } else {
+    std::cerr << "the file can not be opened";
+  }
+  out.close();
+}
+void saveNeighbourFiles() {
+
+  std::string file_name = "adjacentFiles.txt";
+  std::ofstream out(file_name);
+  std::vector<uint64_t> bishop_masks;
+  if (out) {
+    for (int i = 0; i < 64; i++) {
+      uint64_t tempIn = 0b1ull << i;
+      out << generateNeighbourFiles(tempIn) << std::endl;
+    }
+  } else {
+    std::cerr << "the file can not be opened";
+  }
+  out.close();
+}
+uint64_t generateFile(uint64_t position) {
+  std::vector<int> rowCol = position_to_row_col(position);
+  int row = rowCol[0];
+  int column = rowCol[1];
+  uint64_t mask = 0;
+  for (int i = 0; i < 8; i++) {
+
+    mask |= (0b1ull << (8 * i + column));
+  }
+  return mask;
+}
+void saveFilesPretty() {
+  std::string file_name = "FilesPretty.txt";
+  std::ofstream out(file_name);
+  if (out) {
+    for (int i = 0; i < 64; i++) {
+      uint64_t tempIn = 0b1ull << i;
+      print_board_os(out, generateFile(tempIn));
+    }
+  } else {
+    std::cerr << "the file can not be opened";
+  }
+  out.close();
+}
+void saveFiles() {
+
+  std::string file_name = "Files.txt";
+  std::ofstream out(file_name);
+  if (out) {
+    for (int i = 0; i < 64; i++) {
+      uint64_t tempIn = 0b1ull << i;
+      out << generateFile(tempIn) << std::endl;
+    }
+  } else {
+    std::cerr << "the file can not be opened";
+  }
+  out.close();
+}
 int main() {
   // vector<uint64_t> out2 = generate_bishop_masks();
   // vector<uint64_t> out3 = generate_rook_masks();
@@ -613,7 +1023,6 @@ int main() {
   //   // cout << "relevant rook occ" << endl;
   //   // print_board(out5[i]);
   //   // cout << "attack mask" << endl;
-
   //   print_board(mask);
   //   // cout << mask << endl;
   //   // cout << "\n";
@@ -623,8 +1032,27 @@ int main() {
   //   print_board(mask);
   //   cout << "\n";
   // }
+  /*
   save_bishop_magic_numbers();
   save_bishop_attacks_cache();
   save_bishop_lookup_tables();
+*/
+  // save_knight_attacks_cache();
+  // save_knight_look_up_table();
+  // save_black_pawn_attacks_cache();
+  // save_white_pawn_attacks_cache();
+  // save_white_pawn_attack_look_up_table();
+  // save_black_pawn_attack_look_up_table();
+  // save_king_look_up_table();
+  // save_king_attacks();
+  // save_bishop_masks();
+  // save_bishop_shifts();
+  // save_rook_masks();
+  // save_rook_shifts();
+  saveFiles();
+  saveFilesPretty();
+  // generateNeighbourFiles(0b1ull << 34);
+  // uint64_t mask = generate_rook_mask(0b1ULL << 21, 8);
+  // print_board(mask);
   return 0;
 }

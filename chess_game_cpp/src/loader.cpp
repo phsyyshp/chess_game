@@ -2,7 +2,31 @@
 // #include <fstream>
 // #include <iostream>
 // #include <vector>
-std::vector<uint64_t> line_to_nums_vec(const std::string &line) {
+std::string pieceToStr(piece pieceType) {
+  switch (pieceType) {
+  case bishop:
+    return "bishop";
+    break;
+  case queen:
+    return "queen";
+    break;
+  case king:
+    return "king";
+    break;
+  case pawn:
+    return "pawn";
+    break;
+  case knight:
+    return "knight";
+    break;
+  case rook:
+    return "rook";
+    break;
+  default:
+    break;
+  }
+}
+std::vector<uint64_t> lineToNumsVec(const std::string &line) {
   std::vector<uint64_t> out;
   std::string number;
   for (auto c : line) {
@@ -15,110 +39,55 @@ std::vector<uint64_t> line_to_nums_vec(const std::string &line) {
   }
   return out;
 }
-std::vector<uint64_t> read_magic_numbers_to_vec(std::string piece) {
-  std::string file_name = "mask_cache/" + piece + "_magic_numbers.txt";
+std::vector<uint64_t> fileToVec(std::string fileName) {
+  // fileName = "mask_cache/" + fileName + ".txt";
   std::vector<uint64_t> out;
   std::string temp;
-  std::fstream in(file_name);
+  std::fstream in(fileName);
   if (in) {
     while (getline(in, temp)) {
       out.push_back(stoull(temp));
     }
   } else {
-    std::cerr << "the " << file_name << " can not be opened" << std::endl;
+    std::cerr << "the " << fileName << " can not be opened" << std::endl;
   }
   in.close();
   return out;
 }
-std::vector<std::vector<uint64_t>> read_look_up_tables(std::string piece) {
-  std::string file_name = "mask_cache/" + piece + "_look_up_tables.txt";
-  std::vector<std::vector<uint64_t>> look_up_tables;
+std::vector<std::vector<uint64_t>> fileToVec2(std::string fileName) {
+  fileName = "mask_cache/" + fileName + ".txt";
+  std::vector<std::vector<uint64_t>> lookUpTables;
   std::string line;
-  std::fstream in(file_name);
-  std::vector<uint64_t> look_up_table;
+  std::fstream in(fileName);
+  std::vector<uint64_t> lookUpTable;
   std::string number;
   if (in) {
     while (getline(in, line)) {
-      look_up_table = line_to_nums_vec(line);
-      look_up_tables.push_back(look_up_table);
+      lookUpTable = lineToNumsVec(line);
+      lookUpTables.push_back(lookUpTable);
     }
   } else {
-    std::cerr << "the " << file_name << " can not be opened" << std::endl;
+    std::cerr << "the " << fileName << " can not be opened" << std::endl;
   }
   in.close();
-  return look_up_tables;
+  return lookUpTables;
 }
-int get_linear_position(const uint64_t &position) {
-  // Warning!! it starts from 0, i.e. a1 square is 0;
-  return __builtin_ctzll(position);
-}
-std::vector<int> position_to_row_col(const uint64_t &position) {
-
-  int linear_position = get_linear_position(position);
-  int column = linear_position % 8;
-  int row = (linear_position / 8);
-  return {row, column};
-}
-int rook_relevant_bits(const uint64_t &position) {
-  std::vector<int> row_col_vec = position_to_row_col(position);
-  int row = row_col_vec[0];
-  int column = row_col_vec[1];
-  int relevant_bits;
-  bool is_at_sides = (column == 0 || column == 7);
-  bool is_at_topbot = (row == 0 || row == 7);
-  if ((is_at_topbot && !is_at_sides) || (!is_at_topbot && is_at_sides)) {
-    relevant_bits = 11;
-  } else if (!is_at_topbot && !is_at_sides) {
-    relevant_bits = 10;
-  } else {
-    relevant_bits = 12;
+std::vector<magicTbls> fileToLookUpsVec(piece pieceType) {
+  std::string pieceNameStr = pieceToStr(pieceType);
+  std::string shiftFile = "mask_cache/" + pieceNameStr + "_shifts.txt";
+  std::string masksFile = "mask_cache/" + pieceNameStr + "_masks.txt";
+  std::string magicNumFile =
+      "mask_cache/" + pieceNameStr + "_magic_numbers.txt";
+  std::vector<uint64_t> shiftVec = fileToVec(shiftFile);
+  std::vector<uint64_t> magicNumVec = fileToVec(magicNumFile);
+  std::vector<uint64_t> masksVec = fileToVec(masksFile);
+  std::vector<magicTbls> out;
+  magicTbls tempLookUp;
+  for (decltype(shiftVec.size()) i = 0; i < shiftVec.size(); i++) {
+    tempLookUp.shiftBit = shiftVec[i];
+    tempLookUp.magicNum = magicNumVec[i];
+    tempLookUp.mask = masksVec[i];
+    out.push_back(tempLookUp);
   }
-  return relevant_bits;
-}
-
-int bishop_relevant_bits(const uint64_t &position) {
-  std::vector<int> row_col_vec = position_to_row_col(position);
-  int row = row_col_vec[0];
-  int column = row_col_vec[1];
-
-  // Diagonal distances: min distance to any corner in each diagonal direction
-  int dist_NE_SW = std::min(row, column);     // Northeast-Southwest diagonal
-  int dist_NW_SE = std::min(row, 7 - column); // Northwest-Southeast diagonal
-  int dist_SE_NW = std::min(7 - row, column); // Southeast-Northwest diagonal
-  int dist_SW_NE =
-      std::min(7 - row, 7 - column); // Southwest-Northeast diagonal
-
-  // Maximum distance to the edge in any diagonal direction
-  int max_diagonal_distance =
-      std::max({dist_NE_SW, dist_NW_SE, dist_SE_NW, dist_SW_NE});
-
-  // Total number of squares on the longest diagonal minus the square the bishop
-  // is on
-  int relevant_bits = 2 * max_diagonal_distance + 1;
-
-  return relevant_bits;
-}
-
-uint64_t generate_magic_index(const uint64_t &bitboard,
-                              const uint64_t &magic_number, int shiftBits) {
-  return (bitboard * magic_number) >> shiftBits;
-}
-uint64_t
-get_attack_mask(const u_int64_t &position, const u_int64_t &bitboard,
-                const std::vector<uint64_t> &magic_numbers,
-                const std::vector<std::vector<uint64_t>> &look_up_tables,
-                std::string piece_type) {
-  // TODO: dont forget to generalize this to bishop;
-  int shiftBits;
-  if (piece_type == "rook") {
-
-    shiftBits = 64 - rook_relevant_bits(position);
-  } else {
-
-    shiftBits = 64 - bishop_relevant_bits(position);
-  }
-  int linear_position = get_linear_position(position);
-  uint64_t magic_index =
-      generate_magic_index(bitboard, magic_numbers[linear_position], shiftBits);
-  return look_up_tables[linear_position][magic_index];
+  return out;
 }
