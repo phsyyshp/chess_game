@@ -28,7 +28,19 @@ size_t Evaluation::getMobility(const color &pieceColor) const {
   movgen.generateAllMoves(position, pieceColor);
   return movgen.getNumberOfMoves();
 };
+// TODO: finish this impolementation;
+int Evaluation::pieceSquareTables(const color &pieceColor) const {
 
+  int pieceSqVal;
+  for (int clr = 0; clr < 2; clr++) {
+    for (int sq = 0; sq < 64; sq++) {
+
+      pieceVal +=
+    }
+  }
+
+  return 0;
+}
 float Evaluation::evaluate() const {
 
   int kingDiff = getPieceCount(king, white) - getPieceCount(king, black);
