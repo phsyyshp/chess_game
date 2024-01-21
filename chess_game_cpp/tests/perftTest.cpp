@@ -2,13 +2,15 @@
 class perftTest {
 
 public:
+  perftTest() = default;
+  perftTest(Position pos) : position(pos) {}
   int perft(int depth) {
     Position tempPosition;
     if (depth == 0) {
       return 1;
     }
     int nodes = 0;
-    MoveGeneration movGen;
+    MoveGeneration movGen(position);
     movGen.generateAllMoves();
     // std::vector<Move> allMoves = movGen.getMoves();
     for (const auto &move : movGen.getMoves()) {
@@ -25,10 +27,9 @@ public:
   Position position;
 };
 int main() {
-  perftTest test;
   Position position;
   position.setBoardToInitialConfiguration();
-  test.position = position;
+  perftTest test(position);
 
   std::cout << test.perft(5);
 }
