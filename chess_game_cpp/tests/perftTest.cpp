@@ -30,5 +30,5 @@ int main() {
   position.setBoardToInitialConfiguration();
   test.position = position;
 
-  std::cout << test.perft(6);
+  std::cout << test.perft(5);
 }
