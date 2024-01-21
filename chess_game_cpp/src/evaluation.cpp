@@ -1,5 +1,6 @@
 #include "evaluation.hpp"
 
+// getters;
 Position Evaluation::getPosition() const { return position; }
 int Evaluation::getPieceCount(const piece &pieceType,
                               const color &pieceColor) const {
@@ -28,8 +29,7 @@ size_t Evaluation::getMobility(const color &pieceColor) const {
   movgen.generateAllMoves(position, pieceColor);
   return movgen.getNumberOfMoves();
 };
-// TODO: finish this impolementation;
-// square tables
+// Square tables
 int Evaluation::pawnSquareTables(const color &pieceColor) const {
   int out = 0;
   int tempSq;
@@ -87,7 +87,7 @@ int Evaluation::bishopSquareTables(const color &pieceColor) const {
   }
   return out;
 }
-int Evaluation::pieceSquareTables() const {
+float Evaluation::pieceSquareTables() const {
   return rookSquareTables(white) - rookSquareTables(black) +
          pawnSquareTables(white) - pawnSquareTables(black) +
          bishopSquareTables(white) - bishopSquareTables(black) +
@@ -111,7 +111,7 @@ float Evaluation::evaluate() const {
   //        whoToMove[position.getTurn()];
   // std::cout << (200 * kingDiff + 9 * queenDiff + 5 * rookDiff +
   //               3 * (bishopDiff + knightDiff) + pawnDiff -
-  //               0.5 * (isolinDiff + doubledPawnDiff) + 0 *
+  //               0.5 * (isolinDiff + doubledPawnDiff) +
   //               pieceSquareTables())
   //           << "\n";
   return (200 * kingDiff + 9 * queenDiff + 5 * rookDiff +
