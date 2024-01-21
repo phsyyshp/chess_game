@@ -17,7 +17,6 @@ public:
       // FIX IT: do undo;
       tempPosition = position;
       position.makeMove(move);
-
       nodes += perft(depth - 1);
       position = tempPosition;
     }
@@ -30,6 +29,5 @@ int main() {
   Position position;
   position.setBoardToInitialConfiguration();
   perftTest test(position);
-
   std::cout << test.perft(5);
 }
