@@ -36,7 +36,6 @@ int main() {
     Search search(position);
     search.negaMax(3);
     Move bestMove = search.getBestMove();
-
     position.makeMove(bestMove);
     position.printBoard();
   }
