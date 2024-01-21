@@ -56,6 +56,7 @@ piece Position::getPieceType(const uint64_t &sqMask) const {
   }
 }
 color Position::getTurn() const { return turn; }
+color Position::getOppositeTurn() const { return oppositeColor[turn]; }
 uint64_t Position::getAllPieces(const color &pieceColor) const {
   return pieces[pieceColor][rook] | pieces[pieceColor][knight] |
          pieces[pieceColor][bishop] | pieces[pieceColor][queen] |

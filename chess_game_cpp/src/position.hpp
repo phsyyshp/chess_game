@@ -20,6 +20,7 @@ public:
   // getters:
   std::array<std::array<uint64_t, 6>, 2> getPieces() const;
   color getTurn() const;
+  color getOppositeTurn() const;
   color getPieceColor(const uint64_t &position) const;
   piece getPieceType(const uint64_t &position) const;
   uint64_t getAllPieces(const color &pieceColor) const;
