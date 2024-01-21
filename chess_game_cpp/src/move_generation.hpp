@@ -7,22 +7,23 @@ class MoveGeneration {
 
 public:
   MoveGeneration() = default;
-  void generateSinglePawnPushes(const Position &position, const color &coloIn);
-  void generateDoublePawnPushes(const Position &position, const color &coloIn);
-  void generateLeftPawnCaptures(const Position &position, const color &colorIn);
-  void generateRightPawnCaptures(const Position &position,
-                                 const color &colorIn);
-  void generateKnightMoves(const Position &position, const color &coloIn);
-  void generateBishopMoves(const Position &position, const color &colorIn);
-  void generateRookMoves(const Position &position, const color &colorIn);
-  void generateQueenMoves(const Position &position, const color &colorIn);
-  void generateKingMoves(const Position &position, const color &colorIn);
-  void generateAllMoves(const Position &position, const color &colorIn);
+  MoveGeneration(const Position &pos) : position(pos) {}
+  void generateSinglePawnPushes();
+  void generateDoublePawnPushes();
+  void generateLeftPawnCaptures();
+  void generateRightPawnCaptures();
+  void generateKnightMoves();
+  void generateBishopMoves();
+  void generateRookMoves();
+  void generateQueenMoves();
+  void generateKingMoves();
+  void generateAllMoves();
   // getters
   std::vector<Move> getMoves() const;
   size_t getNumberOfMoves() const;
 
 private:
   std::vector<Move> moveList;
+  Position position;
 };
 #endif
