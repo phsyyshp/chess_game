@@ -3,6 +3,7 @@
 #include <array>
 #include <iostream>
 enum color { white, black, invalid };
+const std::array<color, 2> oppositeColor = {black, white};
 enum piece { pawn, bishop, rook, queen, knight, king, noPiece };
 enum square {
   a1,

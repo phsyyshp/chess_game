@@ -9,7 +9,7 @@ public:
     }
     int nodes = 0;
     MoveGeneration movGen;
-    movGen.generateAllMoves(position, position.getTurn());
+    movGen.generateAllMoves();
     // std::vector<Move> allMoves = movGen.getMoves();
     for (const auto &move : movGen.getMoves()) {
       // FIX IT: do undo;
@@ -30,5 +30,5 @@ int main() {
   position.setBoardToInitialConfiguration();
   test.position = position;
 
-  std::cout << test.perft(6);
+  std::cout << test.perft(5);
 }
