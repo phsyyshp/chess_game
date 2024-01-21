@@ -25,8 +25,8 @@ int Evaluation::getIsolatedPawnCount(const color &pieceColor) const {
 }
 size_t Evaluation::getMobility(const color &pieceColor) const {
 
-  MoveGeneration movgen;
-  movgen.generateAllMoves(position, pieceColor);
+  MoveGeneration movgen(position);
+  movgen.generateAllMoves();
   return movgen.getNumberOfMoves();
 };
 // Square tables
