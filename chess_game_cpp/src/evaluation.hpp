@@ -5,7 +5,7 @@ class Evaluation {
 public:
   // setters;
   Evaluation() = default;
-  Evaluation(Position pos) : position(pos) {}
+  Evaluation(Position &pos) : position(pos) {}
   // getters;
   Position getPosition() const;
   int getPieceCount(const piece &, const color &) const;
@@ -32,5 +32,5 @@ public:
   float evaluate() const;
 
 private:
-  Position position;
+  Position &position;
 };

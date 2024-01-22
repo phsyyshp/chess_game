@@ -3,7 +3,7 @@
 class Search {
 public:
   Search() = default;
-  Search(Position p) : position(p){};
+  Search(const Position &p) : position(p){};
 
   int negaMax(int depth);
   Move getBestMove() const;
