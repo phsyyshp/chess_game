@@ -33,6 +33,14 @@ void Position::changeTurn() {
     turn = color::white;
   }
 }
+// Operators;
+Position &Position::operator=(const Position &rhs) {
+  turn = rhs.turn;
+  pieces = rhs.pieces;
+  canWhiteCastle = rhs.canWhiteCastle;
+  canBlackCastle = rhs.canBlackCastle;
+  capturedInLastMove = rhs.capturedInLastMove;
+}
 // Getters;
 color Position ::getPieceColor(const uint64_t &sqMask) const {
 
