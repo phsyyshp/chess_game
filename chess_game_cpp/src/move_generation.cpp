@@ -256,8 +256,8 @@ uint64_t MoveGeneration::getAttacksToKing() {
       position.getAllPieces(black) & position.getAllPieces(white);
   color colorOfKing = position.getTurn();
   color oppositeColor = position.getOppositeTurn();
-  square squareOfKing =
-      static_cast<square>((position.getPieces()[colorOfKing][king]));
+  square squareOfKing = static_cast<square>(
+      __builtin_ctzll(position.getPieces()[colorOfKing][king]));
   uint64_t oppositePawns = position.getPieces()[oppositeColor][pawn];
   uint64_t oppositeKnights = position.getPieces()[oppositeColor][knight];
   uint64_t oppositeRooks = position.getPieces()[oppositeColor][rook];

@@ -71,6 +71,32 @@ uint64_t Position::getAllPieces(const color &pieceColor) const {
          pieces[pieceColor][bishop] | pieces[pieceColor][queen] |
          pieces[pieceColor][king] | pieces[pieceColor][pawn];
 }
+uint64_t Position::getAttacksToKing() const {
+
+  uint64_t allPieces = getAllPieces(black) & getAllPieces(white);
+  color colorOfKing = turn;
+  color oppositeColor = getOppositeTurn();
+  square squareOfKing =
+      static_cast<square>(__builtin_ctzll(pieces[colorOfKing][king]));
+  uint64_t oppositePawns = pieces[oppositeColor][pawn];
+  uint64_t oppositeKnights = pieces[oppositeColor][knight];
+  uint64_t oppositeRooks = pieces[oppositeColor][rook];
+  uint64_t oppositeBishops = pieces[oppositeColor][bishop];
+  uint64_t oppositeQueens = pieces[oppositeColor][queen];
+  uint64_t opppositeRookQueens = oppositeRooks | oppositeQueens;
+
+  uint64_t opppositeBishopQueens = oppositeBishops | oppositeQueens;
+  return (knightLookUpTable[squareOfKing] & oppositeKnights) |
+         (pawnLookUpTable[colorOfKing][squareOfKing] & oppositePawns) |
+         (getBishopAttackMask(squareOfKing, allPieces) &
+          opppositeBishopQueens) |
+         (getRookAttackMask(squareOfKing, allPieces) & opppositeRookQueens);
+}
+
+bool Position::isIncheck() const {
+  return pieces[turn][king] & getAttacksToKing();
+}
+
 // Asuming; non-special moves(!pro|!cast) and valid(des =empt|opColOc) input,
 // use it for temprory changes.
 // It changes turns automatically for now.

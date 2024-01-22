@@ -26,6 +26,9 @@ public:
   color getPieceColor(const uint64_t &sqMask) const;
   piece getPieceType(const uint64_t &sqMask) const;
   uint64_t getAllPieces(const color &pieceColor) const;
+  uint64_t getAttacksToKing() const;
+
+  bool isIncheck() const;
   // movers:
   void makeMove(Move move);
   void undoMove(Move move);
