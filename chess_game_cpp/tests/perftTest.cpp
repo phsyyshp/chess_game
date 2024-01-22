@@ -29,6 +29,7 @@ public:
       return 1;
     }
     int nodes = 0;
+    int j = 0;
     MoveGeneration movGen(position);
     movGen.generateAllMoves();
     for (const auto &move : movGen.getMoves()) {
@@ -37,6 +38,7 @@ public:
       if (!position.isInCheck()) {
         nodes += perft(depth - 1);
       }
+
       position = tempPosition;
     }
     return nodes;
@@ -48,7 +50,7 @@ int main() {
   Position position;
   position.setBoardToInitialConfiguration();
   perftTest test(position);
-  int depth = 5;
+  int depth = 4;
 
   std::cout << "Number Of Pseudo-Legal Moves:" << std::endl;
   std::cout << test.perftPseudoLegal(depth) << std::endl;

@@ -36,7 +36,7 @@ set(SOURCES
     # tests/loader_test.cpp
     tests/perftTest.cpp
     # tests/moveTest.cpp
-    # tests/potsition_test.cpp
+    # tests/position_test.cpp
     # tests/utilTest.cpp
     # tests/evaluationTest.cpp
     # tests/searchTest.cpp

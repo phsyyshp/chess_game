@@ -92,9 +92,7 @@ uint64_t Position::getAttacksToKing() const {
          (getRookAttackMask(squareOfKing, allPieces) & oppositeRookQueens);
 }
 
-bool Position::isInCheck() const {
-  return (pieces[turn][king] & getAttacksToKing()) != 0;
-}
+bool Position::isInCheck() const { return (getAttacksToKing()) != 0; }
 
 // Asuming; non-special moves(!pro|!cast) and valid(des =empt|opColOc) input,
 // use it for temprory changes.
