@@ -40,6 +40,7 @@ Position &Position::operator=(const Position &rhs) {
   canWhiteCastle = rhs.canWhiteCastle;
   canBlackCastle = rhs.canBlackCastle;
   capturedInLastMove = rhs.capturedInLastMove;
+  return *this;
 }
 // Getters;
 color Position ::getPieceColor(const uint64_t &sqMask) const {
