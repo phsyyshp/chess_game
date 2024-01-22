@@ -263,10 +263,14 @@ uint64_t MoveGeneration::getAttacksToKing() {
   uint64_t oppositeRooks = position.getPieces()[oppositeColor][rook];
   uint64_t oppositeBishops = position.getPieces()[oppositeColor][bishop];
   uint64_t oppositeQueens = position.getPieces()[oppositeColor][queen];
+  uint64_t opppositeRookQueens = oppositeRooks | oppositeQueens;
+
+  uint64_t opppositeBishopQueens = oppositeBishops | oppositeQueens;
   return (knightLookUpTable[squareOfKing] & oppositeKnights) |
          (pawnLookUpTable[colorOfKing][squareOfKing] & oppositePawns) |
-         (getBishopAttackMask(squareOfKing, allPieces)) |
-         (generateRookMoves(squareOfKing, AllPieces));
+         (getBishopAttackMask(squareOfKing, allPieces) &
+          opppositeBishopQueens) |
+         (getRookAttackMask(squareOfKing, allPieces) & opppositeRookQueens);
 }
 std::vector<Move> MoveGeneration::getMoves() const { return moveList; }
 size_t MoveGeneration::getNumberOfMoves() const { return moveList.size(); }
