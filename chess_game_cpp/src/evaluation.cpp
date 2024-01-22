@@ -104,7 +104,7 @@ float Evaluation::evaluate() const {
   int doubledPawnDiff = getDoubledPawnCount(white) - getDoubledPawnCount(black);
   int isolinDiff = getIsolatedPawnCount(white) - getIsolatedPawnCount(black);
   size_t mobilityDiff = getMobility(white) - getMobility(black);
-  std::cout << pieceSquareTables() << std::endl;
+  // std::cout << pieceSquareTables() << std::endl;
   // return (200 * kingDiff + 9 * queenDiff + 5 * rookDiff +
   //         3 * (bishopDiff + knightDiff) + pawnDiff -
   //         0.5 * (isolinDiff + doubledPawnDiff) + 0.1 * (mobilityDiff)) *

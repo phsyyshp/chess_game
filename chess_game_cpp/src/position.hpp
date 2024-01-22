@@ -14,6 +14,8 @@ public:
   Position() = default;
   Position(std::array<std::array<uint64_t, 6>, 2> piecesInput, color turnInput)
       : pieces(piecesInput), turn(turnInput) {}
+  // operators:
+
   // setters;
   void setBoardToInitialConfiguration();
   void changeTurn();
