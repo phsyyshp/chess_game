@@ -73,7 +73,7 @@ uint64_t Position::getAllPieces(const color &pieceColor) const {
 }
 uint64_t Position::getAttacksToKing() const {
 
-  uint64_t allPieces = getAllPieces(black) & getAllPieces(white);
+  uint64_t allPieces = getAllPieces(black) | getAllPieces(white);
   color colorOfKing = turn;
   color oppositeColor = getOppositeTurn();
   square squareOfKing =
@@ -83,18 +83,17 @@ uint64_t Position::getAttacksToKing() const {
   uint64_t oppositeRooks = pieces[oppositeColor][rook];
   uint64_t oppositeBishops = pieces[oppositeColor][bishop];
   uint64_t oppositeQueens = pieces[oppositeColor][queen];
-  uint64_t opppositeRookQueens = oppositeRooks | oppositeQueens;
+  uint64_t oppositeRookQueens = oppositeRooks | oppositeQueens;
 
-  uint64_t opppositeBishopQueens = oppositeBishops | oppositeQueens;
+  uint64_t oppositeBishopQueens = oppositeBishops | oppositeQueens;
   return (knightLookUpTable[squareOfKing] & oppositeKnights) |
          (pawnLookUpTable[colorOfKing][squareOfKing] & oppositePawns) |
-         (getBishopAttackMask(squareOfKing, allPieces) &
-          opppositeBishopQueens) |
-         (getRookAttackMask(squareOfKing, allPieces) & opppositeRookQueens);
+         (getBishopAttackMask(squareOfKing, allPieces) & oppositeBishopQueens) |
+         (getRookAttackMask(squareOfKing, allPieces) & oppositeRookQueens);
 }
 
-bool Position::isIncheck() const {
-  return pieces[turn][king] & getAttacksToKing();
+bool Position::isInCheck() const {
+  return (pieces[turn][king] & getAttacksToKing()) != 0;
 }
 
 // Asuming; non-special moves(!pro|!cast) and valid(des =empt|opColOc) input,
