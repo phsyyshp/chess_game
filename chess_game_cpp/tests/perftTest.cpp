@@ -22,14 +22,12 @@ public:
     }
     return nodes;
   }
-
   int perft(int depth) {
     Position tempPosition;
     if (depth == 0) {
       return 1;
     }
     int nodes = 0;
-    int j = 0;
     MoveGeneration movGen(position);
     movGen.generateAllMoves();
     for (const auto &move : movGen.getMoves()) {
@@ -43,9 +41,22 @@ public:
     }
     return nodes;
   }
-
   Position position;
 };
+
+void perftDivide(Position position, int depth) {
+  MoveGeneration movGen(position);
+  movGen.generateAllMoves();
+  Position tempPosition;
+  for (const auto &move : movGen.getMoves()) {
+    tempPosition = position;
+    position.makeMove(move);
+    perftTest test(position);
+    std::cout << chessSq[move.getFrom()] << chessSq[move.getTo()] << std::endl;
+    std::cout << test.perft(depth - 1) << std::endl;
+    position = tempPosition;
+  }
+}
 int main() {
   Position position;
   position.setBoardToInitialConfiguration();
@@ -57,4 +68,13 @@ int main() {
 
   std::cout << "Number Of Legal Moves:" << std::endl;
   std::cout << test.perft(depth) << std::endl;
+  std::cout << "Divided Perft"
+            << "\n";
+  Move move(b1, a3, knight, white, false);
+  position.makeMove(move);
+
+  Move move2(g7, g6, pawn, black, false);
+  position.makeMove(move);
+
+  perftDivide(position, 1);
 }

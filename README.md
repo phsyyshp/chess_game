@@ -21,6 +21,8 @@ chess_game is a fast C++ powered chess engine with a Python API. The engine is s
 More features are planned for future development.
 
 Overall, chess_game aims to provide a high-performance chess engine with a user-friendly Python API.
+## WARNING
+- the python part is comlete garbage rigth now just ignore it. 
 
 ## TODO
 - [ ] Add more tests to ensure the engine is functioning correctly and efficiently.
