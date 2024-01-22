@@ -18,8 +18,8 @@ public:
   void generateQueenMoves();
   void generateKingMoves();
   void generateAllMoves();
-  // getters
 
+  // getters
   std::vector<Move> getMoves() const;
   size_t getNumberOfMoves() const;
 

@@ -62,7 +62,7 @@ int main() {
   position.setBoardToInitialConfiguration();
   perftTest test(position);
   int depth = 3;
-
+  // while (depth > 0) {
   std::cout << "Number Of Pseudo-Legal Moves:" << std::endl;
   std::cout << test.perftPseudoLegal(depth) << std::endl;
 
@@ -70,11 +70,13 @@ int main() {
   std::cout << test.perft(depth) << std::endl;
   std::cout << "Divided Perft"
             << "\n";
-  Move move(b1, a3, knight, white, false);
-  position.makeMove(move);
+  // depth--;
+  // }
+  // Move move(b1, a3, knight, white, false);
+  // position.makeMove(move);
 
-  Move move2(g7, g6, pawn, black, false);
-  position.makeMove(move);
+  // Move move2(g7, g6, pawn, black, false);
+  // position.makeMove(move);
 
-  perftDivide(position, 1);
+  // perftDivide(position, 1);
 }

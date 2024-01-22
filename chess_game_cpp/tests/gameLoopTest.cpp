@@ -1,6 +1,4 @@
-
 #include "search.hpp"
-
 template <typename T, size_t N>
 int findIndex(const std::array<T, N> &arr, const T &value) {
   auto it = std::find(arr.begin(), arr.end(), value);
@@ -8,7 +6,6 @@ int findIndex(const std::array<T, N> &arr, const T &value) {
 }
 
 int main() {
-
   Position position;
   position.setBoardToInitialConfiguration();
   position.printBoard();
