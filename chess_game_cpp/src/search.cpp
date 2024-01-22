@@ -8,7 +8,7 @@ int Search::negaMax(int depth) {
   if (depth == 0) {
     return eval.evaluate();
   }
-  int max = -9999;
+  int max = INT16_MIN;
   MoveGeneration movGen(position);
   movGen.generateAllMoves();
   for (Move move : movGen.getMoves()) {
