@@ -31,13 +31,11 @@ public:
     int nodes = 0;
     MoveGeneration movGen(position);
     movGen.generateAllMoves();
-    // std::vector<Move> allMoves = movGen.getMoves();
     for (const auto &move : movGen.getMoves()) {
-      // FIX IT: do undo;
       tempPosition = position;
       position.makeMove(move);
-      if (position.isIncheck()) {
-        nodes += perftPseudoLegal(depth - 1);
+      if (!position.isInCheck()) {
+        nodes += perft(depth - 1);
       }
       position = tempPosition;
     }
@@ -50,5 +48,11 @@ int main() {
   Position position;
   position.setBoardToInitialConfiguration();
   perftTest test(position);
-  std::cout << test.perftPseudoLegal(5);
+  int depth = 5;
+
+  std::cout << "Number Of Pseudo-Legal Moves:" << std::endl;
+  std::cout << test.perftPseudoLegal(depth) << std::endl;
+
+  std::cout << "Number Of Legal Moves:" << std::endl;
+  std::cout << test.perft(depth) << std::endl;
 }
