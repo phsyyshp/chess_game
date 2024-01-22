@@ -21,4 +21,10 @@ int main() {
   newPos.undoMove(move);
 
   newPos.printBoard();
+
+  std::string FENstr = "rnbqk1nr/pppp1ppp/8/4p3/1b1P4/5N2/PPP1PPPP/RNBQKB1R/";
+  std::array<std::array<uint64_t, 6>, 2> FEN = FENtoPieces(FENstr);
+  Position position2(FEN, white);
+  position2.printBoard();
+  std::cout << position2.isInCheck();
 }
