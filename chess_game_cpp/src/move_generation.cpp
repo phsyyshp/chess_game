@@ -131,9 +131,6 @@ void MoveGeneration::generateRightPawnCaptures() {
     break;
   }
 }
-// uint64_t generate_pawn_captures(const Position &position){
-//   uint64_t pawns =
-// }
 void MoveGeneration::generateKnightMoves() {
 
   uint64_t eligibleSquares = ~position.getAllPieces(position.getTurn());
@@ -253,5 +250,23 @@ void MoveGeneration::generateAllMoves() {
   generateQueenMoves();
 }
 
+uint64_t MoveGeneration::getAttacksToKing() {
+
+  uint64_t allPieces =
+      position.getAllPieces(black) & position.getAllPieces(white);
+  color colorOfKing = position.getTurn();
+  color oppositeColor = position.getOppositeTurn();
+  square squareOfKing =
+      static_cast<square>((position.getPieces()[colorOfKing][king]));
+  uint64_t oppositePawns = position.getPieces()[oppositeColor][pawn];
+  uint64_t oppositeKnights = position.getPieces()[oppositeColor][knight];
+  uint64_t oppositeRooks = position.getPieces()[oppositeColor][rook];
+  uint64_t oppositeBishops = position.getPieces()[oppositeColor][bishop];
+  uint64_t oppositeQueens = position.getPieces()[oppositeColor][queen];
+  return (knightLookUpTable[squareOfKing] & oppositeKnights) |
+         (pawnLookUpTable[colorOfKing][squareOfKing] & oppositePawns) |
+         (getBishopAttackMask(squareOfKing, allPieces)) |
+         (generateRookMoves(squareOfKing, AllPieces));
+}
 std::vector<Move> MoveGeneration::getMoves() const { return moveList; }
 size_t MoveGeneration::getNumberOfMoves() const { return moveList.size(); }
