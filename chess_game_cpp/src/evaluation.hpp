@@ -13,7 +13,7 @@ public:
 
   // pawn operations;
   int getDoubledPawnCount(const color &) const;
-  int getBlockedPawnCount(const color &) const;
+  // int getBlockedPawnCount(const color &) const;
   int getIsolatedPawnCount(const color &) const;
 
   int pawnSquareTables(const color &pieceColor) const;
