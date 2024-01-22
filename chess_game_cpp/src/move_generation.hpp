@@ -19,7 +19,6 @@ public:
   void generateKingMoves();
   void generateAllMoves();
   // getters
-  uint64_t getAttacksToKing();
 
   std::vector<Move> getMoves() const;
   size_t getNumberOfMoves() const;
