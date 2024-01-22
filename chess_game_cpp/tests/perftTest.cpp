@@ -61,7 +61,7 @@ int main() {
   Position position;
   position.setBoardToInitialConfiguration();
   perftTest test(position);
-  int depth = 4;
+  int depth = 3;
 
   std::cout << "Number Of Pseudo-Legal Moves:" << std::endl;
   std::cout << test.perftPseudoLegal(depth) << std::endl;
