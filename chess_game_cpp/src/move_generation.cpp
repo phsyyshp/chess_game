@@ -40,11 +40,13 @@ void MoveGeneration::generateDoublePawnPushes() {
   int to, from;
   uint64_t ineligibleSquares =
       position.getAllPieces(white) | position.getAllPieces(black);
+  uint64_t oneStepMoves;
   switch (position.getTurn()) {
   case white:
     pawns = position.getPieces()[white][pawn];
     pawns_at_initial_config = pawns & ((0b1ULL << 2 * 8) - 1);
-    generatedMoves = (pawns_at_initial_config << 2 * 8) & (~ineligibleSquares);
+    oneStepMoves = (pawns_at_initial_config << 8) & (~ineligibleSquares);
+    generatedMoves = (oneStepMoves << 8) & (~ineligibleSquares);
     while (generatedMoves) {
       to = __builtin_ctzll(generatedMoves);
       from = to - 16;
@@ -56,7 +58,8 @@ void MoveGeneration::generateDoublePawnPushes() {
   case black:
     pawns = position.getPieces()[black][pawn];
     pawns_at_initial_config = pawns & (0b11111111ULL << 6 * 8);
-    generatedMoves = (pawns_at_initial_config >> 2 * 8) & (~ineligibleSquares);
+    oneStepMoves = (pawns_at_initial_config >> 8) & (~ineligibleSquares);
+    generatedMoves = (oneStepMoves >> 8) & (~ineligibleSquares);
     while (generatedMoves) {
       to = __builtin_ctzll(generatedMoves);
       from = to + 16;
