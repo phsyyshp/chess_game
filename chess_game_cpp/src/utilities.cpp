@@ -38,9 +38,8 @@ std::string getPieceIcon(piece pieceType, color pieceColor) {
     case king:
       return "\u265A";
     }
-  } else {
-    return "\u0020";
   }
+  return "\u0020";
 }
 // put / at the end of the FEn
 std::array<std::string, 8> FENtoRanks(std::string FENstring) {
@@ -87,6 +86,8 @@ int charToPiece(char c) {
     break;
 
   default:
+    std::cerr << c << " is an illegal argument" << std::endl;
+    throw std::invalid_argument("no valid chess piece with that letter");
     break;
   }
 }

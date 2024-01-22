@@ -16,10 +16,12 @@ int Evaluation::getDoubledPawnCount(const color &pieceColor) const {
     return __builtin_popcountll(
         blackPawnsInFrontOwn(position.getPieces()[black][pawn]));
   default:
+    std::cerr << pieceColor << " is not valid color" << std::endl;
+    throw std::range_error("invalid color");
     break;
   }
 }
-int Evaluation::getBlockedPawnCount(const color &pieceColor) const {}
+// int Evaluation::getBlockedPawnCount(const color &pieceColor) const {}
 int Evaluation::getIsolatedPawnCount(const color &pieceColor) const {
   return __builtin_popcountll(isolanis(position.getPieces()[pieceColor][pawn]));
 }
