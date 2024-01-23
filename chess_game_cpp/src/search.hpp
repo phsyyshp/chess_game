@@ -6,9 +6,8 @@ public:
   Search(const Position &p) : position(p){};
 
   int negaMax(int depth);
-  Move getBestMove() const;
+  Move search(int depth);
 
 private:
   Position position;
-  Move bestMove;
 };
