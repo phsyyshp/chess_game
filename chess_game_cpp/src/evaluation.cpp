@@ -116,6 +116,12 @@ float Evaluation::evaluate() const {
   //               0.5 * (isolinDiff + doubledPawnDiff) +
   //               pieceSquareTables())
   //           << "\n";
+  std::cout << (200 * kingDiff + 9 * queenDiff + 5 * rookDiff +
+                3 * (bishopDiff + knightDiff) + pawnDiff -
+                0.5 * (isolinDiff + doubledPawnDiff) +
+                pieceSquareTables() / 100) *
+                   whoToMove[position.getTurn()]
+            << std::endl;
   return (200 * kingDiff + 9 * queenDiff + 5 * rookDiff +
           3 * (bishopDiff + knightDiff) + pawnDiff -
           0.5 * (isolinDiff + doubledPawnDiff) + pieceSquareTables() / 100) *

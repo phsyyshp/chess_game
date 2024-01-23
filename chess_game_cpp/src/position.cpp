@@ -55,6 +55,7 @@ color Position ::getPieceColor(const uint64_t &sqMask) const {
     return color::invalid;
   }
 }
+// TODO: there maybe bugs here!
 piece Position::getPieceType(const uint64_t &sqMask) const {
   for (int pieceInd = 0; pieceInd < 6; pieceInd++) {
 
@@ -63,6 +64,7 @@ piece Position::getPieceType(const uint64_t &sqMask) const {
       return static_cast<piece>(pieceInd);
     }
   }
+  return noPiece;
 }
 color Position::getTurn() const { return turn; }
 color Position::getOppositeTurn() const { return oppositeColor[turn]; }
