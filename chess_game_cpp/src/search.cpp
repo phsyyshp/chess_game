@@ -21,6 +21,7 @@ int Search::negaMax(int depth) {
       max = score;
       std::cout << score << std::endl;
       bestMove = move;
+      ;
     }
   }
   return max;
