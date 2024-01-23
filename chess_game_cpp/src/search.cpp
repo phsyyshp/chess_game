@@ -15,9 +15,11 @@ int Search::negaMax(int depth) {
     tempPosition = position;
     position.makeMove(move);
     score = -negaMax(depth - 1);
+    std::cout << score << std::endl;
     position = tempPosition;
     if (score > max) {
       max = score;
+      std::cout << score << std::endl;
       bestMove = move;
     }
   }

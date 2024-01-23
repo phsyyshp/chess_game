@@ -89,14 +89,14 @@ int Evaluation::bishopSquareTables(const color &pieceColor) const {
   }
   return out;
 }
-float Evaluation::pieceSquareTables() const {
+int Evaluation::pieceSquareTables() const {
   return rookSquareTables(white) - rookSquareTables(black) +
          pawnSquareTables(white) - pawnSquareTables(black) +
          bishopSquareTables(white) - bishopSquareTables(black) +
          queenSquareTables(white) - queenSquareTables(black) +
          knightSquareTables(white) - knightSquareTables(black);
 }
-float Evaluation::evaluate() const {
+int Evaluation::evaluate() const {
   int kingDiff = getPieceCount(king, white) - getPieceCount(king, black);
   int queenDiff = getPieceCount(queen, white) - getPieceCount(queen, black);
   int knightDiff = getPieceCount(knight, white) - getPieceCount(knight, black);
@@ -116,14 +116,8 @@ float Evaluation::evaluate() const {
   //               0.5 * (isolinDiff + doubledPawnDiff) +
   //               pieceSquareTables())
   //           << "\n";
-  std::cout << (200 * kingDiff + 9 * queenDiff + 5 * rookDiff +
-                3 * (bishopDiff + knightDiff) + pawnDiff -
-                0.5 * (isolinDiff + doubledPawnDiff) +
-                pieceSquareTables() / 100) *
-                   whoToMove[position.getTurn()]
-            << std::endl;
-  return (200 * kingDiff + 9 * queenDiff + 5 * rookDiff +
-          3 * (bishopDiff + knightDiff) + pawnDiff -
-          0.5 * (isolinDiff + doubledPawnDiff) + pieceSquareTables() / 100) *
+  return (20000 * kingDiff + 900 * queenDiff + 500 * rookDiff +
+          300 * (bishopDiff + knightDiff) + pawnDiff -
+          50 * (isolinDiff + doubledPawnDiff) + pieceSquareTables()) *
          whoToMove[position.getTurn()];
 };
