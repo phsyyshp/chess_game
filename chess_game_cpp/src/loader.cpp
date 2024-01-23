@@ -23,6 +23,8 @@ std::string pieceToStr(piece pieceType) {
     return "rook";
     break;
   default:
+    std::cerr << "invlaid piece type";
+    throw std::range_error("invalid piece type");
     break;
   }
 }

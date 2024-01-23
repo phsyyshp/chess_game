@@ -10,7 +10,6 @@ int main() {
   position.setBoardToInitialConfiguration();
   position.printBoard();
   std::string moveStr;
-  int i = 0;
   while (std::cin >> moveStr) {
     std::string fromStr = std::string(1, moveStr[0]) + moveStr[1];
     std::string toStr = std::string(1, moveStr[2]) + moveStr[3];
@@ -22,10 +21,9 @@ int main() {
     position.makeMove(move);
     position.printBoard();
     Search search(position);
-    search.negaMax(3);
+    search.negaMax(1);
     Move bestMove = search.getBestMove();
     position.makeMove(bestMove);
     position.printBoard();
-    i++;
   }
 }
