@@ -20,9 +20,9 @@ int main() {
               isCaptureVal);
     position.makeMove(move);
     position.printBoard();
-    Search search(position);
-    search.negaMax(1);
-    Move bestMove = search.getBestMove();
+    Search srch(position);
+
+    Move bestMove = srch.search(1);
     position.makeMove(bestMove);
     position.printBoard();
   }

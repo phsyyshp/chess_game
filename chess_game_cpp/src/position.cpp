@@ -51,7 +51,6 @@ color Position ::getPieceColor(const uint64_t &sqMask) const {
     return color::white;
   } else {
 
-    // std::cerr << "empty square";
     return color::invalid;
   }
 }

@@ -19,11 +19,31 @@ int Search::negaMax(int depth) {
     position = tempPosition;
     if (score > max) {
       max = score;
-      std::cout << score << std::endl;
-      bestMove = move;
-      ;
     }
   }
   return max;
 }
-Move Search::getBestMove() const { return bestMove; }
+Move Search::search(int depth) {
+  int score;
+  Move bestMove;
+  Evaluation eval(position);
+  Position tempPosition;
+  if (depth <= 0) {
+    throw std::out_of_range("depth must be positive int");
+  }
+  int max = INT16_MIN;
+  MoveGeneration movGen(position);
+  movGen.generateAllMoves();
+  for (Move move : movGen.getMoves()) {
+    tempPosition = position;
+    position.makeMove(move);
+    score = -negaMax(depth - 1);
+    std::cout << score << std::endl;
+    position = tempPosition;
+    if (score > max) {
+      max = score;
+      bestMove = move;
+    }
+  }
+  return bestMove;
+}
