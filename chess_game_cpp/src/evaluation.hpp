@@ -27,9 +27,9 @@ public:
 
   int bishopSquareTables(const color &pieceColor) const;
 
-  float pieceSquareTables() const;
+  int pieceSquareTables() const;
 
-  float evaluate() const;
+  int evaluate() const;
 
 private:
   Position &position;
