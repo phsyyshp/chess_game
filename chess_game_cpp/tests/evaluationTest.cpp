@@ -13,7 +13,6 @@ int main() {
   for (Move move : movgen.getMoves()) {
     tempPosition = position;
     position.makeMove(move);
-
     Evaluation eval(position);
 
     std::cout << "----------------------------------------------------"

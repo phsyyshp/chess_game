@@ -9,7 +9,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pg")
 # set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pg")
 
-
 # Optimizer flags
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
@@ -38,10 +37,10 @@ set(SOURCES
     # tests/moveTest.cpp
     # tests/position_test.cpp
     # tests/utilTest.cpp
-    # tests/evaluationTest.cpp
+    tests/evaluationTest.cpp
     # tests/searchTest.cpp
     # tests/gameLoopTest.cpp
-    tests/constantsTest.cpp
+    # tests/constantsTest.cpp
 )
 
 # Set the output directory for the executable
