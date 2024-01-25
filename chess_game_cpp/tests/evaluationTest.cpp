@@ -15,9 +15,13 @@ int main() {
     position.makeMove(move);
     Evaluation eval(position);
 
-    std::cout << "----------------------------------------------------"
+    std::cout << "-----------------------a-----------------------------"
               << std::endl;
-    std::cout << eval.evaluate() << std::endl;
+    std::cout << "white eval" << std::endl;
+    std::cout << eval.evaluate(white) << std::endl;
+    std::cout << "black eval" << std::endl;
+    std::cout << eval.evaluate(black) << std::endl;
+
     std::cout << chessSq[move.getFrom()] << chessSq[move.getTo()] << std::endl;
     position.printBoard();
     std::cout << "----------------------------------------------------"

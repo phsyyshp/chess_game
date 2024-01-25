@@ -6,6 +6,7 @@ int Search::negaMax(int depth) {
   Evaluation eval(position);
   Position tempPosition;
   if (depth == 0) {
+    // temp
     return eval.evaluate();
   }
   int max = INT16_MIN;
@@ -41,7 +42,7 @@ Move Search::search(int depth) {
     if (score > max) {
       max = score;
       bestMove = move;
-      std::cout << score << std::endl;
+      // std::cout << score << std::endl;
     }
   }
   return bestMove;
