@@ -5,6 +5,7 @@ public:
   MoveList() : lastSetIdx(-1) {}
 
   void pushBack(Move move);
+  Move operator[](int n) { return elements[n]; }
 
 private:
   int lastSetIdx;
