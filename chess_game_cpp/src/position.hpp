@@ -12,8 +12,8 @@ public:
   };
   // constructors:
   Position() = default;
-  Position(std::array<std::array<uint64_t, 6>, 2> piecesInput, color turnInput)
-      : pieces(piecesInput), turn(turnInput) {}
+  Position(std::array<std::array<uint64_t, 6>, 2> pieces_, color turn_)
+      : pieces(pieces_), turn(turn_) {}
   // operators:
   Position &operator=(const Position &);
   // setters;
@@ -25,9 +25,9 @@ public:
   color getOppositeTurn() const;
   color getPieceColor(const uint64_t &sqMask) const;
   piece getPieceType(const uint64_t &sqMask) const;
-  uint64_t getAllPieces(const color &pieceColor) const;
+  uint64_t getAllPieces(const color &color_) const;
   uint64_t getAttacksToKing() const;
-
+  // bools:
   bool isInCheck() const;
   // movers:
   void makeMove(Move move);

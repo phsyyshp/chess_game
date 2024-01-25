@@ -56,21 +56,21 @@ color Position ::getPieceColor(const uint64_t &sqMask) const {
 }
 // TODO: there maybe bugs here!
 piece Position::getPieceType(const uint64_t &sqMask) const {
-  for (int pieceInd = 0; pieceInd < 6; pieceInd++) {
+  for (int pieceIdx = 0; pieceIdx < 6; pieceIdx++) {
 
-    if (sqMask & (pieces[white][pieceInd] | pieces[black][pieceInd])) {
+    if (sqMask & (pieces[white][pieceIdx] | pieces[black][pieceIdx])) {
 
-      return static_cast<piece>(pieceInd);
+      return static_cast<piece>(pieceIdx);
     }
   }
   return noPiece;
 }
 color Position::getTurn() const { return turn; }
 color Position::getOppositeTurn() const { return oppositeColor[turn]; }
-uint64_t Position::getAllPieces(const color &pieceColor) const {
-  return pieces[pieceColor][rook] | pieces[pieceColor][knight] |
-         pieces[pieceColor][bishop] | pieces[pieceColor][queen] |
-         pieces[pieceColor][king] | pieces[pieceColor][pawn];
+uint64_t Position::getAllPieces(const color &color_) const {
+  return pieces[color_][rook] | pieces[color_][knight] |
+         pieces[color_][bishop] | pieces[color_][queen] | pieces[color_][king] |
+         pieces[color_][pawn];
 }
 uint64_t Position::getAttacksToKing() const {
 
@@ -92,22 +92,20 @@ uint64_t Position::getAttacksToKing() const {
          (getBishopAttackMask(squareOfKing, allPieces) & oppositeBishopQueens) |
          (getRookAttackMask(squareOfKing, allPieces) & oppositeRookQueens);
 }
-
 bool Position::isInCheck() const { return (getAttacksToKing()) != 0; }
-
 // Asuming; non-special moves(!pro|!cast) and valid(des =empt|opColOc) input,
 // use it for temprory changes.
 // It changes turns automatically for now.
 void Position::makeMove(Move move) {
   int from = move.getFrom();
   int to = move.getTo();
-  int pieceType = move.getPiece();
-  int pieceColor = move.getColor();
+  int piece_ = move.getPiece();
+  int color_ = move.getColor();
   bool isCapture = move.checkIsCapture();
-  int oppositePieceColor = (pieceColor + 1) % 2;
+  int oppositePieceColor = (color_ + 1) % 2;
   uint64_t toMask = (0b1ull << to);
   uint64_t fromMask = (0b1ull << from);
-  pieces[pieceColor][pieceType] &= ~fromMask;
+  pieces[color_][piece_] &= ~fromMask;
   if (isCapture) {
     piece capturedPieceType = getPieceType(toMask);
     pieces[oppositePieceColor][capturedPieceType] &= (~toMask);
@@ -116,7 +114,7 @@ void Position::makeMove(Move move) {
     // capturedInLastMove = nulity;
     ;
   }
-  pieces[pieceColor][pieceType] |= toMask;
+  pieces[color_][piece_] |= toMask;
 
   changeTurn();
 }
@@ -124,15 +122,15 @@ void Position::makeMove(Move move) {
 void Position::undoMove(Move move) {
   int from = move.getFrom();
   int to = move.getTo();
-  int pieceType = move.getPiece();
-  int pieceColor = move.getColor();
+  int piece_ = move.getPiece();
+  int color_ = move.getColor();
   bool isCapture = move.checkIsCapture();
-  int oppositePieceColor = (pieceColor + 1) % 2;
+  int oppositePieceColor = (color_ + 1) % 2;
   uint64_t toMask = (0b1ull << to);
   uint64_t notFromMask = ~(0b1ull << from);
   changeTurn();
-  pieces[pieceColor][pieceType] &= ~toMask;
-  pieces[pieceColor][pieceType] |= ~notFromMask;
+  pieces[color_][piece_] &= ~toMask;
+  pieces[color_][piece_] |= ~notFromMask;
 
   if (isCapture) {
     pieces[oppositePieceColor][capturedInLastMove] |= (toMask);
@@ -144,14 +142,14 @@ std::array<std::array<uint64_t, 6>, 2> Position::getPieces() const {
 // Misc
 void Position::printBoard() const {
   uint64_t allPieces = getAllPieces(white) | getAllPieces(black);
-  piece pieceType;
-  color pieceColor;
+  piece piece_;
+  color color_;
   std::string pieceIcon;
   for (int i = 7; i >= 0; i--) {
     for (int j = 0; j < 8; j++) {
-      pieceType = getPieceType(0b1ull << (j + i * 8));
-      pieceColor = getPieceColor(0b1ull << (j + i * 8));
-      pieceIcon = getPieceIcon(pieceType, pieceColor);
+      piece_ = getPieceType(0b1ull << (j + i * 8));
+      color_ = getPieceColor(0b1ull << (j + i * 8));
+      pieceIcon = getPieceIcon(piece_, color_);
       if ((i + j + 1) % 2 == 0) {
         pieceIcon = colorizeString(pieceIcon, "30", "46");
       } else {
