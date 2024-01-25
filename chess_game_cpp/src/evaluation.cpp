@@ -26,7 +26,6 @@ int Evaluation::getIsolatedPawnCount(const color &pieceColor) const {
   return __builtin_popcountll(isolanis(position.getPieces()[pieceColor][pawn]));
 }
 size_t Evaluation::getMobility(const color &pieceColor) const {
-
   MoveGeneration movgen(position);
   movgen.generateAllMoves();
   return movgen.getNumberOfMoves();
@@ -106,16 +105,7 @@ int Evaluation::evaluate() const {
   int doubledPawnDiff = getDoubledPawnCount(white) - getDoubledPawnCount(black);
   int isolinDiff = getIsolatedPawnCount(white) - getIsolatedPawnCount(black);
   size_t mobilityDiff = getMobility(white) - getMobility(black);
-  // std::cout << pieceSquareTables() << std::endl;
-  // return (200 * kingDiff + 9 * queenDiff + 5 * rookDiff +
-  //         3 * (bishopDiff + knightDiff) + pawnDiff -
-  //         0.5 * (isolinDiff + doubledPawnDiff) + 0.1 * (mobilityDiff)) *
-  //        whoToMove[position.getTurn()];
-  // std::cout << (200 * kingDiff + 9 * queenDiff + 5 * rookDiff +
-  //               3 * (bishopDiff + knightDiff) + pawnDiff -
-  //               0.5 * (isolinDiff + doubledPawnDiff) +
-  //               pieceSquareTables())
-  //           << "\n";
+
   return (20000 * kingDiff + 900 * queenDiff + 500 * rookDiff +
           300 * (bishopDiff + knightDiff) + pawnDiff -
           50 * (isolinDiff + doubledPawnDiff) + pieceSquareTables()) *
