@@ -60,7 +60,6 @@ std::array<std::string, 8> FENtoRanks(std::string FENstring) {
   }
   return out;
 }
-
 int charToPiece(char c) {
 
   c = tolower(c);
@@ -91,7 +90,6 @@ int charToPiece(char c) {
     break;
   }
 }
-
 int chartoColor(char c) {
   if (isupper(c)) {
     return 0;
@@ -99,7 +97,6 @@ int chartoColor(char c) {
     return 1;
   }
 }
-
 std::array<std::array<uint64_t, 6>, 2> FENtoPieces(std::string FENstring) {
 
   std::array<std::string, 8> ranks = FENtoRanks(FENstring);

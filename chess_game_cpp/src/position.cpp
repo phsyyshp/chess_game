@@ -1,7 +1,6 @@
 #include "position.hpp"
 // Setters
 void Position::setWhitePiecesToInitialConfiguration() {
-
   pieces[white][rook] = 0b1ULL << a1 | 0b1ULL << h1;
   pieces[white][knight] = 0b1ULL << g1 | 0b1ULL << b1;
   pieces[white][bishop] = 0b1ULL << f1 | 0b1ULL << c1;
