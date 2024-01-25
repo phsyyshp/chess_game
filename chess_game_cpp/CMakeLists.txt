@@ -37,9 +37,9 @@ set(SOURCES
     # tests/moveTest.cpp
     # tests/position_test.cpp
     # tests/utilTest.cpp
-    tests/evaluationTest.cpp
+    # tests/evaluationTest.cpp
     # tests/searchTest.cpp
-    # tests/gameLoopTest.cpp
+    tests/gameLoopTest.cpp
     # tests/constantsTest.cpp
 )
 
@@ -54,8 +54,8 @@ set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/bin)
 # add_executable(utilTest ${SOURCES})
 # add_executable(evaluationTest ${SOURCES})
 # add_executable(searchTest ${SOURCES})
-# add_executable(gameLoopTest ${SOURCES})
-add_executable(constantsTest ${SOURCES})
+add_executable(gameLoopTest ${SOURCES})
+# add_executable(constantsTest ${SOURCES})
  
  
  
