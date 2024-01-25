@@ -252,5 +252,9 @@ void MoveGeneration::generateAllMoves() {
   generateBishopMoves();
   generateQueenMoves();
 }
+// TODO: finish implementing this;
+//  void MoveGeneration::orderMoves(){
+
+// }
 std::vector<Move> MoveGeneration::getMoves() const { return moveList; }
 size_t MoveGeneration::getNumberOfMoves() const { return moveList.size(); }

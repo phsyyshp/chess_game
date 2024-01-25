@@ -1,5 +1,4 @@
 #include "search.hpp"
-
 int Search::negaMax(int depth) {
 
   int score;
@@ -22,6 +21,17 @@ int Search::negaMax(int depth) {
     }
   }
   return max;
+}
+
+int Search::quiesce(int alpha, int beta) {
+  Evaluation eval(position);
+  int standingPat = eval.evaluate();
+  if (standingPat >= beta) {
+    return beta;
+  }
+  if (alpha < standingPat) {
+    alpha = standingPat;
+  }
 }
 Move Search::search(int depth) {
   int score;

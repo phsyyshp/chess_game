@@ -7,6 +7,7 @@ public:
 
   int negaMax(int depth);
   Move search(int depth);
+  int quiesce(int alpha, int beta);
 
 private:
   Position position;
