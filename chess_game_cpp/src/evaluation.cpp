@@ -2,9 +2,9 @@
 
 // getters;
 Position Evaluation::getPosition() const { return position; }
-int Evaluation::getPieceCount(const piece &pieceType,
+int Evaluation::getPieceCount(const piece &piece_,
                               const color &pieceColor) const {
-  return __builtin_popcountll(position.getPieces()[pieceColor][pieceType]);
+  return __builtin_popcountll(position.getPieces()[pieceColor][piece_]);
 }
 // Pawn operations;
 int Evaluation::getDoubledPawnCount(const color &pieceColor) const {
@@ -104,7 +104,7 @@ int Evaluation::evaluate() const {
   int pawnDiff = getPieceCount(pawn, white) - getPieceCount(pawn, black);
   int doubledPawnDiff = getDoubledPawnCount(white) - getDoubledPawnCount(black);
   int isolinDiff = getIsolatedPawnCount(white) - getIsolatedPawnCount(black);
-  size_t mobilityDiff = getMobility(white) - getMobility(black);
+  // size_t mobilityDiff = getMobility(white) - getMobility(black);
 
   return (20000 * kingDiff + 900 * queenDiff + 500 * rookDiff +
           300 * (bishopDiff + knightDiff) + pawnDiff -
