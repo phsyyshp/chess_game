@@ -22,6 +22,7 @@ public:
     }
     return nodes;
   }
+
   int perft(int depth) {
     Position tempPosition;
     if (depth == 0) {
@@ -36,7 +37,6 @@ public:
       if (!position.isInCheck()) {
         nodes += perft(depth - 1);
       }
-
       position = tempPosition;
     }
     return nodes;
@@ -57,19 +57,20 @@ void perftDivide(Position position, int depth) {
     position = tempPosition;
   }
 }
+
 int main() {
   Position position;
   position.setBoardToInitialConfiguration();
   perftTest test(position);
-  int depth = 3;
+  int depth = 5;
   // while (depth > 0) {
-  std::cout << "Number Of Pseudo-Legal Moves:" << std::endl;
-  std::cout << test.perftPseudoLegal(depth) << std::endl;
+  // std::cout << "Number Of Pseudo-Legal Moves:" << std::endl;
+  // std::cout << test.perftPseudoLegal(depth) << std::endl;
 
-  std::cout << "Number Of Legal Moves:" << std::endl;
+  // std::cout << "Number Of Legal Moves:" << std::endl;
   std::cout << test.perft(depth) << std::endl;
-  std::cout << "Divided Perft"
-            << "\n";
+  // std::cout << "Divided Perft"
+  // << "\n";
   // depth--;
   // }
   // Move move(b1, a3, knight, white, false);
