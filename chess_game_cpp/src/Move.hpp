@@ -5,9 +5,9 @@
 class Move {
 public:
   Move() = default;
-  Move(int from, int to, piece pieceType, color colorIn, bool isCapture)
-      : moveNum(from | (to << 6) | (pieceType << 12) | (colorIn << 18) |
-                ((isCapture * 1) << 24)) {};
+  Move(int from, int to, piece piece_, color color_, bool isCapture_)
+      : moveNum(from | (to << 6) | (piece_ << 12) | (color_ << 18) |
+                ((isCapture_ * 1) << 24)){};
   int getTo() const;
   int getFrom() const;
   int getColor() const;
