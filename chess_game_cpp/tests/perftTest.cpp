@@ -3,7 +3,7 @@ class perftTest {
 
 public:
   perftTest() = default;
-  perftTest(Position pos) : position(pos) {}
+  perftTest(Position pos) : position(pos){};
   int perftPseudoLegal(int depth) {
     Position tempPosition;
     if (depth == 0) {
@@ -31,9 +31,10 @@ public:
     int nodes = 0;
     MoveGeneration movGen(position);
     movGen.generateAllMoves();
-    for (const auto &move : movGen.getMoves()) {
+    for (int i = 0; i < movGen.getMoves().size(); i++) {
+      // for (const auto &move : movGen.getMoves()) {
       tempPosition = position;
-      position.makeMove(move);
+      position.makeMove(movGen.getMoves()[i]);
       if (!position.isInCheck()) {
         nodes += perft(depth - 1);
       }
@@ -63,12 +64,22 @@ int main() {
   position.setBoardToInitialConfiguration();
   perftTest test(position);
   int depth = 5;
+  MoveGeneration moveGen(position);
+
+  moveGen.generateAllMoves();
+  MoveList moveList = moveGen.getMoves();
+  auto move_ = moveList[0];
+  std::cout << chessSq[move_.getFrom()] << chessSq[move_.getTo()] << std::endl;
+  for (auto move : moveList) {
+    std::cout << chessSq[move.getFrom()] << chessSq[move.getTo()] << std::endl;
+  }
+
   // while (depth > 0) {
   // std::cout << "Number Of Pseudo-Legal Moves:" << std::endl;
   // std::cout << test.perftPseudoLegal(depth) << std::endl;
 
   // std::cout << "Number Of Legal Moves:" << std::endl;
-  std::cout << test.perft(depth) << std::endl;
+  // std::cout << test.perft(depth) << std::endl;
   // std::cout << "Divided Perft"
   // << "\n";
   // depth--;

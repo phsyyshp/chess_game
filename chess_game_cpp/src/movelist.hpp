@@ -7,7 +7,7 @@ public:
   MoveList() : lastSetIdx(-1) {}
 
   void push_back(Move move);
-  Move operator[](int n) { return elements[n]; }
+  Move operator[](int n) const { return elements[n]; }
   int size() const;
 
   class iterator {
