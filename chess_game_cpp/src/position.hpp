@@ -45,5 +45,6 @@ public:
   piece capturedInLastMove;
   canCastle canWhiteCastle;
   canCastle canBlackCastle;
+  std::array<piece, 64> mailbox;
 };
 #endif

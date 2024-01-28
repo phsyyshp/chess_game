@@ -7,6 +7,22 @@ void Position::setWhitePiecesToInitialConfiguration() {
   pieces[white][queen] = 0b1ULL << d1;
   pieces[white][king] = 0b1ULL << e1;
   pieces[white][pawn] = 0b11111111ULL << 8;
+  mailbox[a1] = rook;
+  mailbox[h1] = rook;
+  mailbox[g1] = knight;
+  mailbox[b1] = knight;
+  mailbox[f1] = bishop;
+  mailbox[c1] = bishop;
+  mailbox[d1] = queen;
+  mailbox[e1] = king;
+  mailbox[a2] = pawn;
+  mailbox[b2] = pawn;
+  mailbox[c2] = pawn;
+  mailbox[d2] = pawn;
+  mailbox[e2] = pawn;
+  mailbox[f2] = pawn;
+  mailbox[g2] = pawn;
+  mailbox[h2] = pawn;
 }
 void Position::setBlackPiecesToInitialConfiguration() {
   pieces[black][rook] = 0b1ULL << a8 | 0b1ULL << h8;
@@ -15,8 +31,27 @@ void Position::setBlackPiecesToInitialConfiguration() {
   pieces[black][queen] = 0b1ULL << d8;
   pieces[black][king] = 0b1ULL << e8;
   pieces[black][pawn] = 0b11111111ULL << 6 * 8;
+  mailbox[a8] = rook;
+  mailbox[h8] = rook;
+  mailbox[g8] = knight;
+  mailbox[b8] = knight;
+  mailbox[f8] = bishop;
+  mailbox[c8] = bishop;
+  mailbox[d8] = queen;
+  mailbox[e8] = king;
+  mailbox[a7] = pawn;
+  mailbox[b7] = pawn;
+  mailbox[c7] = pawn;
+  mailbox[d7] = pawn;
+  mailbox[e7] = pawn;
+  mailbox[f7] = pawn;
+  mailbox[g7] = pawn;
+  mailbox[h7] = pawn;
 }
 void Position::setBoardToInitialConfiguration() {
+  for (int i = 0; i < 64; i++) {
+    mailbox[i] = noPiece;
+  }
   setWhitePiecesToInitialConfiguration();
   setBlackPiecesToInitialConfiguration();
   turn = color::white;
