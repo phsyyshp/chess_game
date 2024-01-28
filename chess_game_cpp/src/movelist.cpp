@@ -1,3 +1,7 @@
 #include "movelist.hpp"
 
-void MoveList::pushBack(Move move) { elements[lastSetIdx + 1] = move; }
+void MoveList::push_back(Move move) {
+  elements[lastSetIdx + 1] = move;
+  lastSetIdx++;
+}
+int MoveList::size() const { return lastSetIdx; }

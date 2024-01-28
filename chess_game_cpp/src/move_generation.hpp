@@ -2,6 +2,7 @@
 #define MOVEGENERATION_HPP
 
 #include "Move.hpp"
+#include "movelist.hpp"
 #include "position.hpp"
 class MoveGeneration {
 
@@ -20,11 +21,11 @@ public:
   void generateAllMoves();
 
   // getters
-  std::vector<Move> getMoves() const;
-  size_t getNumberOfMoves() const;
+  MoveList getMoves() const;
+  int getNumberOfMoves() const;
 
 private:
-  std::vector<Move> moveList;
+  MoveList moveList;
   Position position;
 };
 #endif

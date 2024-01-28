@@ -256,5 +256,5 @@ void MoveGeneration::generateAllMoves() {
 //  void MoveGeneration::orderMoves(){
 
 // }
-std::vector<Move> MoveGeneration::getMoves() const { return moveList; }
-size_t MoveGeneration::getNumberOfMoves() const { return moveList.size(); }
+MoveList MoveGeneration::getMoves() const { return moveList; }
+int MoveGeneration::getNumberOfMoves() const { return moveList.size(); }
