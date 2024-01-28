@@ -12,7 +12,6 @@ public:
     int nodes = 0;
     MoveGeneration movGen(position);
     movGen.generateAllMoves();
-    // std::vector<Move> allMoves = movGen.getMoves();
     for (const auto &move : movGen.getMoves()) {
       // FIX IT: do undo;
       tempPosition = position;
