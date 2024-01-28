@@ -101,7 +101,7 @@ void Position::makeMove(Move move) {
   int piece_ = move.getPiece();
   int color_ = move.getColor();
   bool isCapture = move.checkIsCapture();
-  int oppositePieceColor = (color_ + 1) % 2;
+  int oppositePieceColor = getOppositeTurn();
   uint64_t toMask = (0b1ull << to);
   uint64_t fromMask = (0b1ull << from);
   pieces[color_][piece_] &= ~fromMask;
