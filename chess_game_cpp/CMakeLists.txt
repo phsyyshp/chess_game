@@ -42,6 +42,9 @@ set(SOURCES
     # tests/searchTest.cpp
     # tests/gameLoopTest.cpp
     # tests/constantsTest.cpp
+    # tests/moveListTest.cpp
+     
+ 
 )
 
 # Set the output directory for the executable
@@ -57,6 +60,8 @@ add_executable(perftTest ${SOURCES})
 # add_executable(searchTest ${SOURCES})
 # add_executable(gameLoopTest ${SOURCES})
 # add_executable(constantsTest ${SOURCES})
+# add_executable(moveListTest ${SOURCES})
+ 
  
  
  

@@ -1,3 +1,5 @@
+#pragma once
+
 #include "Move.hpp"
 #include "constants.hpp"
 // TODO add iterator
