@@ -109,7 +109,7 @@ void perftDivideInterface() {
     depth--;
 
     std::cout << "moves in depth " << depth << std::endl;
-    std::cout << "__________________" << std::endl;
+    std::cout << "___________________________" << std::endl;
 
     out = perftDivide(position, depth);
   }
