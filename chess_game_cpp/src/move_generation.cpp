@@ -253,8 +253,6 @@ void MoveGeneration::generateAllMoves() {
   generateQueenMoves();
 }
 // TODO: finish implementing this;
-//  void MoveGeneration::orderMoves(){
-
-// }
+void MoveGeneration::generateOrderedMoves() { generateAllMoves(); }
 MoveList MoveGeneration::getMoves() const { return moveList; }
 int MoveGeneration::getNumberOfMoves() const { return moveList.size(); }

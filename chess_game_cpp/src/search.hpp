@@ -1,5 +1,4 @@
 #include "evaluation.hpp"
-
 class Search {
 public:
   Search() = default;
@@ -8,6 +7,8 @@ public:
   int negaMax(int depth);
   Move search(int depth);
   int quiesce(int alpha, int beta);
+
+  void orderMoves(MoveList &moveList_);
 
 private:
   Position position;
