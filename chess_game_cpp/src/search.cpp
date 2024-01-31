@@ -22,6 +22,7 @@ int Search::negaMax(int depth) {
   }
   return max;
 }
+// TODO: incomplete
 int Search::quiesce(int alpha, int beta) {
   Evaluation eval(position);
   int standingPat = eval.evaluate();
@@ -57,4 +58,4 @@ Move Search::search(int depth) {
   return bestMove;
 }
 // Careful pass by reference without const;
-void Search::orderMoves(MoveList &moveList_) { Evaluation eval; }
+void Search::scoreMoves(MoveList &moveList_) { Evaluation eval; }
