@@ -76,14 +76,14 @@ MoveList perftDivide(Position position, int depth) {
     perftTest test(position);
     if (i < 10) {
 
-      std::cout << "| " << i << "  | " << chessSq[move.getFrom()]
-                << chessSq[move.getTo()] << " | " << test.perftBulk(depth - 1)
-                << " | " << std::endl;
+      std::cout << "│ " << i << "  │ " << chessSq[move.getFrom()]
+                << chessSq[move.getTo()] << " │ " << test.perftBulk(depth - 1)
+                << " │ " << std::endl;
     } else {
 
-      std::cout << "| " << i << " | " << chessSq[move.getFrom()]
-                << chessSq[move.getTo()] << " | " << test.perftBulk(depth - 1)
-                << " | " << std::endl;
+      std::cout << "│ " << i << " │ " << chessSq[move.getFrom()]
+                << chessSq[move.getTo()] << " │ " << test.perftBulk(depth - 1)
+                << " │ " << std::endl;
     }
 
     position = tempPosition;
@@ -93,25 +93,36 @@ MoveList perftDivide(Position position, int depth) {
 }
 void perftDivideInterface() {
   Position position;
+  Position tempPosition;
   int depth;
-  int idx;
+  char idx;
   position.setBoardToInitialConfiguration();
   std::cout << "enter the depth:" << std::endl;
   std::cin >> depth;
+  std::cout << "┌────┬──────┬──────────" << std::endl;
+
   MoveList out = perftDivide(position, depth);
 
   std::cout << "enter index of the move:" << std::endl;
+
   while (std::cin >> idx) {
     if (depth == 1 || idx == 'q') {
       break;
     }
+    tempPosition = position;
+
     position.makeMove(out[idx]);
     depth--;
 
-    std::cout << "moves in depth " << depth << std::endl;
-    std::cout << "___________________________" << std::endl;
+    position.printBoard();
+    std::cout << "moves in depth: " << depth << std::endl;
+    std::cout << "┌────┬──────┬──────────" << std::endl;
 
     out = perftDivide(position, depth);
+
+    std::cout << "enter index of the move for next depth, q to quit:"
+              << std::endl;
+    position = tempPosition;
   }
 }
 
