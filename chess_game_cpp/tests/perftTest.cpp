@@ -130,8 +130,8 @@ int main() {
   Position position;
   position.setBoardToInitialConfiguration();
   perftTest test(position);
-  int depth = 5;
-  MoveGeneration moveGen(position);
+  int depth = 3;
+  // MoveGeneration moveGen(position);
 
   // moveGen.generateAllMoves();
   // MoveList moveList = moveGen.getMoves();
@@ -143,8 +143,8 @@ int main() {
   // }
 
   // while (depth > 0) {
-  // std::cout << "Number Of Pseudo-Legal Moves:" << std::endl;
-  // std::cout << test.perftBulk(depth) << std::endl;
+  std::cout << "Number Of Pseudo-Legal Moves:" << std::endl;
+  std::cout << test.perftBulk(depth) << std::endl;
   // std::cout << test.perftPseudoLegal(depth) << std::endl;
 
   // std::cout << "Number Of Legal Moves:" << std::endl;
@@ -160,5 +160,5 @@ int main() {
   // position.makeMove(move);
 
   // perftDivide(position, 1);
-  perftDivideInterface();
+  // perftDivideInterface();
 }
