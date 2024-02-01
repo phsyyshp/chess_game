@@ -57,5 +57,18 @@ Move Search::search(int depth) {
   }
   return bestMove;
 }
-// Careful pass by reference without const;
-void Search::scoreMoves(MoveList &moveList_) { Evaluation eval; }
+// BE CAREFUL pass by reference without const;
+// this is wrong ;
+// TODO: implement the sort score not the eval.
+void Search::scoreMoves(MoveList &moveList_) {
+  Evaluation eval(position);
+  Position tempPosition;
+
+  for (Move &move : moveList_) {
+    tempPosition = position;
+    position.makeMove(move);
+    move.setScore(eval.evaluate());
+    position = tempPosition;
+  }
+}
+void Search::orderMoves(MoveList &movelist_) {}
