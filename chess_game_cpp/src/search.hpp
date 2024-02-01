@@ -8,7 +8,9 @@ public:
   Move search(int depth);
   int quiesce(int alpha, int beta);
 
-  void orderMoves(MoveList &moveList_);
+  void scoreMoves(MoveList &moveList_);
+
+  void orderMoves(MoveList &movelist_);
 
 private:
   Position position;
