@@ -7,6 +7,22 @@ void Position::setWhitePiecesToInitialConfiguration() {
   pieces[white][queen] = 0b1ULL << d1;
   pieces[white][king] = 0b1ULL << e1;
   pieces[white][pawn] = 0b11111111ULL << 8;
+  mailbox[a1] = rook;
+  mailbox[h1] = rook;
+  mailbox[g1] = knight;
+  mailbox[b1] = knight;
+  mailbox[f1] = bishop;
+  mailbox[c1] = bishop;
+  mailbox[d1] = queen;
+  mailbox[e1] = king;
+  mailbox[a2] = pawn;
+  mailbox[b2] = pawn;
+  mailbox[c2] = pawn;
+  mailbox[d2] = pawn;
+  mailbox[e2] = pawn;
+  mailbox[f2] = pawn;
+  mailbox[g2] = pawn;
+  mailbox[h2] = pawn;
 }
 void Position::setBlackPiecesToInitialConfiguration() {
   pieces[black][rook] = 0b1ULL << a8 | 0b1ULL << h8;
@@ -15,8 +31,27 @@ void Position::setBlackPiecesToInitialConfiguration() {
   pieces[black][queen] = 0b1ULL << d8;
   pieces[black][king] = 0b1ULL << e8;
   pieces[black][pawn] = 0b11111111ULL << 6 * 8;
+  mailbox[a8] = rook;
+  mailbox[h8] = rook;
+  mailbox[g8] = knight;
+  mailbox[b8] = knight;
+  mailbox[f8] = bishop;
+  mailbox[c8] = bishop;
+  mailbox[d8] = queen;
+  mailbox[e8] = king;
+  mailbox[a7] = pawn;
+  mailbox[b7] = pawn;
+  mailbox[c7] = pawn;
+  mailbox[d7] = pawn;
+  mailbox[e7] = pawn;
+  mailbox[f7] = pawn;
+  mailbox[g7] = pawn;
+  mailbox[h7] = pawn;
 }
 void Position::setBoardToInitialConfiguration() {
+  for (int i = 0; i < 64; i++) {
+    mailbox[i] = noPiece;
+  }
   setWhitePiecesToInitialConfiguration();
   setBlackPiecesToInitialConfiguration();
   turn = color::white;
@@ -36,6 +71,7 @@ void Position::changeTurn() {
 Position &Position::operator=(const Position &rhs) {
   turn = rhs.turn;
   pieces = rhs.pieces;
+  mailbox = rhs.mailbox;
   canWhiteCastle = rhs.canWhiteCastle;
   canBlackCastle = rhs.canBlackCastle;
   capturedInLastMove = rhs.capturedInLastMove;
@@ -53,12 +89,11 @@ color Position ::getPieceColor(const uint64_t &sqMask) const {
     return color::invalid;
   }
 }
-// TODO: there maybe bugs here!
+// TODO: there maybe bugs here! Especially when there is not any pieace of that
+// type is left;
 piece Position::getPieceType(const uint64_t &sqMask) const {
   for (int pieceIdx = 0; pieceIdx < 6; pieceIdx++) {
-
     if (sqMask & (pieces[white][pieceIdx] | pieces[black][pieceIdx])) {
-
       return static_cast<piece>(pieceIdx);
     }
   }
@@ -92,8 +127,8 @@ uint64_t Position::getAttacksToKing() const {
          (getRookAttackMask(squareOfKing, allPieces) & oppositeRookQueens);
 }
 bool Position::isInCheck() const { return (getAttacksToKing()) != 0; }
-// Asuming; non-special moves(!pro|!cast) and valid(des =empt|opColOc) input,
-// use it for temprory changes.
+// Asuming; non-special moves(!pro||!cast) and valid(des =empt||opColOc) input,
+// Use it for temprory changes.
 // It changes turns automatically for now.
 void Position::makeMove(Move move) {
   int from = move.getFrom();
@@ -106,7 +141,7 @@ void Position::makeMove(Move move) {
   uint64_t fromMask = (0b1ull << from);
   pieces[color_][piece_] &= ~fromMask;
   if (isCapture) {
-    piece capturedPieceType = getPieceType(toMask);
+    piece capturedPieceType = mailbox[to];
     pieces[oppositePieceColor][capturedPieceType] &= (~toMask);
     capturedInLastMove = capturedPieceType;
   } else {
@@ -114,6 +149,10 @@ void Position::makeMove(Move move) {
     ;
   }
   pieces[color_][piece_] |= toMask;
+  // Mailbox operations;
+  mailbox[to] = mailbox[from];
+  mailbox[from] = noPiece;
+
   changeTurn();
 }
 // FIX IT: sth is wrong here fix me!

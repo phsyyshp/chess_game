@@ -40,6 +40,7 @@ private:
   void setBlackPiecesToInitialConfiguration();
   color turn;
   std::array<std::array<uint64_t, 6>, 2> pieces;
+  std::array<piece, 64> mailbox;
 
 public:
   piece capturedInLastMove;
