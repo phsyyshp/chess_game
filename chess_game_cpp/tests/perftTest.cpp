@@ -1,5 +1,4 @@
 #include "move_generation.hpp"
-// #include <string>
 class perftTest {
 
 public:
@@ -40,7 +39,6 @@ public:
     }
     return nodes;
   }
-  // Warning: There may be a bug here!
   uint64_t perftBulk(int depth) {
 
     Position tempPosition;
@@ -64,7 +62,6 @@ public:
 private:
   Position position;
 };
-
 MoveList perftDivide(Position position, int depth) {
   MoveGeneration movGen(position);
   movGen.generateAllMoves();
@@ -77,13 +74,13 @@ MoveList perftDivide(Position position, int depth) {
     if (i < 10) {
 
       std::cout << "│ " << i << "  │ " << chessSq[move.getFrom()]
-                << chessSq[move.getTo()] << " │ " << test.perftBulk(depth - 1)
-                << " │ " << std::endl;
+                << chessSq[move.getTo()] << " │ "
+                << test.perftPseudoLegal(depth - 1) << " │ " << std::endl;
     } else {
 
       std::cout << "│ " << i << " │ " << chessSq[move.getFrom()]
-                << chessSq[move.getTo()] << " │ " << test.perftBulk(depth - 1)
-                << " │ " << std::endl;
+                << chessSq[move.getTo()] << " │ "
+                << test.perftPseudoLegal(depth - 1) << " │ " << std::endl;
     }
 
     position = tempPosition;
@@ -130,35 +127,13 @@ int main() {
   Position position;
   position.setBoardToInitialConfiguration();
   perftTest test(position);
-  int depth = 3;
-  // MoveGeneration moveGen(position);
+  int depth = 6;
 
-  // moveGen.generateAllMoves();
-  // MoveList moveList = moveGen.getMoves();
-  // auto move_ = moveList[0];
-  // std::cout << chessSq[move_.getFrom()] << chessSq[move_.getTo()] <<
-  // std::endl; for (auto move : moveList) {
-  //   std::cout << chessSq[move.getFrom()] << chessSq[move.getTo()] <<
-  //   std::endl;
-  // }
-
-  // while (depth > 0) {
   std::cout << "Number Of Pseudo-Legal Moves:" << std::endl;
   std::cout << test.perftBulk(depth) << std::endl;
   // std::cout << test.perftPseudoLegal(depth) << std::endl;
 
   // std::cout << "Number Of Legal Moves:" << std::endl;
   // std::cout << test.perft(depth) << std::endl;
-  // std::cout << "Divided Perft"
-  // << "\n";
-  // depth--;
-  // }
-  // Move move(b1, a3, knight, white, false);
-  // position.makeMove(move);
-
-  // Move move2(g7, g6, pawn, black, false);
-  // position.makeMove(move);
-
-  // perftDivide(position, 1);
   // perftDivideInterface();
 }
