@@ -20,6 +20,7 @@ public:
   void generateKingMoves();
   void generateAllMoves();
 
+  void generateOrderedMoves();
   // getters
   MoveList getMoves() const;
   int getNumberOfMoves() const;
