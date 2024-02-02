@@ -23,8 +23,11 @@ int Search::negaMax(int depth) {
   return max;
 }
 // TODO: incomplete
-int Search::quiesce(int alpha, int beta) {
+int Search::quiesce(int alpha, int beta, const MoveList &movelist_) {
   Evaluation eval(position);
+  Position tempPosition;
+  MoveList captureMoves = movelist_.getCapturedMoves();
+  int score;
   int standingPat = eval.evaluate();
   if (standingPat >= beta) {
     return beta;
@@ -32,6 +35,19 @@ int Search::quiesce(int alpha, int beta) {
   if (alpha < standingPat) {
     alpha = standingPat;
   }
+  for (Move move : captureMoves) {
+    tempPosition = position;
+    position.makeMove(move);
+    score = -quiesce(-beta, -alpha, captureMoves);
+    position = tempPosition;
+    if (score >= beta) {
+      return beta;
+    }
+    if (score > alpha) {
+      alpha = score;
+    }
+  }
+  return alpha;
 }
 Move Search::search(int depth) {
   int score;
@@ -58,14 +74,14 @@ Move Search::search(int depth) {
   return bestMove;
 }
 // BE CAREFUL pass by reference without const;
-void Search::scoreMoves(MoveList &moveList_) {
+void Search::scoreMoves(MoveList &moveList_) const {
   for (Move &move : moveList_) {
     int moveScore = MVV_LVA[move.getCaptured(position)][move.getPiece()];
     move.setScore(moveScore);
   }
 }
 // BE CAREFUL pass by reference without const;
-void Search::pickMove(MoveList &scoredMoveList_, int startingIdx) {
+void Search::pickMove(MoveList &scoredMoveList_, int startingIdx) const {
 
   for (int i = startingIdx + 1; i << scoredMoveList_.size(); i++) {
     if (scoredMoveList_[i].getScore() >
@@ -75,20 +91,23 @@ void Search::pickMove(MoveList &scoredMoveList_, int startingIdx) {
   }
 }
 void Search::orderMoves(MoveList &movelist_) {}
-int Search::alphaBeta(int alpha, int beta, int depthLeft) {
 
-  if (depthLeft == 0) {
-    return quiesce(alpha, beta);
-  }
-  int score;
+int Search::alphaBeta(int alpha, int beta, int depthLeft) {
+  Position tempPosition;
   MoveGeneration movgen(position);
   movgen.generateAllMoves();
-  scoreMoves(movgen.getMoves());
-  // TODO: embed the moveordering here
 
+  if (depthLeft == 0) {
+    return quiesce(alpha, beta, movgen.getMoves());
+  }
+  int score;
+  scoreMoves(movgen.getMoves());
   for (int j = 0; j < movgen.getMoves().size(); j++) {
-    pickMove(movgen.getMoves().);
+    pickMove(movgen.getMoves(), j);
+    tempPosition = position;
+    position.makeMove(movgen.getMoves()[j]);
     score = -alphaBeta(-beta, -alpha, depthLeft - 1);
+    position = tempPosition;
     if (score >= beta) {
       return beta;
     }
