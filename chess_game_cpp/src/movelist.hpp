@@ -12,6 +12,7 @@ public:
   Move operator[](int n) const { return elements[n]; }
   int size() const;
 
+  void swap(int i, int j);
   class iterator {
   public:
     using iterator_category = std::forward_iterator_tag;

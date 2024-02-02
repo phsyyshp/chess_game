@@ -58,12 +58,20 @@ Move Search::search(int depth) {
   return bestMove;
 }
 // BE CAREFUL pass by reference without const;
-// this is wrong ;
-// TODO: implement the sort score not the eval.
 void Search::scoreMoves(MoveList &moveList_) {
   for (Move &move : moveList_) {
     int moveScore = MVV_LVA[move.getCaptured(position)][move.getPiece()];
     move.setScore(moveScore);
+  }
+}
+// BE CAREFUL pass by reference without const;
+void Search::pickMove(MoveList &scoredMoveList_, int startingIdx) {
+
+  for (int i = startingIdx + 1; i << scoredMoveList_.size(); i++) {
+    if (scoredMoveList_[i].getScore() >
+        scoredMoveList_[startingIdx].getScore()) {
+      scoredMoveList_.swap(startingIdx, i);
+    }
   }
 }
 void Search::orderMoves(MoveList &movelist_) {}
@@ -75,6 +83,7 @@ int Search::alphaBeta(int alpha, int beta, int depthLeft) {
   int score;
   MoveGeneration movgen(position);
   movgen.generateAllMoves();
+  // TODO: embed the moveordering here
   for (const Move &move : movgen.getMoves()) {
     score = -alphaBeta(-beta, -alpha, depthLeft - 1);
     if (score >= beta) {
@@ -83,6 +92,6 @@ int Search::alphaBeta(int alpha, int beta, int depthLeft) {
     if (score > alpha) {
       alpha = score;
     }
-    return alpha;
   }
+  return alpha;
 }
