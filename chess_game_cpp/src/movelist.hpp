@@ -13,6 +13,8 @@ public:
   int size() const;
 
   void swap(int i, int j);
+  MoveList getCapturedMoves() const;
+
   class iterator {
   public:
     using iterator_category = std::forward_iterator_tag;
