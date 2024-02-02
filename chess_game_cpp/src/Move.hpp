@@ -2,7 +2,8 @@
 #define MOVE_HPP
 
 #include "loader.hpp"
-#include "position.hpp"
+// This forward declaration is for avoiding, circular dependency.
+class Position;
 class Move {
 public:
   Move() = default;

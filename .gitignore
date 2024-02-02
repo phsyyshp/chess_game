@@ -23,3 +23,4 @@ chess_game_cpp/bin/gameLoopTest
 chess_game_cpp/bin/perftTest
 chess_game_cpp/bin/constantsTest
 chess_game_cpp/bin/perftTest
+chess_game_cpp/bin/scoreTest
