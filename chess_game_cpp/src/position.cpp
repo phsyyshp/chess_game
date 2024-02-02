@@ -106,6 +106,8 @@ uint64_t Position::getAllPieces(const color &color_) const {
          pieces[color_][bishop] | pieces[color_][queen] | pieces[color_][king] |
          pieces[color_][pawn];
 }
+
+piece Position::getCapturedInLastMove() const { return capturedInLastMove; }
 uint64_t Position::getAttacksToKing() const {
 
   uint64_t allPieces = getAllPieces(black) | getAllPieces(white);
@@ -145,8 +147,7 @@ void Position::makeMove(Move move) {
     pieces[oppositePieceColor][capturedPieceType] &= (~toMask);
     capturedInLastMove = capturedPieceType;
   } else {
-    // capturedInLastMove = nulity;
-    ;
+    capturedInLastMove = noPiece;
   }
   pieces[color_][piece_] |= toMask;
   // Mailbox operations;
@@ -173,6 +174,7 @@ void Position::undoMove(Move move) {
     pieces[oppositePieceColor][capturedInLastMove] |= (toMask);
   }
 }
+std::array<piece, 64> Position::getMailbox() const { return mailbox; }
 std::array<std::array<uint64_t, 6>, 2> Position::getPieces() const {
   return pieces;
 }

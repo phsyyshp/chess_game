@@ -21,12 +21,14 @@ public:
   void changeTurn();
   // getters:
   std::array<std::array<uint64_t, 6>, 2> getPieces() const;
+  std::array<piece, 64> getMailbox() const;
   color getTurn() const;
   color getOppositeTurn() const;
   color getPieceColor(const uint64_t &sqMask) const;
   piece getPieceType(const uint64_t &sqMask) const;
   uint64_t getAllPieces(const color &color_) const;
   uint64_t getAttacksToKing() const;
+  piece getCapturedInLastMove() const;
   // bools:
   bool isInCheck() const;
   // movers:
@@ -42,8 +44,9 @@ private:
   std::array<std::array<uint64_t, 6>, 2> pieces;
   std::array<piece, 64> mailbox;
 
-public:
   piece capturedInLastMove;
+
+public:
   canCastle canWhiteCastle;
   canCastle canBlackCastle;
 };

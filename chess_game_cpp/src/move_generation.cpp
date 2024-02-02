@@ -242,12 +242,12 @@ void MoveGeneration::generateKingMoves() {
   }
 }
 void MoveGeneration::generateAllMoves() {
-  generateKnightMoves();
-  generateKingMoves();
   generateSinglePawnPushes();
   generateDoublePawnPushes();
   generateLeftPawnCaptures();
   generateRightPawnCaptures();
+  generateKnightMoves();
+  generateKingMoves();
   generateRookMoves();
   generateBishopMoves();
   generateQueenMoves();
