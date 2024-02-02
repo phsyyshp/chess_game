@@ -83,8 +83,11 @@ int Search::alphaBeta(int alpha, int beta, int depthLeft) {
   int score;
   MoveGeneration movgen(position);
   movgen.generateAllMoves();
+  scoreMoves(movgen.getMoves());
   // TODO: embed the moveordering here
-  for (const Move &move : movgen.getMoves()) {
+
+  for (int j = 0; j < movgen.getMoves().size(); j++) {
+    pickMove(movgen.getMoves().);
     score = -alphaBeta(-beta, -alpha, depthLeft - 1);
     if (score >= beta) {
       return beta;
