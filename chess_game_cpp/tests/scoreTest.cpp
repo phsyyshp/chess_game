@@ -10,17 +10,17 @@ int main() {
   MoveList ml = movegen.getMoves();
   Search s(position);
 
-  Move move_ = ml[ml.size() - 1];
-  move_.print();
+  //   Move move_ = ml[ml.size() - 1];
+  //   move_.print();
   s.scoreMoves(ml);
   Position tempPosition;
-  Move move = ml[ml.size() - 1];
-  move.print();
-  //   for (Move move : ml) {
-  //     move.print();
-  //     tempPosition = position;
-  //     position.makeMove(move);
-  //     // position.printBoard();
-  //     position = tempPosition;
-  //   }
+  //   Move move = ml[ml.size() - 1];
+  //   move.print();
+  for (Move move : ml) {
+    move.print();
+    tempPosition = position;
+    position.makeMove(move);
+    position.printBoard();
+    position = tempPosition;
+  }
 }
