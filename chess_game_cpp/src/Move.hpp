@@ -26,6 +26,9 @@ public:
   piece getCaptured(const Position &position) const;
   bool checkIsCapture() const;
 
+  // Visualizers;
+  void print() const;
+
 private:
   uint32_t moveNum;
 };
