@@ -61,7 +61,6 @@ Move Search::search(int depth) {
 // this is wrong ;
 // TODO: implement the sort score not the eval.
 void Search::scoreMoves(MoveList &moveList_) {
-
   for (Move &move : moveList_) {
     int moveScore = MVV_LVA[move.getCaptured(position)][move.getPiece()];
     // std::cout << moveScore << "\n";
