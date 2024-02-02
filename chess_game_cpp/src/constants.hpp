@@ -184,12 +184,12 @@ const std::array<std::array<int, 64>, 2> earlyGameKingSqTbls = {
 // mvlm
 // MVV_LVA[victim][attacker]
 const std::array<std::array<int, 7>, 7> MVV_LVA = {
-    {0, 0, 0, 0, 0, 0, 0},       // victim K, attacker K, Q, R, B, N, P, None
-    {50, 51, 52, 53, 54, 55, 0}, // victim Q, attacker K, Q, R, B, N, P, None
-    {40, 41, 42, 43, 44, 45, 0}, // victim R, attacker K, Q, R, B, N, P, None
-    {30, 31, 32, 33, 34, 35, 0}, // victim B, attacker K, Q, R, B, N, P, None
-    {20, 21, 22, 23, 24, 25, 0}, // victim N, attacker K, Q, R, B, N, P, None
-    {10, 11, 12, 13, 14, 15, 0}, // victim P, attacker K, Q, R, B, N, P, None
+    {15, 13, 12, 11, 14, 10, 0}, // victim P, attacker P,B,R,Q,N,K,None
+    {35, 33, 32, 31, 34, 30, 0}, // victim B, attacker P,B,R,Q,N,K,None
+    {45, 43, 42, 41, 44, 40, 0}, // victim R, attacker P,B,R,Q,N,K,None
+    {55, 53, 52, 51, 54, 50, 0}, // victim Q, attacker P,B,R,Q,N,K,None
+    {25, 23, 22, 21, 24, 20, 0}, // victim N, attacker P,B,R,Q,N,K,None
+    {0, 0, 0, 0, 0, 0, 0},       // victim K, attacker P,K, Q, R, B, N,  None
     {0, 0, 0, 0, 0, 0, 0},       // victim None, attacker K, Q, R, B, N, P, None
 };
 #endif
