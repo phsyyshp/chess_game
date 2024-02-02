@@ -181,6 +181,7 @@ const std::array<std::array<int, 64>, 2> endGameKingSqTbls = {
     endGameKingSqTblsWhite, endGameKingSqTblsBlack};
 const std::array<std::array<int, 64>, 2> earlyGameKingSqTbls = {
     middleGameKingSqTblsWhite, middleGameKingSqTblsBlack};
+
 // mvlm
 // MVV_LVA[victim][attacker]
 const std::array<std::array<int, 7>, 7> MVV_LVA = {
