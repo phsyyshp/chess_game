@@ -11,6 +11,7 @@ public:
   void scoreMoves(MoveList &moveList_);
 
   void orderMoves(MoveList &movelist_);
+  int alphaBeta(int alpha, int beta, int depthLeft);
 
 private:
   Position position;
