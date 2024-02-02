@@ -2,6 +2,7 @@
 #define MOVE_HPP
 
 #include "loader.hpp"
+#include "position.hpp"
 class Move {
 public:
   Move() = default;
@@ -20,7 +21,8 @@ public:
   int getColor() const;
   int getPiece() const;
   int getScore() const;
-
+  // returns noPiece for non captures;
+  piece getCaptured(const Position &position) const;
   bool checkIsCapture() const;
 
 private:

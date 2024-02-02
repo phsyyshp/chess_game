@@ -61,14 +61,10 @@ Move Search::search(int depth) {
 // this is wrong ;
 // TODO: implement the sort score not the eval.
 void Search::scoreMoves(MoveList &moveList_) {
-  Evaluation eval(position);
-  Position tempPosition;
 
   for (Move &move : moveList_) {
-    tempPosition = position;
-    position.makeMove(move);
-    move.setScore(eval.evaluate());
-    position = tempPosition;
+    int moveScore = MVV_LVA[move.getCaptured(position)][move.getPiece()];
+    move.setScore(moveScore);
   }
 }
 void Search::orderMoves(MoveList &movelist_) {}
