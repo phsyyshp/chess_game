@@ -254,5 +254,5 @@ void MoveGeneration::generateAllMoves() {
 }
 // TODO: finish implementing this;
 void MoveGeneration::generateOrderedMoves() { generateAllMoves(); }
-MoveList MoveGeneration::getMoves() const { return moveList; }
+MoveList &MoveGeneration::getMoves() { return moveList; }
 int MoveGeneration::getNumberOfMoves() const { return moveList.size(); }

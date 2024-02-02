@@ -22,7 +22,7 @@ public:
 
   void generateOrderedMoves();
   // getters
-  MoveList getMoves() const;
+  MoveList &getMoves();
   int getNumberOfMoves() const;
 
 private:
