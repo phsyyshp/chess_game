@@ -1,5 +1,23 @@
 #include "position.hpp"
-// Setters
+// Constructors;
+Position::Position(std::array<std::array<uint64_t, 6>, 2> pieces_, color turn_)
+    : pieces(pieces_), turn(turn_) {
+  for (int j = 0; j < 64; j++) {
+    mailbox[j] = noPiece;
+  }
+  for (auto coloredPieces : pieces_) {
+    int i = 0;
+    for (uint64_t piece_ : coloredPieces) {
+      while (piece_) {
+        int sq = __builtin_ctzll(piece_);
+        mailbox[sq] = static_cast<piece>(i);
+        piece_ ^= (0b1ull << sq);
+      }
+      i++;
+    }
+  }
+}
+// Setters;
 void Position::setWhitePiecesToInitialConfiguration() {
   pieces[white][rook] = 0b1ULL << a1 | 0b1ULL << h1;
   pieces[white][knight] = 0b1ULL << g1 | 0b1ULL << b1;

@@ -12,8 +12,7 @@ public:
   };
   // constructors:
   Position() = default;
-  Position(std::array<std::array<uint64_t, 6>, 2> pieces_, color turn_)
-      : pieces(pieces_), turn(turn_) {}
+  Position(std::array<std::array<uint64_t, 6>, 2> pieces_, color turn_);
   // operators:
   Position &operator=(const Position &);
   // setters;
