@@ -10,6 +10,7 @@ public:
 
   void scoreMoves(MoveList &moveList_);
 
+  void pickMove(MoveList &moveList_, int startingIdx);
   void orderMoves(MoveList &movelist_);
   int alphaBeta(int alpha, int beta, int depthLeft);
 
