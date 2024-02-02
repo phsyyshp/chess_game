@@ -63,8 +63,26 @@ Move Search::search(int depth) {
 void Search::scoreMoves(MoveList &moveList_) {
   for (Move &move : moveList_) {
     int moveScore = MVV_LVA[move.getCaptured(position)][move.getPiece()];
-    // std::cout << moveScore << "\n";
     move.setScore(moveScore);
   }
 }
 void Search::orderMoves(MoveList &movelist_) {}
+int Search::alphaBeta(int alpha, int beta, int depthLeft) {
+
+  if (depthLeft == 0) {
+    return quiesce(alpha, beta);
+  }
+  int score;
+  MoveGeneration movgen(position);
+  movgen.generateAllMoves();
+  for (const Move &move : movgen.getMoves()) {
+    score = -alphaBeta(-beta, -alpha, depthLeft - 1);
+    if (score >= beta) {
+      return beta;
+    }
+    if (score > alpha) {
+      alpha = score;
+    }
+    return alpha;
+  }
+}
