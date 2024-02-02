@@ -64,7 +64,7 @@ void Search::scoreMoves(MoveList &moveList_) {
 
   for (Move &move : moveList_) {
     int moveScore = MVV_LVA[move.getCaptured(position)][move.getPiece()];
-    // std::cout << moveScore << "\n";
+    std::cout << moveScore << "\n";
     move.setScore(moveScore);
   }
 }
