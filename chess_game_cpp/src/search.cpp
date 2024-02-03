@@ -114,7 +114,7 @@ void Search::scoreMoves(MoveList &moveList_) const {
 // BE CAREFUL pass by reference without const;
 void Search::pickMove(MoveList &scoredMoveList_, int startingIdx) const {
 
-  for (int i = startingIdx + 1; i << scoredMoveList_.size(); i++) {
+  for (int i = startingIdx + 1; i < scoredMoveList_.size(); i++) {
     if (scoredMoveList_[i].getScore() >
         scoredMoveList_[startingIdx].getScore()) {
       scoredMoveList_.swap(startingIdx, i);
