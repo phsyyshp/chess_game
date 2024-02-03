@@ -25,3 +25,4 @@ chess_game_cpp/bin/constantsTest
 chess_game_cpp/bin/perftTest
 chess_game_cpp/bin/scoreTest
 chess_game_cpp/bin/printBoardTest
+chess_game_cpp/tests/while(example != 0) {
