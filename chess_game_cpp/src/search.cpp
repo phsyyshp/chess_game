@@ -103,7 +103,6 @@ Move Search::searchAB(int depth) {
   }
   return bestMove;
 }
-
 // BE CAREFUL pass by reference without const;
 void Search::scoreMoves(MoveList &moveList_) const {
   for (Move &move : moveList_) {
@@ -122,7 +121,11 @@ void Search::pickMove(MoveList &scoredMoveList_, int startingIdx) const {
   }
 }
 void Search::orderMoves(MoveList &movelist_) {}
-
+/*TODO:
+-killer moves;
+-hash tables;
+-iterative deepning;
+*/
 int Search::alphaBeta(int alpha, int beta, int depthLeft) {
   Position tempPosition;
   MoveGeneration movgen(position);
