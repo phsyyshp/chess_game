@@ -121,6 +121,14 @@ void Search::pickMove(MoveList &scoredMoveList_, int startingIdx) const {
   }
 }
 void Search::orderMoves(MoveList &movelist_) {}
+void Search::storeKillerMove(const Move &move_, int ply) {
+
+  if (!move_.checkIsCapture()) {
+    if (killerMoves[0][ply] != move_) {
+      killerMoves
+    }
+  }
+}
 /*TODO:
 -killer moves;
 -hash tables;
