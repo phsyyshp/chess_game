@@ -15,8 +15,10 @@ int main() {
   for (int i = 0; i < movGen.getMoves().size(); i++) {
     // for (const auto &move : movGen.getMoves()) {
     std::cout << "la" << std::endl;
-    position.makeMove(movGen.getMoves()[i]);
-    // if (!position.isInCheck()) {
-    // }
+    // position.makeMove(movGen.getMoves()[i]);
+    // add tests;
+    //  sear
+    //  if (!position.isInCheck()) {
+    //  }
   }
 }
