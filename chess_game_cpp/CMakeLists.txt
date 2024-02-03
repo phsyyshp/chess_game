@@ -12,12 +12,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Optimizer flags
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
-# Conditional settings for Windows and WSL/Linux
-# if(WIN32)
-#     # Set the C and C++ compilers for MinGW
-#     set(CMAKE_C_COMPILER "C:/msys64/mingw64/bin/gcc.exe")
-#     set(CMAKE_CXX_COMPILER "C:/msys64/mingw64/bin/g++.exe")
-# endif()
 
 # Set the source files for the main executable
 set(SOURCES
@@ -31,7 +25,6 @@ set(SOURCES
     src/evaluation.cpp
     src/search.cpp
     src/movelist.cpp
-    # src/constants.hpp
     # tests/move_generation_test.cpp
     # tests/loader_test.cpp
     # tests/perftTest.cpp
