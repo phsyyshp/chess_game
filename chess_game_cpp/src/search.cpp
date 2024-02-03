@@ -23,10 +23,11 @@ int Search::negaMax(int depth) {
   return max;
 }
 // TODO: incomplete
-int Search::quiesce(int alpha, int beta, const MoveList &movelist_) {
+int Search::quiesce(int alpha, int beta) {
   Evaluation eval(position);
   Position tempPosition;
-  MoveList captureMoves = movelist_.getCapturedMoves();
+  MoveGeneration movegen(position);
+  movegen.generateAllMoves();
   int score;
   int standingPat = eval.evaluate();
   if (standingPat >= beta) {
@@ -35,10 +36,10 @@ int Search::quiesce(int alpha, int beta, const MoveList &movelist_) {
   if (alpha < standingPat) {
     alpha = standingPat;
   }
-  for (Move move : captureMoves) {
+  for (const Move &move : movegen.getMoves().getCapturedMoves()) {
     tempPosition = position;
     position.makeMove(move);
-    score = -quiesce(-beta, -alpha, captureMoves);
+    score = -quiesce(-beta, -alpha);
     position = tempPosition;
     if (score >= beta) {
       return beta;
@@ -73,6 +74,36 @@ Move Search::search(int depth) {
   }
   return bestMove;
 }
+Move Search::searchAB(int depth) {
+  int score;
+  Move bestMove;
+  Evaluation eval(position);
+  Position tempPosition;
+  if (depth <= 0) {
+    throw std::out_of_range("depth must be positive int");
+  }
+  int alpha = INT16_MIN;
+  int beta = INT16_MAX;
+  MoveGeneration movGen(position);
+  movGen.generateAllMoves();
+  for (Move move : movGen.getMoves()) {
+    tempPosition = position;
+    position.makeMove(move);
+    score = -alphaBeta(-beta, -alpha, depth - 1);
+    position = tempPosition;
+    if (score >= beta) {
+      // bestMove = move;
+      return move;
+      // std::cout << score << std::endl;
+    }
+    if (score > alpha) {
+      alpha = score;
+      bestMove = move;
+    }
+  }
+  return bestMove;
+}
+
 // BE CAREFUL pass by reference without const;
 void Search::scoreMoves(MoveList &moveList_) const {
   for (Move &move : moveList_) {
@@ -98,7 +129,7 @@ int Search::alphaBeta(int alpha, int beta, int depthLeft) {
   movgen.generateAllMoves();
 
   if (depthLeft == 0) {
-    return quiesce(alpha, beta, movgen.getMoves());
+    return quiesce(alpha, beta);
   }
   int score;
   scoreMoves(movgen.getMoves());

@@ -6,7 +6,9 @@ public:
 
   int negaMax(int depth);
   Move search(int depth);
-  int quiesce(int alpha, int beta, const MoveList &movelist_);
+  Move searchAB(int depth);
+
+  int quiesce(int alpha, int beta);
 
   void scoreMoves(MoveList &moveList_) const;
 
