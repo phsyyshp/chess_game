@@ -124,8 +124,9 @@ void Search::orderMoves(MoveList &movelist_) {}
 void Search::storeKillerMove(const Move &move_, int ply) {
 
   if (!move_.checkIsCapture()) {
-    if (killerMoves[0][ply] != move_) {
-      killerMoves
+    if (killerMoves[0][ply].getMoveInt() != move_.getMoveInt()) {
+      killerMoves[1][ply] = killerMoves[0][ply];
+      killerMoves[0][ply] = move_;
     }
   }
 }
@@ -138,7 +139,6 @@ int Search::alphaBeta(int alpha, int beta, int depthLeft) {
   Position tempPosition;
   MoveGeneration movgen(position);
   movgen.generateAllMoves();
-
   if (depthLeft == 0) {
     return quiesce(alpha, beta);
   }
