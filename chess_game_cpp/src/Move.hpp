@@ -17,6 +17,7 @@ public:
   // Setters;
   void setScore(const int &score);
   // Getters;
+  uint32_t getMoveInt() const;
   int getTo() const;
   int getFrom() const;
   int getColor() const;
