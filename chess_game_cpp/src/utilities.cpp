@@ -126,3 +126,21 @@ std::array<std::array<uint64_t, 6>, 2> FENtoPieces(std::string FENstring) {
   }
   return pieces;
 }
+
+uint64_t pseudoRandomNumberGenerator() {
+  std::mt19937_64 rng(std::random_device{}());
+
+  std::uniform_int_distribution<uint64_t> dist(
+      std::numeric_limits<uint64_t>::min(),
+      std::numeric_limits<uint64_t>::max());
+
+  return dist(rng);
+}
+
+std::array<uint64_t, 781> generateZobristTable() {
+  std::array<uint64_t, 781> zobristTable;
+  for (int i = 0; i < 781; i++) {
+    zobristTable[i] = pseudoRandomNumberGenerator();
+  }
+  return zobristTable;
+}
