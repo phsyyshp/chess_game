@@ -1,4 +1,12 @@
 #include "search.hpp"
+// getters;
+std::array<std::array<Move, MAX_DEPTH>, MAX_KILLER_MOVES>
+Search::getKillerMoves() const {
+  return killerMoves;
+}
+int Search::getPly() const { return ply; }
+
+// Searchers;
 int Search::negaMax(int depth) {
 
   int score;
@@ -103,34 +111,6 @@ Move Search::searchAB(int depth) {
   }
   return bestMove;
 }
-// BE CAREFUL pass by reference without const;
-void Search::scoreMoves(MoveList &moveList_) const {
-  for (Move &move : moveList_) {
-    int moveScore = MVV_LVA[move.getCaptured(position)][move.getPiece()];
-    move.setScore(moveScore);
-  }
-}
-// BE CAREFUL pass by reference without const;
-void Search::pickMove(MoveList &scoredMoveList_, int startingIdx) const {
-
-  for (int i = startingIdx + 1; i < scoredMoveList_.size(); i++) {
-    if (scoredMoveList_[i].getScore() >
-        scoredMoveList_[startingIdx].getScore()) {
-      scoredMoveList_.swap(startingIdx, i);
-    }
-  }
-}
-void Search::orderMoves(MoveList &movelist_) {}
-
-void Search::storeKillerMove(const Move &move_, int ply) {
-
-  if (!move_.checkIsCapture()) {
-    if (killerMoves[0][ply].getMoveInt() != move_.getMoveInt()) {
-      killerMoves[1][ply] = killerMoves[0][ply];
-      killerMoves[0][ply] = move_;
-    }
-  }
-}
 /*TODO:
 -killer moves;
 -hash tables;
@@ -159,4 +139,38 @@ int Search::alphaBeta(int alpha, int beta, int depthLeft) {
     }
   }
   return alpha;
+}
+
+// Move ordering;
+
+// BE CAREFUL pass by reference without const;
+void Search::scoreMoves(MoveList &moveList_) const {
+  for (Move &move : moveList_) {
+    if (move.checkIsCapture()) {
+
+      int moveScore = MVV_LVA[move.getCaptured(position)][move.getPiece()];
+      move.setScore(moveScore);
+    } else {
+    }
+  }
+}
+// BE CAREFUL pass by reference without const;
+void Search::pickMove(MoveList &scoredMoveList_, int startingIdx) const {
+
+  for (int i = startingIdx + 1; i < scoredMoveList_.size(); i++) {
+    if (scoredMoveList_[i].getScore() >
+        scoredMoveList_[startingIdx].getScore()) {
+      scoredMoveList_.swap(startingIdx, i);
+    }
+  }
+}
+void Search::orderMoves(MoveList &movelist_) {}
+void Search::storeKillerMove(const Move &move_, int ply) {
+
+  if (!move_.checkIsCapture()) {
+    if (killerMoves[0][ply].getMoveInt() != move_.getMoveInt()) {
+      killerMoves[1][ply] = killerMoves[0][ply];
+      killerMoves[0][ply] = move_;
+    }
+  }
 }
