@@ -7,8 +7,10 @@
 class MoveGeneration {
 
 public:
+  // constractors;
   MoveGeneration() = default;
   MoveGeneration(const Position &pos) : position(pos) {}
+  // move generators;
   void generateSinglePawnPushes();
   void generateDoublePawnPushes();
   void generateLeftPawnCaptures();
@@ -19,8 +21,17 @@ public:
   void generateQueenMoves();
   void generateKingMoves();
   void generateAllMoves();
-
   void generateOrderedMoves();
+
+  // attack generators;
+
+  uint64_t generateLeftPawnAttackMaps();
+  uint64_t generateRightPawnAttackMaps();
+  uint64_t generateKnightAttackMaps();
+  uint64_t generateBishopAttackMaps();
+  uint64_t generateRookAttackMaps();
+  uint64_t generateQueenAttackMaps();
+  uint64_t generateAllAttackMaps();
   // getters
   MoveList &getMoves();
   int getNumberOfMoves() const;
