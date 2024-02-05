@@ -28,7 +28,7 @@ int main() {
     position.makeMove(move);
     position.printBoard();
     Search srch(position);
-    Move bestMove = srch.searchAB(6);
+    Move bestMove = srch.searchAB(5);
     position.makeMove(bestMove);
     position.printBoard();
   }
