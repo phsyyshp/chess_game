@@ -27,7 +27,7 @@ set(SOURCES
     src/movelist.cpp
     # tests/move_generation_test.cpp
     # tests/loader_test.cpp
-    tests/perftTest.cpp
+    # tests/perftTest.cpp
     # tests/moveTest.cpp
     # tests/position_test.cpp
     # tests/utilTest.cpp
@@ -38,7 +38,7 @@ set(SOURCES
     # tests/moveListTest.cpp
     # tests/scoreTest.cpp
     # tests/printBoardTest.cpp
-    # tests/unitTests.cpp
+    tests/unitTests.cpp
      
  
 )
@@ -54,12 +54,12 @@ set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/bin)
 # add_executable(utilTest ${SOURCES})
 # add_executable(evaluationTest ${SOURCES})
 # add_executable(searchTest ${SOURCES})
-add_executable(gameLoopTest ${SOURCES})
+# add_executable(gameLoopTest ${SOURCES})
 # add_executable(constantsTest ${SOURCES})
 # add_executable(moveListTest ${SOURCES})
 # add_executable(scoreTest ${SOURCES})
 # add_executable(printBoardTest ${SOURCES})
-# add_executable(unitTests ${SOURCES})
+add_executable(unitTests ${SOURCES})
  
  # Locate GTest
 find_package(GTest REQUIRED)
@@ -67,7 +67,7 @@ find_package(Threads REQUIRED)
 include_directories(${GTEST_INCLUDE_DIRS})
  
 # Link runTests with what we want to test and the GTest and pthread library
-# target_link_libraries(unitTests ${GTEST_LIBRARIES} pthread)
+target_link_libraries(unitTests ${GTEST_LIBRARIES} pthread)
  
  
 

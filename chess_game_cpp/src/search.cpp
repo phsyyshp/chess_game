@@ -1,14 +1,16 @@
 #include "search.hpp"
+
 // constructors;
 Search::Search(const Position &p) : position(p) {
   // this is just zero;
   Move invalidMove(a1, a1, pawn, white, false);
   for (int i = 0; i < MAX_DEPTH; i++) {
     for (int j = 0; j < MAX_KILLER_MOVES; j++) {
-      killerMoves[i][j] = invalidMove;
+      killerMoves[j][i] = invalidMove;
     }
   }
 };
+
 // getters;
 std::array<std::array<Move, MAX_DEPTH>, MAX_KILLER_MOVES>
 Search::getKillerMoves() const {
@@ -32,7 +34,9 @@ int Search::negaMax(int depth) {
   for (Move move : movGen.getMoves()) {
     tempPosition = position;
     position.makeMove(move);
+    ply++;
     score = -negaMax(depth - 1);
+    ply--;
     position = tempPosition;
     if (score > max) {
       max = score;
@@ -40,7 +44,6 @@ int Search::negaMax(int depth) {
   }
   return max;
 }
-// TODO: incomplete
 int Search::quiesce(int alpha, int beta) {
   Evaluation eval(position);
   Position tempPosition;
@@ -150,6 +153,7 @@ int Search::alphaBeta(int alpha, int beta, int depthLeft) {
     position = tempPosition;
     ply--;
     if (score >= beta) {
+      storeKillerMove(movgen.getMoves()[j], ply);
       return beta;
     }
     if (score > alpha) {
@@ -164,17 +168,20 @@ int Search::alphaBeta(int alpha, int beta, int depthLeft) {
 // BE CAREFUL pass by reference without const;
 void Search::scoreMoves(MoveList &moveList_) const {
   for (Move &move : moveList_) {
+    int moveScore = 0;
     if (move.checkIsCapture()) {
-
-      int moveScore =
+      moveScore =
           MVV_LVA_OFFSET + MVV_LVA[move.getCaptured(position)][move.getPiece()];
       move.setScore(moveScore);
     } else {
-      for (int i = 0; i < MAX_KILLER_MOVES; i++) {
+      int i = 0;
+      while (i < MAX_KILLER_MOVES && moveScore == 0) {
         if (move.getMoveInt() == killerMoves[i][ply].getMoveInt()) {
-          // TODO: Be Careful about seting already set score;
-          move.setScore(MVV_LVA_OFFSET - ((i + 1) * KILLER_VALUE));
+          // TODO: Be Careful about setting already set score;
+          moveScore = MVV_LVA_OFFSET - ((i + 1) * KILLER_VALUE);
+          move.setScore(moveScore);
         }
+        i++;
       }
     }
   }

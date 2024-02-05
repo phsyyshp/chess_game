@@ -3,6 +3,7 @@
 #include "position.hpp"
 #include "search.hpp"
 #include <gtest/gtest.h>
+// MoveList tests
 TEST(MoveListTest, swapNonScoredNonCapture) {
   Position position;
   position.setBoardToInitialConfiguration();
@@ -93,8 +94,57 @@ TEST(MoveListTest, swapScoredCaptured) {
     }
   }
 };
-// Dont forget to test reference of movegen stuff
-TEST(Search_pickMoveTest, pickMove_copy) {
+
+// Search tests
+// Ply
+TEST(SearchTest, Ply_constructor) {
+
+  std::string FENstr =
+      "r2q1rk1/1p1nbppp/p2pbn2/4p3/4P3/1NN1BP2/PPPQ2PP/2KR1B1R/";
+
+  Position position(FENtoPieces(FENstr), white);
+  Search s(position);
+  ASSERT_EQ(s.getPly(), 0);
+}
+TEST(SearchTest, Plycounter_SearchAB_5) {
+
+  std::string FENstr =
+      "r2q1rk1/1p1nbppp/p2pbn2/4p3/4P3/1NN1BP2/PPPQ2PP/2KR1B1R/";
+  Position position(FENtoPieces(FENstr), white);
+  Search s(position);
+  int initialPly = s.getPly();
+  s.searchAB(1);
+  int finalPly = s.getPly();
+  ASSERT_EQ(finalPly, initialPly);
+}
+TEST(SearchTest, Plycounter_SearchAB_4) {
+
+  std::string FENstr =
+      "r2q1rk1/1p1nbppp/p2pbn2/4p3/4P3/1NN1BP2/PPPQ2PP/2KR1B1R/";
+  Position position(FENtoPieces(FENstr), white);
+  Search s(position);
+  int initialPly = s.getPly();
+  s.searchAB(2);
+  int finalPly = s.getPly();
+  ASSERT_EQ(finalPly, initialPly);
+}
+
+// Killer move test
+TEST(SearchTest, killerMove_Initilization) {
+
+  std::string FENstr =
+      "r2q1rk1/1p1nbppp/p2pbn2/4p3/4P3/1NN1BP2/PPPQ2PP/2KR1B1R/";
+  Position position(FENtoPieces(FENstr), white);
+  Search s(position);
+  std::array<std::array<Move, MAX_DEPTH>, MAX_KILLER_MOVES> killerMoves =
+      s.getKillerMoves();
+  Move invalidMove(a1, a1, pawn, white, false);
+  ASSERT_EQ(killerMoves[1][63].getScore(), invalidMove.getScore());
+}
+TEST(SearchTest, score_move) {}
+
+// pick move
+TEST(SearchTest, pickMove_copy) {
 
   std::string FENstr =
       "r2q1rk1/1p1nbppp/p2pbn2/4p3/4P3/1NN1BP2/PPPQ2PP/2KR1B1R/";
@@ -114,7 +164,7 @@ TEST(Search_pickMoveTest, pickMove_copy) {
     }
   }
 }
-TEST(Search_pickMoveTest, pickMove_nocopy) {
+TEST(SearchTest, pickMove_nocopy) {
 
   std::string FENstr =
       "r2q1rk1/1p1nbppp/p2pbn2/4p3/4P3/1NN1BP2/PPPQ2PP/2KR1B1R/";
