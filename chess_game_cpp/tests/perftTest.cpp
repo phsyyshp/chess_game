@@ -52,10 +52,10 @@ public:
       tempPosition = position;
       position.makeMove(move);
 
-      if (!position.isInCheck()) {
-        nodes += perftBulk(depth - 1);
-        position = tempPosition;
-      }
+      // if (!position.isInCheck()) {
+      nodes += perftBulk(depth - 1);
+      position = tempPosition;
+      // }
     }
     return nodes;
   }
