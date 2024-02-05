@@ -88,6 +88,7 @@ const uint64_t A_FILE =
 const uint64_t H_FILE =
     0b1000000010000000100000001000000010000000100000001000000010000000ull;
 const std::array<int, 2> whoToMove = {1, -1};
+
 // piece Square tables;
 const std::array<int, 64> pawnSqTblsBlack = {
     0,  0,  0,  0,   0,   0,  0,  0,  50, 50, 50,  50, 50, 50,  50, 50,

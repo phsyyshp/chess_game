@@ -1,4 +1,14 @@
 #include "search.hpp"
+// constructors;
+Search::Search(const Position &p) : position(p) {
+  // this is just zero;
+  Move invalidMove(a1, a1, pawn, white, false);
+  for (int i = 0; i < MAX_DEPTH; i++) {
+    for (int j = 0; j < MAX_KILLER_MOVES; j++) {
+      killerMoves[i][j] = invalidMove;
+    }
+  }
+};
 // getters;
 std::array<std::array<Move, MAX_DEPTH>, MAX_KILLER_MOVES>
 Search::getKillerMoves() const {
