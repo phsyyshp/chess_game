@@ -99,6 +99,7 @@ Move Search::search(int depth) {
   }
   return bestMove;
 }
+// TODO: Rigirous testing;
 Move Search::searchAB(int depth) {
   int score;
   Move bestMove;
@@ -197,6 +198,7 @@ void Search::pickMove(MoveList &scoredMoveList_, int startingIdx) const {
   }
 }
 void Search::orderMoves(MoveList &movelist_) {}
+// TODO: test
 void Search::storeKillerMove(const Move &move_, int ply) {
 
   if (!move_.checkIsCapture()) {

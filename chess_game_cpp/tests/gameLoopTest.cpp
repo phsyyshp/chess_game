@@ -19,7 +19,8 @@ int main() {
     Move move(from, to, position.getPieceType(0b1ull << from), white,
               isCaptureVal);
 
-    if (!mvVld.isPseudoLegalMove(from, to)) {
+    MoveGeneration mg(position);
+    if (!mg.isPseudoLegal(move)) {
 
       std::cout << "illegal move try again." << std::endl;
       continue;
@@ -27,8 +28,7 @@ int main() {
     position.makeMove(move);
     position.printBoard();
     Search srch(position);
-
-    Move bestMove = srch.searchAB(5);
+    Move bestMove = srch.searchAB(6);
     position.makeMove(bestMove);
     position.printBoard();
   }
