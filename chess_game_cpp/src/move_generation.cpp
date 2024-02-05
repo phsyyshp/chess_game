@@ -260,46 +260,41 @@ uint64_t MoveGeneration::generateRookAttackMaps() {
       position.getAllPieces(white) | position.getAllPieces(black);
   uint64_t remainingRooks =
       position.getPieces()[position.getOppositeTurn()][rook];
-  square from;
+  square square_;
   int to;
   uint64_t generatedAttacks = 0b0ull;
   while (remainingRooks) {
-    from = static_cast<square>(__builtin_ctzll(remainingRooks));
-    generatedAttacks |= getRookAttackMask(from, occupancy) & eligibleSquares;
-    remainingRooks ^= (0b1ull << from);
+    square_ = static_cast<square>(__builtin_ctzll(remainingRooks));
+    generatedAttacks |= getRookAttackMask(square_, occupancy) & eligibleSquares;
+    remainingRooks ^= (0b1ull << square_);
   }
   return generatedAttacks;
 }
 uint64_t MoveGeneration::generateBishopAttackMaps() {
-  uint64_t eligibleSquares = ~position.getAllPieces(position.getOppositeTurn());
   uint64_t occupancy =
       position.getAllPieces(white) | position.getAllPieces(black);
   uint64_t remainingBishops =
       position.getPieces()[position.getOppositeTurn()][bishop];
-  square from;
-  int to;
+  square square_;
   uint64_t generatedAttacks = 0b0ull;
   while (remainingBishops) {
-    from = static_cast<square>(__builtin_ctzll(remainingBishops));
-    generatedAttacks |= getBishopAttackMask(from, occupancy) & eligibleSquares;
-    remainingBishops ^= (0b1ull << from);
+    square_ = static_cast<square>(__builtin_ctzll(remainingBishops));
+    generatedAttacks |= getBishopAttackMask(square_, occupancy);
+    remainingBishops ^= (0b1ull << square_);
   }
   return generatedAttacks;
 }
 uint64_t MoveGeneration::generateQueenAttackMaps() {
-  uint64_t eligibleSquares = ~position.getAllPieces(position.getOppositeTurn());
   uint64_t occupancy =
       position.getAllPieces(white) | position.getAllPieces(black);
   uint64_t queenMask = position.getPieces()[position.getOppositeTurn()][queen];
-  square from;
-  uint64_t generatedAttacks = 0b0ull;
+  square square_;
   if (queenMask) {
-    from = static_cast<square>(__builtin_ctzll(queenMask));
-    generatedAttacks = (getRookAttackMask(from, occupancy) |
-                        getBishopAttackMask(from, occupancy)) &
-                       eligibleSquares;
+    square_ = static_cast<square>(__builtin_ctzll(queenMask));
+    return (getRookAttackMask(square_, occupancy) |
+            getBishopAttackMask(square_, occupancy));
   }
-  return generatedAttacks;
+  return 0b0ull;
 }
 uint64_t MoveGeneration::generateKnightAttackMaps() {
   uint64_t remainingKnights =
@@ -342,7 +337,15 @@ uint64_t MoveGeneration::generateRightPawnAttackMaps() {
     break;
   }
 }
-
+uint64_t MoveGeneration::generateAllAttackMaps() {
+  return generateBishopAttackMaps() | generateKnightAttackMaps() |
+         generateLeftPawnAttackMaps() | generateRightPawnAttackMaps() |
+         generateQueenAttackMaps() | generateRookAttackMaps();
+}
+// generate Legal Move related operations;
+void MoveGeneration::generateLegalKingMoves() {
+  uint64_t attackedSquares = generateAllAttackMaps();
+}
 // TODO: finish implementing this;
 void MoveGeneration::generateOrderedMoves() { generateAllMoves(); }
 MoveList &MoveGeneration::getMoves() { return moveList; }
