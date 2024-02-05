@@ -32,6 +32,9 @@ public:
   uint64_t generateRookAttackMaps();
   uint64_t generateQueenAttackMaps();
   uint64_t generateAllAttackMaps();
+  // legal move generation related operations
+  void generateLegalKingMoves();
+
   // getters
   MoveList &getMoves();
   int getNumberOfMoves() const;
