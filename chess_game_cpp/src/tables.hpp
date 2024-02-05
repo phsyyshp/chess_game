@@ -2,6 +2,7 @@
 #define TABLES_HPP
 
 #include "loader.hpp"
+#include "utilities.hpp"
 // slider cache
 
 const std::vector<magicTbls> rookTbls = fileToLookUpsVec(rook);
@@ -20,6 +21,10 @@ const std::vector<uint64_t> kingLookUpTable =
 const std::vector<uint64_t> adjacentFiles =
     fileToVec("mask_cache/adjacentFiles.txt");
 const std::vector<uint64_t> sqToFiles = fileToVec("mask_cache/Files.txt");
+
+// assuming the sequence as;
+// wPx64,wBx64,wRx64,wQx64,wNx64,wPx64,bBx64,bRx64,bQx64,bNx64,sideTomove,castlingRigths,theFileOFValidEnPassant
+const std::array<uint64_t, 781> zobristTable = generateZobristTable();
 
 uint64_t getRookAttackMask(const square &sq, const uint64_t &occupancy);
 uint64_t getBishopAttackMask(const square &sq, const uint64_t &occupancy);
