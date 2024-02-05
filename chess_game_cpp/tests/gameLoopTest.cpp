@@ -18,6 +18,12 @@ int main() {
     bool isCaptureVal = (0b1ull << to) & (position.getAllPieces(black));
     Move move(from, to, position.getPieceType(0b1ull << from), white,
               isCaptureVal);
+
+    if (!mvVld.isPseudoLegalMove(from, to)) {
+
+      std::cout << "illegal move try again." << std::endl;
+      continue;
+    }
     position.makeMove(move);
     position.printBoard();
     Search srch(position);
