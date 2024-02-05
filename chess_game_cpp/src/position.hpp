@@ -30,6 +30,7 @@ public:
   piece getCapturedInLastMove() const;
   // bools:
   bool isInCheck() const;
+  bool isEmpty(int square_) const;
   // movers:
   void makeMove(Move move);
   void undoMove(Move move);
