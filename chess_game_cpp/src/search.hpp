@@ -3,7 +3,7 @@ class Search {
 public:
   // constructors;
   Search() = default;
-  Search(const Position &p) : position(p){};
+  Search(const Position &p);
   // getters;
   std::array<std::array<Move, MAX_DEPTH>, MAX_KILLER_MOVES>
   getKillerMoves() const;

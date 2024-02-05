@@ -3,6 +3,7 @@
 
 #include "loader.hpp"
 // This forward declaration is for avoiding, circular dependency.
+
 class Position;
 class Move {
 public:
@@ -33,4 +34,5 @@ public:
 private:
   uint32_t moveNum;
 };
+
 #endif
