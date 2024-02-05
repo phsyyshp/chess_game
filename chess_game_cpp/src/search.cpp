@@ -47,7 +47,9 @@ int Search::quiesce(int alpha, int beta) {
   for (const Move &move : movegen.getMoves().getCapturedMoves()) {
     tempPosition = position;
     position.makeMove(move);
+    ply++;
     score = -quiesce(-beta, -alpha);
+    ply--;
     position = tempPosition;
     if (score >= beta) {
       return beta;
@@ -72,8 +74,10 @@ Move Search::search(int depth) {
   for (Move move : movGen.getMoves()) {
     tempPosition = position;
     position.makeMove(move);
+    ply++;
     score = -negaMax(depth - 1);
     position = tempPosition;
+    ply--;
     if (score > max) {
       max = score;
       bestMove = move;
@@ -97,7 +101,9 @@ Move Search::searchAB(int depth) {
   for (Move move : movGen.getMoves()) {
     tempPosition = position;
     position.makeMove(move);
+    ply++;
     score = -alphaBeta(-beta, -alpha, depth - 1);
+    ply--;
     position = tempPosition;
     if (score >= beta) {
       // bestMove = move;
@@ -129,8 +135,10 @@ int Search::alphaBeta(int alpha, int beta, int depthLeft) {
     pickMove(movgen.getMoves(), j);
     tempPosition = position;
     position.makeMove(movgen.getMoves()[j]);
+    ply++;
     score = -alphaBeta(-beta, -alpha, depthLeft - 1);
     position = tempPosition;
+    ply--;
     if (score >= beta) {
       return beta;
     }
@@ -148,9 +156,16 @@ void Search::scoreMoves(MoveList &moveList_) const {
   for (Move &move : moveList_) {
     if (move.checkIsCapture()) {
 
-      int moveScore = MVV_LVA[move.getCaptured(position)][move.getPiece()];
+      int moveScore =
+          MVV_LVA_OFFSET + MVV_LVA[move.getCaptured(position)][move.getPiece()];
       move.setScore(moveScore);
     } else {
+      for (int i = 0; i < MAX_KILLER_MOVES; i++) {
+        if (move.getMoveInt() == killerMoves[i][ply].getMoveInt()) {
+          // TODO: Be Careful about seting already set score;
+          move.setScore(MVV_LVA_OFFSET - ((i + 1) * KILLER_VALUE));
+        }
+      }
     }
   }
 }

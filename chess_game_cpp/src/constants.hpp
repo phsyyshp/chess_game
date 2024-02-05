@@ -183,6 +183,7 @@ const std::array<std::array<int, 64>, 2> earlyGameKingSqTbls = {
     middleGameKingSqTblsWhite, middleGameKingSqTblsBlack};
 
 // MVV_LVA
+
 // MVV_LVA[victim][attacker]
 // victim P, attacker P,B,R,Q,N,K,None
 // victim B,
@@ -201,8 +202,13 @@ const std::array<int, 7> noPieceMVV_LVA = {0, 0, 0, 0, 0, 0, 0};
 const std::array<std::array<int, 7>, 7> MVV_LVA = {
     pawnMVV_LVA,   bishopMVV_LVA, rookMVV_LVA,   queenMVV_LVA,
     knightMVV_LVA, kingMVV_LVA,   noPieceMVV_LVA};
+// TODO: becarefull with types reconsider it;
+const uint32_t MVV_LVA_OFFSET = UINT32_MAX - 256;
+
 // Killer move constants;
 
+// TODO: becarefull with types reconsider it;
 const int MAX_KILLER_MOVES = 2;
 const int MAX_DEPTH = 64;
+const int KILLER_VALUE = 10;
 #endif
