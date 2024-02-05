@@ -146,6 +146,9 @@ uint64_t Position::getAttacksToKing() const {
          (getRookAttackMask(squareOfKing, allPieces) & oppositeRookQueens);
 }
 bool Position::isInCheck() const { return (getAttacksToKing()) != 0; }
+bool Position::isEmpty(int square_) const {
+  return mailbox[square_] == noPiece;
+}
 // Asuming; non-special moves(!pro||!cast) and valid(des =empt||opColOc) input,
 // Use it for temprory changes.
 // It changes turns automatically for now.
