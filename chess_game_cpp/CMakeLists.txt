@@ -28,13 +28,13 @@ set(SOURCES
     # src/moveValidator.cpp
     # tests/move_generation_test.cpp
     # tests/loader_test.cpp
-    # tests/perftTest.cpp
+    tests/perftTest.cpp
     # tests/moveTest.cpp
     # tests/position_test.cpp
     # tests/utilTest.cpp
     # tests/evaluationTest.cpp
     # tests/searchTest.cpp
-    tests/gameLoopTest.cpp
+    # tests/gameLoopTest.cpp
     # tests/constantsTest.cpp
     # tests/moveListTest.cpp
     # tests/scoreTest.cpp
@@ -50,12 +50,12 @@ set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/bin)
 # Create the main executable
 # add_executable(move_generation_test ${SOURCES})
 # add_executable(loader_test ${SOURCES})
-# add_executable(perftTest ${SOURCES})
+add_executable(perftTest ${SOURCES})
 # add_executable(position_test ${SOURCES})
 # add_executable(utilTest ${SOURCES})
 # add_executable(evaluationTest ${SOURCES})
 # add_executable(searchTest ${SOURCES})
-add_executable(gameLoopTest ${SOURCES})
+# add_executable(gameLoopTest ${SOURCES})
 # add_executable(constantsTest ${SOURCES})
 # add_executable(moveListTest ${SOURCES})
 # add_executable(scoreTest ${SOURCES})

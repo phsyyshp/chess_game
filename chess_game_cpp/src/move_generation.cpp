@@ -1,5 +1,5 @@
 #include "move_generation.hpp"
-
+// generate moves;
 void MoveGeneration::generateSinglePawnPushes() {
   // TODO: add promotions
   uint64_t generatedMoves;
@@ -252,6 +252,97 @@ void MoveGeneration::generateAllMoves() {
   generateBishopMoves();
   generateQueenMoves();
 }
+// generate attacks;
+
+uint64_t MoveGeneration::generateRookAttackMaps() {
+  uint64_t eligibleSquares = ~position.getAllPieces(position.getOppositeTurn());
+  uint64_t occupancy =
+      position.getAllPieces(white) | position.getAllPieces(black);
+  uint64_t remainingRooks =
+      position.getPieces()[position.getOppositeTurn()][rook];
+  square from;
+  int to;
+  uint64_t generatedAttacks = 0b0ull;
+  while (remainingRooks) {
+    from = static_cast<square>(__builtin_ctzll(remainingRooks));
+    generatedAttacks |= getRookAttackMask(from, occupancy) & eligibleSquares;
+    remainingRooks ^= (0b1ull << from);
+  }
+  return generatedAttacks;
+}
+uint64_t MoveGeneration::generateBishopAttackMaps() {
+  uint64_t eligibleSquares = ~position.getAllPieces(position.getOppositeTurn());
+  uint64_t occupancy =
+      position.getAllPieces(white) | position.getAllPieces(black);
+  uint64_t remainingBishops =
+      position.getPieces()[position.getOppositeTurn()][bishop];
+  square from;
+  int to;
+  uint64_t generatedAttacks = 0b0ull;
+  while (remainingBishops) {
+    from = static_cast<square>(__builtin_ctzll(remainingBishops));
+    generatedAttacks |= getBishopAttackMask(from, occupancy) & eligibleSquares;
+    remainingBishops ^= (0b1ull << from);
+  }
+  return generatedAttacks;
+}
+uint64_t MoveGeneration::generateQueenAttackMaps() {
+  uint64_t eligibleSquares = ~position.getAllPieces(position.getOppositeTurn());
+  uint64_t occupancy =
+      position.getAllPieces(white) | position.getAllPieces(black);
+  uint64_t queenMask = position.getPieces()[position.getOppositeTurn()][queen];
+  square from;
+  uint64_t generatedAttacks = 0b0ull;
+  if (queenMask) {
+    from = static_cast<square>(__builtin_ctzll(queenMask));
+    generatedAttacks = (getRookAttackMask(from, occupancy) |
+                        getBishopAttackMask(from, occupancy)) &
+                       eligibleSquares;
+  }
+  return generatedAttacks;
+}
+uint64_t MoveGeneration::generateKnightAttackMaps() {
+  uint64_t remainingKnights =
+      position.getPieces()[position.getOppositeTurn()][knight];
+  square square_;
+  uint64_t generatedAttacks = 0b0ull;
+  while (remainingKnights) {
+    square_ = static_cast<square>(__builtin_ctzll(remainingKnights));
+    generatedAttacks |= knightLookUpTable[square_];
+    remainingKnights ^= (0b1ull << square_);
+  }
+  return generatedAttacks;
+}
+uint64_t MoveGeneration::generateLeftPawnAttackMaps() {
+  uint64_t pawns = position.getPieces()[position.getTurn()][pawn];
+
+  switch (position.getOppositeTurn()) {
+  case white:
+    return ((pawns << 9) & (~A_FILE));
+    break;
+  case black:
+    return ((pawns >> 7) & (~A_FILE));
+    break;
+  default:
+    throw std::out_of_range("invalid color");
+    break;
+  }
+}
+uint64_t MoveGeneration::generateRightPawnAttackMaps() {
+  uint64_t pawns = position.getPieces()[position.getTurn()][pawn];
+  switch (position.getOppositeTurn()) {
+  case white:
+    return ((pawns << 7) & (~H_FILE));
+    break;
+  case black:
+    return ((pawns >> 9) & (~H_FILE));
+    break;
+  default:
+    throw std::out_of_range("invalid color");
+    break;
+  }
+}
+
 // TODO: finish implementing this;
 void MoveGeneration::generateOrderedMoves() { generateAllMoves(); }
 MoveList &MoveGeneration::getMoves() { return moveList; }

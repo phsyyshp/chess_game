@@ -51,10 +51,11 @@ public:
     for (auto &move : movGen.getMoves()) {
       tempPosition = position;
       position.makeMove(move);
-      // if (!position.isInCheck()) {
-      nodes += perftBulk(depth - 1);
-      // }
-      position = tempPosition;
+
+      if (!position.isInCheck()) {
+        nodes += perftBulk(depth - 1);
+        position = tempPosition;
+      }
     }
     return nodes;
   }
@@ -127,13 +128,13 @@ int main() {
   Position position;
   position.setBoardToInitialConfiguration();
   perftTest test(position);
-  int depth = 6;
+  int depth = 4;
 
-  std::cout << "Number Of Pseudo-Legal Moves:" << std::endl;
-  std::cout << test.perftBulk(depth) << std::endl;
+  // std::cout << "Number Of Pseudo-Legal Moves:" << std::endl;
+  // std::cout << test.perftBulk(depth) << std::endl;
   // std::cout << test.perftPseudoLegal(depth) << std::endl;
 
-  // std::cout << "Number Of Legal Moves:" << std::endl;
-  // std::cout << test.perft(depth) << std::endl;
+  std::cout << "Number Of Legal Moves:" << std::endl;
+  std::cout << test.perftBulk(depth) << std::endl;
   // perftDivideInterface();
 }
