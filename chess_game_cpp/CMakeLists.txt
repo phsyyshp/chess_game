@@ -27,13 +27,13 @@ set(SOURCES
     src/movelist.cpp
     # tests/move_generation_test.cpp
     # tests/loader_test.cpp
-    # tests/perftTest.cpp
+    tests/perftTest.cpp
     # tests/moveTest.cpp
     # tests/position_test.cpp
     # tests/utilTest.cpp
     # tests/evaluationTest.cpp
     # tests/searchTest.cpp
-    tests/gameLoopTest.cpp
+    # tests/gameLoopTest.cpp
     # tests/constantsTest.cpp
     # tests/moveListTest.cpp
     # tests/scoreTest.cpp
