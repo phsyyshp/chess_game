@@ -106,7 +106,7 @@ int Evaluation::evaluate() const {
   // size_t mobilityDiff = getMobility(white) - getMobility(black);
 
   return (20000 * kingDiff + 900 * queenDiff + 500 * rookDiff +
-          300 * (bishopDiff + knightDiff) + pawnDiff -
+          300 * (bishopDiff + knightDiff) + 100 * pawnDiff -
           50 * (isolinDiff + doubledPawnDiff) + pieceSquareTables()) *
          whoToMove[position.getTurn()];
 };
