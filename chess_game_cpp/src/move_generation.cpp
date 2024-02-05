@@ -137,6 +137,8 @@ void MoveGeneration::generateRightPawnCaptures() {
 void MoveGeneration::generateKnightMoves() {
 
   uint64_t eligibleSquares = ~position.getAllPieces(position.getTurn());
+  // uint64_t allPieces =
+  // position.getAllPieces(black) | position.getAllPieces(white);
   uint64_t remainingKnigths = position.getPieces()[position.getTurn()][knight];
   uint64_t generatedMoves;
   int from;
@@ -147,8 +149,8 @@ void MoveGeneration::generateKnightMoves() {
     generatedMoves = knightLookUpTable[from] & eligibleSquares;
     while (generatedMoves) {
       to = __builtin_ctzll(generatedMoves);
-      // isCapture = !position.isEmpty(to);
-      isCapture = ((0b1ull << to) & allPieces) != 0;
+      isCapture = !position.isEmpty(to);
+      // isCapture = ((0b1ull << to) & allPieces) != 0;
       moveList.push_back(
           Move{from, to, piece::knight, position.getTurn(), isCapture});
       generatedMoves ^= (0b1ull << to);
