@@ -14,7 +14,6 @@ uint64_t Zobrist::generatePieceZobristKey(int piece_, int color_) const {
   // wPx64,wBx64,wRx64,wQx64,wNx64,wKx64,wPx64,bBx64,bRx64,bQx64,bNx64,bKx64,sideTomove,castlingRigths,theFileOFValidEnPassant
   //   return zobristTable[piece_ * square_ + 6 * 64 * color_];
   return out;
-  return zobristTable[piece_ * square_ + 6 * 64 * color_];
 };
 
 uint64_t Zobrist::generateTotalZobristKey() const {
@@ -23,4 +22,6 @@ uint64_t Zobrist::generateTotalZobristKey() const {
     for (int piece_ = 0; piece_ < 6; piece_++)
       zobristKey |= generatePieceZobristKey(piece_, color_);
   }
+  zobristKey |= zobristTable[768] * position.getTurn();
+  return zobristKey;
 }
