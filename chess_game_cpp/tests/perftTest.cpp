@@ -52,10 +52,10 @@ public:
       tempPosition = position;
       position.makeMove(move);
 
-      if (!position.isInCheck()) {
-        nodes += perftBulk(depth - 1);
-        position = tempPosition;
-      }
+      // if (!position.isInCheck()) {
+      nodes += perftBulk(depth - 1);
+      position = tempPosition;
+      // }
     }
     return nodes;
   }
@@ -128,7 +128,7 @@ int main() {
   Position position;
   position.setBoardToInitialConfiguration();
   perftTest test(position);
-  int depth = 4;
+  int depth = 6;
 
   // std::cout << "Number Of Pseudo-Legal Moves:" << std::endl;
   // std::cout << test.perftBulk(depth) << std::endl;
