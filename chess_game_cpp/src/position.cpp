@@ -124,7 +124,6 @@ uint64_t Position::getAllPieces(const color &color_) const {
          pieces[color_][bishop] | pieces[color_][queen] | pieces[color_][king] |
          pieces[color_][pawn];
 }
-
 piece Position::getCapturedInLastMove() const { return capturedInLastMove; }
 uint64_t Position::getAttacksToKing() const {
 
@@ -197,20 +196,33 @@ std::array<std::array<uint64_t, 6>, 2> Position::getPieces() const {
   return pieces;
 }
 // Misc
+// TODO: this function is hideous refactor it;
 void Position::printBoard() const {
   uint64_t allPieces = getAllPieces(white) | getAllPieces(black);
   piece piece_;
   color color_;
   std::string pieceIcon;
-  for (int i = 7; i >= 0; i--) {
-    for (int j = 0; j < 8; j++) {
-      piece_ = getPieceType(0b1ull << (j + i * 8));
-      color_ = getPieceColor(0b1ull << (j + i * 8));
-      pieceIcon = getPieceIcon(piece_, color_);
-      if ((i + j + 1) % 2 == 0) {
+  for (int i = 7; i >= -1; i--) {
+    for (int j = -1; j < 8; j++) {
+      if (i != -1 && j != -1) {
+
+        piece_ = getPieceType(0b1ull << (j + i * 8));
+        color_ = getPieceColor(0b1ull << (j + i * 8));
+        pieceIcon = getPieceIcon(piece_, color_);
+        if ((i + j + 1) % 2 == 0) {
+          pieceIcon = colorizeString(pieceIcon, "30", "46");
+        } else {
+          pieceIcon = colorizeString(pieceIcon, "30", "40");
+        }
+      } else if (j != -1 && i == -1) {
+        pieceIcon = j + 'a';
+        pieceIcon = colorizeString(pieceIcon, "30", "46");
+      } else if (j == -1; i != -1) {
+        pieceIcon = i + '1';
         pieceIcon = colorizeString(pieceIcon, "30", "46");
       } else {
-        pieceIcon = colorizeString(pieceIcon, "30", "40");
+        pieceIcon = ' ';
+        pieceIcon = colorizeString(pieceIcon, "30", "46");
       }
       std::cout << pieceIcon;
     }
