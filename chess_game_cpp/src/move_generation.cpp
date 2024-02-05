@@ -256,3 +256,13 @@ void MoveGeneration::generateAllMoves() {
 void MoveGeneration::generateOrderedMoves() { generateAllMoves(); }
 MoveList &MoveGeneration::getMoves() { return moveList; }
 int MoveGeneration::getNumberOfMoves() const { return moveList.size(); }
+
+bool MoveGeneration::isPseudoLegal(const Move &move) {
+  generateAllMoves();
+  for (const Move &pseudoLegalMove : moveList) {
+    if (pseudoLegalMove.getMoveInt() == move.getMoveInt()) {
+      return true;
+    }
+  }
+  return false;
+}

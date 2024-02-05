@@ -1,6 +1,8 @@
 #include "position.hpp"
 class MoveValidator {
 public:
+  MoveValidator() = default;
+  MoveValidator(const Position &position_) : position(position_){};
   bool isSquareEmpty(const uint64_t &squareMask) const;
   bool isDestinationOccupiedBySameColor(const uint64_t &sourceMask,
                                         const uint64_t &destinationMask) const;

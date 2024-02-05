@@ -24,6 +24,7 @@ public:
   // getters
   MoveList &getMoves();
   int getNumberOfMoves() const;
+  bool isPseudoLegal(const Move &move);
 
 private:
   MoveList moveList;

@@ -2,7 +2,7 @@
 // Move validation
 bool MoveValidator::isSquareEmpty(const uint64_t &positionMask) const {
   uint64_t allPieces =
-      position.getPieces()[white][all] | position.getPieces()[black][all];
+      position.getAllPieces(white) | position.getAllPieces(black);
   return ~(allPieces & positionMask);
 }
 // Checks wheter there is a piece on destination with same color of the piece at
@@ -12,7 +12,7 @@ bool MoveValidator::isSquareEmpty(const uint64_t &positionMask) const {
 // move.
 bool MoveValidator::isDestinationOccupiedBySameColor(
     const uint64_t &sourceMask, const uint64_t &destinationMask) const {
-  return position.getPieces()[position.getTurn()][all] & destinationMask;
+  return position.getAllPieces(position.getTurn()) & destinationMask;
 }
 bool MoveValidator::isSlidingMove(const piece &pieceType) const {
   return pieceType == piece::bishop || pieceType == piece::queen ||
@@ -53,7 +53,7 @@ bool MoveValidator::isKnightMoveLegal(const int &source,
 bool MoveValidator::isLegalPawnCapture(const uint64_t &sourceMask,
                                        const uint64_t &destinationMask) const {
   bool oppositeTurn = (position.getTurn() + 1) % 2;
-  return position.getPieces()[oppositeTurn][all] &
+  return position.getAllPieces(position.getOppositeTurn()) &
          pawnLookUpTable[position.getTurn()][__builtin_ctzll(sourceMask)];
 }
 bool MoveValidator::isSinglePawnMoveLegal(
@@ -108,7 +108,7 @@ bool MoveValidator::isAttackedBySlider(const uint64_t &sourceMask) const {
   int oppositeTurn = (position.getTurn() + 1) % 2;
   auto source = static_cast<square>(__builtin_ctzll(sourceMask));
   uint64_t allPieces =
-      position.getPieces()[black][all] | position.getPieces()[white][all];
+      position.getAllPieces(white) | position.getAllPieces(black);
   uint64_t bishopAttackMask = getBishopAttackMask(source, allPieces);
   uint64_t rookAttackMask = getRookAttackMask(source, allPieces);
 
@@ -147,7 +147,7 @@ bool MoveValidator::isPseudoLegalMove(const int &source,
   piece pieceType = position.getPieceType(sourceMask);
   color pieceColor = position.getPieceColor(sourceMask);
   uint64_t allPieces =
-      position.getPieces()[white][all] | position.getPieces()[black][all];
+      position.getAllPieces(white) | position.getAllPieces(black);
   if (position.getTurn() != pieceColor) {
     return false;
   };
@@ -168,14 +168,14 @@ bool MoveValidator::isPseudoLegalMove(const int &source,
     return isKingMoveLegal(source, destinationMask);
   }
 }
-bool MoveValidator::isLegalMove(const int &source,
-                                const int &destination) const {
-  std::vector<std::vector<uint64_t>> piecesTemp =
-      position.makeSoftMove(source, destination);
-  Position tempPosition = Position(piecesTemp, position.getTurn());
-  // FIX IT: first fix then uncoment the following section.
-  //    if (tempPosition.isCheck()) {
-  //      return false;
-  //    }
-  return isPseudoLegalMove(source, destination);
-}
+// bool MoveValidator::isLegalMove(const int &source,
+// const int &destination) const {
+// std::vector<std::vector<uint64_t>> piecesTemp =
+// position.makeSoftMove(source, destination);
+// Position tempPosition = Position(piecesTemp, position.getTurn());
+// FIX IT : first fix then uncoment the following
+//  section.if (tempPosition.isCheck()) {
+// return false;
+// }
+// return isPseudoLegalMove(source, destination);
+// }
