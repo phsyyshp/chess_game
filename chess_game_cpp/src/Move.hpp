@@ -20,7 +20,7 @@ public:
   int getFrom() const;
   int getScore() const;
   // returns noPiece for non captures;
-  bool checkIsCapture() const;
+  bool isCapture() const;
 
   // Visualizers;
   void print() const;
