@@ -31,14 +31,14 @@ public:
     movGen.generateAllMoves();
     for (const auto &move : movGen.getMoves()) {
       tempPosition = position;
-      position.makeMove(move);
-      if (!position.isInCheck()) {
+      if (position.makeMove(move)) {
         nodes += perft(depth - 1);
       }
       position = tempPosition;
     }
     return nodes;
   }
+  // FIX IT: the exit node gives wrong number due to illegal moves;
   uint64_t perftBulk(int depth) {
 
     Position tempPosition;
@@ -50,12 +50,10 @@ public:
     }
     for (auto &move : movGen.getMoves()) {
       tempPosition = position;
-      position.makeMove(move);
-
-      // if (!position.isInCheck()) {
-      nodes += perftBulk(depth - 1);
+      if (position.makeMove(move)) {
+        nodes += perftBulk(depth - 1);
+      }
       position = tempPosition;
-      // }
     }
     return nodes;
   }
@@ -68,26 +66,29 @@ MoveList perftDivide(Position position, int depth) {
   movGen.generateAllMoves();
   Position tempPosition;
   int i = 0;
+  MoveList ml;
+
   for (const auto &move : movGen.getMoves()) {
     tempPosition = position;
-    position.makeMove(move);
-    perftTest test(position);
-    if (i < 10) {
+    if (position.makeMove(move)) {
+      ml.push_back(move);
+      perftTest test(position);
+      if (i < 10) {
 
-      std::cout << "│ " << i << "  │ " << chessSq[move.getFrom()]
-                << chessSq[move.getTo()] << " │ "
-                << test.perftPseudoLegal(depth - 1) << " │ " << std::endl;
-    } else {
+        std::cout << "│ " << i << "  │ " << chessSq[move.getFrom()]
+                  << chessSq[move.getTo()] << " │ " << test.perft(depth - 1)
+                  << " │ " << std::endl;
+      } else {
 
-      std::cout << "│ " << i << " │ " << chessSq[move.getFrom()]
-                << chessSq[move.getTo()] << " │ "
-                << test.perftPseudoLegal(depth - 1) << " │ " << std::endl;
+        std::cout << "│ " << i << " │ " << chessSq[move.getFrom()]
+                  << chessSq[move.getTo()] << " │ " << test.perft(depth - 1)
+                  << " │ " << std::endl;
+      }
+      i++;
     }
-
     position = tempPosition;
-    i++;
   }
-  return movGen.getMoves();
+  return ml;
 }
 void perftDivideInterface() {
   Position position;
@@ -110,9 +111,10 @@ void perftDivideInterface() {
     tempPosition = position;
 
     position.makeMove(out[idx]);
+
     depth--;
 
-    position.printBoard();
+    // position.printBoard();
     std::cout << "moves in depth: " << depth << std::endl;
     std::cout << "┌────┬──────┬──────────" << std::endl;
 
@@ -128,13 +130,12 @@ int main() {
   Position position;
   position.setBoardToInitialConfiguration();
   perftTest test(position);
-  int depth = 6;
+  int depth = 5;
 
-  // std::cout << "Number Of Pseudo-Legal Moves:" << std::endl;
+  // std::cout << "Number Of Legal Moves(bulk):" << std::endl;
   // std::cout << test.perftBulk(depth) << std::endl;
   // std::cout << test.perftPseudoLegal(depth) << std::endl;
-
   std::cout << "Number Of Legal Moves:" << std::endl;
-  std::cout << test.perftBulk(depth) << std::endl;
+  std::cout << test.perft(depth) << std::endl;
   // perftDivideInterface();
 }

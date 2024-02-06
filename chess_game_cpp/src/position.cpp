@@ -151,6 +151,7 @@ bool Position::isEmpty(int square_) const {
 }
 // Asuming; non-special moves(!pro||!cast) and valid(des =empt||opColOc) input,
 // Assuming pseudo-legal move as an input;
+// Assuming kings are present, other wise segmentation error;
 // returns true if pseudo legal input is also legal;
 // Use it for temprory changes.
 // It changes turns automatically for now.
