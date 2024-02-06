@@ -18,6 +18,8 @@ public:
   uint32_t getMoveInt() const;
   int getTo() const;
   int getFrom() const;
+  int getFlags() const;
+
   int getScore() const;
   // returns noPiece for non captures;
   bool isCapture() const;
