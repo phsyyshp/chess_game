@@ -172,9 +172,11 @@ int Search::alphaBeta(int alpha, int beta, int depthLeft) {
 void Search::scoreMoves(MoveList &moveList_) const {
   for (Move &move : moveList_) {
     int moveScore = 0;
-    if (move.checkIsCapture()) {
+    if (move.isCapture()) {
       moveScore =
-          MVV_LVA_OFFSET + MVV_LVA[move.getCaptured(position)][move.getPiece()];
+
+          MVV_LVA_OFFSET + MVV_LVA[position.getPiece(move.getTo())]
+                                  [position.getPiece(move.getFrom())];
       move.setScore(moveScore);
     } else {
       int i = 0;
