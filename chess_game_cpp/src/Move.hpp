@@ -8,12 +8,9 @@ class Position;
 class Move {
 public:
   Move() = default;
-  Move(int from, int to, piece piece_, color color_, bool isCapture_)
-      : moveNum(from | (to << 6) | (piece_ << 12) | (color_ << 15) |
-                ((isCapture_ * 1) << 16)){};
-  Move(int from, int to, piece piece_, color color_, bool isCapture_, int score)
-      : moveNum(from | (to << 6) | (piece_ << 12) | (color_ << 15) |
-                ((isCapture_ * 1) << 16) | (score << 17)){};
+  Move(int from, int to, int flags) : moveNum(from | (to << 6) | flags << 12){};
+  Move(int from, int to, int flags, int score)
+      : moveNum(from | (to << 6) | flags << 12 | (score << 16)){};
 
   // Setters;
   void setScore(const int &score);
@@ -21,11 +18,8 @@ public:
   uint32_t getMoveInt() const;
   int getTo() const;
   int getFrom() const;
-  int getColor() const;
-  int getPiece() const;
   int getScore() const;
   // returns noPiece for non captures;
-  piece getCaptured(const Position &position) const;
   bool checkIsCapture() const;
 
   // Visualizers;
