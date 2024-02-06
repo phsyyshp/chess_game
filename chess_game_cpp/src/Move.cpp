@@ -28,6 +28,7 @@ int Move::getFlags() const {
 */
   return (moveNum >> 12) & 0xf;
 }
+
 int Move::getScore() const { return (moveNum) >> 17; }
 bool Move::isCapture() const { return (moveNum >> 16) & 0x1; }
 
