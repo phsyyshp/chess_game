@@ -15,7 +15,7 @@ void MoveList::swap(int i, int j) {
 MoveList MoveList::getCapturedMoves() const {
   MoveList captureMoves;
   for (int i = 0; i < (lastSetIdx + 1); i++) {
-    if (elements[i].checkIsCapture()) {
+    if (elements[i].isCapture()) {
       captureMoves.push_back(elements[i]);
     }
   }

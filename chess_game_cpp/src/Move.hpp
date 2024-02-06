@@ -8,25 +8,21 @@ class Position;
 class Move {
 public:
   Move() = default;
-  Move(int from, int to, piece piece_, color color_, bool isCapture_)
-      : moveNum(from | (to << 6) | (piece_ << 12) | (color_ << 15) |
-                ((isCapture_ * 1) << 16)){};
-  Move(int from, int to, piece piece_, color color_, bool isCapture_, int score)
-      : moveNum(from | (to << 6) | (piece_ << 12) | (color_ << 15) |
-                ((isCapture_ * 1) << 16) | (score << 17)){};
-
+  Move(uint from, uint to, uint flags)
+      : moveNum((from & 0x3f) | ((to & 0x3f) << 6) | ((flags & 0xf) << 12)){};
+  Move(uint from, uint to, uint flags, uint16_t score)
+      : moveNum((from & 0x3f) | ((to & 0x3f) << 6) | ((flags & 0xf) << 12) |
+                (score << 16)){};
   // Setters;
-  void setScore(const int &score);
+  void setScore(const uint16_t &score);
   // Getters;
   uint32_t getMoveInt() const;
-  int getTo() const;
-  int getFrom() const;
-  int getColor() const;
-  int getPiece() const;
-  int getScore() const;
+  uint getTo() const;
+  uint getFrom() const;
+  uint getFlags() const;
+  uint16_t getScore() const;
   // returns noPiece for non captures;
-  piece getCaptured(const Position &position) const;
-  bool checkIsCapture() const;
+  bool isCapture() const;
 
   // Visualizers;
   void print() const;

@@ -107,6 +107,7 @@ color Position ::getPieceColor(const uint64_t &sqMask) const {
     return color::invalid;
   }
 }
+piece Position::getPiece(int square) const { return mailbox[square]; }
 // TODO: there maybe bugs here! Especially when there is not any pieace of that
 // type is left;
 piece Position::getPieceType(const uint64_t &sqMask) const {
@@ -145,6 +146,8 @@ uint64_t Position::getAttacksToKing() const {
          (getBishopAttackMask(squareOfKing, allPieces) & oppositeBishopQueens) |
          (getRookAttackMask(squareOfKing, allPieces) & oppositeRookQueens);
 }
+
+// bools
 bool Position::isInCheck() const { return (getAttacksToKing()) != 0; }
 bool Position::isEmpty(int square_) const {
   return mailbox[square_] == noPiece;
@@ -156,48 +159,53 @@ bool Position::isEmpty(int square_) const {
 // Use it for temprory changes.
 // It changes turns automatically for now.
 bool Position::makeMove(Move move) {
-  int from = move.getFrom();
-  int to = move.getTo();
-  int piece_ = move.getPiece();
-  int color_ = move.getColor();
-  bool isCapture = move.checkIsCapture();
+  // decoding move
+  uint from = move.getFrom();
+  uint to = move.getTo();
+  int movingPiece = mailbox[from];
   int oppositePieceColor = getOppositeTurn();
+
+  // bit masks
   uint64_t toMask = (0b1ull << to);
   uint64_t fromMask = (0b1ull << from);
-  pieces[color_][piece_] &= ~fromMask;
-  if (isCapture) {
+
+  // moving
+  pieces[turn][movingPiece] &= ~fromMask;
+  if (move.isCapture()) {
     piece capturedPieceType = mailbox[to];
     pieces[oppositePieceColor][capturedPieceType] &= (~toMask);
     capturedInLastMove = capturedPieceType;
   } else {
     capturedInLastMove = noPiece;
   }
-  pieces[color_][piece_] |= toMask;
+  pieces[turn][movingPiece] |= toMask;
   // Mailbox operations;
   mailbox[to] = mailbox[from];
   mailbox[from] = noPiece;
+
+  // legality
   bool isLegal = !isInCheck();
   changeTurn();
   return isLegal;
 }
 // FIX IT: sth is wrong here fix me!
-void Position::undoMove(Move move) {
-  int from = move.getFrom();
-  int to = move.getTo();
-  int piece_ = move.getPiece();
-  int color_ = move.getColor();
-  bool isCapture = move.checkIsCapture();
-  int oppositePieceColor = (color_ + 1) % 2;
-  uint64_t toMask = (0b1ull << to);
-  uint64_t notFromMask = ~(0b1ull << from);
-  changeTurn();
-  pieces[color_][piece_] &= ~toMask;
-  pieces[color_][piece_] |= ~notFromMask;
+// void Position::undoMove(Move move) {
+//   int from = move.getFrom();
+//   int to = move.getTo();
+//   int piece_ = move.getPiece();
+//   int color_ = move.getColor();
+//   bool isCapture = move.checkIsCapture();
+//   int oppositePieceColor = (color_ + 1) % 2;
+//   uint64_t toMask = (0b1ull << to);
+//   uint64_t notFromMask = ~(0b1ull << from);
+//   changeTurn();
+//   pieces[color_][piece_] &= ~toMask;
+//   pieces[color_][piece_] |= ~notFromMask;
 
-  if (isCapture) {
-    pieces[oppositePieceColor][capturedInLastMove] |= (toMask);
-  }
-}
+//   if (isCapture) {
+//     pieces[oppositePieceColor][capturedInLastMove] |= (toMask);
+//   }
+// }
 std::array<piece, 64> Position::getMailbox() const { return mailbox; }
 std::array<std::array<uint64_t, 6>, 2> Position::getPieces() const {
   return pieces;

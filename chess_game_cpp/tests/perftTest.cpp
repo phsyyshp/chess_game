@@ -1,3 +1,4 @@
+#include "UCI.hpp"
 #include "move_generation.hpp"
 class perftTest {
 
@@ -130,7 +131,7 @@ int main() {
   Position position;
   position.setBoardToInitialConfiguration();
   perftTest test(position);
-  int depth = 5;
+  int depth = 4;
 
   // std::cout << "Number Of Legal Moves(bulk):" << std::endl;
   // std::cout << test.perftBulk(depth) << std::endl;
@@ -138,4 +139,8 @@ int main() {
   std::cout << "Number Of Legal Moves:" << std::endl;
   std::cout << test.perft(depth) << std::endl;
   // perftDivideInterface();
+  // UCI uci(position);
+
+  // position.makeMove(uci.getMove("h2h4"));
+  // perftDivide(position, depth - 1);
 }
