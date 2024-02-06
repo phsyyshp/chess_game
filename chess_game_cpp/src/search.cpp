@@ -167,6 +167,8 @@ int Search::alphaBeta(int alpha, int beta, int depthLeft) {
 // Move ordering;
 
 // BE CAREFUL pass by reference without const;
+// FIX ME: maybe a bug here due to value overflow;
+
 void Search::scoreMoves(MoveList &moveList_) const {
   for (Move &move : moveList_) {
     int moveScore = 0;
@@ -179,6 +181,7 @@ void Search::scoreMoves(MoveList &moveList_) const {
       while (i < MAX_KILLER_MOVES && moveScore == 0) {
         if (move.getMoveInt() == killerMoves[i][ply].getMoveInt()) {
           // TODO: Be Careful about setting already set score;
+          // FIX ME: maybe a bug here due to value overflow;
           moveScore = MVV_LVA_OFFSET - ((i + 1) * KILLER_VALUE);
           move.setScore(moveScore);
         }

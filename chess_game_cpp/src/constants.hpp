@@ -88,7 +88,28 @@ const uint64_t A_FILE =
 const uint64_t H_FILE =
     0b1000000010000000100000001000000010000000100000001000000010000000ull;
 const std::array<int, 2> whoToMove = {1, -1};
-
+// Move Flags;
+/*
++------+---------+--------+----------+----------+----------------------+
+| Code | Promo.  | Capt.  | Special1 | Special0 | Kind of Move         |
++------+---------+--------+----------+----------+----------------------+
+| 0    | 0       | 0      | 0        | 0        | Quiet moves          |
+| 1    | 0       | 0      | 0        | 1        | Double pawn push     |
+| 2    | 0       | 0      | 1        | 0        | King castle          |
+| 3    | 0       | 0      | 1        | 1        | Queen castle         |
+| 4    | 0       | 1      | 0        | 0        | Captures             |
+| 5    | 0       | 1      | 0        | 1        | EP-capture           |
+| 8    | 1       | 0      | 0        | 0        | Knight-promotion     |
+| 9    | 1       | 0      | 0        | 1        | Bishop-promotion     |
+| 10   | 1       | 0      | 1        | 0        | Rook-promotion       |
+| 11   | 1       | 0      | 1        | 1        | Queen-promotion      |
+| 12   | 1       | 1      | 0        | 0        | Knight-promo capture |
+| 13   | 1       | 1      | 0        | 1        | Bishop-promo capture |
+| 14   | 1       | 1      | 1        | 0        | Rook-promo capture   |
+| 15   | 1       | 1      | 1        | 1        | Queen-promo capture  |
++------+---------+--------+----------+----------+----------------------+
+*/
+constexpr uint32_t CAPTURE_FLAG = 0b100u << 12;
 // piece Square tables;
 const std::array<int, 64> pawnSqTblsBlack = {
     0,  0,  0,  0,   0,   0,  0,  0,  50, 50, 50,  50, 50, 50,  50, 50,
