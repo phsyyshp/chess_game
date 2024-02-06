@@ -109,6 +109,12 @@ const std::array<int, 2> whoToMove = {1, -1};
 | 15   | 1       | 1      | 1        | 1        | Queen-promo capture  |
 +------+---------+--------+----------+----------+----------------------+
 */
+// codes;
+constexpr uint QUIET_MOVE = 0;
+constexpr uint DOUBLE_PAWN_PUSH = 1;
+constexpr uint CAPTURE = 2;
+
+// shifted flags;
 constexpr uint32_t CAPTURE_FLAG = 0b100u << 12;
 // piece Square tables;
 const std::array<int, 64> pawnSqTblsBlack = {

@@ -188,23 +188,23 @@ bool Position::makeMove(Move move) {
   return isLegal;
 }
 // FIX IT: sth is wrong here fix me!
-void Position::undoMove(Move move) {
-  int from = move.getFrom();
-  int to = move.getTo();
-  int piece_ = move.getPiece();
-  int color_ = move.getColor();
-  bool isCapture = move.checkIsCapture();
-  int oppositePieceColor = (color_ + 1) % 2;
-  uint64_t toMask = (0b1ull << to);
-  uint64_t notFromMask = ~(0b1ull << from);
-  changeTurn();
-  pieces[color_][piece_] &= ~toMask;
-  pieces[color_][piece_] |= ~notFromMask;
+// void Position::undoMove(Move move) {
+//   int from = move.getFrom();
+//   int to = move.getTo();
+//   int piece_ = move.getPiece();
+//   int color_ = move.getColor();
+//   bool isCapture = move.checkIsCapture();
+//   int oppositePieceColor = (color_ + 1) % 2;
+//   uint64_t toMask = (0b1ull << to);
+//   uint64_t notFromMask = ~(0b1ull << from);
+//   changeTurn();
+//   pieces[color_][piece_] &= ~toMask;
+//   pieces[color_][piece_] |= ~notFromMask;
 
-  if (isCapture) {
-    pieces[oppositePieceColor][capturedInLastMove] |= (toMask);
-  }
-}
+//   if (isCapture) {
+//     pieces[oppositePieceColor][capturedInLastMove] |= (toMask);
+//   }
+// }
 std::array<piece, 64> Position::getMailbox() const { return mailbox; }
 std::array<std::array<uint64_t, 6>, 2> Position::getPieces() const {
   return pieces;

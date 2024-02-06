@@ -9,10 +9,10 @@ class Move {
 public:
   Move() = default;
   Move(uint from, uint to, uint flags)
-      : moveNum(from | (to << 6) | flags << 12){};
+      : moveNum((from & 0x3f) | ((to & 0x3f) << 6) | ((flags & 0xf) << 12)){};
   Move(uint from, uint to, uint flags, uint16_t score)
-      : moveNum(from | (to << 6) | flags << 12 | (score << 16)){};
-
+      : moveNum((from & 0x3f) | ((to & 0x3f) << 6) | ((flags & 0xf) << 12) |
+                (score << 16)){};
   // Setters;
   void setScore(const uint16_t &score);
   // Getters;

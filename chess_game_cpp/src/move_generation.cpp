@@ -14,8 +14,7 @@ void MoveGeneration::generateSinglePawnPushes() {
     while (generatedMoves) {
       to = __builtin_ctzll(generatedMoves);
       from = to - 8;
-      moveList.push_back(
-          Move{from, to, piece::pawn, position.getTurn(), false});
+      moveList.push_back(Move{from, to, QUIET_MOVE});
       generatedMoves ^= (0b1ull << to);
     }
     break;
@@ -26,8 +25,7 @@ void MoveGeneration::generateSinglePawnPushes() {
     while (generatedMoves) {
       to = __builtin_ctzll(generatedMoves);
       from = to + 8;
-      moveList.push_back(
-          Move{from, to, piece::pawn, position.getTurn(), false});
+      moveList.push_back(Move{from, to, QUIET_MOVE});
       generatedMoves ^= (0b1ull << to);
     }
     break;
@@ -50,8 +48,7 @@ void MoveGeneration::generateDoublePawnPushes() {
     while (generatedMoves) {
       to = __builtin_ctzll(generatedMoves);
       from = to - 16;
-      moveList.push_back(
-          Move{from, to, piece::pawn, position.getTurn(), false});
+      moveList.push_back(Move{from, to, DOUBLE_PAWN_PUSH});
       generatedMoves ^= (0b1ull << to);
     }
     break;
@@ -63,8 +60,7 @@ void MoveGeneration::generateDoublePawnPushes() {
     while (generatedMoves) {
       to = __builtin_ctzll(generatedMoves);
       from = to + 16;
-      moveList.push_back(
-          Move{from, to, piece::pawn, position.getTurn(), false});
+      moveList.push_back(Move{from, to, DOUBLE_PAWN_PUSH});
       generatedMoves ^= (0b1ull << to);
     }
     break;
@@ -85,7 +81,7 @@ void MoveGeneration::generateLeftPawnCaptures() {
     while (generatedMoves) {
       to = __builtin_ctzll(generatedMoves);
       from = to - 9;
-      moveList.push_back(Move{from, to, piece::pawn, position.getTurn(), true});
+      moveList.push_back(Move{from, to, CAPTURE});
       generatedMoves ^= (0b1ull << to);
     }
     break;
@@ -95,7 +91,7 @@ void MoveGeneration::generateLeftPawnCaptures() {
     while (generatedMoves) {
       to = __builtin_ctzll(generatedMoves);
       from = to + 7;
-      moveList.push_back(Move{from, to, piece::pawn, position.getTurn(), true});
+      moveList.push_back(Move{from, to, CAPTURE});
       generatedMoves ^= (0b1ull << to);
     }
     break;
@@ -116,7 +112,7 @@ void MoveGeneration::generateRightPawnCaptures() {
     while (generatedMoves) {
       to = __builtin_ctzll(generatedMoves);
       from = to - 7;
-      moveList.push_back(Move{from, to, piece::pawn, position.getTurn(), true});
+      moveList.push_back(Move{from, to, CAPTURE});
       generatedMoves ^= (0b1ull << to);
     }
     break;
@@ -126,7 +122,7 @@ void MoveGeneration::generateRightPawnCaptures() {
     while (generatedMoves) {
       to = __builtin_ctzll(generatedMoves);
       from = to + 9;
-      moveList.push_back(Move{from, to, piece::pawn, position.getTurn(), true});
+      moveList.push_back(Move{from, to, CAPTURE});
       generatedMoves ^= (0b1ull << to);
     }
     break;
@@ -137,22 +133,18 @@ void MoveGeneration::generateRightPawnCaptures() {
 void MoveGeneration::generateKnightMoves() {
 
   uint64_t eligibleSquares = ~position.getAllPieces(position.getTurn());
-  // uint64_t allPieces =
-  // position.getAllPieces(black) | position.getAllPieces(white);
   uint64_t remainingKnigths = position.getPieces()[position.getTurn()][knight];
   uint64_t generatedMoves;
-  int from;
-  int to;
-  bool isCapture;
+  uint from;
+  uint to;
+  uint isCaptureFlag;
   while (remainingKnigths) {
     from = __builtin_ctzll(remainingKnigths);
     generatedMoves = knightLookUpTable[from] & eligibleSquares;
     while (generatedMoves) {
       to = __builtin_ctzll(generatedMoves);
-      isCapture = !position.isEmpty(to);
-      // isCapture = ((0b1ull << to) & allPieces) != 0;
-      moveList.push_back(
-          Move{from, to, piece::knight, position.getTurn(), isCapture});
+      isCaptureFlag = !position.isEmpty(to) * 4;
+      moveList.push_back(Move{from, to, isCaptureFlag});
       generatedMoves ^= (0b1ull << to);
     }
     remainingKnigths ^= (0b1ull << from);
@@ -167,16 +159,15 @@ void MoveGeneration::generateBishopMoves() {
 
   square from;
   int to;
-  bool isCapture;
+  uint isCaptureFlag;
   while (remainingBishops) {
     from = static_cast<square>(__builtin_ctzll(remainingBishops));
     generatedMoves = getBishopAttackMask(from, occupancy) & eligibleSquares;
 
     while (generatedMoves) {
       to = __builtin_ctzll(generatedMoves);
-      isCapture = ((0b1ull << to) & occupancy) != 0;
-      moveList.push_back(
-          Move{from, to, piece::bishop, position.getTurn(), isCapture});
+      isCaptureFlag = !position.isEmpty(to) * 4;
+      moveList.push_back(Move{from, to, isCaptureFlag});
       generatedMoves ^= (0b1ull << to);
     }
     remainingBishops ^= (0b1ull << from);
@@ -190,15 +181,14 @@ void MoveGeneration::generateRookMoves() {
   square from;
   int to;
   uint64_t generatedMoves;
-  bool isCapture;
+  uint isCaptureFlag;
   while (remainingRooks) {
     from = static_cast<square>(__builtin_ctzll(remainingRooks));
     generatedMoves = getRookAttackMask(from, occupancy) & eligibleSquares;
     while (generatedMoves) {
       to = __builtin_ctzll(generatedMoves);
-      isCapture = ((0b1ull << to) & occupancy) != 0;
-      moveList.push_back(
-          Move{from, to, piece::rook, position.getTurn(), isCapture});
+      isCaptureFlag = !position.isEmpty(to) * 4;
+      moveList.push_back(Move{from, to, isCaptureFlag});
       generatedMoves ^= (0b1ull << to);
     }
     remainingRooks ^= (0b1ull << from);
@@ -211,7 +201,7 @@ void MoveGeneration::generateQueenMoves() {
   uint64_t queenMask = position.getPieces()[position.getTurn()][queen];
   int to;
   square from = static_cast<square>(__builtin_ctzll(queenMask));
-  bool isCapture;
+  uint isCaptureFlag;
   if (queenMask) {
     uint64_t generatedMoves = (getRookAttackMask(from, occupancy) |
                                getBishopAttackMask(from, occupancy)) &
@@ -219,9 +209,8 @@ void MoveGeneration::generateQueenMoves() {
     while (generatedMoves) {
       to = __builtin_ctzll(generatedMoves);
 
-      isCapture = ((0b1ull << to) & occupancy) != 0;
-      moveList.push_back(
-          Move{from, to, piece::queen, position.getTurn(), isCapture});
+      isCaptureFlag = !position.isEmpty(to) * 4;
+      moveList.push_back(Move{from, to, isCaptureFlag});
       generatedMoves ^= (0b1ull << to);
     }
   }
@@ -233,12 +222,11 @@ void MoveGeneration::generateKingMoves() {
   uint64_t generatedMoves = kingLookUpTable[from] & eligibleSquares;
   uint64_t allPieces =
       position.getAllPieces(black) | position.getAllPieces(white);
-  bool isCapture;
+  uint isCaptureFlag;
   while (generatedMoves) {
     to = __builtin_ctzll(generatedMoves);
-    isCapture = ((0b1ull << to) & allPieces) != 0;
-    moveList.push_back(
-        Move{from, to, piece::king, position.getTurn(), isCapture});
+    isCaptureFlag = !position.isEmpty(to) * 4;
+    moveList.push_back(Move{from, to, isCaptureFlag});
     generatedMoves ^= (0b1ull << to);
   }
 }
