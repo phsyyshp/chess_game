@@ -150,9 +150,11 @@ bool Position::isEmpty(int square_) const {
   return mailbox[square_] == noPiece;
 }
 // Asuming; non-special moves(!pro||!cast) and valid(des =empt||opColOc) input,
+// Assuming pseudo-legal move as an input;
+// returns true if pseudo legal input is also legal;
 // Use it for temprory changes.
 // It changes turns automatically for now.
-void Position::makeMove(Move move) {
+bool Position::makeMove(Move move) {
   int from = move.getFrom();
   int to = move.getTo();
   int piece_ = move.getPiece();
@@ -173,7 +175,9 @@ void Position::makeMove(Move move) {
   // Mailbox operations;
   mailbox[to] = mailbox[from];
   mailbox[from] = noPiece;
+  bool isLegal = !isInCheck();
   changeTurn();
+  return isLegal;
 }
 // FIX IT: sth is wrong here fix me!
 void Position::undoMove(Move move) {
