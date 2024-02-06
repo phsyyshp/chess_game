@@ -1,3 +1,5 @@
+#include "Move.hpp"
+#include "UCI.hpp"
 #include "move_generation.hpp"
 #include "movelist.hpp"
 #include "position.hpp"
@@ -183,6 +185,27 @@ TEST(SearchTest, pickMove_nocopy) {
                 movegen.getMoves()[i].getScore());
     }
   }
+}
+
+// UCI
+TEST(UCITest, strToMove_Nocatpure) {
+  Position position;
+  position.setBoardToInitialConfiguration();
+  UCI uci(position);
+  std::string moveStr = "d2d4";
+  Move UCImove = uci.getMove(moveStr);
+  Move handMade(d2, d4, pawn, white, false);
+  ASSERT_EQ(handMade.getMoveInt(), UCImove.getMoveInt());
+}
+TEST(UCITest, strToMove_capture) {
+  std::string FENstr =
+      "r2q1rk1/1p1nbppp/p2pbn2/4p3/4P3/1NN1BP2/PPPQ2PP/2KR1B1R/";
+  Position position(FENtoPieces(FENstr), white);
+  UCI uci(position);
+  std::string moveStr = "d2d6";
+  Move UCImove = uci.getMove(moveStr);
+  Move handMade(d2, d6, queen, white, true);
+  ASSERT_EQ(handMade.getMoveInt(), UCImove.getMoveInt());
 }
 
 int main(int argc, char **argv) {
