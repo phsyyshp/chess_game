@@ -32,7 +32,9 @@ public:
   bool isInCheck() const;
   bool isEmpty(int square_) const;
   // movers:
-  void makeMove(Move move);
+  // assuming the move is pseudolegal,
+  // returns true if the is legal.
+  bool makeMove(Move move);
   void undoMove(Move move);
   // visualizers;
   void printBoard() const;

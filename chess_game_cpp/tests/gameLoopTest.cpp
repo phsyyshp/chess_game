@@ -1,9 +1,4 @@
 #include "search.hpp"
-template <typename T, size_t N>
-int findIndex(const std::array<T, N> &arr, const T &value) {
-  auto it = std::find(arr.begin(), arr.end(), value);
-  return (it != arr.end()) ? std::distance(arr.begin(), it) : -1;
-}
 
 int main() {
   Position position;
