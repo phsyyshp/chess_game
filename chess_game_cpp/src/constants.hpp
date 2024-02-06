@@ -112,7 +112,7 @@ const std::array<int, 2> whoToMove = {1, -1};
 // codes;
 constexpr uint QUIET_MOVE = 0;
 constexpr uint DOUBLE_PAWN_PUSH = 1;
-constexpr uint CAPTURE = 2;
+constexpr uint CAPTURE = 4;
 
 // shifted flags;
 constexpr uint32_t CAPTURE_FLAG = 0b100u << 12;
