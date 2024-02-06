@@ -158,26 +158,31 @@ bool Position::isEmpty(int square_) const {
 // Use it for temprory changes.
 // It changes turns automatically for now.
 bool Position::makeMove(Move move) {
+  // decoding move
   uint from = move.getFrom();
   uint to = move.getTo();
-  int piece_ = move.getPiece();
-  int color_ = move.getColor();
-  bool isCapture = move.checkIsCapture();
+  int movingPiece = mailbox[from];
   int oppositePieceColor = getOppositeTurn();
+
+  // bit masks
   uint64_t toMask = (0b1ull << to);
   uint64_t fromMask = (0b1ull << from);
-  pieces[color_][piece_] &= ~fromMask;
-  if (isCapture) {
+
+  // moving
+  pieces[turn][movingPiece] &= ~fromMask;
+  if (move.isCapture()) {
     piece capturedPieceType = mailbox[to];
     pieces[oppositePieceColor][capturedPieceType] &= (~toMask);
     capturedInLastMove = capturedPieceType;
   } else {
     capturedInLastMove = noPiece;
   }
-  pieces[color_][piece_] |= toMask;
+  pieces[turn][movingPiece] |= toMask;
   // Mailbox operations;
   mailbox[to] = mailbox[from];
   mailbox[from] = noPiece;
+
+  // legality
   bool isLegal = !isInCheck();
   changeTurn();
   return isLegal;
