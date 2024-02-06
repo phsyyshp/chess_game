@@ -145,6 +145,8 @@ uint64_t Position::getAttacksToKing() const {
          (getBishopAttackMask(squareOfKing, allPieces) & oppositeBishopQueens) |
          (getRookAttackMask(squareOfKing, allPieces) & oppositeRookQueens);
 }
+
+// bools
 bool Position::isInCheck() const { return (getAttacksToKing()) != 0; }
 bool Position::isEmpty(int square_) const {
   return mailbox[square_] == noPiece;
@@ -156,8 +158,8 @@ bool Position::isEmpty(int square_) const {
 // Use it for temprory changes.
 // It changes turns automatically for now.
 bool Position::makeMove(Move move) {
-  int from = move.getFrom();
-  int to = move.getTo();
+  uint from = move.getFrom();
+  uint to = move.getTo();
   int piece_ = move.getPiece();
   int color_ = move.getColor();
   bool isCapture = move.checkIsCapture();
