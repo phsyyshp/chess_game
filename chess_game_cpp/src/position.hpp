@@ -25,6 +25,8 @@ public:
   color getOppositeTurn() const;
   color getPieceColor(const uint64_t &sqMask) const;
   piece getPieceType(const uint64_t &sqMask) const;
+  piece getPiece(int square) const;
+
   uint64_t getAllPieces(const color &color_) const;
   uint64_t getAttacksToKing() const;
   piece getCapturedInLastMove() const;
