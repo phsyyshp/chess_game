@@ -3,7 +3,7 @@
 // constructors;
 Search::Search(const Position &p) : position(p) {
   // this is just zero;
-  Move invalidMove(a1, a1, pawn, white, false);
+  Move invalidMove(a1, a1, false);
   for (int i = 0; i < MAX_DEPTH; i++) {
     for (int j = 0; j < MAX_KILLER_MOVES; j++) {
       killerMoves[j][i] = invalidMove;
@@ -206,7 +206,7 @@ void Search::orderMoves(MoveList &movelist_) {}
 // TODO: test
 void Search::storeKillerMove(const Move &move_, int ply) {
 
-  if (!move_.checkIsCapture()) {
+  if (!move_.isCapture()) {
     if (killerMoves[0][ply].getMoveInt() != move_.getMoveInt()) {
       killerMoves[1][ply] = killerMoves[0][ply];
       killerMoves[0][ply] = move_;

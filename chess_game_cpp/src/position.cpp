@@ -107,7 +107,7 @@ color Position ::getPieceColor(const uint64_t &sqMask) const {
     return color::invalid;
   }
 }
-piece Position::getPiece(int square) { return mailbox[square]; }
+piece Position::getPiece(int square) const { return mailbox[square]; }
 // TODO: there maybe bugs here! Especially when there is not any pieace of that
 // type is left;
 piece Position::getPieceType(const uint64_t &sqMask) const {
