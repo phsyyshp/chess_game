@@ -173,7 +173,6 @@ void Position::makeMove(Move move) {
   // Mailbox operations;
   mailbox[to] = mailbox[from];
   mailbox[from] = noPiece;
-
   changeTurn();
 }
 // FIX IT: sth is wrong here fix me!
