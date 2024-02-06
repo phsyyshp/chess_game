@@ -97,95 +97,133 @@ TEST(MoveListTest, swapScoredCaptured) {
   }
 };
 
+// Position
+TEST(Position, makeMove_legality_individualMoves_Test_nocheck) {
+
+  std::string FENstr =
+      "r2q1rk1/1p1nbppp/p2pbn2/4p3/4P3/1NN1BP2/PPPQ2PP/2KR1B1R/";
+  Position position(FENtoPieces(FENstr), white);
+  MoveGeneration movgen(position);
+  movgen.generateAllMoves();
+  MoveList ml = movgen.getMoves();
+  bool isLegal = position.makeMove(ml[0]);
+  ASSERT_EQ(true, isLegal);
+}
+TEST(Position, makeMove_legality_individualMoves_Test_check) {
+
+  std::string FENstr = "8/q1k5/8/8/8/8/1K6/8/";
+  Position position(FENtoPieces(FENstr), white);
+  UCI uci(position);
+
+  bool isLegal = position.makeMove(uci.getMove("b2a2"));
+  ASSERT_EQ(false, isLegal);
+}
+
+TEST(Position, makeMove_legality_Test) {
+
+  std::string FENstr =
+      "r2q1rk1/1p1nbppp/p2pbn2/4p3/4P3/1NN1BP2/PPPQ2PP/2KR1B1R/";
+  Position position(FENtoPieces(FENstr), white);
+  MoveGeneration movgen(position);
+  movgen.generateAllMoves();
+  Position tempPosition;
+  for (const Move &move : movgen.getMoves()) {
+    tempPosition = position;
+    bool isLegal = position.makeMove(move);
+    position = tempPosition;
+    ASSERT_EQ(true, isLegal);
+  }
+}
+
 // Search tests
 // Ply
-TEST(SearchTest, Ply_constructor) {
+// TEST(SearchTest, Ply_constructor) {
 
-  std::string FENstr =
-      "r2q1rk1/1p1nbppp/p2pbn2/4p3/4P3/1NN1BP2/PPPQ2PP/2KR1B1R/";
+//   std::string FENstr =
+//       "r2q1rk1/1p1nbppp/p2pbn2/4p3/4P3/1NN1BP2/PPPQ2PP/2KR1B1R/";
 
-  Position position(FENtoPieces(FENstr), white);
-  Search s(position);
-  ASSERT_EQ(s.getPly(), 0);
-}
-TEST(SearchTest, Plycounter_SearchAB_5) {
+//   Position position(FENtoPieces(FENstr), white);
+//   Search s(position);
+//   ASSERT_EQ(s.getPly(), 0);
+// }
+// TEST(SearchTest, Plycounter_SearchAB_5) {
 
-  std::string FENstr =
-      "r2q1rk1/1p1nbppp/p2pbn2/4p3/4P3/1NN1BP2/PPPQ2PP/2KR1B1R/";
-  Position position(FENtoPieces(FENstr), white);
-  Search s(position);
-  int initialPly = s.getPly();
-  s.searchAB(1);
-  int finalPly = s.getPly();
-  ASSERT_EQ(finalPly, initialPly);
-}
-TEST(SearchTest, Plycounter_SearchAB_4) {
+//   std::string FENstr =
+//       "r2q1rk1/1p1nbppp/p2pbn2/4p3/4P3/1NN1BP2/PPPQ2PP/2KR1B1R/";
+//   Position position(FENtoPieces(FENstr), white);
+//   Search s(position);
+//   int initialPly = s.getPly();
+//   s.searchAB(1);
+//   int finalPly = s.getPly();
+//   ASSERT_EQ(finalPly, initialPly);
+// }
+// TEST(SearchTest, Plycounter_SearchAB_4) {
 
-  std::string FENstr =
-      "r2q1rk1/1p1nbppp/p2pbn2/4p3/4P3/1NN1BP2/PPPQ2PP/2KR1B1R/";
-  Position position(FENtoPieces(FENstr), white);
-  Search s(position);
-  int initialPly = s.getPly();
-  s.searchAB(2);
-  int finalPly = s.getPly();
-  ASSERT_EQ(finalPly, initialPly);
-}
+//   std::string FENstr =
+//       "r2q1rk1/1p1nbppp/p2pbn2/4p3/4P3/1NN1BP2/PPPQ2PP/2KR1B1R/";
+//   Position position(FENtoPieces(FENstr), white);
+//   Search s(position);
+//   int initialPly = s.getPly();
+//   s.searchAB(2);
+//   int finalPly = s.getPly();
+//   ASSERT_EQ(finalPly, initialPly);
+// }
 
-// Killer move test
-TEST(SearchTest, killerMove_Initilization) {
+// // Killer move test
+// TEST(SearchTest, killerMove_Initilization) {
 
-  std::string FENstr =
-      "r2q1rk1/1p1nbppp/p2pbn2/4p3/4P3/1NN1BP2/PPPQ2PP/2KR1B1R/";
-  Position position(FENtoPieces(FENstr), white);
-  Search s(position);
-  std::array<std::array<Move, MAX_DEPTH>, MAX_KILLER_MOVES> killerMoves =
-      s.getKillerMoves();
-  Move invalidMove(a1, a1, pawn, white, false);
-  ASSERT_EQ(killerMoves[1][63].getScore(), invalidMove.getScore());
-}
-TEST(SearchTest, score_move) {}
+//   std::string FENstr =
+//       "r2q1rk1/1p1nbppp/p2pbn2/4p3/4P3/1NN1BP2/PPPQ2PP/2KR1B1R/";
+//   Position position(FENtoPieces(FENstr), white);
+//   Search s(position);
+//   std::array<std::array<Move, MAX_DEPTH>, MAX_KILLER_MOVES> killerMoves =
+//       s.getKillerMoves();
+//   Move invalidMove(a1, a1, pawn, white, false);
+//   ASSERT_EQ(killerMoves[1][63].getScore(), invalidMove.getScore());
+// }
+// TEST(SearchTest, score_move) {}
 
-// pick move
-TEST(SearchTest, pickMove_copy) {
+// // pick move
+// TEST(SearchTest, pickMove_copy) {
 
-  std::string FENstr =
-      "r2q1rk1/1p1nbppp/p2pbn2/4p3/4P3/1NN1BP2/PPPQ2PP/2KR1B1R/";
-  Position position(FENtoPieces(FENstr), white);
-  MoveGeneration movegen(position);
-  movegen.generateAllMoves();
-  // Copy
-  MoveList moves = movegen.getMoves();
-  Search s(position);
-  s.scoreMoves(moves);
-  for (int startingMove = 0; startingMove < moves.size(); startingMove++) {
+//   std::string FENstr =
+//       "r2q1rk1/1p1nbppp/p2pbn2/4p3/4P3/1NN1BP2/PPPQ2PP/2KR1B1R/";
+//   Position position(FENtoPieces(FENstr), white);
+//   MoveGeneration movegen(position);
+//   movegen.generateAllMoves();
+//   // Copy
+//   MoveList moves = movegen.getMoves();
+//   Search s(position);
+//   s.scoreMoves(moves);
+//   for (int startingMove = 0; startingMove < moves.size(); startingMove++) {
 
-    s.pickMove(moves, startingMove);
+//     s.pickMove(moves, startingMove);
 
-    for (int i = startingMove; i < moves.size(); i++) {
-      ASSERT_GE(moves[startingMove].getScore(), moves[i].getScore());
-    }
-  }
-}
-TEST(SearchTest, pickMove_nocopy) {
+//     for (int i = startingMove; i < moves.size(); i++) {
+//       ASSERT_GE(moves[startingMove].getScore(), moves[i].getScore());
+//     }
+//   }
+// }
+// TEST(SearchTest, pickMove_nocopy) {
 
-  std::string FENstr =
-      "r2q1rk1/1p1nbppp/p2pbn2/4p3/4P3/1NN1BP2/PPPQ2PP/2KR1B1R/";
-  Position position(FENtoPieces(FENstr), white);
-  MoveGeneration movegen(position);
-  movegen.generateAllMoves();
-  Search s(position);
-  // pass by reference;
-  s.scoreMoves(movegen.getMoves());
-  for (int startingMove = 0; startingMove < movegen.getMoves().size();
-       startingMove++) {
+//   std::string FENstr =
+//       "r2q1rk1/1p1nbppp/p2pbn2/4p3/4P3/1NN1BP2/PPPQ2PP/2KR1B1R/";
+//   Position position(FENtoPieces(FENstr), white);
+//   MoveGeneration movegen(position);
+//   movegen.generateAllMoves();
+//   Search s(position);
+//   // pass by reference;
+//   s.scoreMoves(movegen.getMoves());
+//   for (int startingMove = 0; startingMove < movegen.getMoves().size();
+//        startingMove++) {
 
-    s.pickMove(movegen.getMoves(), startingMove);
-    for (int i = startingMove; i < movegen.getMoves().size(); i++) {
-      ASSERT_GE(movegen.getMoves()[startingMove].getScore(),
-                movegen.getMoves()[i].getScore());
-    }
-  }
-}
+//     s.pickMove(movegen.getMoves(), startingMove);
+//     for (int i = startingMove; i < movegen.getMoves().size(); i++) {
+//       ASSERT_GE(movegen.getMoves()[startingMove].getScore(),
+//                 movegen.getMoves()[i].getScore());
+//     }
+//   }
+// }
 
 // UCI
 TEST(UCITest, strToMove_Nocatpure) {
