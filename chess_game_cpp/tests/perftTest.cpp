@@ -66,7 +66,8 @@ MoveList perftDivide(Position position, int depth) {
   MoveGeneration movGen(position);
   movGen.generateAllMoves();
   Position tempPosition;
-  int i = 0;
+  int nodes = 0;
+  int totalNodes = 0;
   MoveList ml;
 
   for (const auto &move : movGen.getMoves()) {
@@ -74,45 +75,38 @@ MoveList perftDivide(Position position, int depth) {
     if (position.makeMove(move)) {
       ml.push_back(move);
       perftTest test(position);
-      if (i < 10) {
+      nodes = test.perft(depth - 1);
+      totalNodes += nodes;
 
-        std::cout << "│ " << i << "  │ " << chessSq[move.getFrom()]
-                  << chessSq[move.getTo()] << " │ " << test.perft(depth - 1)
-                  << " │ " << std::endl;
-      } else {
-
-        std::cout << "│ " << i << " │ " << chessSq[move.getFrom()]
-                  << chessSq[move.getTo()] << " │ " << test.perft(depth - 1)
-                  << " │ " << std::endl;
-      }
-      i++;
+      std::cout << "│ " << chessSq[move.getFrom()] << chessSq[move.getTo()]
+                << " │ " << nodes << std::endl;
     }
     position = tempPosition;
   }
+  std::cout << "  Total:" << totalNodes << std::endl;
   return ml;
 }
 void perftDivideInterface() {
   Position position;
   Position tempPosition;
   int depth;
-  char idx;
+  std::string moveStr;
   position.setBoardToInitialConfiguration();
+  UCI uci(position);
   std::cout << "enter the depth:" << std::endl;
   std::cin >> depth;
-  std::cout << "┌────┬──────┬──────────" << std::endl;
+  std::cout << "┌──────┬─────────" << std::endl;
 
   MoveList out = perftDivide(position, depth);
 
   std::cout << "enter index of the move:" << std::endl;
 
-  while (std::cin >> idx) {
-    if (depth == 1 || idx == 'q') {
+  while (std::cin >> moveStr) {
+    if (depth == 1 || moveStr == "quit") {
       break;
     }
     tempPosition = position;
-
-    position.makeMove(out[idx]);
-
+    position.makeMove(uci.getMove(moveStr));
     depth--;
 
     // position.printBoard();
@@ -138,7 +132,7 @@ int main() {
   // std::cout << test.perftPseudoLegal(depth) << std::endl;
   std::cout << "Number Of Legal Moves:" << std::endl;
   std::cout << test.perft(depth) << std::endl;
-  // perftDivideInterface();
+  perftDivideInterface();
   // UCI uci(position);
 
   // position.makeMove(uci.getMove("h2h4"));
