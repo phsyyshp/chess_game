@@ -22,6 +22,7 @@ public:
   std::array<std::array<uint64_t, 6>, 2> getPieces() const;
   std::array<piece, 64> getMailbox() const;
   color getTurn() const;
+  uint32_t getGameState() const;
   color getOppositeTurn() const;
   color getPieceColor(const uint64_t &sqMask) const;
   piece getPieceType(const uint64_t &sqMask) const;
@@ -44,11 +45,12 @@ public:
 private:
   void setWhitePiecesToInitialConfiguration();
   void setBlackPiecesToInitialConfiguration();
+  void setGameStateToInitialConfiguration();
   color turn;
   std::array<std::array<uint64_t, 6>, 2> pieces;
   std::array<piece, 64> mailbox;
-
   piece capturedInLastMove;
+  uint64_t gameState;
 
 public:
   canCastle canWhiteCastle;

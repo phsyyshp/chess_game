@@ -66,6 +66,8 @@ void Position::setBlackPiecesToInitialConfiguration() {
   mailbox[g7] = pawn;
   mailbox[h7] = pawn;
 }
+void Position::setGameStateToInitialConfiguration() { gameState = 0; }
+
 void Position::setBoardToInitialConfiguration() {
   for (int i = 0; i < 64; i++) {
     mailbox[i] = noPiece;
@@ -90,6 +92,7 @@ Position &Position::operator=(const Position &rhs) {
   turn = rhs.turn;
   pieces = rhs.pieces;
   mailbox = rhs.mailbox;
+  gameState = rhs.gameState;
   canWhiteCastle = rhs.canWhiteCastle;
   canBlackCastle = rhs.canBlackCastle;
   capturedInLastMove = rhs.capturedInLastMove;
