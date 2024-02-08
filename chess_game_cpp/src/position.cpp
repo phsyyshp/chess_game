@@ -232,13 +232,13 @@ void Position::makeEPCapture(const Move &move) {
   switch (turn) {
 
   case white:
-    uint64_t victimMask = 0b1ull << (fileEP + 8 * 4);
+    victimMask = 0b1ull << (fileEP + 8 * 4);
     pieces[black][pawn] ^= victimMask;
     mailbox[fileEP + 8 * 4] = noPiece;
     break;
 
   case black:
-    uint64_t victimMask = 0b1ull << (fileEP + 8 * 2);
+    victimMask = 0b1ull << (fileEP + 8 * 2);
     pieces[white][pawn] ^= victimMask;
     mailbox[fileEP + 8 * 2] = noPiece;
     break;
