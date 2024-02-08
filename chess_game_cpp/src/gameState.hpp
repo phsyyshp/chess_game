@@ -4,10 +4,10 @@ class GameState {
 public:
   GameState()
       : gameStateNum((white & 0x1) | ((0b1111u << 1) & 0xf) |
-                     ((0b0u << 5) & 0xf)){};
+                     ((0b0u << 5) & 0x7)){};
   GameState(color turn)
       : gameStateNum((turn & 0x1) | ((0b1111u << 1) & 0xf) |
-                     ((0b0u << 5) & 0xf)){};
+                     ((0b0u << 5) & 0x7)){};
 
   // canWhiteCastleQueenSide, 1 0 0 0
   // canWhiteCastleKingSide,  0 1 0 0
@@ -15,7 +15,7 @@ public:
   // canBlackCastleKingSide,  0 0 0 1
   GameState(color turn, const uint &castlingRigths, const uint &enPassant)
       : gameStateNum((turn & 0x1) | ((castlingRigths << 1) & 0xf) |
-                     ((enPassant << 5) & 0xf)) {}
+                     ((enPassant << 5) & 0x7)) {}
   // getters
   color getTurn() const;
   uint getCastlingRigths() const;
