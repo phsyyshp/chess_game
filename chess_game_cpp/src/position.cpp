@@ -110,6 +110,8 @@ color Position::getTurn() const { return gameState.getTurn(); }
 color Position::getOppositeTurn() const {
   return oppositeColor[gameState.getTurn()];
 }
+
+GameState Position::getGameState() const { return gameState; }
 uint64_t Position::getAllPieces(const color &color_) const {
   return pieces[color_][rook] | pieces[color_][knight] |
          pieces[color_][bishop] | pieces[color_][queen] | pieces[color_][king] |

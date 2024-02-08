@@ -23,7 +23,7 @@ public:
   std::array<std::array<uint64_t, 6>, 2> getPieces() const;
   std::array<piece, 64> getMailbox() const;
   color getTurn() const;
-  uint32_t getGameState() const;
+  GameState getGameState() const;
   color getOppositeTurn() const;
   color getPieceColor(const uint64_t &sqMask) const;
   piece getPieceType(const uint64_t &sqMask) const;
