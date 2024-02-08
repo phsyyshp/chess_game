@@ -1,7 +1,7 @@
 #include "position.hpp"
 // Constructors;
 Position::Position(std::array<std::array<uint64_t, 6>, 2> pieces_, color turn_)
-    : pieces(pieces_), turn(turn_) {
+    : pieces(pieces_), gameState(turn_) {
   for (int j = 0; j < 64; j++) {
     mailbox[j] = noPiece;
   }
@@ -66,7 +66,6 @@ void Position::setBlackPiecesToInitialConfiguration() {
   mailbox[g7] = pawn;
   mailbox[h7] = pawn;
 }
-void Position::setGameStateToInitialConfiguration() { gameState = 0; }
 
 void Position::setBoardToInitialConfiguration() {
   for (int i = 0; i < 64; i++) {
@@ -74,27 +73,13 @@ void Position::setBoardToInitialConfiguration() {
   }
   setWhitePiecesToInitialConfiguration();
   setBlackPiecesToInitialConfiguration();
-  turn = color::white;
-  canWhiteCastle.kingSide = true;
-  canWhiteCastle.queenSide = true;
-  canBlackCastle.kingSide = true;
-  canBlackCastle.queenSide = true;
 }
-void Position::changeTurn() {
-  if (turn == color::white) {
-    turn = color::black;
-  } else {
-    turn = color::white;
-  }
-}
+void Position::changeTurn() { gameState.changeTurn(); }
 // Operators;
 Position &Position::operator=(const Position &rhs) {
-  turn = rhs.turn;
   pieces = rhs.pieces;
   mailbox = rhs.mailbox;
   gameState = rhs.gameState;
-  canWhiteCastle = rhs.canWhiteCastle;
-  canBlackCastle = rhs.canBlackCastle;
   capturedInLastMove = rhs.capturedInLastMove;
   return *this;
 }
@@ -121,8 +106,10 @@ piece Position::getPieceType(const uint64_t &sqMask) const {
   }
   return noPiece;
 }
-color Position::getTurn() const { return turn; }
-color Position::getOppositeTurn() const { return oppositeColor[turn]; }
+color Position::getTurn() const { return gameState.getTurn(); }
+color Position::getOppositeTurn() const {
+  return oppositeColor[gameState.getTurn()];
+}
 uint64_t Position::getAllPieces(const color &color_) const {
   return pieces[color_][rook] | pieces[color_][knight] |
          pieces[color_][bishop] | pieces[color_][queen] | pieces[color_][king] |
@@ -132,7 +119,7 @@ piece Position::getCapturedInLastMove() const { return capturedInLastMove; }
 uint64_t Position::getAttacksToKing() const {
 
   uint64_t allPieces = getAllPieces(black) | getAllPieces(white);
-  color colorOfKing = turn;
+  color colorOfKing = gameState.getTurn();
   color oppositeColor = getOppositeTurn();
   square squareOfKing =
       static_cast<square>(__builtin_ctzll(pieces[colorOfKing][king]));
@@ -173,7 +160,7 @@ bool Position::makeMove(Move move) {
   uint64_t fromMask = (0b1ull << from);
 
   // moving
-  pieces[turn][movingPiece] &= ~fromMask;
+  pieces[gameState.getTurn()][movingPiece] &= ~fromMask;
   if (move.isCapture()) {
     piece capturedPieceType = mailbox[to];
     pieces[oppositePieceColor][capturedPieceType] &= (~toMask);
@@ -181,13 +168,14 @@ bool Position::makeMove(Move move) {
   } else {
     capturedInLastMove = noPiece;
   }
-  pieces[turn][movingPiece] |= toMask;
+  pieces[gameState.getTurn()][movingPiece] |= toMask;
   // Mailbox operations;
   mailbox[to] = mailbox[from];
   mailbox[from] = noPiece;
 
   // legality
   bool isLegal = !isInCheck();
+  // gameState
   changeTurn();
   return isLegal;
 }
