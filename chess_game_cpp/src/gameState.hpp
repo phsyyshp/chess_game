@@ -30,7 +30,7 @@ public:
   // setters
   void changeTurn();
   void setCastlingRigths();
-  void setEnPassant();
+  void setEnPassant(uint file);
 
 private:
   uint32_t gameStateNum;

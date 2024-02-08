@@ -148,7 +148,28 @@ bool Position::isEmpty(int square_) const {
 // returns true if pseudo legal input is also legal;
 // Use it for temprory changes.
 // It changes turns automatically for now.
-bool Position::makeMove(Move move) {
+bool Position::makeMove(const Move &move) {
+  uint flag = move.getFlags();
+  switch (flag) {
+  case MoveType::quietMoves:
+    makeQuietMove(move);
+    break;
+  case MoveType::captures:
+    capture(move);
+
+  default:
+    break;
+  }
+  // legality
+  bool isLegal = !isInCheck();
+  // gameState
+  changeTurn();
+  return isLegal;
+}
+
+// it does not change turn automatically;
+void Position::makeQuietMove(const Move &move) {
+
   // decoding move
   uint from = move.getFrom();
   uint to = move.getTo();
@@ -161,23 +182,54 @@ bool Position::makeMove(Move move) {
 
   // moving
   pieces[gameState.getTurn()][movingPiece] &= ~fromMask;
-  if (move.isCapture()) {
-    piece capturedPieceType = mailbox[to];
-    pieces[oppositePieceColor][capturedPieceType] &= (~toMask);
-    capturedInLastMove = capturedPieceType;
-  } else {
-    capturedInLastMove = noPiece;
-  }
+  capturedInLastMove = noPiece;
+
   pieces[gameState.getTurn()][movingPiece] |= toMask;
   // Mailbox operations;
   mailbox[to] = mailbox[from];
   mailbox[from] = noPiece;
+}
+void Position::capture(const Move &move) {
+  // decoding move
+  uint from = move.getFrom();
+  uint to = move.getTo();
+  int movingPiece = mailbox[from];
+  int oppositePieceColor = getOppositeTurn();
 
-  // legality
-  bool isLegal = !isInCheck();
-  // gameState
-  changeTurn();
-  return isLegal;
+  // bit masks
+  uint64_t toMask = (0b1ull << to);
+  uint64_t fromMask = (0b1ull << from);
+
+  // moving
+  pieces[gameState.getTurn()][movingPiece] &= ~fromMask;
+  piece capturedPieceType = mailbox[to];
+  pieces[oppositePieceColor][capturedPieceType] &= (~toMask);
+  capturedInLastMove = capturedPieceType;
+  pieces[gameState.getTurn()][movingPiece] |= toMask;
+  // Mailbox operations;
+  mailbox[to] = mailbox[from];
+  mailbox[from] = noPiece;
+}
+void Position::makeDoublePawnPush(const Move &move) {
+  uint from = move.getFrom();
+  uint to = move.getTo();
+  int movingPiece = mailbox[from];
+  int oppositePieceColor = getOppositeTurn();
+
+  // bit masks
+  uint64_t toMask = (0b1ull << to);
+  uint64_t fromMask = (0b1ull << from);
+
+  // moving
+  pieces[gameState.getTurn()][movingPiece] &= ~fromMask;
+  capturedInLastMove = noPiece;
+
+  pieces[gameState.getTurn()][movingPiece] |= toMask;
+  // Mailbox operations;
+  mailbox[to] = mailbox[from];
+  mailbox[from] = noPiece;
+  uint file = squareTofile[from];
+  gameState.setEnPassant(file);
 }
 // FIX IT: sth is wrong here fix me!
 // void Position::undoMove(Move move) {
