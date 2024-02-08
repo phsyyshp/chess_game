@@ -162,6 +162,8 @@ bool Position::makeMove(const Move &move) {
   case MoveType::doublePawnPush:
     makeDoublePawnPush(move);
 
+  case MoveType::ePCapture:
+    makeEPCapture(move);
   default:
     break;
   }
