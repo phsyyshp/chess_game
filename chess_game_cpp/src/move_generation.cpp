@@ -152,7 +152,7 @@ void MoveGeneration::genereateRightEPCaptures() {
 
   case color::black:
     fileEP = position.getGameState().getEnPassant();
-    victimMask = 0b1ull << (fileEP + 8 * 2);
+    victimMask = 0b1ull << (fileEP + 8 * 3);
 
     eligibleSquares = ((victimMask) >> 1) & (~H_FILE);
     AttackerPawnMask = eligibleSquares & position.getPieces()[black][pawn];
@@ -187,7 +187,7 @@ void MoveGeneration::genereateLeftEPCaptures() {
 
   case color::black:
     fileEP = position.getGameState().getEnPassant();
-    victimMask = 0b1ull << (fileEP + 8 * 2);
+    victimMask = 0b1ull << (fileEP + 8 * 3);
 
     eligibleSquares = ((victimMask) << 1) & (~A_FILE);
     AttackerPawnMask = eligibleSquares & position.getPieces()[black][pawn];

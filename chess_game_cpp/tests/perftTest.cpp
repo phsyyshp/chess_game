@@ -125,7 +125,7 @@ int main() {
   Position position;
   position.setBoardToInitialConfiguration();
   perftTest test(position);
-  int depth = 4;
+  int depth = 3;
 
   // std::cout << "Number Of Legal Moves(bulk):" << std::endl;
   // std::cout << test.perftBulk(depth) << std::endl;
