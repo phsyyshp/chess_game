@@ -156,6 +156,9 @@ bool Position::makeMove(const Move &move) {
     break;
   case MoveType::captures:
     capture(move);
+    break;
+  case MoveType::doublePawnPush:
+    makeDoublePawnPush(move);
 
   default:
     break;
@@ -188,6 +191,7 @@ void Position::makeQuietMove(const Move &move) {
   // Mailbox operations;
   mailbox[to] = mailbox[from];
   mailbox[from] = noPiece;
+  gameState.setEnPassant(0);
 }
 void Position::capture(const Move &move) {
   // decoding move
@@ -209,26 +213,11 @@ void Position::capture(const Move &move) {
   // Mailbox operations;
   mailbox[to] = mailbox[from];
   mailbox[from] = noPiece;
+  gameState.setEnPassant(0);
 }
 void Position::makeDoublePawnPush(const Move &move) {
-  uint from = move.getFrom();
-  uint to = move.getTo();
-  int movingPiece = mailbox[from];
-  int oppositePieceColor = getOppositeTurn();
-
-  // bit masks
-  uint64_t toMask = (0b1ull << to);
-  uint64_t fromMask = (0b1ull << from);
-
-  // moving
-  pieces[gameState.getTurn()][movingPiece] &= ~fromMask;
-  capturedInLastMove = noPiece;
-
-  pieces[gameState.getTurn()][movingPiece] |= toMask;
-  // Mailbox operations;
-  mailbox[to] = mailbox[from];
-  mailbox[from] = noPiece;
-  uint file = squareTofile[from];
+  makeQuietMove(move);
+  uint file = squareTofile[move.getFrom()];
   gameState.setEnPassant(file);
 }
 // FIX IT: sth is wrong here fix me!
