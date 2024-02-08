@@ -134,6 +134,7 @@ constexpr std::array<uint, 64> squareTofile = {
 constexpr uint QUIET_MOVE = 0;
 constexpr uint DOUBLE_PAWN_PUSH = 1;
 constexpr uint CAPTURE = 4;
+constexpr uint EP_CAPTURE = 5;
 
 // shifted flags;
 constexpr uint32_t CAPTURE_FLAG = 0b100u << 12;
