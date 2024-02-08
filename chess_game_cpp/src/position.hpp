@@ -38,15 +38,20 @@ public:
   // movers:
   // assuming the move is pseudolegal,
   // returns true if the is legal.
-  bool makeMove(Move move);
-  void undoMove(Move move);
+  bool makeMove(const Move &move);
+  void undoMove(const Move &move);
   // visualizers;
   void printBoard() const;
 
 private:
+  // functions
   void setWhitePiecesToInitialConfiguration();
   void setBlackPiecesToInitialConfiguration();
-  void setGameStateToInitialConfiguration();
+  void makeQuietMove(const Move &move);
+  void capture(const Move &move);
+  void makeDoublePawnPush(const Move &move);
+
+  // members
   std::array<std::array<uint64_t, 6>, 2> pieces;
   std::array<piece, 64> mailbox;
   piece capturedInLastMove;
