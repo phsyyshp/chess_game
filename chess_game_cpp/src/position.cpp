@@ -161,9 +161,11 @@ bool Position::makeMove(const Move &move) {
     break;
   case MoveType::doublePawnPush:
     makeDoublePawnPush(move);
-
+    break;
   case MoveType::ePCapture:
-    makeEPCapture(move);
+    // makeEPCapture(move);
+    break;
+
   default:
     break;
   }
@@ -238,9 +240,9 @@ void Position::makeEPCapture(const Move &move) {
     break;
 
   case black:
-    victimMask = 0b1ull << (fileEP + 8 * 2);
+    victimMask = 0b1ull << (fileEP + 8 * 3);
     pieces[white][pawn] ^= victimMask;
-    mailbox[fileEP + 8 * 2] = noPiece;
+    mailbox[fileEP + 8 * 3] = noPiece;
     break;
   default:
     break;

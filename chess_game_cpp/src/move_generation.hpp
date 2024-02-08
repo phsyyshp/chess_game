@@ -15,8 +15,8 @@ public:
   void generateDoublePawnPushes();
   void generateLeftPawnCaptures();
   void generateRightPawnCaptures();
-  void genereateLeftEPCaptures();
-  void genereateRightEPCaptures();
+  void generateLeftEPCaptures();
+  void generateRightEPCaptures();
 
   void generateKnightMoves();
   void generateBishopMoves();

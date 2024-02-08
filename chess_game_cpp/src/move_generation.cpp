@@ -131,7 +131,7 @@ void MoveGeneration::generateRightPawnCaptures() {
   }
 }
 
-void MoveGeneration::genereateRightEPCaptures() {
+void MoveGeneration::generateRightEPCaptures() {
   uint fileEP;
   uint64_t victimMask;
   uint64_t eligibleSquares;
@@ -166,7 +166,7 @@ void MoveGeneration::genereateRightEPCaptures() {
     break;
   }
 }
-void MoveGeneration::genereateLeftEPCaptures() {
+void MoveGeneration::generateLeftEPCaptures() {
 
   uint fileEP;
   uint64_t victimMask;
@@ -312,10 +312,10 @@ void MoveGeneration::generateAllMoves() {
   generateRookMoves();
   generateBishopMoves();
   generateQueenMoves();
-  if (position.getGameState().getEnPassant()) {
-    genereateLeftEPCaptures();
-    genereateRightEPCaptures();
-  }
+  // if (position.getGameState().getEnPassant()) {
+  generateLeftEPCaptures();
+  generateRightEPCaptures();
+  // }
 }
 // generate attacks;
 
