@@ -2,7 +2,9 @@
 #include "constants.hpp"
 class GameState {
 public:
-  GameState() = default;
+  GameState()
+      : gameStateNum((white & 0x1) | ((0b1111u << 1) & 0xf) |
+                     ((0b0u << 5) & 0xf)){};
   // canWhiteCastleQueenSide, 1 0 0 0
   // canWhiteCastleKingSide,  0 1 0 0
   // canBlackCastleQueenSide, 0 0 1 0

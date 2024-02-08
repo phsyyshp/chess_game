@@ -47,7 +47,6 @@ private:
   void setWhitePiecesToInitialConfiguration();
   void setBlackPiecesToInitialConfiguration();
   void setGameStateToInitialConfiguration();
-  color turn;
   std::array<std::array<uint64_t, 6>, 2> pieces;
   std::array<piece, 64> mailbox;
   piece capturedInLastMove;
