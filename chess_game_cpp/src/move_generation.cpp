@@ -135,8 +135,8 @@ void MoveGeneration::genereateRightEPCaptures() {
 
   switch (position.getTurn()) {
   case color::white:
-    uint32_t fileEP = position.getGameState().getEnPassant();
-    uint32_t victimMask = 0b1ull << (fileEP + 8 * 4);
+    uint fileEP = position.getGameState().getEnPassant();
+    uint64_t victimMask = 0b1ull << (fileEP + 8 * 4);
     uint64_t eligibleSquares = ((victimMask) >> 1) & (~H_FILE);
     uint64_t AttackerPawnMask =
         eligibleSquares & position.getPieces()[white][pawn];
@@ -149,7 +149,7 @@ void MoveGeneration::genereateRightEPCaptures() {
 
   case color::black:
     uint fileEP = position.getGameState().getEnPassant();
-    uint32_t victimMask = 0b1ull << (fileEP + 8 * 2);
+    uint64_t victimMask = 0b1ull << (fileEP + 8 * 2);
 
     uint64_t eligibleSquares = ((victimMask) >> 1) & (~H_FILE);
     uint64_t AttackerPawnMask =
@@ -168,8 +168,8 @@ void MoveGeneration::genereateLeftEPCaptures() {
 
   switch (position.getTurn()) {
   case color::white:
-    uint32_t fileEP = position.getGameState().getEnPassant();
-    uint32_t victimMask = 0b1ull << (fileEP + 8 * 4);
+    uint fileEP = position.getGameState().getEnPassant();
+    uint64_t victimMask = 0b1ull << (fileEP + 8 * 4);
     uint64_t eligibleSquares = ((victimMask) << 1) & (~A_FILE);
     uint64_t AttackerPawnMask =
         eligibleSquares & position.getPieces()[white][pawn];
@@ -182,7 +182,7 @@ void MoveGeneration::genereateLeftEPCaptures() {
 
   case color::black:
     uint fileEP = position.getGameState().getEnPassant();
-    uint32_t victimMask = 0b1ull << (fileEP + 8 * 2);
+    uint64_t victimMask = 0b1ull << (fileEP + 8 * 2);
 
     uint64_t eligibleSquares = ((victimMask) << 1) & (~A_FILE);
     uint64_t AttackerPawnMask =

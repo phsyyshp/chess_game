@@ -50,6 +50,7 @@ private:
   void makeQuietMove(const Move &move);
   void capture(const Move &move);
   void makeDoublePawnPush(const Move &move);
+  void makeEPCapture(const Move &move);
 
   // members
   std::array<std::array<uint64_t, 6>, 2> pieces;
