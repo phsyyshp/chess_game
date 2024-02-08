@@ -1,12 +1,14 @@
 #include "gameState.hpp"
 
 // getters
-uint GameState::getTurn() const { return gameStateNum & 0x1; }
+color GameState::getTurn() const {
+  return static_cast<color>(gameStateNum & 0x1);
+}
 uint GameState::getCastlingRigths() const { return (gameStateNum >> 1) & 0xf; }
-uint GameState::getEnPassant() const { return (gameStateNum >> 5) & 0xf; }
+uint GameState::getEnPassant() const { return (gameStateNum >> 5) & 0x7; }
 uint32_t GameState::getGameStateNum() const { return gameStateNum; }
 // setters
 void GameState::changeTurn() { gameStateNum ^= 0x1; }
 
 void GameState::setCastlingRigths() {}
-void GameState::setEnPassant() {}
+void GameState::setEnPassant() { gameStateNum |= 0b1u; }
