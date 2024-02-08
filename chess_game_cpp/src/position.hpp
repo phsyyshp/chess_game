@@ -1,6 +1,7 @@
 #ifndef POSITION_HPP
 #define POSITION_HPP
 #include "Move.hpp"
+#include "gameState.hpp"
 #include "loader.hpp"
 #include "tables.hpp"
 #include "utilities.hpp"
@@ -50,10 +51,6 @@ private:
   std::array<std::array<uint64_t, 6>, 2> pieces;
   std::array<piece, 64> mailbox;
   piece capturedInLastMove;
-  uint64_t gameState;
-
-public:
-  canCastle canWhiteCastle;
-  canCastle canBlackCastle;
+  GameState gameState;
 };
 #endif
