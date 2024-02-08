@@ -5,6 +5,10 @@ public:
   GameState()
       : gameStateNum((white & 0x1) | ((0b1111u << 1) & 0xf) |
                      ((0b0u << 5) & 0xf)){};
+  GameState(color turn)
+      : gameStateNum((turn & 0x1) | ((0b1111u << 1) & 0xf) |
+                     ((0b0u << 5) & 0xf)){};
+
   // canWhiteCastleQueenSide, 1 0 0 0
   // canWhiteCastleKingSide,  0 1 0 0
   // canBlackCastleQueenSide, 0 0 1 0
@@ -13,7 +17,7 @@ public:
       : gameStateNum((turn & 0x1) | ((castlingRigths << 1) & 0xf) |
                      ((enPassant << 5) & 0xf)) {}
   // getters
-  uint getTurn() const;
+  color getTurn() const;
   uint getCastlingRigths() const;
   uint getEnPassant() const;
   uint32_t getGameStateNum() const;
