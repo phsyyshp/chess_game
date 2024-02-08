@@ -11,4 +11,4 @@ uint32_t GameState::getGameStateNum() const { return gameStateNum; }
 void GameState::changeTurn() { gameStateNum ^= 0x1; }
 
 void GameState::setCastlingRigths() {}
-void GameState::setEnPassant() {}
+void GameState::setEnPassant() { gameStateNum |= 0b1u; }
