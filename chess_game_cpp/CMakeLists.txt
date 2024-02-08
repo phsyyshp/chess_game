@@ -26,6 +26,7 @@ set(SOURCES
     src/search.cpp
     src/movelist.cpp
     src/UCI.cpp
+    src/gameState.cpp
     # src/moveValidator.cpp
     tests/perftTest.cpp
     # tests/gameLoopTest.cpp
