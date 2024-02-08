@@ -69,7 +69,7 @@ MoveList perftDivide(Position position, int depth) {
   int nodes = 0;
   int totalNodes = 0;
   MoveList ml;
-
+  std::vector<std::string> printVec;
   for (const auto &move : movGen.getMoves()) {
     tempPosition = position;
     if (position.makeMove(move)) {
@@ -77,11 +77,17 @@ MoveList perftDivide(Position position, int depth) {
       perftTest test(position);
       nodes = test.perft(depth - 1);
       totalNodes += nodes;
-
-      std::cout << "│ " << chessSq[move.getFrom()] << chessSq[move.getTo()]
-                << " │ " << nodes << std::endl;
+      std::string perftResult = "│ " + chessSq[move.getFrom()] +
+                                chessSq[move.getTo()] + " │ " +
+                                std::to_string(nodes);
+      printVec.push_back(perftResult);
     }
     position = tempPosition;
+  }
+
+  std::sort(printVec.begin(), printVec.end());
+  for (auto line : printVec) {
+    std::cout << line << std::endl;
   }
   std::cout << "  Total:" << totalNodes << std::endl;
   return ml;
@@ -105,7 +111,6 @@ void perftDivideInterface() {
     if (depth == 1 || moveStr == "quit") {
       break;
     }
-    tempPosition = position;
     position.makeMove(uci.getMove(moveStr));
     depth--;
 
@@ -117,7 +122,6 @@ void perftDivideInterface() {
 
     std::cout << "enter index of the move for next depth, q to quit:"
               << std::endl;
-    position = tempPosition;
   }
 }
 
@@ -125,7 +129,7 @@ int main() {
   Position position;
   position.setBoardToInitialConfiguration();
   perftTest test(position);
-  int depth = 3;
+  int depth = 5;
 
   // std::cout << "Number Of Legal Moves(bulk):" << std::endl;
   // std::cout << test.perftBulk(depth) << std::endl;
@@ -135,6 +139,11 @@ int main() {
   perftDivideInterface();
   // UCI uci(position);
 
-  // position.makeMove(uci.getMove("h2h4"));
-  // perftDivide(position, depth - 1);
+  // position.makeMove(uci.getMove("a2a4"));
+  // position.makeMove(uci.getMove("b7b5"));
+
+  // position.makeMove(uci.getMove("a4b5"));
+  // position.makeMove(uci.getMove("a7a5"));
+
+  // perftDivide(position, depth);
 }
