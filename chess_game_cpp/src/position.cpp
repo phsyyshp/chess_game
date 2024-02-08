@@ -222,6 +222,30 @@ void Position::makeDoublePawnPush(const Move &move) {
   uint file = squareTofile[move.getFrom()];
   gameState.setEnPassant(file);
 }
+void Position::makeEPCapture(const Move &move) {
+  color turn = gameState.getTurn();
+  uint fileEP = getGameState().getEnPassant();
+
+  uint64_t victimMask;
+  switch (turn) {
+
+  case white:
+    uint64_t victimMask = 0b1ull << (fileEP + 8 * 4);
+    pieces[black][pawn] ^= victimMask;
+    mailbox[fileEP + 8 * 4] = noPiece;
+    break;
+
+  case black:
+    uint64_t victimMask = 0b1ull << (fileEP + 8 * 2);
+    pieces[white][pawn] ^= victimMask;
+    mailbox[fileEP + 8 * 2] = noPiece;
+    break;
+  default:
+    break;
+  }
+  makeQuietMove(move);
+}
+
 // FIX IT: sth is wrong here fix me!
 // void Position::undoMove(Move move) {
 //   int from = move.getFrom();
