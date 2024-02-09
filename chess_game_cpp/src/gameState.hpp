@@ -27,7 +27,7 @@ public:
   uint32_t getGameStateNum() const;
   // setters
   void changeTurn();
-  void setCastlingRigths();
+  void setCastlingRigths(uint castlingRigths);
   void setEnPassant(uint file);
 
 private:

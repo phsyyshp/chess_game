@@ -54,6 +54,10 @@ private:
   void makeDoublePawnPush(const Move &move);
   void makeEPCapture(const Move &move);
 
+  void makeQueenCastle(const Move &move);
+  void makeKingCastle(const Move &move);
+
+  void updateCastlingRights(int from, int movingPiece);
   // members
   std::array<std::array<uint64_t, 6>, 2> pieces;
   std::array<piece, 64> mailbox;

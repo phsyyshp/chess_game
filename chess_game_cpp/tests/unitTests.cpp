@@ -150,6 +150,31 @@ TEST(Position, constructor_FEN) {
   ASSERT_EQ(white, turn);
   ASSERT_EQ(squareTofile[h6], EP);
 }
+TEST(Position, castling_rigths_update_rook_move) {
+
+  std::string FENstr =
+      "rn1q1rk1/4bpp1/pp1pbn2/4p1Pp/4P3/1NN1BP2/PPPQ3P/R3KB1R w KQ h6 0 12";
+  Position position(FENstr);
+  UCI uci(position);
+  position.makeMove(uci.getMove("a1b1"));
+  GameState gs = position.getGameState();
+
+  uint castling = gs.getCastlingRigths();
+  ASSERT_EQ(0b0100u, castling);
+}
+TEST(Position, castling_rigths_update_king_move) {
+
+  std::string FENstr =
+      "rn1q1rk1/4bpp1/pp1pbn2/4p1Pp/4P3/1NN1BP2/PPPQ3P/R3KB1R w KQ h6 0 12";
+  Position position(FENstr);
+  UCI uci(position);
+  position.makeMove(uci.getMove("e1d1"));
+  GameState gs = position.getGameState();
+
+  uint castling = gs.getCastlingRigths();
+  ASSERT_EQ(0b0000u, castling);
+}
+
 TEST(Utillities, FENtoRanks) {
 
   std::string FENstr =
