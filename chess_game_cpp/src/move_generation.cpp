@@ -313,8 +313,8 @@ void MoveGeneration::generateAllMoves() {
   generateBishopMoves();
   generateQueenMoves();
   // if (position.getGameState().getEnPassant()) {
-  generateLeftEPCaptures();
-  generateRightEPCaptures();
+  // generateLeftEPCaptures();
+  // generateRightEPCaptures();
   // }
 }
 // generate attacks;
