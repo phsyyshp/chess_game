@@ -197,7 +197,7 @@ void Position::makeQuietMove(const Move &move) {
   // Mailbox operations;
   mailbox[to] = mailbox[from];
   mailbox[from] = noPiece;
-  gameState.setEnPassant(0);
+  gameState.setEnPassant(NO_EP);
 }
 void Position::capture(const Move &move) {
   // decoding move
@@ -219,7 +219,7 @@ void Position::capture(const Move &move) {
   // Mailbox operations;
   mailbox[to] = mailbox[from];
   mailbox[from] = noPiece;
-  gameState.setEnPassant(0);
+  gameState.setEnPassant(NO_EP);
 }
 void Position::makeDoublePawnPush(const Move &move) {
   makeQuietMove(move);

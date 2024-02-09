@@ -17,16 +17,10 @@ TEST(MoveListTest, swapNonScoredNonCapture) {
   moves.swap(3, 4);
   ASSERT_EQ(move_3.getTo(), moves[4].getTo());
   ASSERT_EQ(move_3.getFrom(), moves[4].getFrom());
-  ASSERT_EQ(move_3.getPiece(), moves[4].getPiece());
-  ASSERT_EQ(move_3.getColor(), moves[4].getColor());
-  ASSERT_EQ(move_3.checkIsCapture(), moves[4].checkIsCapture());
   ASSERT_EQ(move_3.getScore(), moves[4].getScore());
 
   ASSERT_EQ(move_4.getTo(), moves[3].getTo());
   ASSERT_EQ(move_4.getFrom(), moves[3].getFrom());
-  ASSERT_EQ(move_4.getPiece(), moves[3].getPiece());
-  ASSERT_EQ(move_4.getColor(), moves[3].getColor());
-  ASSERT_EQ(move_4.checkIsCapture(), moves[3].checkIsCapture());
   ASSERT_EQ(move_4.getScore(), moves[3].getScore());
 };
 TEST(MoveListTest, swapNonScoredCapture) {
@@ -47,16 +41,10 @@ TEST(MoveListTest, swapNonScoredCapture) {
 
       ASSERT_EQ(move_i.getTo(), moves[j].getTo());
       ASSERT_EQ(move_i.getFrom(), moves[j].getFrom());
-      ASSERT_EQ(move_i.getPiece(), moves[j].getPiece());
-      ASSERT_EQ(move_i.getColor(), moves[j].getColor());
-      ASSERT_EQ(move_i.checkIsCapture(), moves[j].checkIsCapture());
       ASSERT_EQ(move_i.getScore(), moves[j].getScore());
 
       ASSERT_EQ(move_j.getTo(), moves[i].getTo());
       ASSERT_EQ(move_j.getFrom(), moves[i].getFrom());
-      ASSERT_EQ(move_j.getPiece(), moves[i].getPiece());
-      ASSERT_EQ(move_j.getColor(), moves[i].getColor());
-      ASSERT_EQ(move_j.checkIsCapture(), moves[i].checkIsCapture());
       ASSERT_EQ(move_j.getScore(), moves[i].getScore());
     }
   }
@@ -82,16 +70,10 @@ TEST(MoveListTest, swapScoredCaptured) {
 
       ASSERT_EQ(move_i.getTo(), moves[j].getTo());
       ASSERT_EQ(move_i.getFrom(), moves[j].getFrom());
-      ASSERT_EQ(move_i.getPiece(), moves[j].getPiece());
-      ASSERT_EQ(move_i.getColor(), moves[j].getColor());
-      ASSERT_EQ(move_i.checkIsCapture(), moves[j].checkIsCapture());
       ASSERT_EQ(move_i.getScore(), moves[j].getScore());
 
       ASSERT_EQ(move_j.getTo(), moves[i].getTo());
       ASSERT_EQ(move_j.getFrom(), moves[i].getFrom());
-      ASSERT_EQ(move_j.getPiece(), moves[i].getPiece());
-      ASSERT_EQ(move_j.getColor(), moves[i].getColor());
-      ASSERT_EQ(move_j.checkIsCapture(), moves[i].checkIsCapture());
       ASSERT_EQ(move_j.getScore(), moves[i].getScore());
     }
   }
@@ -232,7 +214,7 @@ TEST(UCITest, strToMove_Nocatpure) {
   UCI uci(position);
   std::string moveStr = "d2d4";
   Move UCImove = uci.getMove(moveStr);
-  Move handMade(d2, d4, pawn, white, false);
+  Move handMade(d2, d4, doublePawnPush);
   ASSERT_EQ(handMade.getMoveInt(), UCImove.getMoveInt());
 }
 TEST(UCITest, strToMove_capture) {
@@ -242,7 +224,7 @@ TEST(UCITest, strToMove_capture) {
   UCI uci(position);
   std::string moveStr = "d2d6";
   Move UCImove = uci.getMove(moveStr);
-  Move handMade(d2, d6, queen, white, true);
+  Move handMade(d2, d6, captures);
   ASSERT_EQ(handMade.getMoveInt(), UCImove.getMoveInt());
 }
 
