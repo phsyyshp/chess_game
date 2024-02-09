@@ -71,6 +71,7 @@ enum square {
   g8,
   h8
 };
+const std::array<std::string, 2> colorLetters = {"w", "b"};
 const std::array<std::string, 64> chessSq = {
     "a1", "b1", "c1", "d1", "e1", "f1", "g1", "h1", "a2", "b2", "c2",
     "d2", "e2", "f2", "g2", "h2", "a3", "b3", "c3", "d3", "e3", "f3",
@@ -109,6 +110,8 @@ constexpr std::array<uint, 64> squareTofile = {
     0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3, 4, 5,
     6, 7, 0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3,
     4, 5, 6, 7, 0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3, 4, 5, 6, 7};
+const std::array<std::string, 5> charToCatslingEncoding = {"-", "Q", "K", "q",
+                                                           "k"};
 // enPassant;
 constexpr uint NO_EP = 8;
 // Move Flags;

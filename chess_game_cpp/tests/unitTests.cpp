@@ -137,6 +137,23 @@ TEST(Position, gameState_normalMove_after_pawnPush_Test) {
 
   ASSERT_EQ(8, position.getGameState().getEnPassant());
 }
+TEST(Utillities, FENtoRanks) {
+
+  std::string FENstr =
+      "r2q1rk1/1p1nbppp/p2pbn2/4p3/4P3/1NN1BP2/PPPQ2PP/2KR1B1R";
+  std::array<std::string, 8> ranksArr = FENtoRanks(FENstr);
+  ASSERT_EQ("2KR1B1R", ranksArr[7]);
+}
+TEST(Utillities, FENtoFields) {
+
+  std::string FENstr =
+      "rnbqkbnr/p2p1ppp/1p6/2pPp3/4P3/8/PPP2PPP/RNBQKBNR w KQkq c6 0 4";
+  std::vector<std::string> fieldVec = FENtoFields(FENstr);
+  ASSERT_EQ("rnbqkbnr/p2p1ppp/1p6/2pPp3/4P3/8/PPP2PPP/RNBQKBNR", fieldVec[0]);
+  ASSERT_EQ("4", fieldVec[5]);
+  ASSERT_EQ("0", fieldVec[4]);
+  ASSERT_EQ("c6", fieldVec[3]);
+}
 
 // Search tests
 // Ply
