@@ -150,15 +150,17 @@ std::vector<std::string> FENtoFields(const std::string &FENstring) {
 
 ;
 uint castlingStrToInt(const std::string &castlingStr) {
-  if (castlingStr == "-") {
-    return 0;
-  }
   uint out = 0;
-  for (const char &c : castlingStr) {
-    out |= findIndex(charToCatslingEncoding, c)
+  if (castlingStr[0] == '-') {
+    return out;
   }
+  for (const char &c : castlingStr) {
+    std::string cStr(1, c);
+    out |= 0b1 << (findIndex(charToCatslingEncoding, cStr) - 1);
+  }
+  return out;
 }
-uint32_t FENtoGameStateInt(const std::string &FENstring) {
+GameState FENtoGameStateInt(const std::string &FENstring) {
 
   std::vector<std::string> fieldVec = FENtoFields(FENstring);
   uint fullMoveNumber = stoull(fieldVec[5]);
@@ -167,13 +169,15 @@ uint32_t FENtoGameStateInt(const std::string &FENstring) {
   std::string castlingStr = fieldVec[2];
   std::string colorChar = fieldVec[1];
   int enPassantInt;
-  int color = findIndex(colorLetters, colorChar);
-  uint castlingRigths;
+  uint turn = findIndex(colorLetters, colorChar);
+  uint castlingRigths = castlingStrToInt(castlingStr);
   if (enPassantStr == "-") {
     enPassantInt = 8;
   } else {
     enPassantInt = squareTofile[findIndex(chessSq, enPassantStr)];
   }
+  GameState gameState(static_cast<color>(turn), castlingRigths, enPassantInt);
+  return gameState;
 }
 uint64_t pseudoRandomNumberGenerator() {
   std::mt19937_64 rng(std::random_device{}());

@@ -1,5 +1,7 @@
 #pragma once
 #include "constants.hpp"
+#include "gameState.hpp"
+#include <algorithm>
 #include <array>
 #include <random>
 std::string colorizeString(std::string, std::string, std::string);
@@ -14,6 +16,7 @@ int chartoColor(char c);
 std::array<std::array<uint64_t, 6>, 2> FENtoPieces(std::string FENstring);
 std::vector<std::string> FENtoFields(const std::string &FENstring);
 
+GameState FENtoGameStateInt(const std::string &FENstring);
 uint64_t pseudoRandomNumberGenerator();
 std::array<uint64_t, 781> generateZobristTable();
 template <typename T, size_t N>

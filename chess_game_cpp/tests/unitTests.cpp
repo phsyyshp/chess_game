@@ -137,6 +137,19 @@ TEST(Position, gameState_normalMove_after_pawnPush_Test) {
 
   ASSERT_EQ(8, position.getGameState().getEnPassant());
 }
+TEST(Position, constructor_FEN) {
+
+  std::string FENstr =
+      "rn1q1rk1/4bpp1/pp1pbn2/4p1Pp/4P3/1NN1BP2/PPPQ3P/R3KB1R w KQ h6 0 12";
+  Position position(FENstr);
+  GameState gs = position.getGameState();
+  uint castling = gs.getCastlingRigths();
+  uint turn = gs.getTurn();
+  uint EP = gs.getEnPassant();
+  ASSERT_EQ(0b1100, castling);
+  ASSERT_EQ(white, turn);
+  ASSERT_EQ(squareTofile[h6], EP);
+}
 TEST(Utillities, FENtoRanks) {
 
   std::string FENstr =
