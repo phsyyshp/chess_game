@@ -116,6 +116,27 @@ TEST(Position, makeMove_legality_Test) {
     ASSERT_EQ(true, isLegal);
   }
 }
+TEST(Position, gameState_initial_config_Test) {
+  Position position;
+  position.setBoardToInitialConfiguration();
+  ASSERT_EQ(8, position.getGameState().getEnPassant());
+}
+TEST(Position, gameState_pawnPush_Test) {
+  Position position;
+  position.setBoardToInitialConfiguration();
+  UCI uci(position);
+  position.makeMove(uci.getMove("d2d4"));
+  ASSERT_EQ(3, position.getGameState().getEnPassant());
+}
+TEST(Position, gameState_normalMove_after_pawnPush_Test) {
+  Position position;
+  position.setBoardToInitialConfiguration();
+  UCI uci(position);
+  position.makeMove(uci.getMove("d2d4"));
+  position.makeMove(uci.getMove("d7d6"));
+
+  ASSERT_EQ(8, position.getGameState().getEnPassant());
+}
 
 // Search tests
 // Ply

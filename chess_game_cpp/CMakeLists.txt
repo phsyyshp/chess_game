@@ -28,9 +28,9 @@ set(SOURCES
     src/UCI.cpp
     src/gameState.cpp
     # src/moveValidator.cpp
-    # tests/perftTest.cpp
+    tests/perftTest.cpp
     # tests/gameLoopTest.cpp
-    tests/unitTests.cpp
+    # tests/unitTests.cpp
      
  
 )
@@ -39,7 +39,7 @@ set(SOURCES
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/bin)
 
 # Create the main executable
-# add_executable(perftTest ${SOURCES})
+add_executable(perftTest ${SOURCES})
 # add_executable(gameLoopTest ${SOURCES})
 add_executable(unitTests ${SOURCES})
  
@@ -49,7 +49,7 @@ find_package(Threads REQUIRED)
 include_directories(${GTEST_INCLUDE_DIRS})
  
 # Link runTests with what we want to test and the GTest and pthread library
-target_link_libraries(unitTests ${GTEST_LIBRARIES} pthread)
+# target_link_libraries(unitTests ${GTEST_LIBRARIES} pthread)
  
  
 
