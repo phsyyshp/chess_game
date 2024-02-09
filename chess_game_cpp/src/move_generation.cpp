@@ -130,6 +130,78 @@ void MoveGeneration::generateRightPawnCaptures() {
     break;
   }
 }
+
+void MoveGeneration::generateRightEPCaptures() {
+  uint fileEP;
+  uint64_t victimMask;
+  uint64_t eligibleSquares;
+  uint64_t AttackerPawnMask;
+
+  switch (position.getTurn()) {
+  case color::white:
+    fileEP = position.getGameState().getEnPassant();
+    victimMask = 0b1ull << (fileEP + 8 * 4);
+    eligibleSquares = ((victimMask) >> 1) & (~H_FILE);
+    AttackerPawnMask = eligibleSquares & position.getPieces()[white][pawn];
+    if (AttackerPawnMask) {
+      moveList.push_back(Move{__builtin_ctzll(AttackerPawnMask),
+                              __builtin_ctzll(AttackerPawnMask << 9),
+                              EP_CAPTURE});
+    }
+    break;
+
+  case color::black:
+    fileEP = position.getGameState().getEnPassant();
+    victimMask = 0b1ull << (fileEP + 8 * 3);
+
+    eligibleSquares = ((victimMask) >> 1) & (~H_FILE);
+    AttackerPawnMask = eligibleSquares & position.getPieces()[black][pawn];
+    if (AttackerPawnMask) {
+      moveList.push_back(Move{__builtin_ctzll(AttackerPawnMask),
+                              __builtin_ctzll(AttackerPawnMask >> 7),
+                              EP_CAPTURE});
+    }
+    break;
+  default:
+    break;
+  }
+}
+void MoveGeneration::generateLeftEPCaptures() {
+
+  uint fileEP;
+  uint64_t victimMask;
+  uint64_t eligibleSquares;
+  uint64_t AttackerPawnMask;
+  switch (position.getTurn()) {
+  case color::white:
+    fileEP = position.getGameState().getEnPassant();
+    victimMask = 0b1ull << (fileEP + 8 * 4);
+    eligibleSquares = ((victimMask) << 1) & (~A_FILE);
+    AttackerPawnMask = eligibleSquares & position.getPieces()[white][pawn];
+    if (AttackerPawnMask) {
+      moveList.push_back(Move{__builtin_ctzll(AttackerPawnMask),
+                              __builtin_ctzll(AttackerPawnMask << 7),
+                              EP_CAPTURE});
+    }
+    break;
+
+  case color::black:
+    fileEP = position.getGameState().getEnPassant();
+    victimMask = 0b1ull << (fileEP + 8 * 3);
+
+    eligibleSquares = ((victimMask) << 1) & (~A_FILE);
+    AttackerPawnMask = eligibleSquares & position.getPieces()[black][pawn];
+    if (AttackerPawnMask) {
+      moveList.push_back(Move{__builtin_ctzll(AttackerPawnMask),
+                              __builtin_ctzll(AttackerPawnMask >> 9),
+                              EP_CAPTURE});
+    }
+    break;
+  default:
+    break;
+  }
+}
+
 void MoveGeneration::generateKnightMoves() {
 
   uint64_t eligibleSquares = ~position.getAllPieces(position.getTurn());
@@ -240,6 +312,10 @@ void MoveGeneration::generateAllMoves() {
   generateRookMoves();
   generateBishopMoves();
   generateQueenMoves();
+  // if (position.getGameState().getEnPassant()) {
+  // generateLeftEPCaptures();
+  // generateRightEPCaptures();
+  // }
 }
 // generate attacks;
 

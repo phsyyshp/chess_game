@@ -23,7 +23,7 @@ public:
   std::array<std::array<uint64_t, 6>, 2> getPieces() const;
   std::array<piece, 64> getMailbox() const;
   color getTurn() const;
-  uint32_t getGameState() const;
+  GameState getGameState() const;
   color getOppositeTurn() const;
   color getPieceColor(const uint64_t &sqMask) const;
   piece getPieceType(const uint64_t &sqMask) const;
@@ -38,15 +38,21 @@ public:
   // movers:
   // assuming the move is pseudolegal,
   // returns true if the is legal.
-  bool makeMove(Move move);
-  void undoMove(Move move);
+  bool makeMove(const Move &move);
+  void undoMove(const Move &move);
   // visualizers;
   void printBoard() const;
 
 private:
+  // functions
   void setWhitePiecesToInitialConfiguration();
   void setBlackPiecesToInitialConfiguration();
-  void setGameStateToInitialConfiguration();
+  void makeQuietMove(const Move &move);
+  void capture(const Move &move);
+  void makeDoublePawnPush(const Move &move);
+  void makeEPCapture(const Move &move);
+
+  // members
   std::array<std::array<uint64_t, 6>, 2> pieces;
   std::array<piece, 64> mailbox;
   piece capturedInLastMove;

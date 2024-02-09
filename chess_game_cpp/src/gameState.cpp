@@ -11,4 +11,6 @@ uint32_t GameState::getGameStateNum() const { return gameStateNum; }
 void GameState::changeTurn() { gameStateNum ^= 0x1; }
 
 void GameState::setCastlingRigths() {}
-void GameState::setEnPassant() { gameStateNum |= 0b1u; }
+void GameState::setEnPassant(uint file) {
+  gameStateNum = (gameStateNum & ~((0x7) << 5)) | (file << 5);
+}
