@@ -10,10 +10,10 @@ public:
   // +-----------------------+---------------------+
   // |       Permission      |      Castling       |
   // +-----------------------+---------------------+
-  // | canWhiteCastleQueenSide | 1 0 0 0 |
-  // | canWhiteCastleKingSide  | 0 1 0 0 |
-  // | canBlackCastleQueenSide | 0 0 1 0 |
-  // | canBlackCastleKingSide  | 0 0 0 1 |
+  // | canWhiteCastleQueenSide | 1 0 0 0 | 8
+  // | canWhiteCastleKingSide  | 0 1 0 0 | 4
+  // | canBlackCastleQueenSide | 0 0 1 0 | 2
+  // | canBlackCastleKingSide  | 0 0 0 1 | 1
   // +-----------------------+---------------------+
   // QKqk
 

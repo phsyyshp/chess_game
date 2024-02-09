@@ -110,8 +110,8 @@ constexpr std::array<uint, 64> squareTofile = {
     0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3, 4, 5,
     6, 7, 0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3,
     4, 5, 6, 7, 0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3, 4, 5, 6, 7};
-const std::array<std::string, 5> charToCatslingEncoding = {"-", "Q", "K", "q",
-                                                           "k"};
+const std::array<std::string, 5> charToCatslingEncoding = {"-", "k", "q", "K",
+                                                           "Q"};
 // enPassant;
 constexpr uint NO_EP = 8;
 // Move Flags;
