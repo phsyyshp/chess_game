@@ -78,6 +78,22 @@ const std::array<std::string, 64> chessSq = {
     "b5", "c5", "d5", "e5", "f5", "g5", "h5", "a6", "b6", "c6", "d6",
     "e6", "f6", "g6", "h6", "a7", "b7", "c7", "d7", "e7", "f7", "g7",
     "h7", "a8", "b8", "c8", "d8", "e8", "f8", "g8", "h8"};
+enum MoveType {
+  quietMoves,
+  doublePawnPush,
+  kingCastle,
+  queenCastle,
+  captures,
+  ePCapture, // En Passant capture
+  knightPromotion,
+  bishopPromotion,
+  rookPromotion,
+  queenPromotion,
+  knightPromoCapture, // Knight promotion with capture
+  bishopPromoCapture, // Bishop promotion with capture
+  rookPromoCapture,   // Rook promotion with capture
+  queenPromoCapture   // Queen promotion with capture
+};
 struct magicTbls {
   uint64_t mask;
   uint64_t magicNum;
@@ -118,6 +134,7 @@ constexpr std::array<uint, 64> squareTofile = {
 constexpr uint QUIET_MOVE = 0;
 constexpr uint DOUBLE_PAWN_PUSH = 1;
 constexpr uint CAPTURE = 4;
+constexpr uint EP_CAPTURE = 5;
 
 // shifted flags;
 constexpr uint32_t CAPTURE_FLAG = 0b100u << 12;
