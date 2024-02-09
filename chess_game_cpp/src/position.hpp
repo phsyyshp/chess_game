@@ -13,7 +13,9 @@ public:
   };
   // constructors:
   Position() = default;
-  Position(std::array<std::array<uint64_t, 6>, 2> pieces_, color turn_);
+  Position(const std::array<std::array<uint64_t, 6>, 2> &pieces_, color turn_);
+  Position(const std::string &FENstr);
+
   // operators:
   Position &operator=(const Position &);
   // setters;

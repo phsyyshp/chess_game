@@ -12,6 +12,8 @@ int charToPiece(char c);
 int chartoColor(char c);
 
 std::array<std::array<uint64_t, 6>, 2> FENtoPieces(std::string FENstring);
+std::vector<std::string> FENtoFields(const std::string &FENstring);
+
 uint64_t pseudoRandomNumberGenerator();
 std::array<uint64_t, 781> generateZobristTable();
 template <typename T, size_t N>

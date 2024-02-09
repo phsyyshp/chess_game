@@ -1,6 +1,11 @@
 #include "position.hpp"
 // Constructors;
-Position::Position(std::array<std::array<uint64_t, 6>, 2> pieces_, color turn_)
+Position::Position(const std::string &FENstr) : pieces(), gameState() {
+  std::vector<std::string> fieldVec = FENtoFields(FENstr);
+  pieces = FENtoPieces(fieldVec[0]);
+}
+Position::Position(const std::array<std::array<uint64_t, 6>, 2> &pieces_,
+                   color turn_)
     : pieces(pieces_), gameState(turn_) {
   for (int j = 0; j < 64; j++) {
     mailbox[j] = noPiece;

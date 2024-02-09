@@ -15,6 +15,7 @@ public:
   // | canBlackCastleQueenSide | 0 0 1 0 |
   // | canBlackCastleKingSide  | 0 0 0 1 |
   // +-----------------------+---------------------+
+  // QKqk
 
   GameState(color turn, const uint &castlingRigths, const uint &enPassant)
       : gameStateNum((turn & 0x1) | ((castlingRigths & 0xf) << 1) |

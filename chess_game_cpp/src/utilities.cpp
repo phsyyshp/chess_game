@@ -47,16 +47,18 @@ std::array<std::string, 8> FENtoRanks(std::string FENstring) {
   std::string rank;
   std::array<std::string, 8> out;
   int i = 0;
+  int j = 1;
   for (auto c : FENstring) {
 
     if (c != '/') {
       rank += c;
-
-    } else if (c == '/') {
+    }
+    if (c == '/' || j == (FENstring.length())) {
       out[i] = rank;
       rank.clear();
       i++;
     }
+    j++;
   }
   return out;
 }
@@ -127,6 +129,52 @@ std::array<std::array<uint64_t, 6>, 2> FENtoPieces(std::string FENstring) {
   return pieces;
 }
 
+std::vector<std::string> FENtoFields(const std::string &FENstring) {
+
+  std::string field;
+  std::vector<std::string> out;
+  int i = 1;
+  for (auto c : FENstring) {
+
+    if (c != ' ') {
+      field += c;
+    }
+    if (c == ' ' || i == FENstring.length()) {
+      out.push_back(field);
+      field.clear();
+    }
+    i++;
+  }
+  return out;
+}
+
+;
+uint castlingStrToInt(const std::string &castlingStr) {
+  if (castlingStr == "-") {
+    return 0;
+  }
+  uint out = 0;
+  for (const char &c : castlingStr) {
+    out |= findIndex(charToCatslingEncoding, c)
+  }
+}
+uint32_t FENtoGameStateInt(const std::string &FENstring) {
+
+  std::vector<std::string> fieldVec = FENtoFields(FENstring);
+  uint fullMoveNumber = stoull(fieldVec[5]);
+  uint ply = stoull(fieldVec[4]);
+  std::string enPassantStr = fieldVec[3];
+  std::string castlingStr = fieldVec[2];
+  std::string colorChar = fieldVec[1];
+  int enPassantInt;
+  int color = findIndex(colorLetters, colorChar);
+  uint castlingRigths;
+  if (enPassantStr == "-") {
+    enPassantInt = 8;
+  } else {
+    enPassantInt = squareTofile[findIndex(chessSq, enPassantStr)];
+  }
+}
 uint64_t pseudoRandomNumberGenerator() {
   std::mt19937_64 rng(std::random_device{}());
 

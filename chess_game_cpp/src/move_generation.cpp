@@ -415,7 +415,6 @@ void MoveGeneration::generateLegalKingMoves() {
 void MoveGeneration::generateOrderedMoves() { generateAllMoves(); }
 MoveList &MoveGeneration::getMoves() { return moveList; }
 int MoveGeneration::getNumberOfMoves() const { return moveList.size(); }
-
 bool MoveGeneration::isPseudoLegal(const Move &move) {
   generateAllMoves();
   for (const Move &pseudoLegalMove : moveList) {
