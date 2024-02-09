@@ -4,10 +4,10 @@ class GameState {
 public:
   GameState()
       : gameStateNum((white & 0x1) | ((0b1111u << 1) & 0xf) |
-                     ((0b0u << 5) & 0x7)){};
+                     ((0x8 << 5) & 0x8)){};
   GameState(color turn)
       : gameStateNum((turn & 0x1) | ((0b1111u << 1) & 0xf) |
-                     ((0b0u << 5) & 0x7)){};
+                     ((0x8 << 5) & 0x8)){};
 
   // Castling Rights Table
   // +-----------------------+---------------------+
@@ -21,7 +21,7 @@ public:
 
   GameState(color turn, const uint &castlingRigths, const uint &enPassant)
       : gameStateNum((turn & 0x1) | ((castlingRigths << 1) & 0xf) |
-                     ((enPassant << 5) & 0x7)) {}
+                     ((enPassant << 5) & 0x8)) {}
   // getters
   color getTurn() const;
   uint getCastlingRigths() const;

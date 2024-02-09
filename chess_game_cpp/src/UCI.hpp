@@ -1,4 +1,5 @@
 #include "constants.hpp"
+#include "move_generation.hpp"
 #include "position.hpp"
 #include "utilities.hpp"
 class UCI {
@@ -10,4 +11,5 @@ public:
 
 private:
   Position &position;
+  MoveType getFlag(const std::string &moveStr) const;
 };
