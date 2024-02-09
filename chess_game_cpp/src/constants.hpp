@@ -1,5 +1,4 @@
-#ifndef CONSTANTS_HPP
-#define CONSTANTS_HPP
+#pragma once
 #include <array>
 #include <iostream>
 enum color { white, black, invalid };
@@ -110,8 +109,18 @@ constexpr std::array<uint, 64> squareTofile = {
     0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3, 4, 5,
     6, 7, 0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3,
     4, 5, 6, 7, 0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3, 4, 5, 6, 7};
+// Castling;
 const std::array<std::string, 5> charToCatslingEncoding = {"-", "k", "q", "K",
                                                            "Q"};
+constexpr uint NO_WHITE_CASTLING_MASK = 0b0011u;
+constexpr uint NO_BLACK_CASTLING_MASK = 0b1100u;
+constexpr uint NO_WHITE_QUEEN_SIDE_CASTLING_MASK = 0b0111u;
+constexpr uint NO_WHITE_KING_SIDE_CASTLING_MASK = 0b1011u;
+constexpr uint NO_BLACK_QUEEN_SIDE_CASTLING_MASK = 0b1101u;
+constexpr uint NO_BLACK_KING_SIDE_CASTLING_MASK = 0b1110u;
+const std::array<uint, 2> NO_CASTLING_COLOR_MASK_LOOK_UP = {
+    NO_WHITE_CASTLING_MASK, NO_BLACK_CASTLING_MASK};
+
 // enPassant;
 constexpr uint NO_EP = 8;
 // Move Flags;
@@ -266,4 +275,3 @@ const uint32_t MVV_LVA_OFFSET = UINT32_MAX - 256;
 const int MAX_KILLER_MOVES = 2;
 const int MAX_DEPTH = 64;
 const int KILLER_VALUE = 10;
-#endif

@@ -86,7 +86,6 @@ void Position::setBlackPiecesToInitialConfiguration() {
   mailbox[g7] = pawn;
   mailbox[h7] = pawn;
 }
-
 void Position::setBoardToInitialConfiguration() {
   for (int i = 0; i < 64; i++) {
     mailbox[i] = noPiece;
@@ -205,6 +204,7 @@ void Position::makeQuietMove(const Move &move) {
   int movingPiece = mailbox[from];
   int oppositePieceColor = getOppositeTurn();
 
+  updateCastlingRights(from, movingPiece);
   // bit masks
   uint64_t toMask = (0b1ull << to);
   uint64_t fromMask = (0b1ull << from);
@@ -225,14 +225,16 @@ void Position::capture(const Move &move) {
   uint to = move.getTo();
   int movingPiece = mailbox[from];
   int oppositePieceColor = getOppositeTurn();
-
+  updateCastlingRights(from, movingPiece);
   // bit masks
   uint64_t toMask = (0b1ull << to);
   uint64_t fromMask = (0b1ull << from);
-
   // moving
   pieces[gameState.getTurn()][movingPiece] &= ~fromMask;
   piece capturedPieceType = mailbox[to];
+  if (capturedPieceType == rook) {
+    updateCastlingRights(to, rook);
+  }
   pieces[oppositePieceColor][capturedPieceType] &= (~toMask);
   capturedInLastMove = capturedPieceType;
   pieces[gameState.getTurn()][movingPiece] |= toMask;
@@ -269,7 +271,97 @@ void Position::makeEPCapture(const Move &move) {
   }
   makeQuietMove(move);
 }
+void Position::makeQueenCastle(const Move &move) {
+  int turn = getTurn();
+  switch (turn) {
+  case white:
+    pieces[white][rook] <<= 3;
+    pieces[white][king] <<= 3;
+    mailbox[a1] = noPiece;
+    mailbox[e1] = noPiece;
+    mailbox[c1] = king;
+    mailbox[d1] = rook;
 
+    break;
+
+  case black:
+    pieces[black][rook] <<= 3;
+    pieces[black][king] <<= 3;
+    mailbox[a8] = noPiece;
+    mailbox[e8] = noPiece;
+    mailbox[c8] = king;
+    mailbox[d8] = rook;
+
+    break;
+
+  default:
+    break;
+  }
+}
+void Position::makeKingCastle(const Move &move) {
+
+  int turn = getTurn();
+  switch (turn) {
+  case white:
+    pieces[white][rook] <<= 3;
+    pieces[white][king] <<= 3;
+    mailbox[a1] = noPiece;
+    mailbox[e1] = noPiece;
+    mailbox[c1] = king;
+    mailbox[d1] = rook;
+
+    break;
+
+  case black:
+    pieces[black][rook] <<= 3;
+    pieces[black][king] <<= 3;
+    mailbox[a8] = noPiece;
+    mailbox[e8] = noPiece;
+    mailbox[c8] = king;
+    mailbox[d8] = rook;
+
+    break;
+
+  default:
+    break;
+  }
+}
+
+// WARNING: this doesnt handle the case if rook is captured
+// TODO: update after castling happens;
+void Position::updateCastlingRights(int from, int movingPiece) {
+
+  uint castlingRigths = gameState.getCastlingRigths();
+  if (movingPiece == king) {
+    gameState.setCastlingRigths(
+        castlingRigths & NO_CASTLING_COLOR_MASK_LOOK_UP[gameState.getTurn()]);
+  }
+  if (movingPiece == rook) {
+    switch (from) {
+    case a1:
+      gameState.setCastlingRigths(castlingRigths &
+                                  NO_WHITE_QUEEN_SIDE_CASTLING_MASK);
+      break;
+
+    case h1:
+      gameState.setCastlingRigths(castlingRigths &
+                                  NO_WHITE_KING_SIDE_CASTLING_MASK);
+      break;
+    case a8:
+      gameState.setCastlingRigths(castlingRigths &
+                                  NO_BLACK_QUEEN_SIDE_CASTLING_MASK);
+      break;
+
+    case h8:
+      gameState.setCastlingRigths(castlingRigths &
+                                  NO_BLACK_KING_SIDE_CASTLING_MASK);
+      break;
+
+    default:
+      break;
+    }
+  }
+}
 // FIX IT: sth is wrong here fix me!
 // void Position::undoMove(Move move) {
 //   int from = move.getFrom();
