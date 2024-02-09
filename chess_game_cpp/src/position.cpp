@@ -185,6 +185,13 @@ bool Position::makeMove(const Move &move) {
     makeEPCapture(move);
     break;
 
+  case MoveType::kingCastle:
+    makeKingCastle(move);
+    break;
+  case MoveType::queenCastle:
+    makeQueenCastle(move);
+    break;
+
   default:
     break;
   }
@@ -273,10 +280,14 @@ void Position::makeEPCapture(const Move &move) {
 }
 void Position::makeQueenCastle(const Move &move) {
   int turn = getTurn();
+  uint castlingRigths = gameState.getCastlingRigths();
+  gameState.setCastlingRigths(
+      castlingRigths & NO_CASTLING_COLOR_MASK_LOOK_UP[gameState.getTurn()]);
+
   switch (turn) {
   case white:
     pieces[white][rook] <<= 3;
-    pieces[white][king] <<= 3;
+    pieces[white][king] >>= 2;
     mailbox[a1] = noPiece;
     mailbox[e1] = noPiece;
     mailbox[c1] = king;
@@ -286,7 +297,7 @@ void Position::makeQueenCastle(const Move &move) {
 
   case black:
     pieces[black][rook] <<= 3;
-    pieces[black][king] <<= 3;
+    pieces[black][king] >>= 2;
     mailbox[a8] = noPiece;
     mailbox[e8] = noPiece;
     mailbox[c8] = king;
@@ -300,25 +311,28 @@ void Position::makeQueenCastle(const Move &move) {
 }
 void Position::makeKingCastle(const Move &move) {
 
+  uint castlingRigths = gameState.getCastlingRigths();
+  gameState.setCastlingRigths(
+      castlingRigths & NO_CASTLING_COLOR_MASK_LOOK_UP[gameState.getTurn()]);
   int turn = getTurn();
   switch (turn) {
   case white:
-    pieces[white][rook] <<= 3;
-    pieces[white][king] <<= 3;
-    mailbox[a1] = noPiece;
+    pieces[white][rook] >>= 2;
+    pieces[white][king] <<= 2;
+    mailbox[h1] = noPiece;
     mailbox[e1] = noPiece;
-    mailbox[c1] = king;
-    mailbox[d1] = rook;
+    mailbox[g1] = king;
+    mailbox[f1] = rook;
 
     break;
 
   case black:
-    pieces[black][rook] <<= 3;
-    pieces[black][king] <<= 3;
-    mailbox[a8] = noPiece;
+    pieces[black][rook] >>= 2;
+    pieces[black][king] <<= 2;
+    mailbox[h8] = noPiece;
     mailbox[e8] = noPiece;
-    mailbox[c8] = king;
-    mailbox[d8] = rook;
+    mailbox[g8] = king;
+    mailbox[f8] = rook;
 
     break;
 

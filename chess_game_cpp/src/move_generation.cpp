@@ -302,6 +302,9 @@ void MoveGeneration::generateKingMoves() {
     generatedMoves ^= (0b1ull << to);
   }
 }
+// void MoveGeneration::generateCastling(){
+
+// }
 void MoveGeneration::generateAllMoves() {
   generateSinglePawnPushes();
   generateDoublePawnPushes();
