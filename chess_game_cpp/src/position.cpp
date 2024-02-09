@@ -163,7 +163,7 @@ bool Position::makeMove(const Move &move) {
     makeDoublePawnPush(move);
     break;
   case MoveType::ePCapture:
-    // makeEPCapture(move);
+    makeEPCapture(move);
     break;
 
   default:

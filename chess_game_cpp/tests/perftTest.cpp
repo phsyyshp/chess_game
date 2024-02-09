@@ -112,6 +112,7 @@ void perftDivideInterface() {
       break;
     }
     position.makeMove(uci.getMove(moveStr));
+    position.printBoard();
     depth--;
 
     // position.printBoard();
