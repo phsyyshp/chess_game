@@ -187,22 +187,28 @@ void MoveGeneration::generateLeftPawnPromoCaptures() {
   case white:
     eligibleSquares = position.getAllPieces(black);
     generatedMoves =
-        (((pawns << 9) & (~A_FILE)) & eligibleSquares) & (~RANK_8_MASK);
+        (((pawns << 9) & (~A_FILE)) & eligibleSquares) & (RANK_8_MASK);
     while (generatedMoves) {
       to = __builtin_ctzll(generatedMoves);
       from = to - 9;
-      moveList.push_back(Move{from, to, CAPTURE});
+      moveList.push_back(Move{from, to, MoveType::bishopPromoCapture});
+      moveList.push_back(Move{from, to, MoveType::queenPromoCapture});
+      moveList.push_back(Move{from, to, MoveType::rookPromoCapture});
+      moveList.push_back(Move{from, to, MoveType::knightPromoCapture});
       generatedMoves ^= (0b1ull << to);
     }
     break;
   case black:
     eligibleSquares = position.getAllPieces(white);
     generatedMoves =
-        (((pawns >> 7) & (~A_FILE)) & eligibleSquares) & (~RANK_1_MASK);
+        (((pawns >> 7) & (~A_FILE)) & eligibleSquares) & (RANK_1_MASK);
     while (generatedMoves) {
       to = __builtin_ctzll(generatedMoves);
       from = to + 7;
-      moveList.push_back(Move{from, to, CAPTURE});
+      moveList.push_back(Move{from, to, MoveType::bishopPromoCapture});
+      moveList.push_back(Move{from, to, MoveType::queenPromoCapture});
+      moveList.push_back(Move{from, to, MoveType::rookPromoCapture});
+      moveList.push_back(Move{from, to, MoveType::knightPromoCapture});
       generatedMoves ^= (0b1ull << to);
     }
     break;
@@ -220,22 +226,28 @@ void MoveGeneration::generateRightPawnPromoCaptures() {
   case white:
     eligibleSquares = position.getAllPieces(black);
     generatedMoves =
-        (((pawns << 7) & (~H_FILE)) & eligibleSquares) & (~RANK_8_MASK);
+        (((pawns << 7) & (~H_FILE)) & eligibleSquares) & (RANK_8_MASK);
     while (generatedMoves) {
       to = __builtin_ctzll(generatedMoves);
       from = to - 7;
-      moveList.push_back(Move{from, to, CAPTURE});
+      moveList.push_back(Move{from, to, MoveType::bishopPromoCapture});
+      moveList.push_back(Move{from, to, MoveType::queenPromoCapture});
+      moveList.push_back(Move{from, to, MoveType::rookPromoCapture});
+      moveList.push_back(Move{from, to, MoveType::knightPromoCapture});
       generatedMoves ^= (0b1ull << to);
     }
     break;
   case black:
     eligibleSquares = position.getAllPieces(white);
     generatedMoves =
-        (((pawns >> 9) & (~H_FILE)) & eligibleSquares) & (~RANK_1_MASK);
+        (((pawns >> 9) & (~H_FILE)) & eligibleSquares) & (RANK_1_MASK);
     while (generatedMoves) {
       to = __builtin_ctzll(generatedMoves);
       from = to + 9;
-      moveList.push_back(Move{from, to, CAPTURE});
+      moveList.push_back(Move{from, to, MoveType::bishopPromoCapture});
+      moveList.push_back(Move{from, to, MoveType::queenPromoCapture});
+      moveList.push_back(Move{from, to, MoveType::rookPromoCapture});
+      moveList.push_back(Move{from, to, MoveType::knightPromoCapture});
       generatedMoves ^= (0b1ull << to);
     }
     break;
