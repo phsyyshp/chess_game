@@ -26,26 +26,26 @@ public:
   void generateAllMoves();
   void generateOrderedMoves();
 
-  void generateCastling() {
-    // attack generators;
+  void generateCastling();
+  // attack generators;
 
-    uint64_t generateLeftPawnAttackMaps();
-    uint64_t generateRightPawnAttackMaps();
-    uint64_t generateKnightAttackMaps();
-    uint64_t generateBishopAttackMaps();
-    uint64_t generateRookAttackMaps();
-    uint64_t generateQueenAttackMaps();
-    uint64_t generateAllAttackMaps();
-    // legal move generation related operations
-    void generateLegalKingMoves();
+  uint64_t generateLeftPawnAttackMaps();
+  uint64_t generateRightPawnAttackMaps();
+  uint64_t generateKnightAttackMaps();
+  uint64_t generateBishopAttackMaps();
+  uint64_t generateRookAttackMaps();
+  uint64_t generateQueenAttackMaps();
+  uint64_t generateAllAttackMaps();
+  // legal move generation related operations
+  void generateLegalKingMoves();
 
-    // getters
-    MoveList &getMoves();
-    int getNumberOfMoves() const;
-    bool isPseudoLegal(const Move &move);
+  // getters
+  MoveList &getMoves();
+  int getNumberOfMoves() const;
+  bool isPseudoLegal(const Move &move);
 
-  private:
-    MoveList moveList;
-    Position position;
-  };
+private:
+  MoveList moveList;
+  Position position;
+};
 #endif

@@ -306,14 +306,33 @@ void MoveGeneration::generateCastling() {
   int color_ = position.getTurn();
   uint64_t allPieces =
       position.getAllPieces(black) | position.getAllPieces(white);
+  uint castlingRigths = position.getGameState().getCastlingRigths();
   switch (color_) {
-  case white:
-    if (~(allPieces & WHITE_QUEEN_SIDE_CASTLING_RAY)) {
 
-      moveList.push_back(Move{
-          e1,
-          c1,
-      });
+  case white:
+    if ((WHITE_QUEEN_SIDE_CASTLING_MASK & castlingRigths) &&
+        ~(allPieces & WHITE_QUEEN_SIDE_CASTLING_RAY)) {
+
+      moveList.push_back(Move{e1, c1, MoveType::queenCastle});
+    }
+
+    if ((WHITE_KING_SIDE_CASTLING_MASK & castlingRigths) &&
+        ~(allPieces & WHITE_KING_SIDE_CASTLING_RAY)) {
+
+      moveList.push_back(Move{e1, g1, MoveType::kingCastle});
+    }
+    break;
+  case black:
+    if ((BLACK_QUEEN_SIDE_CASTLING_MASK & castlingRigths) &&
+        ~(allPieces & BLACK_QUEEN_SIDE_CASTLING_RAY)) {
+
+      moveList.push_back(Move{e8, c8, MoveType::queenCastle});
+    }
+
+    if ((BLACK_KING_SIDE_CASTLING_MASK & castlingRigths) &&
+        ~(allPieces & BLACK_KING_SIDE_CASTLING_RAY)) {
+
+      moveList.push_back(Move{e8, g8, MoveType::kingCastle});
     }
     break;
 
@@ -335,6 +354,7 @@ void MoveGeneration::generateAllMoves() {
     generateLeftEPCaptures();
     generateRightEPCaptures();
   }
+  generateCastling();
 }
 // generate attacks;
 

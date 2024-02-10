@@ -118,6 +118,18 @@ constexpr uint NO_WHITE_QUEEN_SIDE_CASTLING_MASK = 0b0111u;
 constexpr uint NO_WHITE_KING_SIDE_CASTLING_MASK = 0b1011u;
 constexpr uint NO_BLACK_QUEEN_SIDE_CASTLING_MASK = 0b1101u;
 constexpr uint NO_BLACK_KING_SIDE_CASTLING_MASK = 0b1110u;
+constexpr uint WHITE_QUEEN_SIDE_CASTLING_MASK = 0b1000u;
+constexpr uint WHITE_KING_SIDE_CASTLING_MASK = 0b0100u;
+constexpr uint BLACK_QUEEN_SIDE_CASTLING_MASK = 0b0010u;
+constexpr uint BLACK_KING_SIDE_CASTLING_MASK = 0b0001u;
+
+// Castling moves;
+// const std::array<Move, 4> CASTLING_MOVES = {
+//     Move{e8, g8, MoveType::kingCastle},
+//     Move{e8, c8, MoveType::queenCastle},
+//     Move{e1, g1, MoveType::kingCastle},
+//     Move{e1, c1, MoveType::queenCastle},
+// };
 const std::array<uint, 2> NO_CASTLING_COLOR_MASK_LOOK_UP = {
     NO_WHITE_CASTLING_MASK, NO_BLACK_CASTLING_MASK};
 

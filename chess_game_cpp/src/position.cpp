@@ -278,6 +278,7 @@ void Position::makeEPCapture(const Move &move) {
   }
   makeQuietMove(move);
 }
+// doesnt check if castling is legal;
 void Position::makeQueenCastle(const Move &move) {
   int turn = getTurn();
   uint castlingRigths = gameState.getCastlingRigths();
@@ -286,7 +287,8 @@ void Position::makeQueenCastle(const Move &move) {
 
   switch (turn) {
   case white:
-    pieces[white][rook] <<= 3;
+    pieces[white][rook] &= ~(0b1ull << a1);
+    pieces[white][rook] |= (0b1ull << d1);
     pieces[white][king] >>= 2;
     mailbox[a1] = noPiece;
     mailbox[e1] = noPiece;
@@ -296,7 +298,8 @@ void Position::makeQueenCastle(const Move &move) {
     break;
 
   case black:
-    pieces[black][rook] <<= 3;
+    pieces[black][rook] &= ~(0b1ull << a8);
+    pieces[black][rook] |= (0b1ull << d8);
     pieces[black][king] >>= 2;
     mailbox[a8] = noPiece;
     mailbox[e8] = noPiece;
@@ -308,7 +311,9 @@ void Position::makeQueenCastle(const Move &move) {
   default:
     break;
   }
+  gameState.setEnPassant(NO_EP);
 }
+// doesnt check if castling is legal;
 void Position::makeKingCastle(const Move &move) {
 
   uint castlingRigths = gameState.getCastlingRigths();
@@ -317,7 +322,8 @@ void Position::makeKingCastle(const Move &move) {
   int turn = getTurn();
   switch (turn) {
   case white:
-    pieces[white][rook] >>= 2;
+    pieces[white][rook] &= ~(0b1ull << h1);
+    pieces[white][rook] |= (0b1ull << f1);
     pieces[white][king] <<= 2;
     mailbox[h1] = noPiece;
     mailbox[e1] = noPiece;
@@ -327,8 +333,10 @@ void Position::makeKingCastle(const Move &move) {
     break;
 
   case black:
-    pieces[black][rook] >>= 2;
+    pieces[black][rook] &= ~(0b1ull << h8);
+    pieces[black][rook] |= (0b1ull << f8);
     pieces[black][king] <<= 2;
+
     mailbox[h8] = noPiece;
     mailbox[e8] = noPiece;
     mailbox[g8] = king;
@@ -339,8 +347,8 @@ void Position::makeKingCastle(const Move &move) {
   default:
     break;
   }
+  gameState.setEnPassant(NO_EP);
 }
-
 // WARNING: this doesnt handle the case if rook is captured
 // TODO: update after castling happens;
 void Position::updateCastlingRights(int from, int movingPiece) {
