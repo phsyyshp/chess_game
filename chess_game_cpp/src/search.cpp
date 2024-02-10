@@ -33,14 +33,15 @@ int Search::negaMax(int depth) {
   movGen.generateAllMoves();
   for (Move move : movGen.getMoves()) {
     tempPosition = position;
-    position.makeMove(move);
-    ply++;
-    score = -negaMax(depth - 1);
-    ply--;
-    position = tempPosition;
-    if (score > max) {
-      max = score;
+    if (position.makeMove(move)) {
+      ply++;
+      score = -negaMax(depth - 1);
+      ply--;
+      if (score > max) {
+        max = score;
+      }
     }
+    position = tempPosition;
   }
   return max;
 }
@@ -59,17 +60,19 @@ int Search::quiesce(int alpha, int beta) {
   }
   for (const Move &move : movegen.getMoves().getCapturedMoves()) {
     tempPosition = position;
-    position.makeMove(move);
-    ply++;
-    score = -quiesce(-beta, -alpha);
-    ply--;
+    if (position.makeMove(move)) {
+      ply++;
+      score = -quiesce(-beta, -alpha);
+      ply--;
+      if (score >= beta) {
+        position = tempPosition;
+        return beta;
+      }
+      if (score > alpha) {
+        alpha = score;
+      }
+    }
     position = tempPosition;
-    if (score >= beta) {
-      return beta;
-    }
-    if (score > alpha) {
-      alpha = score;
-    }
   }
   return alpha;
 }
@@ -86,16 +89,17 @@ Move Search::search(int depth) {
   movGen.generateAllMoves();
   for (Move move : movGen.getMoves()) {
     tempPosition = position;
-    position.makeMove(move);
-    ply++;
-    score = -negaMax(depth - 1);
-    position = tempPosition;
-    ply--;
-    if (score > max) {
-      max = score;
-      bestMove = move;
-      // std::cout << score << std::endl;
+    if (position.makeMove(move)) {
+      ply++;
+      score = -negaMax(depth - 1);
+      ply--;
+      if (score > max) {
+        max = score;
+        bestMove = move;
+        // std::cout << score << std::endl;
+      }
     }
+    position = tempPosition;
   }
   return bestMove;
 }
@@ -114,20 +118,20 @@ Move Search::searchAB(int depth) {
   movGen.generateAllMoves();
   for (Move move : movGen.getMoves()) {
     tempPosition = position;
-    position.makeMove(move);
-    ply++;
-    score = -alphaBeta(-beta, -alpha, depth - 1);
-    ply--;
+    if (position.makeMove(move)) {
+      ply++;
+      score = -alphaBeta(-beta, -alpha, depth - 1);
+      ply--;
+      if (score >= beta) {
+        position = tempPosition;
+        return move;
+      }
+      if (score > alpha) {
+        alpha = score;
+        bestMove = move;
+      }
+    }
     position = tempPosition;
-    if (score >= beta) {
-      // bestMove = move;
-      return move;
-      // std::cout << score << std::endl;
-    }
-    if (score > alpha) {
-      alpha = score;
-      bestMove = move;
-    }
   }
   return bestMove;
 }
@@ -145,21 +149,24 @@ int Search::alphaBeta(int alpha, int beta, int depthLeft) {
   }
   int score;
   scoreMoves(movgen.getMoves());
+  // FIX IT: THERE MUST BE A BUG HERE
   for (int j = 0; j < movgen.getMoves().size(); j++) {
     pickMove(movgen.getMoves(), j);
     tempPosition = position;
-    position.makeMove(movgen.getMoves()[j]);
-    ply++;
-    score = -alphaBeta(-beta, -alpha, depthLeft - 1);
+    if (position.makeMove(movgen.getMoves()[j])) {
+      ply++;
+      score = -alphaBeta(-beta, -alpha, depthLeft - 1);
+      ply--;
+      if (score >= beta) {
+        storeKillerMove(movgen.getMoves()[j], ply);
+        position = tempPosition;
+        return beta;
+      }
+      if (score > alpha) {
+        alpha = score;
+      }
+    }
     position = tempPosition;
-    ply--;
-    if (score >= beta) {
-      storeKillerMove(movgen.getMoves()[j], ply);
-      return beta;
-    }
-    if (score > alpha) {
-      alpha = score;
-    }
   }
   return alpha;
 }
