@@ -34,8 +34,12 @@ public:
   uint64_t getAllPieces(const color &color_) const;
   uint64_t getAttacksToKing() const;
   piece getCapturedInLastMove() const;
+  uint64_t getAttacksToSquare(square square_) const;
+
   // bools:
   bool isInCheck() const;
+  bool isInCheck(square square_) const;
+
   bool isEmpty(int square_) const;
   // movers:
   // assuming the move is pseudolegal,
@@ -49,11 +53,11 @@ private:
   // functions
   void setWhitePiecesToInitialConfiguration();
   void setBlackPiecesToInitialConfiguration();
+  // moveMakers
   void makeQuietMove(const Move &move);
   void capture(const Move &move);
   void makeDoublePawnPush(const Move &move);
   void makeEPCapture(const Move &move);
-
   void makeQueenCastle(const Move &move);
   void makeKingCastle(const Move &move);
 
