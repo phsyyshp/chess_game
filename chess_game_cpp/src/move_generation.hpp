@@ -17,6 +17,9 @@ public:
   void generateRightPawnCaptures();
   void generateLeftEPCaptures();
   void generateRightEPCaptures();
+  void generateSinglePawnPromotions();
+  void generateLeftPawnPromoCaptures();
+  void generateRightPawnPromoCaptures();
 
   void generateKnightMoves();
   void generateBishopMoves();

@@ -28,7 +28,7 @@ set(SOURCES
     src/UCI.cpp
     src/gameState.cpp
     # src/moveValidator.cpp
-    # tests/perftTest.cpp
+    tests/perftTest.cpp
     # tests/gameLoopTest.cpp
     tests/unitTests.cpp
      
