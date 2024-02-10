@@ -225,7 +225,7 @@ TEST(Utillities, FENtoFields) {
   ASSERT_EQ("0", fieldVec[4]);
   ASSERT_EQ("c6", fieldVec[3]);
 }
-TEST(Perft, perft) {
+TEST(Perft, perft_castling) {
   Position position("rn1qk2r/p4p1p/bp1p1n2/2P1p1p1/1b1p4/1PN1PNP1/PB1Q1PBP/"
                     "R3K2R w KQkq - 0 12");
   perftTest test(position);
@@ -234,6 +234,14 @@ TEST(Perft, perft) {
   //  "R3K2R w KQkq - 0 12");
   ASSERT_EQ(57902, perftResult);
 }
+TEST(Perft, perft__pawn_promos) {
+  Position position("4k3/6PP/P1P3P1/3P1P2/8/p7/8/2K5 w - - 0 1");
+  perftTest test(position);
+  uint64_t perftResult = test.perft(4);
+  // perftDivideInterface("4k3/6PP/P1P3P1/3P1P2/8/p7/8/2K5 w - - 0 1");
+  ASSERT_EQ(2771, perftResult);
+}
+
 // Search tests
 // Ply
 // TEST(SearchTest, Ply_constructor) {
