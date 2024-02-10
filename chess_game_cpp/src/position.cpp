@@ -207,14 +207,36 @@ bool Position::makeMove(const Move &move) {
   case MoveType::ePCapture:
     makeEPCapture(move);
     break;
-
   case MoveType::kingCastle:
     makeKingCastle(move);
     break;
   case MoveType::queenCastle:
     makeQueenCastle(move);
     break;
-
+  case MoveType::rookPromotion:
+    makeRookPromotion(move);
+    break;
+  case MoveType::rookPromoCapture:
+    makeRookPromoCapture(move);
+    break;
+  case MoveType::queenPromotion:
+    makeQueenPromotion(move);
+    break;
+  case MoveType::queenPromoCapture:
+    makeQueenPromoCapture(move);
+    break;
+  case MoveType::bishopPromotion:
+    makeBishopPromotion(move);
+    break;
+  case MoveType::bishopPromoCapture:
+    makeBishopPromoCapture(move);
+    break;
+  case MoveType::knightPromotion:
+    makeKnightPromotion(move);
+    break;
+  case MoveType::knightPromoCapture:
+    makeKnightPromoCapture(move);
+    break;
   default:
     break;
   }

@@ -489,6 +489,9 @@ void MoveGeneration::generateAllMoves() {
     generateRightEPCaptures();
   }
   generateCastling();
+  generateSinglePawnPromotions();
+  generateLeftPawnPromoCaptures();
+  generateRightPawnPromoCaptures();
 }
 // generate attacks;
 
