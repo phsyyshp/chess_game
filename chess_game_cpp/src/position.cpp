@@ -372,6 +372,199 @@ void Position::makeKingCastle(const Move &move) {
   }
   gameState.setEnPassant(NO_EP);
 }
+
+void Position::makeKnightPromotion(const Move &move) {
+
+  // decoding move
+  uint from = move.getFrom();
+  uint to = move.getTo();
+  int movingPiece = mailbox[from];
+  int oppositePieceColor = getOppositeTurn();
+
+  updateCastlingRights(from, movingPiece);
+  // bit masks
+  uint64_t toMask = (0b1ull << to);
+  uint64_t fromMask = (0b1ull << from);
+
+  // moving
+  pieces[gameState.getTurn()][movingPiece] &= ~fromMask;
+  capturedInLastMove = noPiece;
+
+  pieces[gameState.getTurn()][knight] |= toMask;
+  // Mailbox operations;
+  mailbox[to] = knight;
+  mailbox[from] = noPiece;
+  gameState.setEnPassant(NO_EP);
+}
+void Position::makeBishopPromotion(const Move &move) {
+
+  // decoding move
+  uint from = move.getFrom();
+  uint to = move.getTo();
+  int movingPiece = mailbox[from];
+  int oppositePieceColor = getOppositeTurn();
+
+  updateCastlingRights(from, movingPiece);
+  // bit masks
+  uint64_t toMask = (0b1ull << to);
+  uint64_t fromMask = (0b1ull << from);
+
+  // moving
+  pieces[gameState.getTurn()][movingPiece] &= ~fromMask;
+  capturedInLastMove = noPiece;
+
+  pieces[gameState.getTurn()][bishop] |= toMask;
+  // Mailbox operations;
+  mailbox[to] = bishop;
+  mailbox[from] = noPiece;
+  gameState.setEnPassant(NO_EP);
+}
+void Position::makeRookPromotion(const Move &move) {
+
+  // decoding move
+  uint from = move.getFrom();
+  uint to = move.getTo();
+  int movingPiece = mailbox[from];
+  int oppositePieceColor = getOppositeTurn();
+
+  updateCastlingRights(from, movingPiece);
+  // bit masks
+  uint64_t toMask = (0b1ull << to);
+  uint64_t fromMask = (0b1ull << from);
+
+  // moving
+  pieces[gameState.getTurn()][movingPiece] &= ~fromMask;
+  capturedInLastMove = noPiece;
+
+  pieces[gameState.getTurn()][rook] |= toMask;
+  // Mailbox operations;
+  mailbox[to] = rook;
+  mailbox[from] = noPiece;
+  gameState.setEnPassant(NO_EP);
+}
+void Position::makeQueenPromotion(const Move &move) {
+
+  // decoding move
+  uint from = move.getFrom();
+  uint to = move.getTo();
+  int movingPiece = mailbox[from];
+  int oppositePieceColor = getOppositeTurn();
+
+  updateCastlingRights(from, movingPiece);
+  // bit masks
+  uint64_t toMask = (0b1ull << to);
+  uint64_t fromMask = (0b1ull << from);
+
+  // moving
+  pieces[gameState.getTurn()][movingPiece] &= ~fromMask;
+  capturedInLastMove = noPiece;
+
+  pieces[gameState.getTurn()][queen] |= toMask;
+  // Mailbox operations;
+  mailbox[to] = queen;
+  mailbox[from] = noPiece;
+  gameState.setEnPassant(NO_EP);
+}
+void Position::makeKnightPromoCapture(const Move &move) {
+
+  // decoding move
+  uint from = move.getFrom();
+  uint to = move.getTo();
+  int movingPiece = mailbox[from];
+  int oppositePieceColor = getOppositeTurn();
+  updateCastlingRights(from, movingPiece);
+  // bit masks
+  uint64_t toMask = (0b1ull << to);
+  uint64_t fromMask = (0b1ull << from);
+  // moving
+  pieces[gameState.getTurn()][movingPiece] &= ~fromMask;
+  piece capturedPieceType = mailbox[to];
+  if (capturedPieceType == rook) {
+    updateCastlingRights(to, rook);
+  }
+  pieces[oppositePieceColor][capturedPieceType] &= (~toMask);
+  capturedInLastMove = capturedPieceType;
+  pieces[gameState.getTurn()][knight] |= toMask;
+  // Mailbox operations;
+  mailbox[to] = knight;
+  mailbox[from] = noPiece;
+  gameState.setEnPassant(NO_EP);
+}
+void Position::makeBishopPromoCapture(const Move &move) {
+
+  // decoding move
+  uint from = move.getFrom();
+  uint to = move.getTo();
+  int movingPiece = mailbox[from];
+  int oppositePieceColor = getOppositeTurn();
+  updateCastlingRights(from, movingPiece);
+  // bit masks
+  uint64_t toMask = (0b1ull << to);
+  uint64_t fromMask = (0b1ull << from);
+  // moving
+  pieces[gameState.getTurn()][movingPiece] &= ~fromMask;
+  piece capturedPieceType = mailbox[to];
+  if (capturedPieceType == rook) {
+    updateCastlingRights(to, rook);
+  }
+  pieces[oppositePieceColor][capturedPieceType] &= (~toMask);
+  capturedInLastMove = capturedPieceType;
+  pieces[gameState.getTurn()][bishop] |= toMask;
+  // Mailbox operations;
+  mailbox[to] = bishop;
+  mailbox[from] = noPiece;
+  gameState.setEnPassant(NO_EP);
+}
+void Position::makeRookPromoCapture(const Move &move) {
+
+  // decoding move
+  uint from = move.getFrom();
+  uint to = move.getTo();
+  int movingPiece = mailbox[from];
+  int oppositePieceColor = getOppositeTurn();
+  updateCastlingRights(from, movingPiece);
+  // bit masks
+  uint64_t toMask = (0b1ull << to);
+  uint64_t fromMask = (0b1ull << from);
+  // moving
+  pieces[gameState.getTurn()][movingPiece] &= ~fromMask;
+  piece capturedPieceType = mailbox[to];
+  if (capturedPieceType == rook) {
+    updateCastlingRights(to, rook);
+  }
+  pieces[oppositePieceColor][capturedPieceType] &= (~toMask);
+  capturedInLastMove = capturedPieceType;
+  pieces[gameState.getTurn()][rook] |= toMask;
+  // Mailbox operations;
+  mailbox[to] = rook;
+  mailbox[from] = noPiece;
+  gameState.setEnPassant(NO_EP);
+}
+void Position::makeQueenPromoCapture(const Move &move) {
+
+  // decoding move
+  uint from = move.getFrom();
+  uint to = move.getTo();
+  int movingPiece = mailbox[from];
+  int oppositePieceColor = getOppositeTurn();
+  updateCastlingRights(from, movingPiece);
+  // bit masks
+  uint64_t toMask = (0b1ull << to);
+  uint64_t fromMask = (0b1ull << from);
+  // moving
+  pieces[gameState.getTurn()][movingPiece] &= ~fromMask;
+  piece capturedPieceType = mailbox[to];
+  if (capturedPieceType == rook) {
+    updateCastlingRights(to, rook);
+  }
+  pieces[oppositePieceColor][capturedPieceType] &= (~toMask);
+  capturedInLastMove = capturedPieceType;
+  pieces[gameState.getTurn()][queen] |= toMask;
+  // Mailbox operations;
+  mailbox[to] = queen;
+  mailbox[from] = noPiece;
+  gameState.setEnPassant(NO_EP);
+}
 // WARNING: this doesnt handle the case if rook is captured
 // TODO: update after castling happens;
 void Position::updateCastlingRights(int from, int movingPiece) {
@@ -407,6 +600,7 @@ void Position::updateCastlingRights(int from, int movingPiece) {
     }
   }
 }
+
 // FIX IT: sth is wrong here fix me!
 // void Position::undoMove(Move move) {
 //   int from = move.getFrom();
