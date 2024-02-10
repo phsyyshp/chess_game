@@ -158,8 +158,31 @@ uint64_t Position::getAttacksToKing() const {
          (getRookAttackMask(squareOfKing, allPieces) & oppositeRookQueens);
 }
 
+uint64_t Position::getAttacksToSquare(square square_) const {
+
+  uint64_t allPieces = getAllPieces(black) | getAllPieces(white);
+  color colorOfVictim = gameState.getTurn();
+  color oppositeColor = getOppositeTurn();
+  square victimSq = square_;
+  uint64_t oppositePawns = pieces[oppositeColor][pawn];
+  uint64_t oppositeKnights = pieces[oppositeColor][knight];
+  uint64_t oppositeRooks = pieces[oppositeColor][rook];
+  uint64_t oppositeBishops = pieces[oppositeColor][bishop];
+  uint64_t oppositeQueens = pieces[oppositeColor][queen];
+  uint64_t oppositeRookQueens = oppositeRooks | oppositeQueens;
+
+  uint64_t oppositeBishopQueens = oppositeBishops | oppositeQueens;
+  return (knightLookUpTable[victimSq] & oppositeKnights) |
+         (pawnLookUpTable[colorOfVictim][victimSq] & oppositePawns) |
+         (getBishopAttackMask(victimSq, allPieces) & oppositeBishopQueens) |
+         (getRookAttackMask(victimSq, allPieces) & oppositeRookQueens);
+}
 // bools
 bool Position::isInCheck() const { return (getAttacksToKing()) != 0; }
+bool Position::isInCheck(square square_) const {
+  return (getAttacksToSquare(square_) != 0);
+}
+
 bool Position::isEmpty(int square_) const {
   return mailbox[square_] == noPiece;
 }
