@@ -72,9 +72,8 @@ MoveList perftDivide(Position position, int depth) {
       perftTest test(position);
       nodes = test.perft(depth - 1);
       totalNodes += nodes;
-      std::string perftResult = "│ " + chessSq[move.getFrom()] +
-                                chessSq[move.getTo()] + " │ " +
-                                std::to_string(nodes);
+      std::string perftResult =
+          "│ " + move.toStr() + " | " + std::to_string(nodes);
       printVec.push_back(perftResult);
     }
     position = tempPosition;

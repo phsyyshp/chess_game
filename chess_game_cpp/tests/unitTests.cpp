@@ -238,7 +238,7 @@ TEST(Perft, perft__pawn_promos) {
   Position position("4k3/6PP/P1P3P1/3P1P2/8/p7/8/2K5 w - - 0 1");
   perftTest test(position);
   uint64_t perftResult = test.perft(4);
-  // perftDivideInterface("4k3/6PP/P1P3P1/3P1P2/8/p7/8/2K5 w - - 0 1");
+  perftDivideInterface("4k3/6PP/P1P3P1/3P1P2/8/p7/8/2K5 w - - 0 1");
   ASSERT_EQ(2771, perftResult);
 }
 
