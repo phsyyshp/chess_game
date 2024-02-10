@@ -121,6 +121,15 @@ constexpr uint NO_BLACK_KING_SIDE_CASTLING_MASK = 0b1110u;
 const std::array<uint, 2> NO_CASTLING_COLOR_MASK_LOOK_UP = {
     NO_WHITE_CASTLING_MASK, NO_BLACK_CASTLING_MASK};
 
+constexpr uint64_t WHITE_QUEEN_SIDE_CASTLING_RAY =
+    (0b1ull << b1) | (0b1ull << c1) | (0b1ull << d1);
+constexpr uint64_t WHITE_KING_SIDE_CASTLING_RAY =
+    (0b1ull << f1) | (0b1ull << g1);
+constexpr uint64_t BLACK_QUEEN_SIDE_CASTLING_RAY =
+    (0b1ull << b1) | (0b1ull << c8) | (0b1ull << d8);
+constexpr uint64_t BLACK_KING_SIDE_CASTLING_RAY =
+    (0b1ull << f8) | (0b1ull << g8);
+
 // enPassant;
 constexpr uint NO_EP = 8;
 // Move Flags;
