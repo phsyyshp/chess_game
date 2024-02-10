@@ -1,7 +1,6 @@
 #include "move_generation.hpp"
 // generate moves;
 void MoveGeneration::generateSinglePawnPushes() {
-  // TODO: add promotions
   uint64_t generatedMoves;
   uint64_t pawns;
   int to, from;
