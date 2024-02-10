@@ -174,7 +174,38 @@ TEST(Position, castling_rigths_update_king_move) {
   uint castling = gs.getCastlingRigths();
   ASSERT_EQ(0b0000u, castling);
 }
+TEST(Position, makecastling_white_queen_side) {
 
+  Position position(
+      "rn1q1rk1/4bpp1/pp1pbn2/4p1Pp/4P3/1NN1BP2/PPPQ3P/R3KB1R w KQ h6 0 12");
+  UCI uci(position);
+  position.makeMove(uci.getMove("e1c1"));
+  Position positionCorrect(
+      "rn1q1rk1/4bpp1/pp1pbn2/4p1Pp/4P3/1NN1BP2/PPPQ3P/2KR1B1R b - - 1 12");
+  positionCorrect.printBoard();
+  position.printBoard();
+
+  ASSERT_EQ(positionCorrect.getPieces(), position.getPieces());
+
+  ASSERT_EQ(positionCorrect.getGameState().getGameStateNum(),
+            position.getGameState().getGameStateNum());
+}
+TEST(Position, makecastling_white_king_side) {
+
+  Position position(
+      "rn3rk1/2q1bpp1/pp1pbn2/4p1Pp/4P3/1NNBBP2/PPPQ3P/R3K2R w KQ - 2 13");
+  UCI uci(position);
+  position.makeMove(uci.getMove("e1g1"));
+  Position positionCorrect(
+      "rn3rk1/2q1bpp1/pp1pbn2/4p1Pp/4P3/1NNBBP2/PPPQ3P/R4RK1 b - - 3 13");
+  positionCorrect.printBoard();
+  position.printBoard();
+
+  ASSERT_EQ(positionCorrect.getPieces(), position.getPieces());
+
+  ASSERT_EQ(positionCorrect.getGameState().getGameStateNum(),
+            position.getGameState().getGameStateNum());
+}
 TEST(Utillities, FENtoRanks) {
 
   std::string FENstr =
@@ -303,7 +334,15 @@ TEST(UCITest, strToMove_capture) {
   Move handMade(d2, d6, captures);
   ASSERT_EQ(handMade.getMoveInt(), UCImove.getMoveInt());
 }
+TEST(UCI, makecastling_white_king_side) {
 
+  Position position(
+      "rn3rk1/2q1bpp1/pp1pbn2/4p1Pp/4P3/1NNBBP2/PPPQ3P/R3K2R w KQ - 2 13");
+  UCI uci(position);
+  Move move = uci.getMove("e1g1");
+  Move handMade(e1, g1, kingCastle);
+  ASSERT_EQ(handMade.getMoveInt(), move.getMoveInt());
+}
 int main(int argc, char **argv) {
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();
