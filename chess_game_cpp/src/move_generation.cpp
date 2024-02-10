@@ -302,9 +302,25 @@ void MoveGeneration::generateKingMoves() {
     generatedMoves ^= (0b1ull << to);
   }
 }
-// void MoveGeneration::generateCastling(){
+void MoveGeneration::generateCastling() {
+  int color_ = position.getTurn();
+  uint64_t allPieces =
+      position.getAllPieces(black) | position.getAllPieces(white);
+  switch (color_) {
+  case white:
+    if (~(allPieces & WHITE_QUEEN_SIDE_CASTLING_RAY)) {
 
-// }
+      moveList.push_back(Move{
+          e1,
+          c1,
+      });
+    }
+    break;
+
+  default:
+    break;
+  }
+}
 void MoveGeneration::generateAllMoves() {
   generateSinglePawnPushes();
   generateDoublePawnPushes();
