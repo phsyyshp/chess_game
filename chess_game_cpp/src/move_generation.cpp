@@ -164,7 +164,6 @@ void MoveGeneration::generateSinglePawnPromotions() {
     while (generatedMoves) {
       to = __builtin_ctzll(generatedMoves);
       from = to + 8;
-      moveList.push_back(Move{from, to, QUIET_MOVE});
       generatedMoves ^= (0b1ull << to);
       moveList.push_back(Move{from, to, MoveType::bishopPromotion});
       moveList.push_back(Move{from, to, MoveType::queenPromotion});

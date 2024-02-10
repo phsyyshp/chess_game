@@ -94,6 +94,9 @@ enum MoveType {
   rookPromoCapture,   // Rook promotion with capture
   queenPromoCapture   // Queen promotion with capture
 };
+const std::array<char, 8> PROMOTION_TYPE_TO_STR = {'n', 'b', 'r', 'q',
+                                                   'n', 'b', 'r', 'q'};
+const std::array<char, 8> PROMOTION_TYPE_TO_STR_SHORT = {'n', 'b', 'r', 'q'};
 struct magicTbls {
   uint64_t mask;
   uint64_t magicNum;

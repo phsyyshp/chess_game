@@ -27,6 +27,8 @@ public:
   // Visualizers;
   void print() const;
 
+  std::string toStr() const;
+
 private:
   uint32_t moveNum;
 };
