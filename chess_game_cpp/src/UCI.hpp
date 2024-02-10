@@ -598,6 +598,7 @@ public:
   Move getMove(const std::string &moveStr) const;
 
 private:
+  std::string cmd;
   Position &position;
   MoveType getFlag(const std::string &moveStr) const;
 };
