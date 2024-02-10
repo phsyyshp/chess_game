@@ -238,99 +238,98 @@ TEST(Perft, perft__pawn_promos) {
   Position position("4k3/6PP/P1P3P1/3P1P2/8/p7/8/2K5 w - - 0 1");
   perftTest test(position);
   uint64_t perftResult = test.perft(4);
-  perftDivideInterface("4k3/6PP/P1P3P1/3P1P2/8/p7/8/2K5 w - - 0 1");
+  // perftDivideInterface("4k3/6PP/P1P3P1/3P1P2/8/p7/8/2K5 w - - 0 1");
   ASSERT_EQ(2771, perftResult);
 }
 
-// Search tests
-// Ply
-// TEST(SearchTest, Ply_constructor) {
+// Search tests Ply
+TEST(SearchTest, Ply_constructor) {
 
-//   std::string FENstr =
-//       "r2q1rk1/1p1nbppp/p2pbn2/4p3/4P3/1NN1BP2/PPPQ2PP/2KR1B1R/";
+  std::string FENstr =
+      "r2q1rk1/1p1nbppp/p2pbn2/4p3/4P3/1NN1BP2/PPPQ2PP/2KR1B1R/";
 
-//   Position position(FENtoPieces(FENstr), white);
-//   Search s(position);
-//   ASSERT_EQ(s.getPly(), 0);
-// }
-// TEST(SearchTest, Plycounter_SearchAB_5) {
+  Position position(FENtoPieces(FENstr), white);
+  Search s(position);
+  ASSERT_EQ(s.getPly(), 0);
+}
+TEST(SearchTest, Plycounter_SearchAB_5) {
 
-//   std::string FENstr =
-//       "r2q1rk1/1p1nbppp/p2pbn2/4p3/4P3/1NN1BP2/PPPQ2PP/2KR1B1R/";
-//   Position position(FENtoPieces(FENstr), white);
-//   Search s(position);
-//   int initialPly = s.getPly();
-//   s.searchAB(1);
-//   int finalPly = s.getPly();
-//   ASSERT_EQ(finalPly, initialPly);
-// }
-// TEST(SearchTest, Plycounter_SearchAB_4) {
+  std::string FENstr =
+      "r2q1rk1/1p1nbppp/p2pbn2/4p3/4P3/1NN1BP2/PPPQ2PP/2KR1B1R/";
+  Position position(FENtoPieces(FENstr), white);
+  Search s(position);
+  int initialPly = s.getPly();
+  s.searchAB(1);
+  int finalPly = s.getPly();
+  ASSERT_EQ(finalPly, initialPly);
+}
+TEST(SearchTest, Plycounter_SearchAB_4) {
 
-//   std::string FENstr =
-//       "r2q1rk1/1p1nbppp/p2pbn2/4p3/4P3/1NN1BP2/PPPQ2PP/2KR1B1R/";
-//   Position position(FENtoPieces(FENstr), white);
-//   Search s(position);
-//   int initialPly = s.getPly();
-//   s.searchAB(2);
-//   int finalPly = s.getPly();
-//   ASSERT_EQ(finalPly, initialPly);
-// }
+  std::string FENstr =
+      "r2q1rk1/1p1nbppp/p2pbn2/4p3/4P3/1NN1BP2/PPPQ2PP/2KR1B1R/";
+  Position position(FENtoPieces(FENstr), white);
+  Search s(position);
+  int initialPly = s.getPly();
+  s.searchAB(2);
+  int finalPly = s.getPly();
+  ASSERT_EQ(finalPly, initialPly);
+}
 
-// // Killer move test
-// TEST(SearchTest, killerMove_Initilization) {
+// Killer move test
+TEST(SearchTest, killerMove_Initilization) {
 
-//   std::string FENstr =
-//       "r2q1rk1/1p1nbppp/p2pbn2/4p3/4P3/1NN1BP2/PPPQ2PP/2KR1B1R/";
-//   Position position(FENtoPieces(FENstr), white);
-//   Search s(position);
-//   std::array<std::array<Move, MAX_DEPTH>, MAX_KILLER_MOVES> killerMoves =
-//       s.getKillerMoves();
-//   Move invalidMove(a1, a1, pawn, white, false);
-//   ASSERT_EQ(killerMoves[1][63].getScore(), invalidMove.getScore());
-// }
-// TEST(SearchTest, score_move) {}
+  std::string FENstr =
+      "r2q1rk1/1p1nbppp/p2pbn2/4p3/4P3/1NN1BP2/PPPQ2PP/2KR1B1R/";
+  Position position(FENtoPieces(FENstr), white);
+  Search s(position);
+  std::array<std::array<Move, MAX_DEPTH>, MAX_KILLER_MOVES> killerMoves =
+      s.getKillerMoves();
+  Move invalidMove(a1, a1, 0);
+  ASSERT_EQ(killerMoves[1][63].getScore(), invalidMove.getScore());
+}
+TEST(SearchTest, score_move) {}
 
-// // pick move
-// TEST(SearchTest, pickMove_copy) {
+// pick move
+TEST(SearchTest, pickMove_copy) {
 
-//   std::string FENstr =
-//       "r2q1rk1/1p1nbppp/p2pbn2/4p3/4P3/1NN1BP2/PPPQ2PP/2KR1B1R/";
-//   Position position(FENtoPieces(FENstr), white);
-//   MoveGeneration movegen(position);
-//   movegen.generateAllMoves();
-//   // Copy
-//   MoveList moves = movegen.getMoves();
-//   Search s(position);
-//   s.scoreMoves(moves);
-//   for (int startingMove = 0; startingMove < moves.size(); startingMove++) {
+  std::string FENstr =
+      "r2q1rk1/1p1nbppp/p2pbn2/4p3/4P3/1NN1BP2/PPPQ2PP/2KR1B1R/";
+  Position position(FENtoPieces(FENstr), white);
+  MoveGeneration movegen(position);
+  movegen.generateAllMoves();
+  // Copy
+  MoveList moves = movegen.getMoves();
+  Search s(position);
+  s.scoreMoves(moves);
+  for (int startingMove = 0; startingMove < moves.size(); startingMove++) {
 
-//     s.pickMove(moves, startingMove);
+    s.pickMove(moves, startingMove);
 
-//     for (int i = startingMove; i < moves.size(); i++) {
-//       ASSERT_GE(moves[startingMove].getScore(), moves[i].getScore());
-//     }
-//   }
-// }
-// TEST(SearchTest, pickMove_nocopy) {
+    for (int i = startingMove; i < moves.size(); i++) {
+      ASSERT_GE(moves[startingMove].getScore(), moves[i].getScore());
+    }
+  }
+}
+TEST(SearchTest, pickMove_nocopy) {
 
-//   std::string FENstr =
-//       "r2q1rk1/1p1nbppp/p2pbn2/4p3/4P3/1NN1BP2/PPPQ2PP/2KR1B1R/";
-//   Position position(FENtoPieces(FENstr), white);
-//   MoveGeneration movegen(position);
-//   movegen.generateAllMoves();
-//   Search s(position);
-//   // pass by reference;
-//   s.scoreMoves(movegen.getMoves());
-//   for (int startingMove = 0; startingMove < movegen.getMoves().size();
-//        startingMove++) {
+  std::string FENstr =
+      "r2q1rk1/1p1nbppp/p2pbn2/4p3/4P3/1NN1BP2/PPPQ2PP/2KR1B1R/";
+  Position position(FENtoPieces(FENstr), white);
+  MoveGeneration movegen(position);
+  movegen.generateAllMoves();
+  Search s(position);
+  // pass by reference;
+  s.scoreMoves(movegen.getMoves());
+  for (int startingMove = 0; startingMove < movegen.getMoves().size();
+       startingMove++) {
 
-//     s.pickMove(movegen.getMoves(), startingMove);
-//     for (int i = startingMove; i < movegen.getMoves().size(); i++) {
-//       ASSERT_GE(movegen.getMoves()[startingMove].getScore(),
-//                 movegen.getMoves()[i].getScore());
-//     }
-//   }
-// }
+    s.pickMove(movegen.getMoves(), startingMove);
+    for (int i = startingMove; i < movegen.getMoves().size(); i++) {
+      ASSERT_GE(movegen.getMoves()[startingMove].getScore(),
+                movegen.getMoves()[i].getScore());
+    }
+  }
+}
 
 // UCI
 TEST(UCITest, strToMove_Nocatpure) {
@@ -360,6 +359,27 @@ TEST(UCI, makecastling_white_king_side) {
   Move move = uci.getMove("e1g1");
   Move handMade(e1, g1, kingCastle);
   ASSERT_EQ(handMade.getMoveInt(), move.getMoveInt());
+}
+TEST(GameLoop, gameloopTEST) {
+  Position position;
+  position.setBoardToInitialConfiguration();
+  position.printBoard();
+  std::string moveStr;
+  UCI uci(position);
+  while (std::cin >> moveStr) {
+    Move move = uci.getMove(moveStr);
+    MoveGeneration mg(position);
+    if (!mg.isPseudoLegal(move)) {
+      std::cout << "illegal move try again." << std::endl;
+      continue;
+    }
+    position.makeMove(move);
+    position.printBoard();
+    Search srch(position);
+    Move bestMove = srch.searchAB(5);
+    position.makeMove(bestMove);
+    position.printBoard();
+  }
 }
 int main(int argc, char **argv) {
   testing::InitGoogleTest(&argc, argv);
