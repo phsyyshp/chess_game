@@ -1,3 +1,4 @@
+#pragma once
 #include "constants.hpp"
 #include "move_generation.hpp"
 #include "position.hpp"

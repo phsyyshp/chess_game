@@ -10,7 +10,7 @@ void MoveGeneration::generateSinglePawnPushes() {
   switch (position.getTurn()) {
   case color::white:
     pawns = position.getPieces()[white][pawn];
-    generatedMoves = (pawns << 8) & (~ineligibleSquares);
+    generatedMoves = ((pawns << 8) & (~ineligibleSquares)) & (~RANK_8_MASK);
     while (generatedMoves) {
       to = __builtin_ctzll(generatedMoves);
       from = to - 8;
@@ -21,7 +21,7 @@ void MoveGeneration::generateSinglePawnPushes() {
   case color::black:
 
     pawns = position.getPieces()[black][pawn];
-    generatedMoves = (pawns >> 8) & (~ineligibleSquares);
+    generatedMoves = ((pawns >> 8) & (~ineligibleSquares)) & (~RANK_1_MASK);
     while (generatedMoves) {
       to = __builtin_ctzll(generatedMoves);
       from = to + 8;
@@ -77,7 +77,8 @@ void MoveGeneration::generateLeftPawnCaptures() {
   switch (position.getTurn()) {
   case white:
     eligibleSquares = position.getAllPieces(black);
-    generatedMoves = ((pawns << 9) & (~A_FILE)) & eligibleSquares;
+    generatedMoves =
+        (((pawns << 9) & (~A_FILE)) & eligibleSquares) & (~RANK_8_MASK);
     while (generatedMoves) {
       to = __builtin_ctzll(generatedMoves);
       from = to - 9;
@@ -87,7 +88,8 @@ void MoveGeneration::generateLeftPawnCaptures() {
     break;
   case black:
     eligibleSquares = position.getAllPieces(white);
-    generatedMoves = ((pawns >> 7) & (~A_FILE)) & eligibleSquares;
+    generatedMoves =
+        (((pawns >> 7) & (~A_FILE)) & eligibleSquares) & (~RANK_1_MASK);
     while (generatedMoves) {
       to = __builtin_ctzll(generatedMoves);
       from = to + 7;
@@ -108,7 +110,8 @@ void MoveGeneration::generateRightPawnCaptures() {
   switch (position.getTurn()) {
   case white:
     eligibleSquares = position.getAllPieces(black);
-    generatedMoves = ((pawns << 7) & (~H_FILE)) & eligibleSquares;
+    generatedMoves =
+        (((pawns << 7) & (~H_FILE)) & eligibleSquares) & (~RANK_8_MASK);
     while (generatedMoves) {
       to = __builtin_ctzll(generatedMoves);
       from = to - 7;
@@ -118,7 +121,117 @@ void MoveGeneration::generateRightPawnCaptures() {
     break;
   case black:
     eligibleSquares = position.getAllPieces(white);
-    generatedMoves = ((pawns >> 9) & (~H_FILE)) & eligibleSquares;
+    generatedMoves =
+        (((pawns >> 9) & (~H_FILE)) & eligibleSquares) & (~RANK_1_MASK);
+    while (generatedMoves) {
+      to = __builtin_ctzll(generatedMoves);
+      from = to + 9;
+      moveList.push_back(Move{from, to, CAPTURE});
+      generatedMoves ^= (0b1ull << to);
+    }
+    break;
+  default:
+    break;
+  }
+}
+
+void MoveGeneration::generateSinglePawnPromotions() {
+  // TODO: add promotions
+  uint64_t generatedMoves;
+  uint64_t pawns;
+  int to, from;
+  uint64_t ineligibleSquares =
+      position.getAllPieces(white) | position.getAllPieces(black);
+  switch (position.getTurn()) {
+  case color::white:
+    pawns = position.getPieces()[white][pawn];
+    generatedMoves = ((pawns << 8) & (~ineligibleSquares)) & (RANK_8_MASK);
+    while (generatedMoves) {
+      to = __builtin_ctzll(generatedMoves);
+      from = to - 8;
+      moveList.push_back(Move{from, to, MoveType::bishopPromotion});
+      moveList.push_back(Move{from, to, MoveType::queenPromotion});
+      moveList.push_back(Move{from, to, MoveType::rookPromotion});
+      moveList.push_back(Move{from, to, MoveType::knightPromotion});
+
+      generatedMoves ^= (0b1ull << to);
+    }
+    break;
+  case color::black:
+
+    pawns = position.getPieces()[black][pawn];
+    generatedMoves = ((pawns >> 8) & (~ineligibleSquares)) & (RANK_1_MASK);
+    while (generatedMoves) {
+      to = __builtin_ctzll(generatedMoves);
+      from = to + 8;
+      moveList.push_back(Move{from, to, QUIET_MOVE});
+      generatedMoves ^= (0b1ull << to);
+      moveList.push_back(Move{from, to, MoveType::bishopPromotion});
+      moveList.push_back(Move{from, to, MoveType::queenPromotion});
+      moveList.push_back(Move{from, to, MoveType::rookPromotion});
+      moveList.push_back(Move{from, to, MoveType::knightPromotion});
+    }
+    break;
+  default:
+    break;
+  }
+}
+
+void MoveGeneration::generateLeftPawnPromoCaptures() {
+  uint64_t eligibleSquares;
+  uint64_t generatedMoves;
+  uint64_t pawns = position.getPieces()[position.getTurn()][pawn];
+  int to, from;
+
+  switch (position.getTurn()) {
+  case white:
+    eligibleSquares = position.getAllPieces(black);
+    generatedMoves =
+        (((pawns << 9) & (~A_FILE)) & eligibleSquares) & (~RANK_8_MASK);
+    while (generatedMoves) {
+      to = __builtin_ctzll(generatedMoves);
+      from = to - 9;
+      moveList.push_back(Move{from, to, CAPTURE});
+      generatedMoves ^= (0b1ull << to);
+    }
+    break;
+  case black:
+    eligibleSquares = position.getAllPieces(white);
+    generatedMoves =
+        (((pawns >> 7) & (~A_FILE)) & eligibleSquares) & (~RANK_1_MASK);
+    while (generatedMoves) {
+      to = __builtin_ctzll(generatedMoves);
+      from = to + 7;
+      moveList.push_back(Move{from, to, CAPTURE});
+      generatedMoves ^= (0b1ull << to);
+    }
+    break;
+  default:
+    break;
+  }
+}
+void MoveGeneration::generateRightPawnPromoCaptures() {
+  uint64_t eligibleSquares;
+  uint64_t generatedMoves;
+  uint64_t pawns = position.getPieces()[position.getTurn()][pawn];
+  int to, from;
+
+  switch (position.getTurn()) {
+  case white:
+    eligibleSquares = position.getAllPieces(black);
+    generatedMoves =
+        (((pawns << 7) & (~H_FILE)) & eligibleSquares) & (~RANK_8_MASK);
+    while (generatedMoves) {
+      to = __builtin_ctzll(generatedMoves);
+      from = to - 7;
+      moveList.push_back(Move{from, to, CAPTURE});
+      generatedMoves ^= (0b1ull << to);
+    }
+    break;
+  case black:
+    eligibleSquares = position.getAllPieces(white);
+    generatedMoves =
+        (((pawns >> 9) & (~H_FILE)) & eligibleSquares) & (~RANK_1_MASK);
     while (generatedMoves) {
       to = __builtin_ctzll(generatedMoves);
       from = to + 9;
@@ -311,35 +424,35 @@ void MoveGeneration::generateCastling() {
   switch (color_) {
 
   case white:
-    if (~position.isInCheck(e1) && ~position.isInCheck(d1) &&
-        ~position.isInCheck(c1) &&
+    if ((!position.isInCheck(e1)) && (!position.isInCheck(d1)) &&
+        (!position.isInCheck(c1)) &&
         (WHITE_QUEEN_SIDE_CASTLING_MASK & castlingRigths) &&
-        ~(allPieces & WHITE_QUEEN_SIDE_CASTLING_RAY)) {
+        ((allPieces & WHITE_QUEEN_SIDE_CASTLING_RAY) == 0)) {
 
       moveList.push_back(Move{e1, c1, MoveType::queenCastle});
     }
 
-    if (~position.isInCheck(e1) && ~position.isInCheck(f1) &&
-        ~position.isInCheck(g1) &&
+    if ((!position.isInCheck(e1)) && (!position.isInCheck(f1)) &&
+        (!position.isInCheck(g1)) &&
         (WHITE_KING_SIDE_CASTLING_MASK & castlingRigths) &&
-        ~(allPieces & WHITE_KING_SIDE_CASTLING_RAY)) {
+        ((allPieces & WHITE_KING_SIDE_CASTLING_RAY) == 0)) {
 
       moveList.push_back(Move{e1, g1, MoveType::kingCastle});
     }
     break;
   case black:
-    if (~position.isInCheck(e8) && ~position.isInCheck(d8) &&
-        ~position.isInCheck(c8) &&
+    if ((!position.isInCheck(e8)) && (!position.isInCheck(d8)) &&
+        (!position.isInCheck(c8)) &&
         (BLACK_QUEEN_SIDE_CASTLING_MASK & castlingRigths) &&
-        ~(allPieces & BLACK_QUEEN_SIDE_CASTLING_RAY)) {
+        ((allPieces & BLACK_QUEEN_SIDE_CASTLING_RAY) == 0)) {
 
       moveList.push_back(Move{e8, c8, MoveType::queenCastle});
     }
 
-    if (~position.isInCheck(e8) && ~position.isInCheck(f8) &&
-        ~position.isInCheck(g8) &&
+    if ((!position.isInCheck(e8)) && (!position.isInCheck(f8)) &&
+        (!position.isInCheck(g8)) &&
         (BLACK_KING_SIDE_CASTLING_MASK & castlingRigths) &&
-        ~(allPieces & BLACK_KING_SIDE_CASTLING_RAY)) {
+        ((allPieces & BLACK_KING_SIDE_CASTLING_RAY) == 0)) {
 
       moveList.push_back(Move{e8, g8, MoveType::kingCastle});
     }

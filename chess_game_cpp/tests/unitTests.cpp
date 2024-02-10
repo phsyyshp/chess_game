@@ -2,6 +2,7 @@
 #include "UCI.hpp"
 #include "move_generation.hpp"
 #include "movelist.hpp"
+#include "perftTest.hpp"
 #include "position.hpp"
 #include "search.hpp"
 #include <gtest/gtest.h>
@@ -206,6 +207,7 @@ TEST(Position, makecastling_white_king_side) {
   ASSERT_EQ(positionCorrect.getGameState().getGameStateNum(),
             position.getGameState().getGameStateNum());
 }
+// Utilities
 TEST(Utillities, FENtoRanks) {
 
   std::string FENstr =
@@ -223,7 +225,15 @@ TEST(Utillities, FENtoFields) {
   ASSERT_EQ("0", fieldVec[4]);
   ASSERT_EQ("c6", fieldVec[3]);
 }
-
+TEST(Perft, perft) {
+  Position position("rn1qk2r/p4p1p/bp1p1n2/2P1p1p1/1b1p4/1PN1PNP1/PB1Q1PBP/"
+                    "R3K2R w KQkq - 0 12");
+  perftTest test(position);
+  uint64_t perftResult = test.perft(3);
+  // perftDivideInterface("rn1qk2r/p4p1p/bp1p1n2/2P1p1p1/1b1p4/1PN1PNP1/PB1Q1PBP/"
+  //  "R3K2R w KQkq - 0 12");
+  ASSERT_EQ(57902, perftResult);
+}
 // Search tests
 // Ply
 // TEST(SearchTest, Ply_constructor) {

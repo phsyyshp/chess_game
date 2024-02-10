@@ -38,8 +38,8 @@ public:
 
   // bools:
   bool isInCheck() const;
+  // TODO: refactor this
   bool isInCheck(square square_) const;
-
   bool isEmpty(int square_) const;
   // movers:
   // assuming the move is pseudolegal,

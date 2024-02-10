@@ -99,11 +99,15 @@ struct magicTbls {
   uint64_t magicNum;
   int shiftBit;
 };
-// bitboard filters;
+// bitboard FILES;
 const uint64_t A_FILE =
     0b0000000100000001000000010000000100000001000000010000000100000001ull;
 const uint64_t H_FILE =
     0b1000000010000000100000001000000010000000100000001000000010000000ull;
+// bitboard Ranks;
+
+constexpr uint64_t RANK_1_MASK = (0b11111111ULL);
+constexpr uint64_t RANK_8_MASK = (0b11111111ULL) << 7 * 8;
 const std::array<int, 2> whoToMove = {1, -1};
 constexpr std::array<uint, 64> squareTofile = {
     0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3, 4, 5,
@@ -138,7 +142,7 @@ constexpr uint64_t WHITE_QUEEN_SIDE_CASTLING_RAY =
 constexpr uint64_t WHITE_KING_SIDE_CASTLING_RAY =
     (0b1ull << f1) | (0b1ull << g1);
 constexpr uint64_t BLACK_QUEEN_SIDE_CASTLING_RAY =
-    (0b1ull << b1) | (0b1ull << c8) | (0b1ull << d8);
+    (0b1ull << b8) | (0b1ull << c8) | (0b1ull << d8);
 constexpr uint64_t BLACK_KING_SIDE_CASTLING_RAY =
     (0b1ull << f8) | (0b1ull << g8);
 
