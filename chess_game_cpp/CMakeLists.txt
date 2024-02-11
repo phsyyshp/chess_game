@@ -22,7 +22,7 @@ set(MAIN_SOURCES
     src/movelist.cpp
     src/UCI.cpp
     src/gameState.cpp
-    src/main.cpp # Keep your main.cpp here
+    src/main.cpp 
 )
 
 # Unit test source files
@@ -42,14 +42,13 @@ set(TEST_SOURCES
     src/UCI.cpp
     src/gameState.cpp
     src/moveToStr.cpp
-    # Do not include src/main.cpp here as it's for your main application
 )
 
 # Set the output directory for the executable
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/bin)
 
 # Create the main executable
-add_executable(marta ${MAIN_SOURCES})
+add_executable(engine ${MAIN_SOURCES})
 
 # Create the unit tests executable
 add_executable(unitTests ${TEST_SOURCES})
