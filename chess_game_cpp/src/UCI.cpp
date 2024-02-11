@@ -1,6 +1,7 @@
 #include "UCI.hpp"
 void UCI::uci() const {
-  std::cout << "id name Marta\n";
+  std::cout << "id name M.A.R.T.A.: Machine Algorithm for Real-time Tactical "
+               "Analysis\n";
   std::cout << "uciok\n";
 }
 void UCI::isready() const { std::cout << "readyok\n"; }
