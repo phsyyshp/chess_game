@@ -24,3 +24,7 @@ int findIndex(const std::array<T, N> &arr, const T &value) {
   auto it = std::find(arr.begin(), arr.end(), value);
   return (it != arr.end()) ? std::distance(arr.begin(), it) : -1;
 }
+
+std::string getCommand(const std::string &combinedCommand);
+
+std::vector<std::string> getSubCommands(const std::string &combinedCommand);
