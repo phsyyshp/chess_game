@@ -1,3 +1,4 @@
+#pragma once
 #include "evaluation.hpp"
 class Search {
 public:
@@ -10,6 +11,7 @@ public:
   int getPly() const;
   // searchers;
   int negaMax(int depth);
+
   Move search(int depth);
   Move searchAB(int depth);
   int quiesce(int alpha, int beta);

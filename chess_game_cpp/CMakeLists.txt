@@ -22,6 +22,7 @@ set(MAIN_SOURCES
     src/movelist.cpp
     src/UCI.cpp
     src/gameState.cpp
+    src/moveToStr.cpp
     src/main.cpp 
 )
 

@@ -1,7 +1,9 @@
 #pragma once
 #include "constants.hpp"
+#include "moveToStr.hpp"
 #include "move_generation.hpp"
 #include "position.hpp"
+#include "search.hpp"
 #include "utilities.hpp"
 #include <functional>
 #include <map>
@@ -612,4 +614,5 @@ private:
           {"uci", std::bind(&UCI::uci, this, std::placeholders::_1)},
           {"go", std::bind(&UCI::go, this, std::placeholders::_1)},
           {"position", std::bind(&UCI::position, this, std::placeholders::_1)}};
+  Position _position;
 };

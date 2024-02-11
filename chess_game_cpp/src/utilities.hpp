@@ -27,4 +27,4 @@ int findIndex(const std::array<T, N> &arr, const T &value) {
 
 std::string getCommand(const std::string &combinedCommand);
 
-std::vector<std::string> getSubCommands(const std::string &combinedCommand);
+std::vector<std::string> tokenize(const std::string &combinedCommand);
