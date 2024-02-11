@@ -592,10 +592,17 @@ class UCI {
   black's castling rights. Example: The normal chess position would be:
   rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w AHah -
   */
+  // isready, uci, and go,
 public:
   UCI() = default;
   UCI(Position &position_) : position(position_){};
+
   Move getMove(const std::string &moveStr) const;
+  // commands:
+  void isready();
+  void go();
+  void uci();
+  void position_();
 
 private:
   std::string cmd;
