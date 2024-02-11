@@ -3,6 +3,8 @@
 #include "move_generation.hpp"
 #include "position.hpp"
 #include "utilities.hpp"
+#include <functional>
+#include <map>
 class UCI {
   /*
   Description of the universal chess interface (UCI)    April  2006
@@ -595,17 +597,16 @@ class UCI {
   // isready, uci, and go,
 public:
   UCI() = default;
-  UCI(Position &position_) : position(position_){};
-
-  Move getMove(const std::string &moveStr) const;
-  // commands:
-  void isready();
-  void go();
-  void uci();
-  void position_();
+  void loop();
 
 private:
-  std::string cmd;
-  Position &position;
-  MoveType getFlag(const std::string &moveStr) const;
+  // commands:
+  void uci() const;
+  void isready() const;
+  void go() const;
+
+  std::map<std::string, std::function<void()>> commands = {
+      {"isready", std::bind(&UCI::isready, this)},
+      {"uci", std::bind(&UCI::uci, this)},
+      {"go", std::bind(&UCI::go, this)}};
 };

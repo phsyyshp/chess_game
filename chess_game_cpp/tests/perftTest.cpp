@@ -1,6 +1,6 @@
 
 #include "perftTest.hpp"
-#include "UCI.hpp"
+#include "moveToStr.hpp"
 #include "move_generation.hpp"
 
 uint64_t perftTest::perftPseudoLegal(int depth) {
@@ -92,7 +92,7 @@ void perftDivideInterface() {
   int depth;
   std::string moveStr;
   position.setBoardToInitialConfiguration();
-  UCI uci(position);
+  moveToStr uci(position);
   std::cout << "enter the depth:" << std::endl;
   std::cin >> depth;
   std::cout << "┌──────┬─────────" << std::endl;
@@ -125,7 +125,7 @@ void perftDivideInterface(std::string FENstr) {
   Position tempPosition;
   int depth;
   std::string moveStr;
-  UCI uci(position);
+  moveToStr uci(position);
   position.printBoard();
   std::cout << "enter the depth:" << std::endl;
   std::cin >> depth;
