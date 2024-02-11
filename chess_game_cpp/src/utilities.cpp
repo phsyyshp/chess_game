@@ -213,8 +213,8 @@ std::string getCommand(const std::string &combinedCommand) {
   }
   return commandVector[0];
 }
-std::vector<std::string> getSubCommands(const std::string &combinedCommand) {
-  std::vector<std::string> commandVector;
+std::vector<std::string> tokenize(const std::string &combinedCommand) {
+  std::vector<std::string> tokens;
   std::string command;
   int i = 0;
   for (const char &c : combinedCommand) {
@@ -223,14 +223,9 @@ std::vector<std::string> getSubCommands(const std::string &combinedCommand) {
       command.push_back(c);
     }
     if (c == ' ' || i == combinedCommand.size()) {
-      commandVector.push_back(command);
+      tokens.push_back(command);
       command.clear();
     }
   }
-  if (commandVector.size() < 2) {
-    std::vector<std::string> emptyStringVec = {" "};
-    return emptyStringVec;
-  }
-  commandVector.erase(commandVector.begin());
-  return commandVector;
+  return tokens;
 }
