@@ -1,5 +1,6 @@
 #include "Move.hpp"
 #include "UCI.hpp"
+#include "moveToStr.hpp"
 #include "move_generation.hpp"
 #include "movelist.hpp"
 #include "perftTest.hpp"
@@ -96,7 +97,7 @@ TEST(Position, makeMove_legality_individualMoves_Test_check) {
 
   std::string FENstr = "8/q1k5/8/8/8/8/1K6/8/";
   Position position(FENtoPieces(FENstr), white);
-  UCI uci(position);
+  moveToStr uci(position);
 
   bool isLegal = position.makeMove(uci.getMove("b2a2"));
   ASSERT_EQ(false, isLegal);
@@ -125,14 +126,14 @@ TEST(Position, gameState_initial_config_Test) {
 TEST(Position, gameState_pawnPush_Test) {
   Position position;
   position.setBoardToInitialConfiguration();
-  UCI uci(position);
+  moveToStr uci(position);
   position.makeMove(uci.getMove("d2d4"));
   ASSERT_EQ(3, position.getGameState().getEnPassant());
 }
 TEST(Position, gameState_normalMove_after_pawnPush_Test) {
   Position position;
   position.setBoardToInitialConfiguration();
-  UCI uci(position);
+  moveToStr uci(position);
   position.makeMove(uci.getMove("d2d4"));
   position.makeMove(uci.getMove("d7d6"));
 
@@ -156,7 +157,7 @@ TEST(Position, castling_rigths_update_rook_move) {
   std::string FENstr =
       "rn1q1rk1/4bpp1/pp1pbn2/4p1Pp/4P3/1NN1BP2/PPPQ3P/R3KB1R w KQ h6 0 12";
   Position position(FENstr);
-  UCI uci(position);
+  moveToStr uci(position);
   position.makeMove(uci.getMove("a1b1"));
   GameState gs = position.getGameState();
 
@@ -168,7 +169,7 @@ TEST(Position, castling_rigths_update_king_move) {
   std::string FENstr =
       "rn1q1rk1/4bpp1/pp1pbn2/4p1Pp/4P3/1NN1BP2/PPPQ3P/R3KB1R w KQ h6 0 12";
   Position position(FENstr);
-  UCI uci(position);
+  moveToStr uci(position);
   position.makeMove(uci.getMove("e1d1"));
   GameState gs = position.getGameState();
 
@@ -179,7 +180,7 @@ TEST(Position, makecastling_white_queen_side) {
 
   Position position(
       "rn1q1rk1/4bpp1/pp1pbn2/4p1Pp/4P3/1NN1BP2/PPPQ3P/R3KB1R w KQ h6 0 12");
-  UCI uci(position);
+  moveToStr uci(position);
   position.makeMove(uci.getMove("e1c1"));
   Position positionCorrect(
       "rn1q1rk1/4bpp1/pp1pbn2/4p1Pp/4P3/1NN1BP2/PPPQ3P/2KR1B1R b - - 1 12");
@@ -195,7 +196,7 @@ TEST(Position, makecastling_white_king_side) {
 
   Position position(
       "rn3rk1/2q1bpp1/pp1pbn2/4p1Pp/4P3/1NNBBP2/PPPQ3P/R3K2R w KQ - 2 13");
-  UCI uci(position);
+  moveToStr uci(position);
   position.makeMove(uci.getMove("e1g1"));
   Position positionCorrect(
       "rn3rk1/2q1bpp1/pp1pbn2/4p1Pp/4P3/1NNBBP2/PPPQ3P/R4RK1 b - - 3 13");
@@ -332,30 +333,30 @@ TEST(SearchTest, pickMove_nocopy) {
 }
 
 // UCI
-TEST(UCITest, strToMove_Nocatpure) {
+TEST(moveToStr, strToMove_Nocatpure) {
   Position position;
   position.setBoardToInitialConfiguration();
-  UCI uci(position);
+  moveToStr uci(position);
   std::string moveStr = "d2d4";
   Move UCImove = uci.getMove(moveStr);
   Move handMade(d2, d4, doublePawnPush);
   ASSERT_EQ(handMade.getMoveInt(), UCImove.getMoveInt());
 }
-TEST(UCITest, strToMove_capture) {
+TEST(moveToStr, strToMove_capture) {
   std::string FENstr =
       "r2q1rk1/1p1nbppp/p2pbn2/4p3/4P3/1NN1BP2/PPPQ2PP/2KR1B1R/";
   Position position(FENtoPieces(FENstr), white);
-  UCI uci(position);
+  moveToStr uci(position);
   std::string moveStr = "d2d6";
   Move UCImove = uci.getMove(moveStr);
   Move handMade(d2, d6, captures);
   ASSERT_EQ(handMade.getMoveInt(), UCImove.getMoveInt());
 }
-TEST(UCI, makecastling_white_king_side) {
+TEST(moveToStr, makecastling_white_king_side) {
 
   Position position(
       "rn3rk1/2q1bpp1/pp1pbn2/4p1Pp/4P3/1NNBBP2/PPPQ3P/R3K2R w KQ - 2 13");
-  UCI uci(position);
+  moveToStr uci(position);
   Move move = uci.getMove("e1g1");
   Move handMade(e1, g1, kingCastle);
   ASSERT_EQ(handMade.getMoveInt(), move.getMoveInt());
@@ -365,7 +366,7 @@ TEST(GameLoop, gameloopTEST) {
   position.setBoardToInitialConfiguration();
   position.printBoard();
   std::string moveStr;
-  UCI uci(position);
+  moveToStr uci(position);
   while (std::cin >> moveStr) {
     Move move = uci.getMove(moveStr);
     MoveGeneration mg(position);

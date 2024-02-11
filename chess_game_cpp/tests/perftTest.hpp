@@ -1,4 +1,4 @@
-#include "UCI.hpp"
+#include "moveToStr.hpp"
 #include "move_generation.hpp"
 class perftTest {
 
