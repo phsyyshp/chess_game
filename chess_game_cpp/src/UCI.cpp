@@ -10,16 +10,15 @@ void UCI::isready(const std::vector<std::string> &subCommands) const {
 }
 void UCI::go(const std::vector<std::string> &tokens) const {
   int depth = 500;
-  auto depthIt = std::find(tokens.begin(), tokens.end(), "depth");
-
+  double wtime = DOUBLE_MAX doube whiteTime auto depthIt =
+      std::find(tokens.begin(), tokens.end(), "depth");
   if (depthIt != tokens.end()) {
     depth = stoi(*(depthIt + 1));
   }
-  Search srch(_position);
+  Search srch(_position, );
   Move bestMove = srch.searchAB(depth);
   std::cout << "bestmove " << bestMove.toStr() << "\n";
 }
-
 void UCI::position(const std::vector<std::string> &tokens) {
   if (tokens[0] == "startpos") {
     _position.setBoardToInitialConfiguration();

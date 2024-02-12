@@ -11,6 +11,20 @@ Search::Search(const Position &p) : position(p) {
   }
 };
 
+Search::Search(const Position &p, double timeLeftWhite_,
+               double timeIncrementWhite_, double timeLeftBlack_,
+               double timeIncrementBlack_)
+    : position(p), timeLeftWhite(timeLeftWhite_),
+      timeIncrementWhite(timeIncrementWhite_), timeLeftBlack(timeLeftBlack_),
+      timeIncrementBlack(timeIncrementBlack_) {
+
+  Move invalidMove(a1, a1, false);
+  for (int i = 0; i < MAX_DEPTH; i++) {
+    for (int j = 0; j < MAX_KILLER_MOVES; j++) {
+      killerMoves[j][i] = invalidMove;
+    }
+  }
+}
 // getters;
 std::array<std::array<Move, MAX_DEPTH>, MAX_KILLER_MOVES>
 Search::getKillerMoves() const {
@@ -81,9 +95,6 @@ Move Search::search(int depth) {
   Move bestMove;
   Evaluation eval(position);
   Position tempPosition;
-  if (depth <= 0) {
-    throw std::out_of_range("depth must be positive int");
-  }
   int max = INT16_MIN;
   MoveGeneration movGen(position);
   movGen.generateAllMoves();
@@ -103,6 +114,54 @@ Move Search::search(int depth) {
   }
   return bestMove;
 }
+Move Search::searchIt(int maxDepth) {
+  int depth = 2;
+  double remainingTime;
+  double timeIncrement;
+  double timeSpentOnIteration;
+  Move bestMove;
+  color turn = position.getTurn();
+  switch (turn) {
+  case white:
+    remainingTime = timeLeftWhite;
+    timeIncrement = timeIncrementWhite;
+    break;
+
+  case black:
+    remainingTime = timeLeftBlack;
+    timeIncrement = timeIncrementBlack;
+    break;
+  default:
+    break;
+  }
+  double maxMoveDuration = remainingTime / 20 + timeIncrement / 2;
+  double moveDuration = 0;
+
+  while ((depth <= maxDepth) && (moveDuration <= maxMoveDuration)) {
+    auto start = std::chrono::high_resolution_clock::now();
+    bestMove = search(depth);
+    depth++;
+    auto end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> elapsed = end - start;
+    timeSpentOnIteration = elapsed.count();
+    moveDuration += timeSpentOnIteration;
+  }
+
+  switch (turn) {
+  case white:
+    timeLeftWhite -= moveDuration - timeIncrementWhite;
+    break;
+
+  case black:
+    timeLeftBlack -= moveDuration - timeIncrementBlack;
+    break;
+  default:
+    break;
+  }
+  moveDuration = 0;
+  return bestMove;
+}
+
 // TODO: Rigirous testing;
 Move Search::searchAB(int depth) {
   int score;
@@ -135,10 +194,9 @@ Move Search::searchAB(int depth) {
   }
   return bestMove;
 }
+
 /*TODO:
--killer moves;
 -hash tables;
--iterative deepning;
 */
 int Search::alphaBeta(int alpha, int beta, int depthLeft) {
   Position tempPosition;
