@@ -39,6 +39,7 @@ void UCI::go(const std::vector<std::string> &tokens) const {
   Move bestMove = srch.searchIt(depth);
   std::cout << "bestmove " << bestMove.toStr() << "\n";
 }
+// TODO: add fen support;
 void UCI::position(const std::vector<std::string> &tokens) {
   if (tokens[0] == "startpos") {
     _position.setBoardToInitialConfiguration();
