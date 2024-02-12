@@ -228,7 +228,7 @@ void Search::scoreMoves(MoveList &moveList_) const {
           MVV_LVA_OFFSET + MVV_LVA[position.getPiece(move.getTo())]
                                   [position.getPiece(move.getFrom())];
       move.setScore(moveScore);
-    } else if (false) {
+    } else {
       int i = 0;
       while (i < MAX_KILLER_MOVES && moveScore == 0) {
         if (move.getMoveInt() == killerMoves[i][ply].getMoveInt()) {
