@@ -10,12 +10,32 @@ void UCI::isready(const std::vector<std::string> &subCommands) const {
 }
 void UCI::go(const std::vector<std::string> &tokens) const {
   int depth = 500;
-  double wtime = DOUBLE_MAX doube whiteTime auto depthIt =
-      std::find(tokens.begin(), tokens.end(), "depth");
+  double wtime = DBL_MAX;
+  double btime = DBL_MAX;
+  double winc = 0;
+  double binc = 0;
+
+  auto depthIt = std::find(tokens.begin(), tokens.end(), "depth");
   if (depthIt != tokens.end()) {
     depth = stoi(*(depthIt + 1));
   }
-  Search srch(_position, );
+  auto wtimeIt = std::find(tokens.begin(), tokens.end(), "wtime");
+  if (wtimeIt != tokens.end()) {
+    wtime = std::stod(*(wtimeIt + 1));
+  }
+  auto btimeIt = std::find(tokens.begin(), tokens.end(), "btime");
+  if (btimeIt != tokens.end()) {
+    btime = std::stod(*(btimeIt + 1));
+  }
+  auto wincIt = std::find(tokens.begin(), tokens.end(), "winc");
+  if (wincIt != tokens.end()) {
+    winc = std::stod(*(wincIt + 1));
+  }
+  auto bincIt = std::find(tokens.begin(), tokens.end(), "binc");
+  if (bincIt != tokens.end()) {
+    binc = std::stod(*(bincIt + 1));
+  }
+  Search srch(_position, wtime, winc, btime, binc);
   Move bestMove = srch.searchAB(depth);
   std::cout << "bestmove " << bestMove.toStr() << "\n";
 }
