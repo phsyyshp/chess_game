@@ -609,12 +609,16 @@ private:
   void isready(const std::vector<std::string> &subCommand) const;
   void go(const std::vector<std::string> &subCommand) const;
   void position(const std::vector<std::string> &subCommand);
+  void ucinewgame(const std::vector<std::string> &subCommand);
 
   std::map<std::string, std::function<void(const std::vector<std::string> &)>>
       commands = {
           {"isready", std::bind(&UCI::isready, this, std::placeholders::_1)},
           {"uci", std::bind(&UCI::uci, this, std::placeholders::_1)},
           {"go", std::bind(&UCI::go, this, std::placeholders::_1)},
+          {"ucinewgame",
+           std::bind(&UCI::ucinewgame, this, std::placeholders::_1)},
+
           {"position", std::bind(&UCI::position, this, std::placeholders::_1)}};
   Position _position;
 };

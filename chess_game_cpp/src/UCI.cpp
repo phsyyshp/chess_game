@@ -51,6 +51,10 @@ void UCI::position(const std::vector<std::string> &tokens) {
     _position.makeMove(ms.getMove(*it));
   }
 }
+void UCI::ucinewgame(const std::vector<std::string> &tokens) {
+  Position tempPosition;
+  _position = tempPosition;
+}
 void UCI::loop() {
   std::string combinedCommand;
   while (std::getline(std::cin, combinedCommand)) {
@@ -60,7 +64,6 @@ void UCI::loop() {
       std::vector<std::string> emptyToken;
       commands[command](emptyToken);
     } else {
-
       tokens.erase(tokens.begin());
       commands[command](tokens);
     }
