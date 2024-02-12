@@ -618,7 +618,6 @@ private:
           {"go", std::bind(&UCI::go, this, std::placeholders::_1)},
           {"ucinewgame",
            std::bind(&UCI::ucinewgame, this, std::placeholders::_1)},
-
           {"position", std::bind(&UCI::position, this, std::placeholders::_1)}};
   Position _position;
 };
