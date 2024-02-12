@@ -36,7 +36,7 @@ void UCI::go(const std::vector<std::string> &tokens) const {
     binc = std::stod(*(bincIt + 1));
   }
   Search srch(_position, wtime, winc, btime, binc);
-  Move bestMove = srch.searchAB(depth);
+  Move bestMove = srch.searchIt(depth);
   std::cout << "bestmove " << bestMove.toStr() << "\n";
 }
 void UCI::position(const std::vector<std::string> &tokens) {
