@@ -142,7 +142,7 @@ Move Search::searchIt(int maxDepth) {
     bestMove = searchAB(depth);
     depth++;
     auto end = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<double> elapsed = end - start;
+    std::chrono::duration<double, std::milli> elapsed = end - start;
     timeSpentOnIteration = elapsed.count();
     moveDuration += timeSpentOnIteration;
   }
@@ -228,7 +228,7 @@ void Search::scoreMoves(MoveList &moveList_) const {
           MVV_LVA_OFFSET + MVV_LVA[position.getPiece(move.getTo())]
                                   [position.getPiece(move.getFrom())];
       move.setScore(moveScore);
-    } else {
+    } else if (false) {
       int i = 0;
       while (i < MAX_KILLER_MOVES && moveScore == 0) {
         if (move.getMoveInt() == killerMoves[i][ply].getMoveInt()) {
