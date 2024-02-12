@@ -46,7 +46,8 @@ void UCI::position(const std::vector<std::string> &tokens) {
   } else {
   }
   auto moves = std::find(tokens.begin(), tokens.end(), "move");
-  for (auto it = moves + 1; it != tokens.end(); it++) {
+  for (auto it = moves + 1; it != tokens.end() && (moves != tokens.end());
+       it++) {
     moveToStr ms(_position);
     _position.makeMove(ms.getMove(*it));
   }
