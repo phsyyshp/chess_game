@@ -11,9 +11,8 @@ Search::Search(const Position &p) : position(p) {
   }
 };
 
-Search::Search(const Position &p, double timeLeftWhite_,
-               double timeIncrementWhite_, double timeLeftBlack_,
-               double timeIncrementBlack_)
+Search::Search(const Position &p, int timeLeftWhite_, int timeIncrementWhite_,
+               int timeLeftBlack_, int timeIncrementBlack_)
     : position(p), timeLeftWhite(timeLeftWhite_),
       timeIncrementWhite(timeIncrementWhite_), timeLeftBlack(timeLeftBlack_),
       timeIncrementBlack(timeIncrementBlack_) {
@@ -116,9 +115,11 @@ Move Search::search(int depth) {
 }
 Move Search::searchIt(int maxDepth) {
   int depth = 2;
-  double remainingTime;
-  double timeIncrement;
-  double timeSpentOnIteration;
+  int remainingTime;
+  int timeIncrement;
+  int timeSpent;
+  auto start = std::chrono::high_resolution_clock::now();
+
   Move bestMove;
   color turn = position.getTurn();
   switch (turn) {
@@ -134,24 +135,25 @@ Move Search::searchIt(int maxDepth) {
   default:
     break;
   }
-  double maxMoveDuration = remainingTime / 20 + timeIncrement / 2;
-  double moveDuration = 0;
+  int maxMoveDuration = remainingTime / 20 + timeIncrement / 2;
+  int moveDuration = 0;
 
-  while ((depth <= maxDepth) && (moveDuration <= maxMoveDuration)) {
-    auto start = std::chrono::high_resolution_clock::now();
-    bestMove = searchAB(depth);
+  while ((depth <= maxDepth) && (timeSpent <= maxMoveDuration)) {
+    bestMove = searchAB(depth, start, remainingTime, timeIncrement);
     depth++;
     auto end = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<double, std::milli> elapsed = end - start;
-    timeSpentOnIteration = elapsed.count();
-    moveDuration += timeSpentOnIteration;
+    auto elapsed =
+        std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+    timeSpent = elapsed.count();
   }
 
   return bestMove;
 }
 
-// TODO: Rigirous testing;
-Move Search::searchAB(int depth) {
+// TODO: Rigorous testing;
+Move Search::searchAB(int depth, auto start, int remainingTime,
+                      int timeIncrement) {
+  int timeSpent;
   int score;
   Move bestMove;
   Evaluation eval(position);
@@ -176,7 +178,16 @@ Move Search::searchAB(int depth) {
       }
     }
     position = tempPosition;
+
+    auto end = std::chrono::high_resolution_clock::now();
+    auto elapsed =
+        std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+    timeSpent = elapsed.count();
+    if (timeSpent >= remainingTime / 20 + timeIncrement / 2) {
+      return pv;
+    }
   }
+  pv = bestMove;
   return bestMove;
 }
 
