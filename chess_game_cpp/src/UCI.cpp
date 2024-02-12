@@ -10,10 +10,10 @@ void UCI::isready(const std::vector<std::string> &subCommands) const {
 }
 void UCI::go(const std::vector<std::string> &tokens) const {
   int depth = 500;
-  double wtime = DBL_MAX;
-  double btime = DBL_MAX;
-  double winc = 0;
-  double binc = 0;
+  int wtime = INT32_MAX;
+  int btime = INT32_MAX;
+  int winc = 0;
+  int binc = 0;
 
   auto depthIt = std::find(tokens.begin(), tokens.end(), "depth");
   if (depthIt != tokens.end()) {
