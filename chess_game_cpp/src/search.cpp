@@ -139,7 +139,7 @@ Move Search::searchIt(int maxDepth) {
 
   while ((depth <= maxDepth) && (moveDuration <= maxMoveDuration)) {
     auto start = std::chrono::high_resolution_clock::now();
-    bestMove = search(depth);
+    bestMove = searchAB(depth);
     depth++;
     auto end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> elapsed = end - start;
@@ -147,18 +147,6 @@ Move Search::searchIt(int maxDepth) {
     moveDuration += timeSpentOnIteration;
   }
 
-  switch (turn) {
-  case white:
-    timeLeftWhite -= moveDuration - timeIncrementWhite;
-    break;
-
-  case black:
-    timeLeftBlack -= moveDuration - timeIncrementBlack;
-    break;
-  default:
-    break;
-  }
-  moveDuration = 0;
   return bestMove;
 }
 
