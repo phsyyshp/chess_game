@@ -156,9 +156,6 @@ Move Search::searchAB(int depth) {
   Move bestMove;
   Evaluation eval(position);
   Position tempPosition;
-  if (depth <= 0) {
-    throw std::out_of_range("depth must be positive int");
-  }
   int alpha = INT16_MIN;
   int beta = INT16_MAX;
   MoveGeneration movGen(position);
@@ -189,10 +186,10 @@ Move Search::searchAB(int depth) {
 int Search::alphaBeta(int alpha, int beta, int depthLeft) {
   Position tempPosition;
   MoveGeneration movgen(position);
-  movgen.generateAllMoves();
   if (depthLeft == 0) {
     return quiesce(alpha, beta);
   }
+  movgen.generateAllMoves();
   int score;
   scoreMoves(movgen.getMoves());
   // FIX IT: THERE MUST BE A BUG HERE
