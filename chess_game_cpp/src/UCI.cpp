@@ -40,9 +40,9 @@ void UCI::go(const std::vector<std::string> &tokens) {
   }
   Search srch(_position, wtime, winc, btime, binc);
   Move bestMove = srch.searchIt(depth);
-  std::string message = "output ";
-  message += "bestmove";
-  logMessage(message);
+  std::string message;
+  message += "bestmove ";
+  logMessage(message + bestMove.toStr());
   std::cout << "bestmove " << bestMove.toStr() << "\n";
 }
 // TODO: add fen support;
@@ -76,6 +76,9 @@ void UCI::loop() {
     logMessage(message);
     std::vector<std::string> tokens = tokenize(combinedCommand);
     std::string command = tokens[0];
+    if (tokens[0] == "quit") {
+      break;
+    }
     if (tokens.size() < 2) {
       std::vector<std::string> emptyToken;
       commands[command](emptyToken);
@@ -87,6 +90,9 @@ void UCI::loop() {
 }
 void UCI::debugInit() const {}
 void UCI::logMessage(std::string message) {
+  debugLog.open("/home/oturker/chess_game/chess_game_cpp/bin/debugLog.txt",
+                std::ios::app);
+
   auto in_time_t =
       std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
   auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(
@@ -96,4 +102,5 @@ void UCI::logMessage(std::string message) {
   debugLog << std::put_time(std::localtime(&in_time_t), "%Y-%m-%d %H:%M:%S");
   debugLog << '.' << std::setfill('0') << std::setw(3) << millis.count()
            << " - " << message << "\n";
+  debugLog.close();
 }

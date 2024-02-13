@@ -3,7 +3,7 @@
 
 cutechess-cli \
 -engine cmd=/home/oturker/chess_game/chess_game_cpp/bin/engine \
--engine cmd=/home/oturker/chess_game/chess_game_cpp/bin/engine \
+-engine cmd=/home/oturker/chess_game/chess_game_cpp/bin/engine_1 \
 -each \
     tc=inf/40+0.08 \
     proto=uci \
