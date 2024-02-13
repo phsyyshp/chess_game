@@ -603,7 +603,11 @@ class UCI {
   */
   // isready, uci, and go,
 public:
-  UCI() { debugLog.open("debugLog.txt"); }
+  UCI() {
+    debugLog.open("/home/oturker/chess_game/chess_game_cpp/bin/debugLog.txt");
+    debugLog.close();
+  }
+
   void loop();
 
   void debugInit() const;
