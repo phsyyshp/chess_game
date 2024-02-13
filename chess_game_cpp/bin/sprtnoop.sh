@@ -14,3 +14,4 @@ cutechess-cli \
 -pgnout "sprt.pgn" \
 -debug > "/home/oturker/chess_game/chess_game_cpp/debug_output.txt" 2>&1
 
+
