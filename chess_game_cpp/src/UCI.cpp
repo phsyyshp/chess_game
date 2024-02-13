@@ -1,8 +1,7 @@
 #include "UCI.hpp"
 
 void UCI::uci(const std::vector<std::string> &subCommands) const {
-  std::cout << "id name  Machine Algorithm for Real-time Tactical "
-               "Analysis\n";
+  std::cout << "id name  Engine\n";
   std::cout << "uciok\n";
 }
 void UCI::isready(const std::vector<std::string> &subCommands) const {
@@ -37,6 +36,7 @@ void UCI::go(const std::vector<std::string> &tokens) const {
   }
   Search srch(_position, wtime, winc, btime, binc);
   Move bestMove = srch.searchIt(depth);
+
   std::cout << "bestmove " << bestMove.toStr() << "\n";
 }
 // TODO: add fen support;
@@ -45,7 +45,7 @@ void UCI::position(const std::vector<std::string> &tokens) {
     _position.setBoardToInitialConfiguration();
   } else {
   }
-  auto moves = std::find(tokens.begin(), tokens.end(), "move");
+  auto moves = std::find(tokens.begin(), tokens.end(), "moves");
   for (auto it = moves + 1; it != tokens.end() && (moves != tokens.end());
        it++) {
     moveToStr ms(_position);
