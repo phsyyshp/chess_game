@@ -30,3 +30,5 @@ chess_game_cpp/bin/debugLog.txt
 chess_game_cpp/bin/debugLog_1.txt
 chess_game_cpp/bin/sprtnoop.sh
 chess_game_cpp/bin/errors
+chess_game_cpp/bin/engine_1debugLog
+chess_game_cpp/bin/enginedebugLog

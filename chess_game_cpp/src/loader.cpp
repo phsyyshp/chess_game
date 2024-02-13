@@ -113,3 +113,20 @@ std::string getExecutableDirectory() {
   // fallback
   return fullPath;
 }
+std::string getExecutableName() {
+  char path[PATH_MAX];
+  ssize_t count = readlink("/proc/self/exe", path, PATH_MAX);
+
+  std::string fullPath(path, (count > 0) ? count : 0);
+
+  // Find the last '/' character and extract everything after that to get the
+  // executable name
+  size_t lastSlashPos = fullPath.find_last_of("/");
+  if (lastSlashPos != std::string::npos) {
+    return fullPath.substr(lastSlashPos + 1); // +1 to skip the '/'
+  }
+
+  // If for some reason the '/' character isn't found, return the full path as
+  // fallback
+  return fullPath;
+}
