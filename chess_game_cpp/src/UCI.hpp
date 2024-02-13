@@ -604,7 +604,10 @@ class UCI {
   // isready, uci, and go,
 public:
   UCI() {
-    debugLog.open("/home/oturker/chess_game/chess_game_cpp/bin/debugLog_1.txt");
+    std::string currentDIR = getExecutableDirectory();
+    std::string executableName = getExecutableName();
+    path = currentDIR + '/' + executableName + "debugLog";
+    debugLog.open(path);
     debugLog.close();
   }
 
@@ -632,4 +635,5 @@ private:
            std::bind(&UCI::ucinewgame, this, std::placeholders::_1)},
           {"position", std::bind(&UCI::position, this, std::placeholders::_1)}};
   Position _position;
+  std::string path;
 };
