@@ -1,13 +1,17 @@
 #include "UCI.hpp"
 
-void UCI::uci(const std::vector<std::string> &subCommands) const {
+void UCI::uci(const std::vector<std::string> &subCommands) {
+  std::string message = "id name  Engine";
+  logMessage(message);
   std::cout << "id name  Engine\n";
+  logMessage("uciok");
   std::cout << "uciok\n";
 }
-void UCI::isready(const std::vector<std::string> &subCommands) const {
+void UCI::isready(const std::vector<std::string> &subCommands) {
+  logMessage("readyok");
   std::cout << "readyok\n";
 }
-void UCI::go(const std::vector<std::string> &tokens) const {
+void UCI::go(const std::vector<std::string> &tokens) {
   int depth = 500;
   int wtime = INT32_MAX;
   int btime = INT32_MAX;
@@ -36,7 +40,9 @@ void UCI::go(const std::vector<std::string> &tokens) const {
   }
   Search srch(_position, wtime, winc, btime, binc);
   Move bestMove = srch.searchIt(depth);
-
+  std::string message = "output ";
+  message += "bestmove";
+  logMessage(message);
   std::cout << "bestmove " << bestMove.toStr() << "\n";
 }
 // TODO: add fen support;
@@ -58,7 +64,16 @@ void UCI::ucinewgame(const std::vector<std::string> &tokens) {
 }
 void UCI::loop() {
   std::string combinedCommand;
+  if (debugLog) {
+    debugLog << "Debug Log\n";
+  } else {
+    std::cerr << "couldnt open the file";
+  }
+
+  std::string message;
   while (std::getline(std::cin, combinedCommand)) {
+    message = "Input:" + combinedCommand;
+    logMessage(message);
     std::vector<std::string> tokens = tokenize(combinedCommand);
     std::string command = tokens[0];
     if (tokens.size() < 2) {
@@ -69,4 +84,16 @@ void UCI::loop() {
       commands[command](tokens);
     }
   }
+}
+void UCI::debugInit() const {}
+void UCI::logMessage(std::string message) {
+  auto in_time_t =
+      std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+  auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(
+                    std::chrono::system_clock::now().time_since_epoch()) %
+                1000;
+
+  debugLog << std::put_time(std::localtime(&in_time_t), "%Y-%m-%d %H:%M:%S");
+  debugLog << '.' << std::setfill('0') << std::setw(3) << millis.count()
+           << " - " << message << "\n";
 }
