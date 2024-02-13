@@ -40,6 +40,9 @@ std::vector<uint64_t> lineToNumsVec(const std::string &line) {
 }
 std::vector<uint64_t> fileToVec(std::string fileName) {
   // fileName = "mask_cache/" + fileName + ".txt";
+  std::string fullDir = getExecutableDirectory();
+  fileName = "/mask_cache/" + fileName;
+  fileName = fullDir + fileName;
   std::vector<uint64_t> out;
   std::string temp;
   std::fstream in(fileName);
@@ -54,7 +57,10 @@ std::vector<uint64_t> fileToVec(std::string fileName) {
   return out;
 }
 std::vector<std::vector<uint64_t>> fileToVec2(std::string fileName) {
-  fileName = "mask_cache/" + fileName + ".txt";
+
+  std::string fullDir = getExecutableDirectory();
+  fileName = "/mask_cache/" + fileName;
+  fileName = fullDir + fileName;
   std::vector<std::vector<uint64_t>> lookUpTables;
   std::string line;
   std::fstream in(fileName);
@@ -73,10 +79,9 @@ std::vector<std::vector<uint64_t>> fileToVec2(std::string fileName) {
 }
 std::vector<magicTbls> fileToLookUpsVec(piece pieceType) {
   std::string pieceNameStr = pieceToStr(pieceType);
-  std::string shiftFile = "mask_cache/" + pieceNameStr + "_shifts.txt";
-  std::string masksFile = "mask_cache/" + pieceNameStr + "_masks.txt";
-  std::string magicNumFile =
-      "mask_cache/" + pieceNameStr + "_magic_numbers.txt";
+  std::string shiftFile = pieceNameStr + "_shifts.txt";
+  std::string masksFile = pieceNameStr + "_masks.txt";
+  std::string magicNumFile = pieceNameStr + "_magic_numbers.txt";
   std::vector<uint64_t> shiftVec = fileToVec(shiftFile);
   std::vector<uint64_t> magicNumVec = fileToVec(magicNumFile);
   std::vector<uint64_t> masksVec = fileToVec(masksFile);
@@ -89,4 +94,22 @@ std::vector<magicTbls> fileToLookUpsVec(piece pieceType) {
     out.push_back(tempLookUp);
   }
   return out;
+}
+
+std::string getExecutableDirectory() {
+  char path[PATH_MAX];
+  ssize_t count = readlink("/proc/self/exe", path, PATH_MAX);
+
+  std::string fullPath(path, (count > 0) ? count : 0);
+
+  // Find the last '/' character and remove everything after that to get the
+  // directory
+  size_t lastSlashPos = fullPath.find_last_of("/");
+  if (lastSlashPos != std::string::npos) {
+    return fullPath.substr(0, lastSlashPos);
+  }
+
+  // If for some reason the '/' character isn't found, return the full path as
+  // fallback
+  return fullPath;
 }
