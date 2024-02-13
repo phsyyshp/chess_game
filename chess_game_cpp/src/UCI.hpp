@@ -6,7 +6,10 @@
 #include "position.hpp"
 #include "search.hpp"
 #include "utilities.hpp"
+#include <chrono>
+#include <fstream>
 #include <functional>
+#include <iomanip>
 #include <map>
 class UCI {
   /*
@@ -600,14 +603,19 @@ class UCI {
   */
   // isready, uci, and go,
 public:
-  UCI() = default;
+  UCI() { debugLog.open("/bin/debugLog.txt"); }
   void loop();
+
+  void debugInit() const;
+
+  void logMessage(std::string message);
 
 private:
   // commands:
-  void uci(const std::vector<std::string> &subCommand) const;
-  void isready(const std::vector<std::string> &subCommand) const;
-  void go(const std::vector<std::string> &subCommand) const;
+  std::ofstream debugLog;
+  void uci(const std::vector<std::string> &subCommand);
+  void isready(const std::vector<std::string> &subCommand);
+  void go(const std::vector<std::string> &subCommand);
   void position(const std::vector<std::string> &subCommand);
   void ucinewgame(const std::vector<std::string> &subCommand);
 
