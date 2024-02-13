@@ -90,7 +90,7 @@ void UCI::loop() {
 }
 void UCI::debugInit() const {}
 void UCI::logMessage(std::string message) {
-  debugLog.open("/home/oturker/chess_game/chess_game_cpp/bin/debugLog.txt",
+  debugLog.open("/home/oturker/chess_game/chess_game_cpp/bin/debugLog_1.txt",
                 std::ios::app);
 
   auto in_time_t =
