@@ -24,3 +24,5 @@ chess_game_cpp/bin/sprt.sh
 chess_game_cpp/bin/sprt.pgn
 chess_game_cpp/openings/cute-chess-openings.bin
 chess_game_cpp/debug_output.txt
+chess_game_cpp/openings/bjbraams_chessdb_198350_lines.pgn
+chess_game_cpp/bin/engine_1
