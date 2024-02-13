@@ -603,7 +603,7 @@ class UCI {
   */
   // isready, uci, and go,
 public:
-  UCI() { debugLog.open("/bin/debugLog.txt"); }
+  UCI() { debugLog.open("debugLog.txt"); }
   void loop();
 
   void debugInit() const;
