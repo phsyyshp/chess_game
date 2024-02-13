@@ -1,7 +1,4 @@
 #include "loader.hpp"
-// #include <fstream>
-// #include <iostream>
-// #include <vector>
 std::string pieceToStr(piece pieceType) {
   switch (pieceType) {
   case bishop:
