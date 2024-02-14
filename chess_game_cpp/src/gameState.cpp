@@ -17,3 +17,7 @@ void GameState::setCastlingRigths(uint castlingRigths) {
 void GameState::setEnPassant(uint file) {
   gameStateNum = (gameStateNum & ~((0xf) << 5)) | (file << 5);
 }
+
+void GameState::clear() {
+  gameStateNum = (white & 0x1) | ((0b1111u) << 1) | ((0x8) << 5);
+}
