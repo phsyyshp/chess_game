@@ -171,7 +171,7 @@ Move Search::searchIt(int maxDepth, bool isInfoOn) {
 }
 
 // TODO: Rigorous testing;
-Move Search::searchAB(int depth, auto start, int remainingTime,
+Move Search::searchAB(int depth, std::chrono::high_resolution_clock::time_point start, int remainingTime,
                       int timeIncrement) {
   int timeSpent = 0;
   int score;
