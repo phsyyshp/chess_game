@@ -79,6 +79,9 @@ void UCI::loop() {
     if (tokens[0] == "quit") {
       break;
     }
+    if (tokens[0] == "stop") {
+      continue;
+    }
     if (tokens.size() < 2) {
       std::vector<std::string> emptyToken;
       commands[command](emptyToken);
