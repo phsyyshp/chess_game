@@ -275,6 +275,16 @@ TEST(Perft, perft_king_capture) {
   uint64_t perftResult = test.perft(4);
   ASSERT_EQ(525086, perftResult);
 }
+TEST(Perft, perftFEN) {
+  Position position(
+      "r1b1k2r/1pp1qpbp/p1n1p1p1/2n1P3/4NB2/3BQN2/PPP2PPP/3RK2R b Kkq - 5 12");
+  perftTest test(position);
+  // perftDivideInterface(
+  // "r6r/pb4pp/4Pp2/2k2P2/1pP5/4N3/2PB2PP/1R3K1R b - - 3 24");
+  uint64_t perftResult = test.perft(4);
+  ASSERT_EQ(2899828, perftResult);
+}
+
 // Search tests Ply
 TEST(SearchTest, Ply_constructor) {
 
