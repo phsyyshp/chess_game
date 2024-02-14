@@ -267,7 +267,14 @@ TEST(Perft, perft__pawn_promos) {
   // perftDivideInterface("4k3/6PP/P1P3P1/3P1P2/8/p7/8/2K5 w - - 0 1");
   ASSERT_EQ(2771, perftResult);
 }
-
+TEST(Perft, perft_king_capture) {
+  Position position("r6r/pb4pp/4Pp2/2k2P2/1pP5/4N3/2PB2PP/1R3K1R b - - 3 24");
+  perftTest test(position);
+  perftDivideInterface(
+      "r6r/pb4pp/4Pp2/2k2P2/1pP5/4N3/2PB2PP/1R3K1R b - - 3 24");
+  uint64_t perftResult = test.perft(4);
+  ASSERT_EQ(525086, perftResult);
+}
 // Search tests Ply
 TEST(SearchTest, Ply_constructor) {
 
@@ -428,6 +435,19 @@ TEST(UCI, uciManualTESTSingleLineManyMoves) {
   uci.getPosition().printBoard();
   uci.manual("isready");
   uci.getPosition().printBoard();
+}
+TEST(UCI, timeControl) {
+  UCI uci;
+  uci.manual(
+      "position startpos moves e2e4 e7e5 g1f3 g8f6 d2d4 f6e4 d4e5 d7d5 f1b5 "
+      "c7c6 b5d3 f8c5 d3e4 d5e4 d1d8 e8d8 f3g5 d8c7 g5e4 b8d7 f2f4 f7f6 e5e6 "
+      "c5b4 b1d2 d7c5 e4c5 b4c5 f4f5 c5b4 e1f1 c6c5 d2c4 c7c6 a2a3 b4c3 b2c3 "
+      "b7b5 c4e3 c8b7 c3c4 b5b4 a3b4 c5b4 c1d2 c6c5 a1b1");
+  uci.getPosition().printBoard();
+  uci.manual("isready");
+  uci.getPosition().printBoard();
+
+  uci.manual("go wtime 2234 btime 2235 winc 80 binc 80");
 }
 // comeToStr
 TEST(moveToStr, strToMove_Nocatpure) {

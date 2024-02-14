@@ -1,9 +1,9 @@
 #include "UCI.hpp"
 
 void UCI::uci(const std::vector<std::string> &subCommands) {
-  std::string message = "id name Engine";
+  std::string message = "id name Engine v0.1.0-alpha";
   logMessage(message);
-  std::cout << "id name Engine\n";
+  std::cout << "id name Engine v0.1.0-alpha\n";
   logMessage("uciok");
   std::cout << "uciok\n";
 }
@@ -40,10 +40,13 @@ void UCI::go(const std::vector<std::string> &tokens) {
   }
   Search srch(_position, wtime, winc, btime, binc);
   Move bestMove = srch.searchIt(maxDepth, true);
-  std::string message;
-  message += "bestmove ";
-  logMessage(message + bestMove.toStr());
-  std::cout << "bestmove " << bestMove.toStr() << "\n";
+  Move invalidMove(a1, a1, 0);
+  if (bestMove.getMoveInt() != invalidMove.getMoveInt()) {
+    std::string message;
+    message += "bestmove ";
+    logMessage(message + bestMove.toStr());
+    std::cout << "bestmove " << bestMove.toStr() << "\n";
+  }
 }
 // TODO: add fen support;
 void UCI::position(const std::vector<std::string> &tokens) {
@@ -64,11 +67,11 @@ void UCI::ucinewgame(const std::vector<std::string> &tokens) {
 }
 void UCI::loop() {
   std::string combinedCommand;
-  if (debugLog) {
-    debugLog << "Debug Log\n";
-  } else {
-    std::cerr << "couldnt open the debug file " + path;
-  }
+  // if (debugLog) {
+  //   debugLog << "Debug Log\n";
+  // } else {
+  //   std::cerr << "couldnt open the debug file " + path;
+  // }
 
   std::string message;
   while (std::getline(std::cin, combinedCommand)) {

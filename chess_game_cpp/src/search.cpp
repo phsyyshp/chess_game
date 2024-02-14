@@ -120,7 +120,7 @@ Move Search::searchIt(int maxDepth, bool isInfoOn) {
   int timeSpent;
   auto start = std::chrono::high_resolution_clock::now();
 
-  Move bestMove;
+  Move bestMove(a1, a1, 0); // invalid move;
   color turn = position.getTurn();
   switch (turn) {
   case white:
@@ -137,7 +137,7 @@ Move Search::searchIt(int maxDepth, bool isInfoOn) {
   }
   int maxMoveDuration = remainingTime / 20 + timeIncrement / 2;
   int moveDuration = 0;
-
+  bool didSearchOccured = false;
   while ((depth <= maxDepth) && (timeSpent <= maxMoveDuration)) {
     bestMove = searchAB(depth, start, remainingTime, timeIncrement);
     if (isInfoOn) {
@@ -149,8 +149,11 @@ Move Search::searchIt(int maxDepth, bool isInfoOn) {
     auto elapsed =
         std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
     timeSpent = elapsed.count();
+    didSearchOccured = true;
   }
-
+  if (didSearchOccured) {
+    return bestMove;
+  }
   return bestMove;
 }
 
@@ -216,7 +219,7 @@ int Search::alphaBeta(int alpha, int beta, int depthLeft) {
       score = -alphaBeta(-beta, -alpha, depthLeft - 1);
       ply--;
       if (score >= beta) {
-        // storeKillerMove(movgen.getMoves()[j], ply);
+        storeKillerMove(movgen.getMoves()[j], ply);
         position = tempPosition;
         return beta;
       }
@@ -243,7 +246,7 @@ void Search::scoreMoves(MoveList &moveList_) const {
           MVV_LVA_OFFSET + MVV_LVA[position.getPiece(move.getTo())]
                                   [position.getPiece(move.getFrom())];
       move.setScore(moveScore);
-    } else if (false) {
+    } else {
       int i = 0;
       while (i < MAX_KILLER_MOVES && moveScore == 0) {
         if (move.getMoveInt() == killerMoves[i][ply].getMoveInt()) {

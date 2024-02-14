@@ -36,3 +36,6 @@ chess_game_cpp/bin/engine_1debugLog copy
 chess_game_cpp/bin/enginedebugLog copy
 chess_game_cpp/bin/unitTestsdebugLog
 chess_game_cpp/bin/engine_0_1_1_alpha
+chess_game_cpp/bin/engine_0_1_0_alpha
+chess_game_cpp/bin/engine_0_1_0_alphadebugLog
+chess_game_cpp/bin/engine_0_1_1_alphadebugLog
