@@ -68,7 +68,7 @@ void UCI::loop() {
   if (debugLog) {
     debugLog << "Debug Log\n";
   } else {
-    std::cerr << "couldnt open the debug file";
+    std::cerr << "couldnt open the debug file " + path;
   }
 
   std::string message;
@@ -93,12 +93,6 @@ void UCI::loop() {
   }
 }
 void UCI::manual(const std::string &combinedCommand) {
-
-  if (debugLog) {
-    debugLog << "Debug Log\n";
-  } else {
-    std::cerr << "couldnt open the debug file";
-  }
 
   std::vector<std::string> tokens = tokenize(combinedCommand);
   std::string command = tokens[0];
