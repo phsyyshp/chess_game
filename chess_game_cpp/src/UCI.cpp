@@ -1,7 +1,7 @@
 #include "UCI.hpp"
 
 void UCI::uci(const std::vector<std::string> &subCommands) {
-  std::string message = "id name  Engine";
+  std::string message = "id name Engine";
   logMessage(message);
   std::cout << "id name  Engine\n";
   logMessage("uciok");
@@ -79,6 +79,9 @@ void UCI::loop() {
     if (tokens[0] == "quit") {
       break;
     }
+    if (tokens[0] == "stop") {
+      continue;
+    }
     if (tokens.size() < 2) {
       std::vector<std::string> emptyToken;
       commands[command](emptyToken);
@@ -90,8 +93,7 @@ void UCI::loop() {
 }
 void UCI::debugInit() const {}
 void UCI::logMessage(std::string message) {
-  debugLog.open("/home/oturker/chess_game/chess_game_cpp/bin/debugLog_1.txt",
-                std::ios::app);
+  debugLog.open(path, std::ios::app);
 
   auto in_time_t =
       std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
