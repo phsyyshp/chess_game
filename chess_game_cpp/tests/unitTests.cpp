@@ -7,6 +7,31 @@
 #include "position.hpp"
 #include "search.hpp"
 #include <gtest/gtest.h>
+
+class UCITestHelper {
+public:
+  static std::streambuf *originalCinBuffer;
+  static std::istringstream testInput;
+
+  static void SetUp(const std::string &input) {
+    // Backup the original cin buffer
+    originalCinBuffer = std::cin.rdbuf();
+
+    // Set the test input
+    testInput.str(input);
+    // Redirect cin to read from the test input
+    std::cin.rdbuf(testInput.rdbuf());
+  }
+
+  static void TearDown() {
+    // Restore the original cin buffer
+    std::cin.rdbuf(originalCinBuffer);
+  }
+};
+
+// Define the static members of UCITestHelper
+std::streambuf *UCITestHelper::originalCinBuffer = nullptr;
+std::istringstream UCITestHelper::testInput;
 // MoveList tests
 TEST(MoveListTest, swapNonScoredNonCapture) {
   Position position;
@@ -260,7 +285,8 @@ TEST(SearchTest, Plycounter_SearchAB_5) {
   Position position(FENtoPieces(FENstr), white);
   Search s(position);
   int initialPly = s.getPly();
-  s.searchAB(1);
+  auto start = std::chrono::high_resolution_clock::now();
+  s.searchAB(1, start, 1000, 10);
   int finalPly = s.getPly();
   ASSERT_EQ(finalPly, initialPly);
 }
@@ -271,14 +297,14 @@ TEST(SearchTest, Plycounter_SearchAB_4) {
   Position position(FENtoPieces(FENstr), white);
   Search s(position);
   int initialPly = s.getPly();
-  s.searchAB(2);
+  auto start = std::chrono::high_resolution_clock::now();
+  s.searchAB(2, start, 1000, 10);
   int finalPly = s.getPly();
   ASSERT_EQ(finalPly, initialPly);
 }
 
 // Killer move test
 TEST(SearchTest, killerMove_Initilization) {
-
   std::string FENstr =
       "r2q1rk1/1p1nbppp/p2pbn2/4p3/4P3/1NN1BP2/PPPQ2PP/2KR1B1R/";
   Position position(FENtoPieces(FENstr), white);
@@ -288,7 +314,26 @@ TEST(SearchTest, killerMove_Initilization) {
   Move invalidMove(a1, a1, 0);
   ASSERT_EQ(killerMoves[1][63].getScore(), invalidMove.getScore());
 }
-TEST(SearchTest, score_move) {}
+TEST(SearchTest, SerachLegalityTest) {
+
+  Position position;
+  position.setBoardToInitialConfiguration();
+  int i = 0;
+  int wtime = 8080;
+  int winc = 80;
+  int btime = 8080;
+  int binc = 80;
+  int maxDepth = 500;
+  while (i < 10) {
+
+    MoveGeneration mg(position);
+    Search srch(position, wtime, winc, btime, binc);
+    Move bestMove = srch.searchIt(maxDepth, false);
+    ASSERT_TRUE(position.makeMove(bestMove));
+    // position.printBoard();
+    i++;
+  }
+}
 
 // pick move
 TEST(SearchTest, pickMove_copy) {
@@ -333,6 +378,35 @@ TEST(SearchTest, pickMove_nocopy) {
 }
 
 // UCI
+TEST(UCI, uciLoopTEST) {
+  UCITestHelper::SetUp("uci\nposition startpos\nisready\n");
+
+  UCI uci;
+  uci.loop(); // Run the loop with predefined commands
+
+  // Add assertions to verify the behavior of your UCI class
+  // based on the predefined commands
+
+  UCITestHelper::TearDown();
+}
+TEST(UCI, uciManualTEST) {
+
+  UCI uci;
+  uci.manual("uci");
+  // uci.getPosition().printBoard();
+  uci.manual("position startpos");
+  uci.getPosition().printBoard();
+  uci.manual("isready");
+  uci.getPosition().printBoard();
+  uci.manual("go wtime 35939 btime 38039 winc 80 binc 80");
+  uci.getPosition().printBoard();
+
+  // Add assertions to verify the behavior of your UCI class
+  // based on the predefined commands
+
+  UCITestHelper::TearDown();
+}
+// comeToStr
 TEST(moveToStr, strToMove_Nocatpure) {
   Position position;
   position.setBoardToInitialConfiguration();
@@ -361,27 +435,28 @@ TEST(moveToStr, makecastling_white_king_side) {
   Move handMade(e1, g1, kingCastle);
   ASSERT_EQ(handMade.getMoveInt(), move.getMoveInt());
 }
-TEST(GameLoop, gameloopTEST) {
-  Position position;
-  position.setBoardToInitialConfiguration();
-  position.printBoard();
-  std::string moveStr;
-  moveToStr uci(position);
-  while (std::cin >> moveStr) {
-    Move move = uci.getMove(moveStr);
-    MoveGeneration mg(position);
-    if (!mg.isPseudoLegal(move)) {
-      std::cout << "illegal move try again." << std::endl;
-      continue;
-    }
-    position.makeMove(move);
-    position.printBoard();
-    Search srch(position);
-    Move bestMove = srch.searchAB(5);
-    position.makeMove(bestMove);
-    position.printBoard();
-  }
-}
+
+// TEST(GameLoop, gameloopTEST) {
+//   Position position;
+//   position.setBoardToInitialConfiguration();
+//   position.printBoard();
+//   std::string moveStr;
+//   moveToStr uci(position);
+//   while (std::cin >> moveStr) {
+//     Move move = uci.getMove(moveStr);
+//     MoveGeneration mg(position);
+//     if (!mg.isPseudoLegal(move)) {
+//       std::cout << "illegal move try again." << std::endl;
+//       continue;
+//     }
+//     position.makeMove(move);
+//     position.printBoard();
+//     Search srch(position);
+//     Move bestMove = srch.searchAB(5);
+//     position.makeMove(bestMove);
+//     position.printBoard();
+//   }
+// }
 int main(int argc, char **argv) {
   testing::InitGoogleTest(&argc, argv);
   return RUN_ALL_TESTS();

@@ -613,9 +613,11 @@ public:
 
   void loop();
 
+  void manual(const std::string &command);
   void debugInit() const;
 
   void logMessage(std::string message);
+  Position getPosition() const;
 
 private:
   // commands:
