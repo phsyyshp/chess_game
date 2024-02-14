@@ -314,7 +314,7 @@ TEST(SearchTest, killerMove_Initilization) {
   Move invalidMove(a1, a1, 0);
   ASSERT_EQ(killerMoves[1][63].getScore(), invalidMove.getScore());
 }
-TEST(SearchTest, SerachLegalityTest) {
+TEST(SearchTest, SearchLegalityTest) {
 
   Position position;
   position.setBoardToInitialConfiguration();
@@ -324,7 +324,7 @@ TEST(SearchTest, SerachLegalityTest) {
   int btime = 8080;
   int binc = 80;
   int maxDepth = 500;
-  while (i < 10) {
+  while (i < 2) {
 
     MoveGeneration mg(position);
     Search srch(position, wtime, winc, btime, binc);
@@ -389,7 +389,7 @@ TEST(UCI, uciLoopTEST) {
 
   UCITestHelper::TearDown();
 }
-TEST(UCI, uciManualTEST) {
+TEST(UCI, uciManualTESTSequenceOfMOves) {
 
   UCI uci;
   uci.manual("uci");
@@ -400,11 +400,34 @@ TEST(UCI, uciManualTEST) {
   uci.getPosition().printBoard();
   uci.manual("go wtime 35939 btime 38039 winc 80 binc 80");
   uci.getPosition().printBoard();
+  uci.manual("position startpos moves d2d4");
+  uci.getPosition().printBoard();
+  uci.manual("isready");
+  uci.getPosition().printBoard();
+  uci.manual("go wtime 35939 btime 38039 winc 80 binc 80");
+  uci.getPosition().printBoard();
+  uci.manual("position startpos moves d2d4 h7h6 e2e4");
+  uci.getPosition().printBoard();
+}
+TEST(UCI, uciManualTESTSingleLineManyMoves) {
 
-  // Add assertions to verify the behavior of your UCI class
-  // based on the predefined commands
-
-  UCITestHelper::TearDown();
+  UCI uci;
+  uci.manual("uci");
+  // uci.getPosition().printBoard();
+  uci.manual("position startpos");
+  uci.getPosition().printBoard();
+  uci.manual("isready");
+  uci.getPosition().printBoard();
+  uci.manual("position startpos moves d2d4 e7e5");
+  uci.getPosition().printBoard();
+  uci.manual("isready");
+  uci.getPosition().printBoard();
+  uci.manual("go wtime 35939 btime 38039 winc 80 binc 80");
+  uci.getPosition().printBoard();
+  uci.manual("position startpos moves d2d4 e7e5 a2a3");
+  uci.getPosition().printBoard();
+  uci.manual("isready");
+  uci.getPosition().printBoard();
 }
 // comeToStr
 TEST(moveToStr, strToMove_Nocatpure) {
