@@ -155,6 +155,7 @@ Move Search::searchIt(int maxDepth, bool isInfoOn) {
     return bestMove;
   } else {
     MoveGeneration movgen(position);
+    movgen.generateAllMoves();
     std::cout << "info depth 1\n";
     Position tempPosition;
     tempPosition = position;
@@ -162,8 +163,11 @@ Move Search::searchIt(int maxDepth, bool isInfoOn) {
       if (position.makeMove(move)) {
         bestMove = move;
         position = tempPosition;
-        break;
+        std::cout << "legal\n";
+        return bestMove;
       }
+
+      std::cout << "nolegal\n";
       position = tempPosition;
     }
     return bestMove;
@@ -171,8 +175,9 @@ Move Search::searchIt(int maxDepth, bool isInfoOn) {
 }
 
 // TODO: Rigorous testing;
-Move Search::searchAB(int depth, std::chrono::high_resolution_clock::time_point start, int remainingTime,
-                      int timeIncrement) {
+Move Search::searchAB(int depth,
+                      std::chrono::high_resolution_clock::time_point start,
+                      int remainingTime, int timeIncrement) {
   int timeSpent = 0;
   int score;
   Move bestMove;
