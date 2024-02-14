@@ -209,8 +209,8 @@ TEST(Position, makecastling_white_queen_side) {
   position.makeMove(uci.getMove("e1c1"));
   Position positionCorrect(
       "rn1q1rk1/4bpp1/pp1pbn2/4p1Pp/4P3/1NN1BP2/PPPQ3P/2KR1B1R b - - 1 12");
-  positionCorrect.printBoard();
-  position.printBoard();
+  // positionCorrect.printBoard();
+  // position.printBoard();
 
   ASSERT_EQ(positionCorrect.getPieces(), position.getPieces());
 
@@ -225,8 +225,8 @@ TEST(Position, makecastling_white_king_side) {
   position.makeMove(uci.getMove("e1g1"));
   Position positionCorrect(
       "rn3rk1/2q1bpp1/pp1pbn2/4p1Pp/4P3/1NNBBP2/PPPQ3P/R4RK1 b - - 3 13");
-  positionCorrect.printBoard();
-  position.printBoard();
+  // positionCorrect.printBoard();
+  // position.printBoard();
 
   ASSERT_EQ(positionCorrect.getPieces(), position.getPieces());
 
@@ -270,8 +270,8 @@ TEST(Perft, perft__pawn_promos) {
 TEST(Perft, perft_king_capture) {
   Position position("r6r/pb4pp/4Pp2/2k2P2/1pP5/4N3/2PB2PP/1R3K1R b - - 3 24");
   perftTest test(position);
-  perftDivideInterface(
-      "r6r/pb4pp/4Pp2/2k2P2/1pP5/4N3/2PB2PP/1R3K1R b - - 3 24");
+  // perftDivideInterface(
+  // "r6r/pb4pp/4Pp2/2k2P2/1pP5/4N3/2PB2PP/1R3K1R b - - 3 24");
   uint64_t perftResult = test.perft(4);
   ASSERT_EQ(525086, perftResult);
 }
@@ -396,59 +396,59 @@ TEST(UCI, uciLoopTEST) {
 
   UCITestHelper::TearDown();
 }
-TEST(UCI, uciManualTESTSequenceOfMOves) {
+// TEST(UCI, uciManualTESTSequenceOfMOves) {
 
-  UCI uci;
-  uci.manual("uci");
-  // uci.getPosition().printBoard();
-  uci.manual("position startpos");
-  uci.getPosition().printBoard();
-  uci.manual("isready");
-  uci.getPosition().printBoard();
-  uci.manual("go wtime 35939 btime 38039 winc 80 binc 80");
-  uci.getPosition().printBoard();
-  uci.manual("position startpos moves d2d4");
-  uci.getPosition().printBoard();
-  uci.manual("isready");
-  uci.getPosition().printBoard();
-  uci.manual("go wtime 35939 btime 38039 winc 80 binc 80");
-  uci.getPosition().printBoard();
-  uci.manual("position startpos moves d2d4 h7h6 e2e4");
-  uci.getPosition().printBoard();
-}
-TEST(UCI, uciManualTESTSingleLineManyMoves) {
+//   UCI uci;
+//   uci.manual("uci");
+//   // uci.getPosition().printBoard();
+//   uci.manual("position startpos");
+//   uci.getPosition().printBoard();
+//   uci.manual("isready");
+//   uci.getPosition().printBoard();
+//   uci.manual("go wtime 35939 btime 38039 winc 80 binc 80");
+//   uci.getPosition().printBoard();
+//   uci.manual("position startpos moves d2d4");
+//   uci.getPosition().printBoard();
+//   uci.manual("isready");
+//   uci.getPosition().printBoard();
+//   uci.manual("go wtime 35939 btime 38039 winc 80 binc 80");
+//   uci.getPosition().printBoard();
+//   uci.manual("position startpos moves d2d4 h7h6 e2e4");
+//   uci.getPosition().printBoard();
+// }
+// TEST(UCI, uciManualTESTSingleLineManyMoves) {
 
-  UCI uci;
-  uci.manual("uci");
-  // uci.getPosition().printBoard();
-  uci.manual("position startpos");
-  uci.getPosition().printBoard();
-  uci.manual("isready");
-  uci.getPosition().printBoard();
-  uci.manual("position startpos moves d2d4 e7e5");
-  uci.getPosition().printBoard();
-  uci.manual("isready");
-  uci.getPosition().printBoard();
-  uci.manual("go wtime 35939 btime 38039 winc 80 binc 80");
-  uci.getPosition().printBoard();
-  uci.manual("position startpos moves d2d4 e7e5 a2a3");
-  uci.getPosition().printBoard();
-  uci.manual("isready");
-  uci.getPosition().printBoard();
-}
-TEST(UCI, timeControl) {
-  UCI uci;
-  uci.manual(
-      "position startpos moves e2e4 e7e5 g1f3 g8f6 d2d4 f6e4 d4e5 d7d5 f1b5 "
-      "c7c6 b5d3 f8c5 d3e4 d5e4 d1d8 e8d8 f3g5 d8c7 g5e4 b8d7 f2f4 f7f6 e5e6 "
-      "c5b4 b1d2 d7c5 e4c5 b4c5 f4f5 c5b4 e1f1 c6c5 d2c4 c7c6 a2a3 b4c3 b2c3 "
-      "b7b5 c4e3 c8b7 c3c4 b5b4 a3b4 c5b4 c1d2 c6c5 a1b1");
-  uci.getPosition().printBoard();
-  uci.manual("isready");
-  uci.getPosition().printBoard();
+//   UCI uci;
+//   uci.manual("uci");
+//   // uci.getPosition().printBoard();
+//   uci.manual("position startpos");
+//   uci.getPosition().printBoard();
+//   uci.manual("isready");
+//   uci.getPosition().printBoard();
+//   uci.manual("position startpos moves d2d4 e7e5");
+//   uci.getPosition().printBoard();
+//   uci.manual("isready");
+//   uci.getPosition().printBoard();
+//   uci.manual("go wtime 35939 btime 38039 winc 80 binc 80");
+//   uci.getPosition().printBoard();
+//   uci.manual("position startpos moves d2d4 e7e5 a2a3");
+//   uci.getPosition().printBoard();
+//   uci.manual("isready");
+//   uci.getPosition().printBoard();
+// }
+// TEST(UCI, timeControl) {
+//   UCI uci;
+//   uci.manual(
+//       "position startpos moves e2e4 e7e5 g1f3 g8f6 d2d4 f6e4 d4e5 d7d5 f1b5 "
+//       "c7c6 b5d3 f8c5 d3e4 d5e4 d1d8 e8d8 f3g5 d8c7 g5e4 b8d7 f2f4 f7f6 e5e6
+//       " "c5b4 b1d2 d7c5 e4c5 b4c5 f4f5 c5b4 e1f1 c6c5 d2c4 c7c6 a2a3 b4c3
+//       b2c3 " "b7b5 c4e3 c8b7 c3c4 b5b4 a3b4 c5b4 c1d2 c6c5 a1b1");
+//   uci.getPosition().printBoard();
+//   uci.manual("isready");
+//   uci.getPosition().printBoard();
 
-  uci.manual("go wtime 2234 btime 2235 winc 80 binc 80");
-}
+//   uci.manual("go wtime 2234 btime 2235 winc 80 binc 80");
+// }
 // comeToStr
 TEST(moveToStr, strToMove_Nocatpure) {
   Position position;

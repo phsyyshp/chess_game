@@ -1,9 +1,9 @@
 #include "UCI.hpp"
 
 void UCI::uci(const std::vector<std::string> &subCommands) {
-  std::string message = "id name Engine v0.1.0-alpha";
-  logMessage(message);
-  std::cout << "id name Engine v0.1.0-alpha\n";
+  // std::string message = "id name Engine v0.1.0-alpha";
+  // logMessage(message);
+  std::cout << "id name Engine v0.1.3-alpha\n";
   logMessage("uciok");
   std::cout << "uciok\n";
 }
