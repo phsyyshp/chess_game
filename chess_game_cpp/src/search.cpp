@@ -153,8 +153,10 @@ Move Search::searchIt(int maxDepth, bool isInfoOn) {
   }
   if (didSearchOccured) {
     return bestMove;
+  } else {
+    MoveGeneration movgen(position);
+    return movgen.getMoves()[0];
   }
-  return bestMove;
 }
 
 // TODO: Rigorous testing;
@@ -241,10 +243,8 @@ void Search::scoreMoves(MoveList &moveList_) const {
   for (Move &move : moveList_) {
     int moveScore = 0;
     if (move.isCapture()) {
-      moveScore =
-
-          MVV_LVA_OFFSET + MVV_LVA[position.getPiece(move.getTo())]
-                                  [position.getPiece(move.getFrom())];
+      moveScore = MVV_LVA_OFFSET + MVV_LVA[position.getPiece(move.getTo())]
+                                          [position.getPiece(move.getFrom())];
       move.setScore(moveScore);
     } else {
       int i = 0;
