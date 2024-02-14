@@ -158,13 +158,14 @@ uint64_t Position::getAttacksToKing() const {
   uint64_t oppositeRooks = pieces[oppositeColor][rook];
   uint64_t oppositeBishops = pieces[oppositeColor][bishop];
   uint64_t oppositeQueens = pieces[oppositeColor][queen];
+  uint64_t oppositeKing = pieces[oppositeColor][king];
   uint64_t oppositeRookQueens = oppositeRooks | oppositeQueens;
-
   uint64_t oppositeBishopQueens = oppositeBishops | oppositeQueens;
   return (knightLookUpTable[squareOfKing] & oppositeKnights) |
          (pawnLookUpTable[colorOfKing][squareOfKing] & oppositePawns) |
          (getBishopAttackMask(squareOfKing, allPieces) & oppositeBishopQueens) |
-         (getRookAttackMask(squareOfKing, allPieces) & oppositeRookQueens);
+         (getRookAttackMask(squareOfKing, allPieces) & oppositeRookQueens) |
+         (kingLookUpTable[squareOfKing] & oppositeKing);
 }
 
 uint64_t Position::getAttacksToSquare(square square_) const {
@@ -179,14 +180,16 @@ uint64_t Position::getAttacksToSquare(square square_) const {
   uint64_t oppositeBishops = pieces[oppositeColor][bishop];
   uint64_t oppositeQueens = pieces[oppositeColor][queen];
   uint64_t oppositeRookQueens = oppositeRooks | oppositeQueens;
-
+  uint64_t oppositeKing = pieces[oppositeColor][king];
   uint64_t oppositeBishopQueens = oppositeBishops | oppositeQueens;
   return (knightLookUpTable[victimSq] & oppositeKnights) |
          (pawnLookUpTable[colorOfVictim][victimSq] & oppositePawns) |
          (getBishopAttackMask(victimSq, allPieces) & oppositeBishopQueens) |
-         (getRookAttackMask(victimSq, allPieces) & oppositeRookQueens);
+         (getRookAttackMask(victimSq, allPieces) & oppositeRookQueens) |
+         (kingLookUpTable[victimSq] & oppositeKing);
 }
 // bools
+// FIX IT: kings can become adjacent;
 bool Position::isInCheck() const { return (getAttacksToKing()) != 0; }
 bool Position::isInCheck(square square_) const {
   return (getAttacksToSquare(square_) != 0);

@@ -18,8 +18,8 @@ public:
     std::string currentDIR = getExecutableDirectory();
     std::string executableName = getExecutableName();
     path = currentDIR + '/' + executableName + "debugLog";
-    debugLog.open(path);
-    debugLog.close();
+    // debugLog.open(path);
+    // debugLog.close();
   }
 
   void loop();
