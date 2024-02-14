@@ -90,6 +90,10 @@ void Position::setBoardToInitialConfiguration() {
   for (int i = 0; i < 64; i++) {
     mailbox[i] = noPiece;
   }
+  for (int j = 0; j < 6; j++) {
+    pieces[white][j] = 0;
+    pieces[black][j] = 0;
+  }
   setWhitePiecesToInitialConfiguration();
   setBlackPiecesToInitialConfiguration();
 }
