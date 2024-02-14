@@ -17,7 +17,7 @@ public:
   // searchers;
   int negaMax(int depth);
   Move search(int depth);
-  Move searchIt(int maxDepth);
+  Move searchIt(int maxDepth, bool isInfoOn);
   Move searchAB(int depth, auto start, int remainingTime, int timeIncrement);
   int quiesce(int alpha, int beta);
   int alphaBeta(int alpha, int beta, int depthLeft);

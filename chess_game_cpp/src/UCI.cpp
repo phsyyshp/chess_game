@@ -3,7 +3,7 @@
 void UCI::uci(const std::vector<std::string> &subCommands) {
   std::string message = "id name Engine";
   logMessage(message);
-  std::cout << "id name  Engine\n";
+  std::cout << "id name Engine\n";
   logMessage("uciok");
   std::cout << "uciok\n";
 }
@@ -12,7 +12,7 @@ void UCI::isready(const std::vector<std::string> &subCommands) {
   std::cout << "readyok\n";
 }
 void UCI::go(const std::vector<std::string> &tokens) {
-  int depth = 500;
+  int maxDepth = 500;
   int wtime = INT32_MAX;
   int btime = INT32_MAX;
   int winc = 0;
@@ -20,7 +20,7 @@ void UCI::go(const std::vector<std::string> &tokens) {
 
   auto depthIt = std::find(tokens.begin(), tokens.end(), "depth");
   if (depthIt != tokens.end()) {
-    depth = stoi(*(depthIt + 1));
+    maxDepth = stoi(*(depthIt + 1));
   }
   auto wtimeIt = std::find(tokens.begin(), tokens.end(), "wtime");
   if (wtimeIt != tokens.end()) {
@@ -39,7 +39,7 @@ void UCI::go(const std::vector<std::string> &tokens) {
     binc = std::stod(*(bincIt + 1));
   }
   Search srch(_position, wtime, winc, btime, binc);
-  Move bestMove = srch.searchIt(depth);
+  Move bestMove = srch.searchIt(maxDepth, true);
   std::string message;
   message += "bestmove ";
   logMessage(message + bestMove.toStr());
@@ -50,6 +50,7 @@ void UCI::position(const std::vector<std::string> &tokens) {
   if (tokens[0] == "startpos") {
     _position.setBoardToInitialConfiguration();
   } else {
+    // TODO: FEN
   }
   auto moves = std::find(tokens.begin(), tokens.end(), "moves");
   for (auto it = moves + 1; it != tokens.end() && (moves != tokens.end());
@@ -67,7 +68,7 @@ void UCI::loop() {
   if (debugLog) {
     debugLog << "Debug Log\n";
   } else {
-    std::cerr << "couldnt open the file";
+    std::cerr << "couldnt open the debug file";
   }
 
   std::string message;
@@ -91,6 +92,24 @@ void UCI::loop() {
     }
   }
 }
+void UCI::manual(const std::string &combinedCommand) {
+
+  if (debugLog) {
+    debugLog << "Debug Log\n";
+  } else {
+    std::cerr << "couldnt open the debug file";
+  }
+
+  std::vector<std::string> tokens = tokenize(combinedCommand);
+  std::string command = tokens[0];
+  if (tokens.size() < 2) {
+    std::vector<std::string> emptyToken;
+    commands[command](emptyToken);
+  } else {
+    tokens.erase(tokens.begin());
+    commands[command](tokens);
+  }
+}
 void UCI::debugInit() const {}
 void UCI::logMessage(std::string message) {
   debugLog.open(path, std::ios::app);
@@ -106,3 +125,5 @@ void UCI::logMessage(std::string message) {
            << " - " << message << "\n";
   debugLog.close();
 }
+
+Position UCI::getPosition() const { return _position; }

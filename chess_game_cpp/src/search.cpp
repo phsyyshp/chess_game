@@ -113,7 +113,7 @@ Move Search::search(int depth) {
   }
   return bestMove;
 }
-Move Search::searchIt(int maxDepth) {
+Move Search::searchIt(int maxDepth, bool isInfoOn) {
   int depth = 1;
   int remainingTime;
   int timeIncrement;
@@ -140,8 +140,10 @@ Move Search::searchIt(int maxDepth) {
 
   while ((depth <= maxDepth) && (timeSpent <= maxMoveDuration)) {
     bestMove = searchAB(depth, start, remainingTime, timeIncrement);
-    std::cout << "info "
-              << "depth " << depth << '\n';
+    if (isInfoOn) {
+      std::cout << "info "
+                << "depth " << depth << '\n';
+    }
     depth++;
     auto end = std::chrono::high_resolution_clock::now();
     auto elapsed =
