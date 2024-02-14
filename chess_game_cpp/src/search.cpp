@@ -216,7 +216,7 @@ int Search::alphaBeta(int alpha, int beta, int depthLeft) {
       score = -alphaBeta(-beta, -alpha, depthLeft - 1);
       ply--;
       if (score >= beta) {
-        storeKillerMove(movgen.getMoves()[j], ply);
+        // storeKillerMove(movgen.getMoves()[j], ply);
         position = tempPosition;
         return beta;
       }
@@ -243,7 +243,7 @@ void Search::scoreMoves(MoveList &moveList_) const {
           MVV_LVA_OFFSET + MVV_LVA[position.getPiece(move.getTo())]
                                   [position.getPiece(move.getFrom())];
       move.setScore(moveScore);
-    } else {
+    } else if (false) {
       int i = 0;
       while (i < MAX_KILLER_MOVES && moveScore == 0) {
         if (move.getMoveInt() == killerMoves[i][ply].getMoveInt()) {
