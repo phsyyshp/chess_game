@@ -105,18 +105,18 @@ void UCI::manual(const std::string &combinedCommand) {
 }
 void UCI::debugInit() const {}
 void UCI::logMessage(std::string message) {
-  debugLog.open(path, std::ios::app);
+  // debugLog.open(path, std::ios::app);
 
-  auto in_time_t =
-      std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-  auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(
-                    std::chrono::system_clock::now().time_since_epoch()) %
-                1000;
+  // auto in_time_t =
+  //     std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
+  // auto millis = std::chrono::duration_cast<std::chrono::milliseconds>(
+  //                   std::chrono::system_clock::now().time_since_epoch()) %
+  //               1000;
 
-  debugLog << std::put_time(std::localtime(&in_time_t), "%Y-%m-%d %H:%M:%S");
-  debugLog << '.' << std::setfill('0') << std::setw(3) << millis.count()
-           << " - " << message << "\n";
-  debugLog.close();
+  // debugLog << std::put_time(std::localtime(&in_time_t), "%Y-%m-%d %H:%M:%S");
+  // debugLog << '.' << std::setfill('0') << std::setw(3) << millis.count()
+  //          << " - " << message << "\n";
+  // debugLog.close();
 }
 
 Position UCI::getPosition() const { return _position; }
