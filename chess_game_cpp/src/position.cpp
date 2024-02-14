@@ -87,6 +87,11 @@ void Position::setBlackPiecesToInitialConfiguration() {
   mailbox[h7] = pawn;
 }
 void Position::setBoardToInitialConfiguration() {
+  clear();
+  setWhitePiecesToInitialConfiguration();
+  setBlackPiecesToInitialConfiguration();
+}
+void Position::clear() {
   for (int i = 0; i < 64; i++) {
     mailbox[i] = noPiece;
   }
@@ -94,8 +99,8 @@ void Position::setBoardToInitialConfiguration() {
     pieces[white][j] = 0;
     pieces[black][j] = 0;
   }
-  setWhitePiecesToInitialConfiguration();
-  setBlackPiecesToInitialConfiguration();
+  gameState.clear();
+  capturedInLastMove = noPiece;
 }
 void Position::changeTurn() { gameState.changeTurn(); }
 // Operators;

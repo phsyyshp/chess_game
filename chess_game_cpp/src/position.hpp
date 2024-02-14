@@ -21,6 +21,7 @@ public:
   // setters;
   void setBoardToInitialConfiguration();
   void changeTurn();
+  void clear();
   // getters:
   std::array<std::array<uint64_t, 6>, 2> getPieces() const;
   std::array<piece, 64> getMailbox() const;

@@ -29,6 +29,7 @@ public:
   void changeTurn();
   void setCastlingRigths(uint castlingRigths);
   void setEnPassant(uint file);
+  void clear();
 
 private:
   uint32_t gameStateNum;

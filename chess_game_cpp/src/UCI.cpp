@@ -60,8 +60,7 @@ void UCI::position(const std::vector<std::string> &tokens) {
   }
 }
 void UCI::ucinewgame(const std::vector<std::string> &tokens) {
-  Position tempPosition;
-  _position = tempPosition;
+  _position.clear();
 }
 void UCI::loop() {
   std::string combinedCommand;
