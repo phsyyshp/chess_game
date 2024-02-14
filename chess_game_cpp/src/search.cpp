@@ -64,7 +64,9 @@ int Search::quiesce(int alpha, int beta) {
   MoveGeneration movegen(position);
   movegen.generateAllMoves();
   int score;
+  int moveCounter = 0;
   int standingPat = eval.evaluate();
+  // FIX IT: is this correct
   if (standingPat >= beta) {
     return beta;
   }
@@ -74,6 +76,7 @@ int Search::quiesce(int alpha, int beta) {
   for (const Move &move : movegen.getMoves().getCapturedMoves()) {
     tempPosition = position;
     if (position.makeMove(move)) {
+      moveCounter++;
       ply++;
       score = -quiesce(-beta, -alpha);
       ply--;
@@ -86,6 +89,9 @@ int Search::quiesce(int alpha, int beta) {
       }
     }
     position = tempPosition;
+  }
+  if (moveCounter == 0 && position.isInCheck()) {
+    return INT16_MIN;
   }
   return alpha;
 }
@@ -208,6 +214,7 @@ Move Search::searchAB(int depth,
     auto elapsed =
         std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
     timeSpent = elapsed.count();
+    // there may be a bug here
     if (timeSpent >= remainingTime / 20 + timeIncrement / 2) {
       return pv;
     }
@@ -228,11 +235,13 @@ int Search::alphaBeta(int alpha, int beta, int depthLeft) {
   movgen.generateAllMoves();
   int score;
   scoreMoves(movgen.getMoves());
+  int moveCounter = 0;
   // FIX IT: THERE MUST BE A BUG HERE
   for (int j = 0; j < movgen.getMoves().size(); j++) {
     pickMove(movgen.getMoves(), j);
     tempPosition = position;
     if (position.makeMove(movgen.getMoves()[j])) {
+      moveCounter++;
       ply++;
       score = -alphaBeta(-beta, -alpha, depthLeft - 1);
       ply--;
@@ -246,6 +255,9 @@ int Search::alphaBeta(int alpha, int beta, int depthLeft) {
       }
     }
     position = tempPosition;
+  }
+  if (moveCounter == 0 && position.isInCheck()) {
+    return INT16_MIN;
   }
   return alpha;
 }
