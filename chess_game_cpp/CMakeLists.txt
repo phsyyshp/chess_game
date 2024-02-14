@@ -49,7 +49,7 @@ set(TEST_SOURCES
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/bin)
 
 # Create the main executable
-add_executable(engine ${MAIN_SOURCES})
+add_executable(engine_1 ${MAIN_SOURCES})
 
 # Create the unit tests executable
 add_executable(unitTests ${TEST_SOURCES})
