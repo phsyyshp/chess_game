@@ -393,11 +393,11 @@ void MoveGeneration::generateQueenMoves() {
   uint64_t eligibleSquares = ~position.getAllPieces(position.getTurn());
   uint64_t occupancy =
       position.getAllPieces(white) | position.getAllPieces(black);
-  uint64_t queenMask = position.getPieces()[position.getTurn()][queen];
+  uint64_t remainingQueens = position.getPieces()[position.getTurn()][queen];
   int to;
-  square from = static_cast<square>(__builtin_ctzll(queenMask));
   uint isCaptureFlag;
-  if (queenMask) {
+  while (remainingQueens) {
+    square from = static_cast<square>(__builtin_ctzll(remainingQueens));
     uint64_t generatedMoves = (getRookAttackMask(from, occupancy) |
                                getBishopAttackMask(from, occupancy)) &
                               eligibleSquares;
@@ -408,6 +408,7 @@ void MoveGeneration::generateQueenMoves() {
       moveList.push_back(Move{from, to, isCaptureFlag});
       generatedMoves ^= (0b1ull << to);
     }
+    remainingQueens ^= (0b1ull << from);
   }
 }
 void MoveGeneration::generateKingMoves() {
