@@ -28,6 +28,9 @@ public:
   void orderMoves(MoveList &movelist_);
   void storeKillerMove(const Move &move_, int ply);
 
+  // timing
+  int countTime(std::chrono::high_resolution_clock::time_point);
+
 private:
   Position position;
   std::array<std::array<Move, MAX_DEPTH>, MAX_KILLER_MOVES> killerMoves;

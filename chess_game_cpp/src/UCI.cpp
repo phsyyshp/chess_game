@@ -12,7 +12,7 @@ void UCI::isready(const std::vector<std::string> &subCommands) {
   std::cout << "readyok\n";
 }
 void UCI::go(const std::vector<std::string> &tokens) {
-  int maxDepth = 500;
+  int maxDepth = 100;
   int wtime = INT32_MAX;
   int btime = INT32_MAX;
   int winc = 0;
