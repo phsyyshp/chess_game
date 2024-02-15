@@ -216,6 +216,7 @@ Move Search::searchAB(int depth,
     timeSpent = elapsed.count();
     // there may be a bug here
     if (timeSpent >= remainingTime / 20 + timeIncrement / 2) {
+      std::cout << "la\n";
       return pv;
     }
   }
@@ -236,7 +237,6 @@ int Search::alphaBeta(int alpha, int beta, int depthLeft) {
   int score;
   scoreMoves(movgen.getMoves());
   int moveCounter = 0;
-  // FIX IT: THERE MUST BE A BUG HERE
   for (int j = 0; j < movgen.getMoves().size(); j++) {
     pickMove(movgen.getMoves(), j);
     tempPosition = position;
