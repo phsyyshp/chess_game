@@ -151,10 +151,7 @@ Move Search::searchIt(int maxDepth, bool isInfoOn) {
                 << "depth " << depth << '\n';
     }
     depth++;
-    auto end = std::chrono::high_resolution_clock::now();
-    auto elapsed =
-        std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-    timeSpent = elapsed.count();
+    timeSpent = countTime(start);
     didSearchOccured = true;
   }
   if (didSearchOccured) {
@@ -207,20 +204,14 @@ Move Search::searchAB(int depth,
         alpha = score;
         bestMove = move;
       }
+      timeSpent = countTime(start);
+      if (timeSpent >= remainingTime / 20 + timeIncrement / 2) {
+        position = tempPosition;
+        return move;
+      }
     }
     position = tempPosition;
-
-    auto end = std::chrono::high_resolution_clock::now();
-    auto elapsed =
-        std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-    timeSpent = elapsed.count();
-    // there may be a bug here
-    if (timeSpent >= remainingTime / 20 + timeIncrement / 2) {
-      std::cout << "la\n";
-      return pv;
-    }
   }
-  pv = bestMove;
   return bestMove;
 }
 
@@ -308,4 +299,10 @@ void Search::storeKillerMove(const Move &move_, int ply) {
       killerMoves[0][ply] = move_;
     }
   }
+}
+int Search::countTime(std::chrono::high_resolution_clock::time_point start) {
+  auto end = std::chrono::high_resolution_clock::now();
+  auto elapsed =
+      std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
+  return elapsed.count();
 }
