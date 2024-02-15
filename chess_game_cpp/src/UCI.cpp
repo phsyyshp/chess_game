@@ -24,19 +24,19 @@ void UCI::go(const std::vector<std::string> &tokens) {
   }
   auto wtimeIt = std::find(tokens.begin(), tokens.end(), "wtime");
   if (wtimeIt != tokens.end()) {
-    wtime = std::stod(*(wtimeIt + 1));
+    wtime = stoi(*(wtimeIt + 1));
   }
   auto btimeIt = std::find(tokens.begin(), tokens.end(), "btime");
   if (btimeIt != tokens.end()) {
-    btime = std::stod(*(btimeIt + 1));
+    btime = stoi(*(btimeIt + 1));
   }
   auto wincIt = std::find(tokens.begin(), tokens.end(), "winc");
   if (wincIt != tokens.end()) {
-    winc = std::stod(*(wincIt + 1));
+    winc = stoi(*(wincIt + 1));
   }
   auto bincIt = std::find(tokens.begin(), tokens.end(), "binc");
   if (bincIt != tokens.end()) {
-    binc = std::stod(*(bincIt + 1));
+    binc = stoi(*(bincIt + 1));
   }
   Search srch(_position, wtime, winc, btime, binc);
   Move bestMove = srch.searchIt(maxDepth, true);
