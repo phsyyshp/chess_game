@@ -181,6 +181,8 @@ Move Search::searchAB(int depth,
                       int remainingTime, int timeIncrement) {
   int timeSpent = 0;
   int score;
+  bool moveFound = false;
+  int maxMoveDuration = remainingTime / 20 + timeIncrement / 2;
   Move bestMove;
   Evaluation eval(position);
   Position tempPosition;
@@ -191,6 +193,10 @@ Move Search::searchAB(int depth,
   for (Move move : movGen.getMoves()) {
     tempPosition = position;
     if (position.makeMove(move)) {
+      if (!moveFound) {
+        bestMove = move;
+        moveFound = true;
+      }
       ply++;
       score = -alphaBeta(-beta, -alpha, depth - 1);
       ply--;
@@ -202,13 +208,12 @@ Move Search::searchAB(int depth,
         alpha = score;
         bestMove = move;
       }
-      timeSpent = countTime(start);
-      if (timeSpent >= remainingTime / 20 + timeIncrement / 2) {
-        position = tempPosition;
-        return move;
-      }
     }
     position = tempPosition;
+    timeSpent = countTime(start);
+    if (timeSpent >= maxMoveDuration) {
+      break;
+    }
   }
   return bestMove;
 }
