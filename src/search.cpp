@@ -145,6 +145,7 @@ Move Search::searchIt(int maxDepth, bool isInfoOn) {
   bool didSearchOccured = false;
   while ((depth <= maxDepth) && (timeSpent <= maxMoveDuration)) {
     bestMove = searchAB(depth, start, remainingTime, timeIncrement);
+    pv = bestMove;
     if (isInfoOn) {
       std::cout << "info "
                 << "depth " << depth << '\n';
@@ -211,10 +212,14 @@ Move Search::searchAB(int depth,
       }
     }
     position = tempPosition;
-    // timeSpent = countTime(start);
-    // if (timeSpent >= maxMoveDuration) {
-    //   break;
-    // }
+    timeSpent = countTime(start);
+    if (timeSpent >= maxMoveDuration) {
+      if (depth > 1) {
+
+        bestMove = pv;
+      }
+      break;
+    }
   }
   return bestMove;
 }
