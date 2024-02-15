@@ -156,6 +156,7 @@ Move Search::searchIt(int maxDepth, bool isInfoOn) {
   if (didSearchOccured) {
     return bestMove;
   } else {
+    // std::cout << "la\n";
     MoveGeneration movgen(position);
     movgen.generateAllMoves();
     std::cout << "info depth 1\n";
@@ -210,10 +211,10 @@ Move Search::searchAB(int depth,
       }
     }
     position = tempPosition;
-    timeSpent = countTime(start);
-    if (timeSpent >= maxMoveDuration) {
-      break;
-    }
+    // timeSpent = countTime(start);
+    // if (timeSpent >= maxMoveDuration) {
+    //   break;
+    // }
   }
   return bestMove;
 }
