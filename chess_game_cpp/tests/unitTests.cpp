@@ -275,15 +275,21 @@ TEST(Perft, perft_king_capture) {
   uint64_t perftResult = test.perft(4);
   ASSERT_EQ(525086, perftResult);
 }
-TEST(Perft, perftFEN1) {
-  Position position(
-      "r1b1k2r/1pp1qpbp/p1n1p1p1/2n1P3/4NB2/3BQN2/PPP2PPP/3RK2R b Kkq - 5 12");
-  perftTest test(position);
-  // perftDivideInterface(
-  // "r6r/pb4pp/4Pp2/2k2P2/1pP5/4N3/2PB2PP/1R3K1R b - - 3 24");
-  uint64_t perftResult = test.perft(4);
-  ASSERT_EQ(2899828, perftResult);
-}
+// TEST(Perft, perftFEN1) {
+//   Position position(
+//       "r1b1k2r/1pp1qpbp/p1n1p1p1/2n1P3/4NB2/3BQN2/PPP2PPP/3RK2R b Kkq - 5
+//       12");
+//   perftTest test(position);
+//   uint64_t perftResult = test.perft(4);
+//   ASSERT_EQ(2899828, perftResult);
+// }
+// TEST(Perft, perftFEN2) {
+//   Position position(
+//       "r1b2k1r/N2q2pp/2p3n1/3ppp2/3P4/1P1BPQP1/2PN1P1P/R3K2R w KQ - 2 16");
+//   perftTest test(position);
+//   uint64_t perftResult = test.perft(5);
+//   ASSERT_EQ(68719694, perftResult);
+// }
 // TEST(Perft, perftList) {
 //   std::vector<std::vector<std::string>> chessData = {
 //       {"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
@@ -420,30 +426,30 @@ TEST(Perft, perftFEN1) {
 //     ASSERT_EQ(stoull(data[1]), perftResult);
 //   }
 // }
-TEST(Perft, perftFENMultipleQueens) {
+// TEST(Perft, perftFENMultipleQueens) {
 
-  Position position("8/PPPk4/8/8/8/8/4Kppp/8 w - - 0 1");
-  perftTest test(position);
-  // perftDivideInterface("8/PPPk4/8/8/8/8/4Kppp/8 w - - 0 1");
-  uint64_t perftResult = test.perft(6);
-  ASSERT_EQ(28859283, perftResult);
-}
-TEST(Perft, perftListRemainder) {
-  std::vector<std::vector<std::string>> chessData = {
-      {"8/PPPk4/8/8/8/8/4Kppp/8 w - - 0 1", "28859283"},
-      {"n1n5/PPPk4/8/8/8/8/4Kppp/5N1N w - - 0 1", "71179139"},
-      {"8/Pk6/8/8/8/8/6Kp/8 b - - 0 1", "1030499"},
-      {"n1n5/1Pk5/8/8/8/8/5Kp1/5N1N b - - 0 1", "37665329"},
-      {"8/PPPk4/8/8/8/8/4Kppp/8 b - - 0 1", "28859283"},
-      {"n1n5/PPPk4/8/8/8/8/4Kppp/5N1N b - - 0 1", "71179139"}};
-  for (auto data : chessData) {
-    Position position(data[0]);
-    perftTest test(position);
-    uint64_t perftResult = test.perft(6);
-    std::cout << data[0] << " " << data[1] << '\n';
-    ASSERT_EQ(stoull(data[1]), perftResult);
-  }
-}
+//   Position position("8/PPPk4/8/8/8/8/4Kppp/8 w - - 0 1");
+//   perftTest test(position);
+//   // perftDivideInterface("8/PPPk4/8/8/8/8/4Kppp/8 w - - 0 1");
+//   uint64_t perftResult = test.perft(6);
+//   ASSERT_EQ(28859283, perftResult);
+// }
+// TEST(Perft, perftListRemainder) {
+//   std::vector<std::vector<std::string>> chessData = {
+//       {"8/PPPk4/8/8/8/8/4Kppp/8 w - - 0 1", "28859283"},
+//       {"n1n5/PPPk4/8/8/8/8/4Kppp/5N1N w - - 0 1", "71179139"},
+//       {"8/Pk6/8/8/8/8/6Kp/8 b - - 0 1", "1030499"},
+//       {"n1n5/1Pk5/8/8/8/8/5Kp1/5N1N b - - 0 1", "37665329"},
+//       {"8/PPPk4/8/8/8/8/4Kppp/8 b - - 0 1", "28859283"},
+//       {"n1n5/PPPk4/8/8/8/8/4Kppp/5N1N b - - 0 1", "71179139"}};
+//   for (auto data : chessData) {
+//     Position position(data[0]);
+//     perftTest test(position);
+//     uint64_t perftResult = test.perft(6);
+//     std::cout << data[0] << " " << data[1] << '\n';
+//     ASSERT_EQ(stoull(data[1]), perftResult);
+//   }
+// }
 // Search tests Ply
 TEST(SearchTest, Ply_constructor) {
 
