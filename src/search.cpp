@@ -91,7 +91,7 @@ int Search::quiesce(int alpha, int beta) {
     position = tempPosition;
   }
   if (moveCounter == 0 && position.isInCheck()) {
-    return INT16_MIN;
+    return -10000 + ply;
   }
   return alpha;
 }
@@ -181,7 +181,7 @@ Move Search::searchAB(int depth,
                       std::chrono::high_resolution_clock::time_point start,
                       int remainingTime, int timeIncrement) {
   int timeSpent = 0;
-  int score;
+  int score = 0;
   bool moveFound = false;
   int maxMoveDuration = remainingTime / 20 + timeIncrement / 2;
   Move bestMove;
@@ -229,7 +229,7 @@ int Search::alphaBeta(int alpha, int beta, int depthLeft) {
     return quiesce(alpha, beta);
   }
   movgen.generateAllMoves();
-  int score;
+  int score = 0;
   scoreMoves(movgen.getMoves());
   int moveCounter = 0;
   for (int j = 0; j < movgen.getMoves().size(); j++) {
@@ -252,7 +252,7 @@ int Search::alphaBeta(int alpha, int beta, int depthLeft) {
     position = tempPosition;
   }
   if (moveCounter == 0 && position.isInCheck()) {
-    return INT16_MIN;
+    return -10000 + ply;
   }
   return alpha;
 }
