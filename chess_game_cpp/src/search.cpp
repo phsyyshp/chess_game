@@ -142,7 +142,6 @@ Move Search::searchIt(int maxDepth, bool isInfoOn) {
     break;
   }
   int maxMoveDuration = remainingTime / 20 + timeIncrement / 2;
-  int moveDuration = 0;
   bool didSearchOccured = false;
   while ((depth <= maxDepth) && (timeSpent <= maxMoveDuration)) {
     bestMove = searchAB(depth, start, remainingTime, timeIncrement);
@@ -166,11 +165,10 @@ Move Search::searchIt(int maxDepth, bool isInfoOn) {
       if (position.makeMove(move)) {
         bestMove = move;
         position = tempPosition;
-        std::cout << "legal\n";
+        // std::cout << "legal\n";
         return bestMove;
       }
-
-      std::cout << "nolegal\n";
+      // std::cout << "nolegal\n";
       position = tempPosition;
     }
     return bestMove;
