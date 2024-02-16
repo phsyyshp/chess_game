@@ -22,6 +22,7 @@ uint64_t Zobrist::generateTotalZobristKey() const {
     for (int piece_ = 0; piece_ < 6; piece_++)
       zobristKey |= generatePieceZobristKey(piece_, color_);
   }
+  // TODO: check if i need to add en passant castling stuff here;
   zobristKey |= zobristTable[768] * position.getTurn();
   return zobristKey;
 }
