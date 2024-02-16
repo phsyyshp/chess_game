@@ -109,6 +109,7 @@ Position &Position::operator=(const Position &rhs) {
   mailbox = rhs.mailbox;
   gameState = rhs.gameState;
   capturedInLastMove = rhs.capturedInLastMove;
+  ply = rhs.ply;
   return *this;
 }
 // Getters;
@@ -124,6 +125,7 @@ color Position ::getPieceColor(const uint64_t &sqMask) const {
   }
 }
 piece Position::getPiece(int square) const { return mailbox[square]; }
+int Position::getPly() const { return ply; }
 // TODO: there maybe bugs here! Especially when there is not any pieace of that
 // type is left;
 piece Position::getPieceType(const uint64_t &sqMask) const {
@@ -256,6 +258,7 @@ bool Position::makeMove(const Move &move) {
   bool isLegal = !isInCheck();
   // gameState
   changeTurn();
+  ply++;
   return isLegal;
 }
 

@@ -271,7 +271,7 @@ const std::array<std::array<int, 64>, 2> queenSqTbls = {queenSqTblsWhite,
                                                         queenSqTblsBlack};
 const std::array<std::array<int, 64>, 2> endGameKingSqTbls = {
     endGameKingSqTblsWhite, endGameKingSqTblsBlack};
-const std::array<std::array<int, 64>, 2> earlyGameKingSqTbls = {
+const std::array<std::array<int, 64>, 2> middleGameKingSqTbls = {
     middleGameKingSqTblsWhite, middleGameKingSqTblsBlack};
 
 // MVV_LVA
