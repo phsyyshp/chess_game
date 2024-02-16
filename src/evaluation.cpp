@@ -87,12 +87,28 @@ int Evaluation::bishopSquareTables(const color &color_) const {
   }
   return out;
 }
+int Evaluation::kingSquareTables(const color &color_) const {
+
+  int out = 0;
+  int tempSq;
+  uint64_t kingMask = position.getPieces()[color_][bishop];
+  tempSq = __builtin_ctzll(kingMask);
+  if (position.getPly() < 25) {
+
+    out = middleGameKingSqTbls[color_][tempSq];
+  } else {
+
+    out = endGameKingSqTbls[color_][tempSq];
+  }
+  return out;
+}
 int Evaluation::pieceSquareTables() const {
   return rookSquareTables(white) - rookSquareTables(black) +
          pawnSquareTables(white) - pawnSquareTables(black) +
          bishopSquareTables(white) - bishopSquareTables(black) +
          queenSquareTables(white) - queenSquareTables(black) +
-         knightSquareTables(white) - knightSquareTables(black);
+         knightSquareTables(white) - knightSquareTables(black) +
+         kingSquareTables(white) - kingSquareTables(black);
 }
 int Evaluation::evaluate() const {
   int kingDiff = getPieceCount(king, white) - getPieceCount(king, black);

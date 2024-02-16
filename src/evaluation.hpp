@@ -20,6 +20,7 @@ public:
   int queenSquareTables(const color &color_) const;
   int rookSquareTables(const color &color_) const;
   int bishopSquareTables(const color &color_) const;
+  int kingSquareTables(const color &color_) const;
   int pieceSquareTables() const;
   int evaluate() const;
 
