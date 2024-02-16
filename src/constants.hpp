@@ -94,13 +94,6 @@ enum MoveType {
   rookPromoCapture,   // Rook promotion with capture
   queenPromoCapture   // Queen promotion with capture
 };
-struct hashEntry {
-  uint64_t zobrist;
-  int depth;
-  int score;
-  int ancient;
-  Move move;
-};
 const std::array<char, 8> PROMOTION_TYPE_TO_STR = {'n', 'b', 'r', 'q',
                                                    'n', 'b', 'r', 'q'};
 const std::array<char, 8> PROMOTION_TYPE_TO_STR_SHORT = {'n', 'b', 'r', 'q'};

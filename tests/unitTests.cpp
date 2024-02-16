@@ -457,6 +457,17 @@ TEST(Perft, perftFEN3) {
 //     ASSERT_EQ(stoull(data[1]), perftResult);
 //   }
 // }
+
+// Eval
+TEST(Evaluation, eval) {
+  Position position(
+      "r1bqkb1r/ppp4p/3p1np1/3Ppp2/1nP1P3/2N2P2/PP2N1PP/R1BQKB1R w KQkq - 1 8");
+  perftTest test(position);
+  uint val = test.perft(4);
+  ASSERT_EQ(1217394, val);
+  Evaluation eval(position);
+  std::cout << eval.evaluate() << std::endl;
+}
 // Search tests Ply
 TEST(SearchTest, Ply_constructor) {
 
