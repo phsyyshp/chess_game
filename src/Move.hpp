@@ -10,11 +10,11 @@ public:
   Move() = default;
   Move(uint from, uint to, uint flags)
       : moveNum((from & 0x3f) | ((to & 0x3f) << 6) | ((flags & 0xf) << 12)){};
-  Move(uint from, uint to, uint flags, uint16_t score)
+  Move(uint from, uint to, uint flags, int score)
       : moveNum((from & 0x3f) | ((to & 0x3f) << 6) | ((flags & 0xf) << 12) |
                 (score << 16)){};
   // Setters;
-  void setScore(const uint16_t &score);
+  void setScore(const int &score);
   // Getters;
   uint32_t getMoveInt() const;
   uint getTo() const;
