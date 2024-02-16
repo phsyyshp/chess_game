@@ -14,6 +14,7 @@ public:
       : moveNum((from & 0x3f) | ((to & 0x3f) << 6) | ((flags & 0xf) << 12) |
                 (score << 16)){};
   // Setters;
+  // TODO: maybe overflow error
   void setScore(const int &score);
   // Getters;
   uint32_t getMoveInt() const;

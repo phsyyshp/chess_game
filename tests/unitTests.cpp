@@ -474,7 +474,11 @@ TEST(Evaluation, eval) {
   MoveList ml = mg.getMoves();
   sc.scoreMoves(ml);
   for (Move move : ml) {
+    std::cout << move.getScore() << '\n';
   }
+  sc.pickMove(ml, 0);
+
+  std::cout << ml[0].getScore() << '\n';
 }
 // Search tests Ply
 TEST(SearchTest, Ply_constructor) {
