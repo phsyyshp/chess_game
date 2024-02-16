@@ -20,7 +20,7 @@ public:
   uint getTo() const;
   uint getFrom() const;
   uint getFlags() const;
-  uint16_t getScore() const;
+  int getScore() const;
   // returns noPiece for non captures;
   bool isCapture() const;
 

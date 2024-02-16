@@ -27,7 +27,7 @@ uint Move::getFlags() const {
 */
   return (moveNum >> 12) & 0xf;
 }
-uint16_t Move::getScore() const { return (moveNum) >> 17; }
+int Move::getScore() const { return (moveNum) >> 17; }
 
 // bools
 bool Move::isCapture() const { return (moveNum & CAPTURE_FLAG) != 0; }
