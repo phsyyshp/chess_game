@@ -26,6 +26,7 @@ public:
   std::array<std::array<uint64_t, 6>, 2> getPieces() const;
   std::array<piece, 64> getMailbox() const;
   color getTurn() const;
+  int getPly() const;
   GameState getGameState() const;
   color getOppositeTurn() const;
   color getPieceColor(const uint64_t &sqMask) const;
@@ -77,5 +78,6 @@ private:
   std::array<piece, 64> mailbox;
   piece capturedInLastMove;
   GameState gameState;
+  uint ply;
 };
 #endif
