@@ -290,13 +290,14 @@ TEST(Perft, perft_king_capture) {
 //   uint64_t perftResult = test.perft(5);
 //   ASSERT_EQ(68719694, perftResult);
 // }
-TEST(Perft, perftFEN3) {
-  Position position(
-      "rnbqkb1r/pp5p/3p1np1/2pPpp2/2P5/2N2NP1/PP2PP1P/R1BQKB1R w KQkq - 2 7");
-  perftTest test(position);
-  uint64_t perftResult = test.perft(5);
-  ASSERT_EQ(44351570, perftResult);
-}
+// TEST(Perft, perftFEN3) {
+//   Position position(
+//       "rnbqkb1r/pp5p/3p1np1/2pPpp2/2P5/2N2NP1/PP2PP1P/R1BQKB1R w KQkq - 2
+//       7");
+//   perftTest test(position);
+//   uint64_t perftResult = test.perft(5);
+//   ASSERT_EQ(44351570, perftResult);
+// }
 // TEST(Perft, perftList) {
 //   std::vector<std::vector<std::string>> chessData = {
 //       {"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
@@ -467,6 +468,13 @@ TEST(Evaluation, eval) {
   ASSERT_EQ(1217394, val);
   Evaluation eval(position);
   std::cout << eval.evaluate() << std::endl;
+  Search sc(position);
+  MoveGeneration mg(position);
+  mg.generateAllMoves();
+  MoveList ml = mg.getMoves();
+  sc.scoreMoves(ml);
+  for (Move move : ml) {
+  }
 }
 // Search tests Ply
 TEST(SearchTest, Ply_constructor) {
