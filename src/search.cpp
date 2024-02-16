@@ -271,8 +271,9 @@ void Search::scoreMoves(MoveList &moveList_) const {
   for (Move &move : moveList_) {
     int moveScore = 0;
     if (move.isCapture()) {
-      moveScore = MVV_LVA_OFFSET + MVV_LVA[position.getPiece(move.getTo())]
-                                          [position.getPiece(move.getFrom())];
+      // TODO: becarefull with overflow here
+      moveScore = MVV_LVA[position.getPiece(move.getTo())]
+                         [position.getPiece(move.getFrom())];
       move.setScore(moveScore);
     } else {
       int i = 0;
@@ -280,7 +281,7 @@ void Search::scoreMoves(MoveList &moveList_) const {
         if (move.getMoveInt() == killerMoves[i][ply].getMoveInt()) {
           // TODO: Be Careful about setting already set score;
           // FIX ME: maybe a bug here due to value overflow;
-          moveScore = MVV_LVA_OFFSET - ((i + 1) * KILLER_VALUE);
+          moveScore = -((i + 1) * KILLER_VALUE);
           move.setScore(moveScore);
         }
         i++;
