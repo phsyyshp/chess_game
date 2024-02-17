@@ -5,12 +5,9 @@
 #include "loader.hpp"
 #include "tables.hpp"
 #include "utilities.hpp"
+#include "zobrist.hpp"
 class Position {
 public:
-  struct canCastle {
-    bool kingSide;
-    bool queenSide;
-  };
   // constructors:
   Position() = default;
   Position(const std::array<std::array<uint64_t, 6>, 2> &pieces_, color turn_);
@@ -79,6 +76,7 @@ private:
   std::array<piece, 64> mailbox;
   piece capturedInLastMove;
   GameState gameState;
+  uint64_t zobristHash;
   int ply = 0;
 };
 #endif

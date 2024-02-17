@@ -1,6 +1,7 @@
 #include "zobrist.hpp"
 
-uint64_t Zobrist::generatePieceZobristKey(int piece_, int color_) const {
+uint64_t Zobrist::generatePieceZobristKey(int piece_, int color_,
+                                          const Position &position) {
 
   uint64_t remainingPieces = position.getPieces()[color_][piece_];
   uint64_t out = 0b0ull;
@@ -16,7 +17,7 @@ uint64_t Zobrist::generatePieceZobristKey(int piece_, int color_) const {
   return out;
 };
 
-uint64_t Zobrist::generateCastlingZobristKey() const {
+uint64_t Zobrist::generateCastlingZobristKey(const Position &position) {
   uint remainingCastlingRigths = position.getGameState().getCastlingRigths();
   if (remainingCastlingRigths == 0) {
     return 0;
@@ -32,7 +33,7 @@ uint64_t Zobrist::generateCastlingZobristKey() const {
   // wPx64,wBx64,wRx64,wQx64,wNx64,wKx64,wPx64,bBx64,bRx64,bQx64,bNx64,bKx64,sideTomove,castlingRigths,theFileOFValidEnPassant
   return out;
 }
-uint64_t Zobrist::generateEpZobristKey() const {
+uint64_t Zobrist::generateEpZobristKey(const Position &position) {
   uint epFile = position.getGameState().getEnPassant();
   if (epFile == NO_EP) {
     return 0;
@@ -43,13 +44,14 @@ uint64_t Zobrist::generateEpZobristKey() const {
   // wPx64,wBx64,wRx64,wQx64,wNx64,wKx64,wPx64,bBx64,bRx64,bQx64,bNx64,bKx64,sideTomove,castlingRigths,theFileOFValidEnPassant
   return out;
 }
-uint64_t Zobrist::generateTotalZobristKey() const {
+uint64_t Zobrist::generateTotalZobristKey(const Position &position) {
   uint64_t zobristKey = 0b0ull;
   for (int color_ = 0; color_ < 2; color_++) {
     for (int piece_ = 0; piece_ < 6; piece_++)
-      zobristKey |= generatePieceZobristKey(piece_, color_);
+      zobristKey |= generatePieceZobristKey(piece_, color_, position);
   }
   // TODO: check if i need to add en passant castling stuff here;
-  zobristKey |= generateCastlingZobristKey() | generateEpZobristKey();
+  zobristKey |=
+      generateCastlingZobristKey(position) | generateEpZobristKey(position);
   return zobristKey;
 }

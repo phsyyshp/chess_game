@@ -91,6 +91,7 @@ void Position::setBoardToInitialConfiguration() {
   clear();
   setWhitePiecesToInitialConfiguration();
   setBlackPiecesToInitialConfiguration();
+  zobristHash = Zobrist::generateTotalZobristKey(*this);
 }
 void Position::clear() {
   for (int i = 0; i < 64; i++) {
@@ -102,6 +103,7 @@ void Position::clear() {
   }
   ply = 0;
   gameState.clear();
+  zobristHash = 0ull;
   capturedInLastMove = noPiece;
 }
 void Position::changeTurn() { gameState.changeTurn(); }
@@ -114,6 +116,7 @@ Position &Position::operator=(const Position &rhs) {
   gameState = rhs.gameState;
   capturedInLastMove = rhs.capturedInLastMove;
   ply = rhs.ply;
+  zobristHash = rhs.zobristHash;
   return *this;
 }
 // Getters;
