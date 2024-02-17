@@ -10,12 +10,39 @@ uint64_t Zobrist::generatePieceZobristKey(int piece_, int color_) const {
     out |= zobristTable[square_ * (piece_ + 1) + 6 * 64 * color_];
     remainingPieces ^= (0b1ull << square_);
   }
-  // zobrist tabloe is in form of;
+  // zobrist table is in form of;
   // wPx64,wBx64,wRx64,wQx64,wNx64,wKx64,wPx64,bBx64,bRx64,bQx64,bNx64,bKx64,sideTomove,castlingRigths,theFileOFValidEnPassant
   //   return zobristTable[piece_ * square_ + 6 * 64 * color_];
   return out;
 };
 
+uint64_t Zobrist::generateCastlingZobristKey() const {
+  uint remainingCastlingRigths = position.getGameState().getCastlingRigths();
+  if (remainingCastlingRigths == 0) {
+    return 0;
+  }
+  uint64_t out = 0b0ull;
+  int castlingRights;
+  while (remainingCastlingRigths) {
+    castlingRights = __builtin_ctzll(remainingCastlingRigths);
+    out |= zobristTable[769 + castlingRights];
+    remainingCastlingRigths ^= (0b1ull << castlingRights);
+  }
+  // zobrist table is in form of;
+  // wPx64,wBx64,wRx64,wQx64,wNx64,wKx64,wPx64,bBx64,bRx64,bQx64,bNx64,bKx64,sideTomove,castlingRigths,theFileOFValidEnPassant
+  return out;
+}
+uint64_t Zobrist::generateEpZobristKey() const {
+  uint epFile = position.getGameState().getEnPassant();
+  if (epFile == NO_EP) {
+    return 0;
+  }
+  uint64_t out = 0b0ull;
+  out = zobristTable[epFile + 773];
+  // zobrist table is in form of;
+  // wPx64,wBx64,wRx64,wQx64,wNx64,wKx64,wPx64,bBx64,bRx64,bQx64,bNx64,bKx64,sideTomove,castlingRigths,theFileOFValidEnPassant
+  return out;
+}
 uint64_t Zobrist::generateTotalZobristKey() const {
   uint64_t zobristKey = 0b0ull;
   for (int color_ = 0; color_ < 2; color_++) {
@@ -23,6 +50,6 @@ uint64_t Zobrist::generateTotalZobristKey() const {
       zobristKey |= generatePieceZobristKey(piece_, color_);
   }
   // TODO: check if i need to add en passant castling stuff here;
-  zobristKey |= zobristTable[768] * position.getTurn();
+  zobristKey |= generateCastlingZobristKey() | generateEpZobristKey();
   return zobristKey;
 }

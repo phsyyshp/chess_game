@@ -5,7 +5,7 @@ void TranspositionTable::add(const hashEntry &entry) {
 hashEntry TranspositionTable::get(const hashEntry &entry) {
   return tt[entry.zobrist % 100];
 }
-void TranspositionTable::replaceNyDepth(const hashEntry &entry) {
+void TranspositionTable::replaceByDepth(const hashEntry &entry) {
   if (get(entry).depth < entry.depth) {
     add(entry);
   }
