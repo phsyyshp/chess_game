@@ -480,6 +480,24 @@ TEST(Evaluation, eval) {
 
   std::cout << ml[0].getScore() << '\n';
 }
+TEST(Evaluation, king_evalTEST) {
+  Position position(
+      "r1bqk1nr/ppp2ppp/2np4/2b5/2BpP3/5N2/PPPN1PPP/R1BQK2R w KQkq - 0 6");
+  perftTest test(position);
+  uint val = test.perft(4);
+  ASSERT_EQ(1511714, val);
+  position.setPly(20);
+  Evaluation eval(position);
+  std::cout << eval.evaluate() << std::endl;
+  Position position1(
+      "r1bqk1nr/ppp2ppp/2np4/2b5/2BpP3/5N2/PPPNKPPP/R1BQ3R b kq - 1 6");
+  position1.setPly(20);
+  // perftTest test1(position);
+  // uint val = test.perft(4);
+  // ASSERT_EQ(1511714, val);
+  Evaluation eval1(position1);
+  std::cout << eval1.evaluate() << std::endl;
+}
 // Search tests Ply
 TEST(SearchTest, Ply_constructor) {
 

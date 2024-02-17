@@ -21,6 +21,7 @@ public:
   // setters;
   void setBoardToInitialConfiguration();
   void changeTurn();
+  void setPly(int ply_);
   void clear();
   // getters:
   std::array<std::array<uint64_t, 6>, 2> getPieces() const;
@@ -78,6 +79,6 @@ private:
   std::array<piece, 64> mailbox;
   piece capturedInLastMove;
   GameState gameState;
-  uint ply;
+  int ply = 0;
 };
 #endif

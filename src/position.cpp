@@ -4,6 +4,7 @@ Position::Position(const std::string &FENstr) {
   std::vector<std::string> fieldVec = FENtoFields(FENstr);
   pieces = FENtoPieces(fieldVec[0]);
   gameState = FENtoGameStateInt(FENstr);
+  // ply = stoi(fieldVec[5]);
   for (int j = 0; j < 64; j++) {
     mailbox[j] = noPiece;
   }
@@ -99,10 +100,13 @@ void Position::clear() {
     pieces[white][j] = 0;
     pieces[black][j] = 0;
   }
+  ply = 0;
   gameState.clear();
   capturedInLastMove = noPiece;
 }
 void Position::changeTurn() { gameState.changeTurn(); }
+void Position::setPly(int ply_) { ply = ply_; }
+
 // Operators;
 Position &Position::operator=(const Position &rhs) {
   pieces = rhs.pieces;
