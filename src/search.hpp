@@ -4,7 +4,7 @@
 class Search {
 public:
   // constructors;
-  Search() = default;
+  Search();
   Search(int timeLeftWhite_, int timeIncrementWhite_, int timeLeftBlack_,
          int timeIncrementBlack_);
 
