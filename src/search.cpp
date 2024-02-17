@@ -62,20 +62,23 @@ int Search::quiesce(int alpha, int beta) {
   Evaluation eval(position);
   Position tempPosition;
   MoveGeneration movegen(position);
-  movegen.generateAllMoves();
   int score;
   int moveCounter = 0;
   int standingPat = eval.evaluate();
-  // FIX IT: is this correct
   if (standingPat >= beta) {
     return beta;
   }
   if (alpha < standingPat) {
     alpha = standingPat;
   }
-  for (const Move &move : movegen.getMoves().getCapturedMoves()) {
+
+  movegen.generateAllMoves();
+  MoveList capturedMoves = movegen.getMoves().getCapturedMoves();
+  scoreMoves(capturedMoves);
+  for (int j = 0; j < capturedMoves.size(); j++) {
+    pickMove(capturedMoves, j);
     tempPosition = position;
-    if (position.makeMove(move)) {
+    if (position.makeMove(capturedMoves[j])) {
       moveCounter++;
       ply++;
       score = -quiesce(-beta, -alpha);
@@ -90,9 +93,7 @@ int Search::quiesce(int alpha, int beta) {
     }
     position = tempPosition;
   }
-  if (moveCounter == 0 && position.isInCheck()) {
-    return -10000 + ply;
-  }
+
   return alpha;
 }
 Move Search::search(int depth) {
