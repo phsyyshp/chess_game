@@ -5,6 +5,7 @@ struct hashEntry {
   uint64_t zobrist;
   int depth;
   int score;
+  int flag;
   int ancient;
   Move move;
 };
