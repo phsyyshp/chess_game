@@ -38,8 +38,8 @@ void UCI::go(const std::vector<std::string> &tokens) {
   if (bincIt != tokens.end()) {
     binc = stoi(*(bincIt + 1));
   }
-  Search srch(_position, wtime, winc, btime, binc);
-  Move bestMove = srch.searchIt(maxDepth, true);
+  Search srch(wtime, winc, btime, binc);
+  Move bestMove = srch.searchIt(maxDepth, true, _position);
   Move invalidMove(a1, a1, 0);
   if (bestMove.getMoveInt() != invalidMove.getMoveInt()) {
     std::string message;

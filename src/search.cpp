@@ -1,7 +1,7 @@
 #include "search.hpp"
 
 // constructors;
-Search::Search(const Position &p) : position(p) {
+Search::Search() {
   // this is just zero;
   Move invalidMove(a1, a1, false);
   for (int i = 0; i < MAX_DEPTH; i++) {
@@ -11,11 +11,10 @@ Search::Search(const Position &p) : position(p) {
   }
 };
 
-Search::Search(const Position &p, int timeLeftWhite_, int timeIncrementWhite_,
-               int timeLeftBlack_, int timeIncrementBlack_)
-    : position(p), timeLeftWhite(timeLeftWhite_),
-      timeIncrementWhite(timeIncrementWhite_), timeLeftBlack(timeLeftBlack_),
-      timeIncrementBlack(timeIncrementBlack_) {
+Search::Search(int timeLeftWhite_, int timeIncrementWhite_, int timeLeftBlack_,
+               int timeIncrementBlack_)
+    : timeLeftWhite(timeLeftWhite_), timeIncrementWhite(timeIncrementWhite_),
+      timeLeftBlack(timeLeftBlack_), timeIncrementBlack(timeIncrementBlack_) {
 
   Move invalidMove(a1, a1, false);
   for (int i = 0; i < MAX_DEPTH; i++) {
@@ -32,7 +31,7 @@ Search::getKillerMoves() const {
 int Search::getPly() const { return ply; }
 
 // Searchers;
-int Search::negaMax(int depth) {
+int Search::negaMax(int depth, const Position &position) {
 
   int score;
   Evaluation eval(position);
@@ -46,19 +45,18 @@ int Search::negaMax(int depth) {
   movGen.generateAllMoves();
   for (Move move : movGen.getMoves()) {
     tempPosition = position;
-    if (position.makeMove(move)) {
+    if (tempPosition.makeMove(move)) {
       ply++;
-      score = -negaMax(depth - 1);
+      score = -negaMax(depth - 1, tempPosition);
       ply--;
       if (score > max) {
         max = score;
       }
     }
-    position = tempPosition;
   }
   return max;
 }
-int Search::quiesce(int alpha, int beta) {
+int Search::quiesce(int alpha, int beta, const Position &position) {
   Evaluation eval(position);
   Position tempPosition;
   MoveGeneration movegen(position);
@@ -74,29 +72,27 @@ int Search::quiesce(int alpha, int beta) {
 
   movegen.generateAllMoves();
   MoveList capturedMoves = movegen.getMoves().getCapturedMoves();
-  scoreMoves(capturedMoves);
+  scoreMoves(capturedMoves, position);
   for (int j = 0; j < capturedMoves.size(); j++) {
     pickMove(capturedMoves, j);
     tempPosition = position;
-    if (position.makeMove(capturedMoves[j])) {
+    if (tempPosition.makeMove(capturedMoves[j])) {
       moveCounter++;
       ply++;
-      score = -quiesce(-beta, -alpha);
+      score = -quiesce(-beta, -alpha, tempPosition);
       ply--;
       if (score >= beta) {
-        position = tempPosition;
         return beta;
       }
       if (score > alpha) {
         alpha = score;
       }
     }
-    position = tempPosition;
   }
 
   return alpha;
 }
-Move Search::search(int depth) {
+Move Search::search(int depth, const Position &position) {
   int score;
   Move bestMove;
   Evaluation eval(position);
@@ -106,9 +102,9 @@ Move Search::search(int depth) {
   movGen.generateAllMoves();
   for (Move move : movGen.getMoves()) {
     tempPosition = position;
-    if (position.makeMove(move)) {
+    if (tempPosition.makeMove(move)) {
       ply++;
-      score = -negaMax(depth - 1);
+      score = -negaMax(depth - 1, tempPosition);
       ply--;
       if (score > max) {
         max = score;
@@ -116,11 +112,10 @@ Move Search::search(int depth) {
         // std::cout << score << std::endl;
       }
     }
-    position = tempPosition;
   }
   return bestMove;
 }
-Move Search::searchIt(int maxDepth, bool isInfoOn) {
+Move Search::searchIt(int maxDepth, bool isInfoOn, const Position &position) {
   int depth = 1;
   int remainingTime = 0;
   int timeIncrement = 0;
@@ -145,7 +140,7 @@ Move Search::searchIt(int maxDepth, bool isInfoOn) {
   int maxMoveDuration = remainingTime / 20 + timeIncrement / 2;
   bool didSearchOccured = false;
   while ((depth <= maxDepth) && (timeSpent <= maxMoveDuration)) {
-    bestMove = searchAB(depth, start, remainingTime, timeIncrement);
+    bestMove = searchAB(depth, start, remainingTime, timeIncrement, position);
     pv = bestMove;
     if (isInfoOn) {
       std::cout << "info "
@@ -165,14 +160,12 @@ Move Search::searchIt(int maxDepth, bool isInfoOn) {
     Position tempPosition;
     tempPosition = position;
     for (const Move &move : movgen.getMoves()) {
-      if (position.makeMove(move)) {
+      if (tempPosition.makeMove(move)) {
         bestMove = move;
-        position = tempPosition;
         // std::cout << "legal\n";
         return bestMove;
       }
       // std::cout << "nolegal\n";
-      position = tempPosition;
     }
     return bestMove;
   }
@@ -181,7 +174,8 @@ Move Search::searchIt(int maxDepth, bool isInfoOn) {
 // TODO: Rigorous testing;
 Move Search::searchAB(int depth,
                       std::chrono::high_resolution_clock::time_point start,
-                      int remainingTime, int timeIncrement) {
+                      int remainingTime, int timeIncrement,
+                      const Position &position) {
   int timeSpent = 0;
   int score = 0;
   bool moveFound = false;
@@ -195,16 +189,15 @@ Move Search::searchAB(int depth,
   movGen.generateAllMoves();
   for (Move move : movGen.getMoves()) {
     tempPosition = position;
-    if (position.makeMove(move)) {
+    if (tempPosition.makeMove(move)) {
       if (!moveFound) {
         bestMove = move;
         moveFound = true;
       }
       ply++;
-      score = -alphaBeta(-beta, -alpha, depth - 1);
+      score = -alphaBeta(-beta, -alpha, depth - 1, tempPosition);
       ply--;
       if (score >= beta) {
-        position = tempPosition;
         return move;
       }
       if (score > alpha) {
@@ -212,7 +205,6 @@ Move Search::searchAB(int depth,
         bestMove = move;
       }
     }
-    position = tempPosition;
     timeSpent = countTime(start);
     if (timeSpent >= maxMoveDuration) {
       if (depth > 1) {
@@ -228,34 +220,33 @@ Move Search::searchAB(int depth,
 /*TODO:
 -hash tables;
 */
-int Search::alphaBeta(int alpha, int beta, int depthLeft) {
+int Search::alphaBeta(int alpha, int beta, int depthLeft,
+                      const Position &position) {
   Position tempPosition;
   MoveGeneration movgen(position);
   if (depthLeft == 0) {
-    return quiesce(alpha, beta);
+    return quiesce(alpha, beta, position);
   }
   movgen.generateAllMoves();
   int score = 0;
-  scoreMoves(movgen.getMoves());
+  scoreMoves(movgen.getMoves(), position);
   int moveCounter = 0;
   for (int j = 0; j < movgen.getMoves().size(); j++) {
     pickMove(movgen.getMoves(), j);
     tempPosition = position;
-    if (position.makeMove(movgen.getMoves()[j])) {
+    if (tempPosition.makeMove(movgen.getMoves()[j])) {
       moveCounter++;
       ply++;
-      score = -alphaBeta(-beta, -alpha, depthLeft - 1);
+      score = -alphaBeta(-beta, -alpha, depthLeft - 1, tempPosition);
       ply--;
       if (score >= beta) {
         storeKillerMove(movgen.getMoves()[j], ply);
-        position = tempPosition;
         return beta;
       }
       if (score > alpha) {
         alpha = score;
       }
     }
-    position = tempPosition;
   }
   if (moveCounter == 0 && position.isInCheck()) {
     return -10000 + ply;
@@ -268,7 +259,7 @@ int Search::alphaBeta(int alpha, int beta, int depthLeft) {
 // BE CAREFUL pass by reference without const;
 // FIX ME: maybe a bug here due to value overflow;
 
-void Search::scoreMoves(MoveList &moveList_) const {
+void Search::scoreMoves(MoveList &moveList_, const Position &position) const {
   for (Move &move : moveList_) {
     int moveScore = 0;
     if (move.isCapture()) {
