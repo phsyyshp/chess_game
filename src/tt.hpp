@@ -14,6 +14,6 @@ class TranspositionTable {
 public:
   TranspositionTable() = default;
   void add(const hashEntry &entry);
-  void replaceNyDepth(const hashEntry &entry);
+  void replaceByDepth(const hashEntry &entry);
   hashEntry get(const hashEntry &entry);
 };

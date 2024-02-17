@@ -8,7 +8,9 @@ public:
   Zobrist(const Position &position_) : position(position_){};
   // getters;
   uint64_t generatePieceZobristKey(int piece_, int color_) const;
+  uint64_t generateCastlingZobristKey() const;
   uint64_t generateTotalZobristKey() const;
+  uint64_t generateEpZobristKey() const;
 
 private:
   Position position;
