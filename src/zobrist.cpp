@@ -8,7 +8,7 @@ uint64_t Zobrist::generatePieceZobristKey(int piece_, int color_,
   int square_;
   while (remainingPieces) {
     square_ = __builtin_ctzll(remainingPieces);
-    out |= zobristTable[square_ * (piece_ + 1) + 6 * 64 * color_];
+    out ^= zobristTable[square_ * (piece_ + 1) + 6 * 64 * color_];
     remainingPieces ^= (0b1ull << square_);
   }
   // zobrist table is in form of;
@@ -26,7 +26,7 @@ uint64_t Zobrist::generateCastlingZobristKey(const Position &position) {
   int castlingRights;
   while (remainingCastlingRigths) {
     castlingRights = __builtin_ctzll(remainingCastlingRigths);
-    out |= zobristTable[769 + castlingRights];
+    out ^= zobristTable[769 + castlingRights];
     remainingCastlingRigths ^= (0b1ull << castlingRights);
   }
   // zobrist table is in form of;
@@ -48,10 +48,9 @@ uint64_t Zobrist::generateTotalZobristKey(const Position &position) {
   uint64_t zobristKey = 0b0ull;
   for (int color_ = 0; color_ < 2; color_++) {
     for (int piece_ = 0; piece_ < 6; piece_++)
-      zobristKey |= generatePieceZobristKey(piece_, color_, position);
+      zobristKey ^= generatePieceZobristKey(piece_, color_, position);
   }
-  // TODO: check if i need to add en passant castling stuff here;
-  zobristKey |=
-      generateCastlingZobristKey(position) | generateEpZobristKey(position);
+  zobristKey ^=
+      generateCastlingZobristKey(position) ^ generateEpZobristKey(position);
   return zobristKey;
 }

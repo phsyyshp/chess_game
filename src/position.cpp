@@ -91,7 +91,7 @@ void Position::setBoardToInitialConfiguration() {
   clear();
   setWhitePiecesToInitialConfiguration();
   setBlackPiecesToInitialConfiguration();
-  zobristHash = Zobrist::generateTotalZobristKey(*this);
+  // zobristHash = Zobrist::generateTotalZobristKey(*this);
 }
 void Position::clear() {
   for (int i = 0; i < 64; i++) {
@@ -107,6 +107,7 @@ void Position::clear() {
   capturedInLastMove = noPiece;
 }
 void Position::changeTurn() { gameState.changeTurn(); }
+
 void Position::setPly(int ply_) { ply = ply_; }
 
 // Operators;
