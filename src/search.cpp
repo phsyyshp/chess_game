@@ -186,13 +186,16 @@ Move Search::searchAB(int depth,
   Position tempPosition;
   int alpha = INT16_MIN;
   int beta = INT16_MAX;
-  MoveGeneration movGen(position);
-  movGen.generateAllMoves();
-  for (Move move : movGen.getMoves()) {
+  MoveGeneration movegen(position);
+  movegen.generateAllMoves();
+  scoreMoves(movegen.getMoves(), position);
+  int moveCounter = 0;
+  for (int j = 0; j < movegen.getMoves().size(); j++) {
+    pickMove(movegen.getMoves(), j);
     tempPosition = position;
-    if (tempPosition.makeMove(move)) {
+    if (tempPosition.makeMove(movegen.getMoves()[j])) {
       if (!moveFound) {
-        bestMove = move;
+        bestMove = movegen.getMoves()[j];
         moveFound = true;
       }
       ply++;
@@ -200,11 +203,12 @@ Move Search::searchAB(int depth,
       score = -alphaBeta(-beta, -alpha, depth - 1, tempPosition);
       ply--;
       if (score >= beta) {
-        return move;
+        storeKillerMove(movegen.getMoves()[j], ply);
+        return movegen.getMoves()[j];
       }
       if (score > alpha) {
         alpha = score;
-        bestMove = move;
+        bestMove = movegen.getMoves()[j];
       }
     }
     timeSpent = countTime(start);
