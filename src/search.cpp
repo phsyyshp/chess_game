@@ -145,6 +145,7 @@ Move Search::searchIt(int maxDepth, bool isInfoOn, const Position &position) {
     if (isInfoOn) {
       std::cout << "info "
                 << "depth " << depth << '\n';
+      // << "depth " << depth << "ply" << ply + '\n';
     }
     depth++;
     timeSpent = countTime(start);
@@ -195,6 +196,7 @@ Move Search::searchAB(int depth,
         moveFound = true;
       }
       ply++;
+
       score = -alphaBeta(-beta, -alpha, depth - 1, tempPosition);
       ply--;
       if (score >= beta) {
