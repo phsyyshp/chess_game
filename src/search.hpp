@@ -10,7 +10,7 @@ public:
   std::array<std::array<Move, MAX_DEPTH>, MAX_KILLER_MOVES>
   getKillerMoves() const;
   int getPly() const;
-
+  void clear();
   // searchers;
   int negaMax(int depth, const Position &position);
   Move search(int depth, const Position &position);
@@ -26,6 +26,7 @@ public:
   void orderMoves(MoveList &movelist_);
   void storeKillerMove(const Move &move_, int ply);
 
+  void flipGlobalAncientFlag();
   // timing
   int countTime(std::chrono::high_resolution_clock::time_point);
 
@@ -34,4 +35,5 @@ private:
   int ply = 0;
   Move pv;
   TranspositionTable tt;
+  bool globalAncientFlag = false;
 };

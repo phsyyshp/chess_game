@@ -11,6 +11,18 @@ Search::Search() {
   }
 };
 
+void Search::clear() {
+
+  Move invalidMove(a1, a1, false);
+  for (int i = 0; i < MAX_DEPTH; i++) {
+    for (int j = 0; j < MAX_KILLER_MOVES; j++) {
+      killerMoves[j][i] = invalidMove;
+    }
+  }
+  tt.clear();
+  globalAncientFlag = false;
+}
+void Search::flipGlobalAncientFlag() { globalAncientFlag = !globalAncientFlag; }
 // getters;
 std::array<std::array<Move, MAX_DEPTH>, MAX_KILLER_MOVES>
 Search::getKillerMoves() const {
@@ -104,6 +116,7 @@ Move Search::search(int depth, const Position &position) {
   return bestMove;
 }
 Move Search::searchIt(int maxDepth, bool isInfoOn, const Position &position,
+
                       int wtime, int winc, int btime, int binc) {
   ply = 0;
   int depth = 1;
@@ -142,6 +155,7 @@ Move Search::searchIt(int maxDepth, bool isInfoOn, const Position &position,
     didSearchOccured = true;
   }
   if (didSearchOccured) {
+    flipGlobalAncientFlag();
     return bestMove;
   } else {
     // std::cout << "la\n";
@@ -193,9 +207,6 @@ Move Search::searchAB(int depth,
       ply--;
       if (score >= beta) {
         storeKillerMove(movegen.getMoves()[j], ply);
-        tt.replaceByDepth(hashEntry{tempPosition.getZobrist(), depth, score,
-                                    nodeType::BETA, false,
-                                    movegen.getMoves()[j]});
         return movegen.getMoves()[j];
       }
       if (score > alpha) {
@@ -220,34 +231,55 @@ Move Search::searchAB(int depth,
 */
 int Search::alphaBeta(int alpha, int beta, int depthLeft,
                       const Position &position) {
+  int originalAlpha = alpha;
+  bool isExact = false;
   Position tempPosition;
-  MoveGeneration movgen(position);
+  MoveGeneration movegen(position);
+  Move bestMove;
   if (depthLeft == 0) {
     return quiesce(alpha, beta, position);
   }
-  movgen.generateAllMoves();
+  movegen.generateAllMoves();
   int score = 0;
-  scoreMoves(movgen.getMoves(), position);
+  scoreMoves(movegen.getMoves(), position);
   int moveCounter = 0;
-  for (int j = 0; j < movgen.getMoves().size(); j++) {
-    pickMove(movgen.getMoves(), j);
+  for (int j = 0; j < movegen.getMoves().size(); j++) {
+    pickMove(movegen.getMoves(), j);
     tempPosition = position;
-    if (tempPosition.makeMove(movgen.getMoves()[j])) {
+    if (tempPosition.makeMove(movegen.getMoves()[j])) {
       moveCounter++;
       ply++;
       score = -alphaBeta(-beta, -alpha, depthLeft - 1, tempPosition);
       ply--;
       if (score >= beta) {
-        storeKillerMove(movgen.getMoves()[j], ply);
+        storeKillerMove(movegen.getMoves()[j], ply);
+        tt.replaceByDepth(hashEntry{position.getZobrist(), depthLeft, score,
+                                    nodeType::BETA, false,
+                                    movegen.getMoves()[j]},
+                          globalAncientFlag);
         return beta;
       }
       if (score > alpha) {
         alpha = score;
+        bestMove = movegen.getMoves()[j];
+        isExact = true;
       }
     }
   }
+  // FIX IT: be sure ply doesnt just resets
   if (moveCounter == 0 && position.isInCheck()) {
-    return -10000 + ply;
+    return -50000 + ply;
+  }
+  if (score < originalAlpha) {
+    tt.replaceByDepth(hashEntry{position.getZobrist(), depthLeft, score,
+                                nodeType::ALPHA, false, Move{a1, a1, 0}},
+                      globalAncientFlag);
+  }
+  if (isExact) {
+
+    tt.replaceByDepth(hashEntry{position.getZobrist(), depthLeft, alpha,
+                                nodeType::EXACT, false, bestMove},
+                      globalAncientFlag);
   }
   return alpha;
 }

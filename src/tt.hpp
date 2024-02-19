@@ -2,7 +2,7 @@
 #include "Move.hpp"
 #include "constants.hpp"
 struct hashEntry {
-  hashEntry(uint64_t z, int depth_, int score_, nodeType flag_, int ancient_,
+  hashEntry(uint64_t z, int depth_, int score_, nodeType flag_, bool ancient_,
             const Move &move_)
       : zobrist(z), depth(depth_), score(score_), flag(flag_),
         ancient(ancient_), move(move_){};
@@ -10,15 +10,16 @@ struct hashEntry {
   int depth;
   int score;
   nodeType flag;
-  int ancient;
+  bool ancient;
   Move move;
 };
 class TranspositionTable {
 public:
-  TranspositionTable() = default;
+  TranspositionTable();
   void add(const hashEntry &entry);
-  void replaceByDepth(const hashEntry &entry);
+  void replaceByDepth(const hashEntry &entry, bool globalAncientFlag);
   hashEntry get(const hashEntry &entry);
+  void clear();
 
 private:
   static std::array<hashEntry, 100> tt;
