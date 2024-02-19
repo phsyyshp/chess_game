@@ -8,7 +8,7 @@ uint64_t Zobrist::generatePieceZobristKey(int piece_, int color_,
   int square_;
   while (remainingPieces) {
     square_ = __builtin_ctzll(remainingPieces);
-    out ^= zobristTable[square_ * (piece_ + 1) + 6 * 64 * color_];
+    out ^= zobristTable[square_ + piece_ * 64 + color_ * 6 * 64];
     remainingPieces ^= (0b1ull << square_);
   }
   // zobrist table is in form of;
@@ -77,7 +77,7 @@ void Zobrist::changeTurn(uint64_t &zobristKey) {
 }
 void Zobrist::removeAddPiece(uint64_t &zobristKey, int square_, piece piece_,
                              color color_) {
-  zobristKey ^= zobristTable[square_ * (piece_ + 1) + 6 * 64 * color_];
+  zobristKey ^= zobristTable[square_ + piece_ * 64 + color_ * 6 * 64];
 }
 
 void Zobrist::flipEpStatus(uint64_t &zobristKey, int epFile) {

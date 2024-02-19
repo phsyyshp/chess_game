@@ -19,7 +19,10 @@ struct hashEntry {
 };
 class TranspositionTable {
 public:
-  TranspositionTable() { clear(); }
+  TranspositionTable() {
+    tt.resize(TT_SIZE);
+    clear();
+  }
   void add(const hashEntry &entry);
   void replaceByDepth(const hashEntry &entry, bool globalAncientFlag);
   hashEntry get(const hashEntry &entry) const;
@@ -28,5 +31,5 @@ public:
   void clear();
 
 private:
-  std::array<hashEntry, TT_SIZE> tt;
+  std::vector<hashEntry> tt;
 };

@@ -192,6 +192,9 @@ Move Search::searchAB(int depth,
   Position tempPosition;
   int alpha = INT16_MIN;
   int beta = INT16_MAX;
+  bool isExact = false;
+
+  int originalAlpha = alpha;
   MoveGeneration movegen(position);
   movegen.generateAllMoves();
   scoreMoves(movegen.getMoves(), position);
@@ -209,11 +212,17 @@ Move Search::searchAB(int depth,
       ply--;
       if (score >= beta) {
         storeKillerMove(movegen.getMoves()[j], ply);
+        tt.replaceByDepth(hashEntry{position.getZobrist(), 0, score,
+                                    nodeType::BETA, false,
+                                    movegen.getMoves()[j]},
+                          globalAncientFlag);
         return movegen.getMoves()[j];
       }
       if (score > alpha) {
         alpha = score;
         bestMove = movegen.getMoves()[j];
+
+        isExact = true;
       }
     }
     timeSpent = countTime(start);
@@ -224,6 +233,17 @@ Move Search::searchAB(int depth,
       }
       break;
     }
+  }
+  if (score < originalAlpha) {
+    tt.replaceByDepth(hashEntry{position.getZobrist(), 0, score,
+                                nodeType::ALPHA, false, Move{a1, a1, 0}},
+                      globalAncientFlag);
+  }
+  if (isExact) {
+
+    tt.replaceByDepth(hashEntry{position.getZobrist(), 0, alpha,
+                                nodeType::EXACT, false, bestMove},
+                      globalAncientFlag);
   }
   return bestMove;
 }
@@ -284,6 +304,8 @@ int Search::alphaBeta(int alpha, int beta, int depthLeft,
   // FIX IT: be sure ply doesnt just resets
   if (moveCounter == 0 && position.isInCheck()) {
     return -50000 + ply;
+  } else if (moveCounter == 0) {
+    return 0;
   }
   if (score < originalAlpha) {
     tt.replaceByDepth(hashEntry{position.getZobrist(), depthLeft, score,
