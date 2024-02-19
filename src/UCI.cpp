@@ -64,6 +64,7 @@ void UCI::position(const std::vector<std::string> &tokens) {
 }
 void UCI::ucinewgame(const std::vector<std::string> &tokens) {
   _position.clear();
+  search_.clear();
 }
 void UCI::loop() {
   std::string combinedCommand;
