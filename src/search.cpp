@@ -237,6 +237,19 @@ int Search::alphaBeta(int alpha, int beta, int depthLeft,
   bool isExact = false;
   Position tempPosition;
   MoveGeneration movegen(position);
+  hashEntry entry = tt.getByKey(position.getZobrist());
+  if (entry.depth >= depthLeft && entry.zobrist == position.getZobrist()) {
+    if (entry.flag == nodeType::EXACT) {
+      return entry.score;
+    } else if (entry.flag == nodeType::ALPHA && entry.score > alpha) {
+      alpha = entry.score;
+    } else if (entry.flag == nodeType::BETA && entry.score < beta) {
+      beta = entry.score;
+    }
+    if (alpha >= beta) {
+      return entry.score;
+    }
+  }
   Move bestMove;
   if (depthLeft == 0) {
     return quiesce(alpha, beta, position);
