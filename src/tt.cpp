@@ -11,6 +11,9 @@ void TranspositionTable::add(const hashEntry &entry) {
 hashEntry TranspositionTable::get(const hashEntry &entry) {
   return tt[entry.zobrist % 100];
 }
+Move TranspositionTable::getMove(uint64_t zobristKey) const {
+  return tt[zobristKey % 100].move;
+}
 void TranspositionTable::replaceByDepth(const hashEntry &entry,
                                         bool globalAncientFlag) {
   if ((get(entry).depth < entry.depth) &&

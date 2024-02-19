@@ -292,7 +292,9 @@ int Search::alphaBeta(int alpha, int beta, int depthLeft,
 void Search::scoreMoves(MoveList &moveList_, const Position &position) const {
   for (Move &move : moveList_) {
     int moveScore = 0;
-    if (move.isCapture()) {
+    if (move.getMoveInt() == tt.getMove(position.getZobrist()).getMoveInt()) {
+      move.setScore(TT_MOVE_SORT_VALUE);
+    } else if (move.isCapture()) {
       // TODO: becarefull with overflow here
       moveScore = MVV_LVA[position.getPiece(move.getTo())]
                          [position.getPiece(move.getFrom())];

@@ -19,6 +19,8 @@ public:
   void add(const hashEntry &entry);
   void replaceByDepth(const hashEntry &entry, bool globalAncientFlag);
   hashEntry get(const hashEntry &entry);
+  Move getMove(uint64_t zobristKey) const;
+
   void clear();
 
 private:

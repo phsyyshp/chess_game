@@ -24,6 +24,7 @@ set(MAIN_SOURCES
     src/gameState.cpp
     src/moveToStr.cpp
     src/zobrist.cpp
+    src/tt.cpp
     src/main.cpp 
 )
 
@@ -45,6 +46,7 @@ set(TEST_SOURCES
     src/gameState.cpp
     src/zobrist.cpp
     src/moveToStr.cpp
+    src/tt.cpp
 )
 
 # Set the output directory for the executable
