@@ -1,14 +1,9 @@
 #include "tt.hpp"
 
-TranspositionTable::TranspositionTable() {
-  for (hashEntry entry : tt) {
-    entry = hashEntry{0ull, 0, 0, nodeType::EXACT, true, Move{a1, a1, false}};
-  }
-}
 void TranspositionTable::add(const hashEntry &entry) {
   tt[entry.zobrist % 100] = entry;
 }
-hashEntry TranspositionTable::get(const hashEntry &entry) {
+hashEntry TranspositionTable::get(const hashEntry &entry) const {
   return tt[entry.zobrist % 100];
 }
 Move TranspositionTable::getMove(uint64_t zobristKey) const {
@@ -23,7 +18,7 @@ void TranspositionTable::replaceByDepth(const hashEntry &entry,
 }
 void TranspositionTable::clear() {
 
-  for (hashEntry entry : tt) {
+  for (hashEntry &entry : tt) {
     entry = hashEntry{0ull, 0, 0, nodeType::EXACT, true, Move{a1, a1, false}};
   }
 }
