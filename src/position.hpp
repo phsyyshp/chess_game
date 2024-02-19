@@ -61,14 +61,8 @@ private:
   void makeQueenCastle(const Move &move);
   void makeKingCastle(const Move &move);
 
-  void makeKnightPromotion(const Move &move);
-  void makeBishopPromotion(const Move &move);
-  void makeRookPromotion(const Move &move);
-  void makeQueenPromotion(const Move &move);
-  void makeKnightPromoCapture(const Move &move);
-  void makeBishopPromoCapture(const Move &move);
-  void makeRookPromoCapture(const Move &move);
-  void makeQueenPromoCapture(const Move &move);
+  void makePromotion(const Move &move, piece piece_);
+  void makePromoCapture(const Move &move, piece piece_);
 
   void updateCastlingRights(int from, int movingPiece);
   // members

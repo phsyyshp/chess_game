@@ -241,28 +241,28 @@ bool Position::makeMove(const Move &move) {
     makeQueenCastle(move);
     break;
   case MoveType::rookPromotion:
-    makeRookPromotion(move);
+    makePromotion(move, rook);
     break;
   case MoveType::rookPromoCapture:
-    makeRookPromoCapture(move);
+    makePromoCapture(move, rook);
     break;
   case MoveType::queenPromotion:
-    makeQueenPromotion(move);
+    makePromotion(move, queen);
     break;
   case MoveType::queenPromoCapture:
-    makeQueenPromoCapture(move);
+    makePromoCapture(move, queen);
     break;
   case MoveType::bishopPromotion:
-    makeBishopPromotion(move);
+    makePromotion(move, bishop);
     break;
   case MoveType::bishopPromoCapture:
-    makeBishopPromoCapture(move);
+    makePromoCapture(move, bishop);
     break;
   case MoveType::knightPromotion:
-    makeKnightPromotion(move);
+    makePromotion(move, knight);
     break;
   case MoveType::knightPromoCapture:
-    makeKnightPromoCapture(move);
+    makePromoCapture(move, knight);
     break;
   default:
     break;
@@ -474,8 +474,7 @@ void Position::makeKingCastle(const Move &move) {
   gameState.setEnPassant(NO_EP);
 }
 
-void Position::makeKnightPromotion(const Move &move) {
-
+void Position::makePromotion(const Move &move, piece piece_) {
   // decoding move
   uint from = move.getFrom();
   uint to = move.getTo();
@@ -492,11 +491,11 @@ void Position::makeKnightPromotion(const Move &move) {
   Zobrist::removeAddPiece(zobristHash, from, movingPiece, getTurn());
   capturedInLastMove = noPiece;
 
-  pieces[gameState.getTurn()][knight] |= toMask;
-  Zobrist::removeAddPiece(zobristHash, to, knight, getTurn());
+  pieces[gameState.getTurn()][piece_] |= toMask;
+  Zobrist::removeAddPiece(zobristHash, to, piece_, getTurn());
 
   // Mailbox operations;
-  mailbox[to] = knight;
+  mailbox[to] = piece_;
   mailbox[from] = noPiece;
   int epFile = gameState.getEnPassant();
   if (epFile != NO_EP) {
@@ -504,197 +503,34 @@ void Position::makeKnightPromotion(const Move &move) {
   }
   gameState.setEnPassant(NO_EP);
 }
-void Position::makeBishopPromotion(const Move &move) {
+
+void Position::makePromoCapture(const Move &move, piece piece_) {
 
   // decoding move
   uint from = move.getFrom();
   uint to = move.getTo();
   piece movingPiece = mailbox[from];
   int oppositePieceColor = getOppositeTurn();
-
   updateCastlingRights(from, movingPiece);
   // bit masks
   uint64_t toMask = (0b1ull << to);
   uint64_t fromMask = (0b1ull << from);
-
   // moving
   pieces[gameState.getTurn()][movingPiece] &= ~fromMask;
   Zobrist::removeAddPiece(zobristHash, from, movingPiece, getTurn());
-  capturedInLastMove = noPiece;
-
-  pieces[gameState.getTurn()][bishop] |= toMask;
-  // Mailbox operations;
-  mailbox[to] = bishop;
-  mailbox[from] = noPiece;
-  int epFile = gameState.getEnPassant();
-  if (epFile != NO_EP) {
-    Zobrist::flipEpStatus(zobristHash, epFile);
-  }
-  gameState.setEnPassant(NO_EP);
-}
-void Position::makeRookPromotion(const Move &move) {
-
-  // decoding move
-  uint from = move.getFrom();
-  uint to = move.getTo();
-  int movingPiece = mailbox[from];
-  int oppositePieceColor = getOppositeTurn();
-
-  updateCastlingRights(from, movingPiece);
-  // bit masks
-  uint64_t toMask = (0b1ull << to);
-  uint64_t fromMask = (0b1ull << from);
-
-  // moving
-  pieces[gameState.getTurn()][movingPiece] &= ~fromMask;
-  capturedInLastMove = noPiece;
-
-  pieces[gameState.getTurn()][rook] |= toMask;
-  // Mailbox operations;
-  mailbox[to] = rook;
-  mailbox[from] = noPiece;
-  int epFile = gameState.getEnPassant();
-  if (epFile != NO_EP) {
-    Zobrist::flipEpStatus(zobristHash, epFile);
-  }
-  gameState.setEnPassant(NO_EP);
-}
-void Position::makeQueenPromotion(const Move &move) {
-
-  // decoding move
-  uint from = move.getFrom();
-  uint to = move.getTo();
-  int movingPiece = mailbox[from];
-  int oppositePieceColor = getOppositeTurn();
-
-  updateCastlingRights(from, movingPiece);
-  // bit masks
-  uint64_t toMask = (0b1ull << to);
-  uint64_t fromMask = (0b1ull << from);
-
-  // moving
-  pieces[gameState.getTurn()][movingPiece] &= ~fromMask;
-  capturedInLastMove = noPiece;
-
-  pieces[gameState.getTurn()][queen] |= toMask;
-  // Mailbox operations;
-  mailbox[to] = queen;
-  mailbox[from] = noPiece;
-  int epFile = gameState.getEnPassant();
-  if (epFile != NO_EP) {
-    Zobrist::flipEpStatus(zobristHash, epFile);
-  }
-  gameState.setEnPassant(NO_EP);
-}
-void Position::makeKnightPromoCapture(const Move &move) {
-
-  // decoding move
-  uint from = move.getFrom();
-  uint to = move.getTo();
-  int movingPiece = mailbox[from];
-  int oppositePieceColor = getOppositeTurn();
-  updateCastlingRights(from, movingPiece);
-  // bit masks
-  uint64_t toMask = (0b1ull << to);
-  uint64_t fromMask = (0b1ull << from);
-  // moving
-  pieces[gameState.getTurn()][movingPiece] &= ~fromMask;
   piece capturedPieceType = mailbox[to];
   if (capturedPieceType == rook) {
     updateCastlingRights(to, rook);
   }
   pieces[oppositePieceColor][capturedPieceType] &= (~toMask);
-  capturedInLastMove = capturedPieceType;
-  pieces[gameState.getTurn()][knight] |= toMask;
-  // Mailbox operations;
-  mailbox[to] = knight;
-  mailbox[from] = noPiece;
-  int epFile = gameState.getEnPassant();
-  if (epFile != NO_EP) {
-    Zobrist::flipEpStatus(zobristHash, epFile);
-  }
-  gameState.setEnPassant(NO_EP);
-}
-void Position::makeBishopPromoCapture(const Move &move) {
+  Zobrist::removeAddPiece(zobristHash, to, capturedPieceType,
+                          getOppositeTurn());
 
-  // decoding move
-  uint from = move.getFrom();
-  uint to = move.getTo();
-  int movingPiece = mailbox[from];
-  int oppositePieceColor = getOppositeTurn();
-  updateCastlingRights(from, movingPiece);
-  // bit masks
-  uint64_t toMask = (0b1ull << to);
-  uint64_t fromMask = (0b1ull << from);
-  // moving
-  pieces[gameState.getTurn()][movingPiece] &= ~fromMask;
-  piece capturedPieceType = mailbox[to];
-  if (capturedPieceType == rook) {
-    updateCastlingRights(to, rook);
-  }
-  pieces[oppositePieceColor][capturedPieceType] &= (~toMask);
   capturedInLastMove = capturedPieceType;
-  pieces[gameState.getTurn()][bishop] |= toMask;
+  pieces[gameState.getTurn()][piece_] |= toMask;
+  Zobrist::removeAddPiece(zobristHash, to, piece_, getTurn());
   // Mailbox operations;
-  mailbox[to] = bishop;
-  mailbox[from] = noPiece;
-  int epFile = gameState.getEnPassant();
-  if (epFile != NO_EP) {
-    Zobrist::flipEpStatus(zobristHash, epFile);
-  }
-  gameState.setEnPassant(NO_EP);
-}
-void Position::makeRookPromoCapture(const Move &move) {
-
-  // decoding move
-  uint from = move.getFrom();
-  uint to = move.getTo();
-  int movingPiece = mailbox[from];
-  int oppositePieceColor = getOppositeTurn();
-  updateCastlingRights(from, movingPiece);
-  // bit masks
-  uint64_t toMask = (0b1ull << to);
-  uint64_t fromMask = (0b1ull << from);
-  // moving
-  pieces[gameState.getTurn()][movingPiece] &= ~fromMask;
-  piece capturedPieceType = mailbox[to];
-  if (capturedPieceType == rook) {
-    updateCastlingRights(to, rook);
-  }
-  pieces[oppositePieceColor][capturedPieceType] &= (~toMask);
-  capturedInLastMove = capturedPieceType;
-  pieces[gameState.getTurn()][rook] |= toMask;
-  // Mailbox operations;
-  mailbox[to] = rook;
-  mailbox[from] = noPiece;
-  int epFile = gameState.getEnPassant();
-  if (epFile != NO_EP) {
-    Zobrist::flipEpStatus(zobristHash, epFile);
-  }
-  gameState.setEnPassant(NO_EP);
-}
-void Position::makeQueenPromoCapture(const Move &move) {
-
-  // decoding move
-  uint from = move.getFrom();
-  uint to = move.getTo();
-  int movingPiece = mailbox[from];
-  int oppositePieceColor = getOppositeTurn();
-  updateCastlingRights(from, movingPiece);
-  // bit masks
-  uint64_t toMask = (0b1ull << to);
-  uint64_t fromMask = (0b1ull << from);
-  // moving
-  pieces[gameState.getTurn()][movingPiece] &= ~fromMask;
-  piece capturedPieceType = mailbox[to];
-  if (capturedPieceType == rook) {
-    updateCastlingRights(to, rook);
-  }
-  pieces[oppositePieceColor][capturedPieceType] &= (~toMask);
-  capturedInLastMove = capturedPieceType;
-  pieces[gameState.getTurn()][queen] |= toMask;
-  // Mailbox operations;
-  mailbox[to] = queen;
+  mailbox[to] = piece_;
   mailbox[from] = noPiece;
   int epFile = gameState.getEnPassant();
   if (epFile != NO_EP) {
