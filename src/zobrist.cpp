@@ -1,5 +1,5 @@
 #include "zobrist.hpp"
-
+// TODO: check all the methods for wrong indexing
 uint64_t Zobrist::generatePieceZobristKey(int piece_, int color_,
                                           const Position &position) {
 

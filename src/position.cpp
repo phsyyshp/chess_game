@@ -309,7 +309,7 @@ void Position::capture(const Move &move) {
   // decoding move
   uint from = move.getFrom();
   uint to = move.getTo();
-  int movingPiece = mailbox[from];
+  piece movingPiece = mailbox[from];
   int oppositePieceColor = getOppositeTurn();
   updateCastlingRights(from, movingPiece);
   // bit masks
@@ -317,21 +317,31 @@ void Position::capture(const Move &move) {
   uint64_t fromMask = (0b1ull << from);
   // moving
   pieces[gameState.getTurn()][movingPiece] &= ~fromMask;
+  Zobrist::removeAddPiece(zobristHash, from, movingPiece, getTurn());
   piece capturedPieceType = mailbox[to];
   if (capturedPieceType == rook) {
     updateCastlingRights(to, rook);
   }
   pieces[oppositePieceColor][capturedPieceType] &= (~toMask);
+  Zobrist::removeAddPiece(zobristHash, to, capturedPieceType,
+                          getOppositeTurn());
   capturedInLastMove = capturedPieceType;
   pieces[gameState.getTurn()][movingPiece] |= toMask;
+  Zobrist::removeAddPiece(zobristHash, to, movingPiece, getTurn());
+
   // Mailbox operations;
   mailbox[to] = mailbox[from];
   mailbox[from] = noPiece;
+  int epFile = gameState.getEnPassant();
+  if (epFile != NO_EP) {
+    Zobrist::flipEpStatus(zobristHash, epFile);
+  }
   gameState.setEnPassant(NO_EP);
 }
 void Position::makeDoublePawnPush(const Move &move) {
   makeQuietMove(move);
   uint file = squareTofile[move.getFrom()];
+  Zobrist::flipEpStatus(zobristHash, file);
   gameState.setEnPassant(file);
 }
 void Position::makeEPCapture(const Move &move) {
@@ -344,12 +354,14 @@ void Position::makeEPCapture(const Move &move) {
   case white:
     victimMask = 0b1ull << (fileEP + 8 * 4);
     pieces[black][pawn] ^= victimMask;
+    Zobrist::removeAddPiece(zobristHash, fileEP + 8 * 4, pawn, black);
     mailbox[fileEP + 8 * 4] = noPiece;
     break;
 
   case black:
     victimMask = 0b1ull << (fileEP + 8 * 3);
     pieces[white][pawn] ^= victimMask;
+    Zobrist::removeAddPiece(zobristHash, fileEP + 8 * 3, pawn, white);
     mailbox[fileEP + 8 * 3] = noPiece;
     break;
   default:
@@ -367,12 +379,21 @@ void Position::makeQueenCastle(const Move &move) {
   switch (turn) {
   case white:
     pieces[white][rook] &= ~(0b1ull << a1);
+    Zobrist::removeAddPiece(zobristHash, a1, rook, white);
     pieces[white][rook] |= (0b1ull << d1);
+    Zobrist::removeAddPiece(zobristHash, d1, rook, white);
+
     pieces[white][king] >>= 2;
+    Zobrist::removeAddPiece(zobristHash, c1, king, white);
+    Zobrist::removeAddPiece(zobristHash, e1, king, white);
+
     mailbox[a1] = noPiece;
     mailbox[e1] = noPiece;
     mailbox[c1] = king;
     mailbox[d1] = rook;
+
+    Zobrist::flipCastlingStatus(zobristHash, castlingType::whiteKingSide);
+    Zobrist::flipCastlingStatus(zobristHash, castlingType::whiteQueenSide);
 
     break;
 
@@ -380,11 +401,15 @@ void Position::makeQueenCastle(const Move &move) {
     pieces[black][rook] &= ~(0b1ull << a8);
     pieces[black][rook] |= (0b1ull << d8);
     pieces[black][king] >>= 2;
+    Zobrist::removeAddPiece(zobristHash, c8, king, white);
+    Zobrist::removeAddPiece(zobristHash, e8, king, white);
     mailbox[a8] = noPiece;
     mailbox[e8] = noPiece;
     mailbox[c8] = king;
     mailbox[d8] = rook;
 
+    Zobrist::flipCastlingStatus(zobristHash, castlingType::blackKingSide);
+    Zobrist::flipCastlingStatus(zobristHash, castlingType::blackQueenSide);
     break;
 
   default:
