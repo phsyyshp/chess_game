@@ -1,13 +1,11 @@
 #pragma once
 #include "evaluation.hpp"
+#include "tt.hpp"
 #include <chrono>
 class Search {
 public:
   // constructors;
   Search();
-  Search(int timeLeftWhite_, int timeIncrementWhite_, int timeLeftBlack_,
-         int timeIncrementBlack_);
-
   // getters;
   std::array<std::array<Move, MAX_DEPTH>, MAX_KILLER_MOVES>
   getKillerMoves() const;
@@ -35,4 +33,5 @@ private:
   std::array<std::array<Move, MAX_DEPTH>, MAX_KILLER_MOVES> killerMoves;
   int ply = 0;
   Move pv;
+  TranspositionTable tt;
 };

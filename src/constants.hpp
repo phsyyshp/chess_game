@@ -321,3 +321,5 @@ const int MAX_DEPTH = 64;
 const int KILLER_VALUE = 10;
 // Zobrist
 constexpr uint COLOR_INDEX = 768;
+// tt
+enum nodeType { EXACT, ALPHA, BETA };

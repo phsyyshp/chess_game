@@ -189,11 +189,13 @@ Move Search::searchAB(int depth,
         moveFound = true;
       }
       ply++;
-
       score = -alphaBeta(-beta, -alpha, depth - 1, tempPosition);
       ply--;
       if (score >= beta) {
         storeKillerMove(movegen.getMoves()[j], ply);
+        tt.replaceByDepth(hashEntry{tempPosition.getZobrist(), depth, score,
+                                    nodeType::BETA, false,
+                                    movegen.getMoves()[j]});
         return movegen.getMoves()[j];
       }
       if (score > alpha) {

@@ -137,6 +137,7 @@ color Position ::getPieceColor(const uint64_t &sqMask) const {
     return color::invalid;
   }
 }
+uint64_t Position::getZobrist() const { return zobristHash; }
 piece Position::getPiece(int square) const { return mailbox[square]; }
 int Position::getPly() const { return ply; }
 // TODO: there maybe bugs here! Especially when there is not any pieace of that
