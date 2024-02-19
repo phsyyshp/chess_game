@@ -323,5 +323,5 @@ const int KILLER_VALUE = 10;
 constexpr uint COLOR_INDEX = 768;
 // tt
 enum nodeType { EXACT, ALPHA, BETA };
-constexpr int TT_MOVE_SORT_VALUE = 100000;
+constexpr int TT_MOVE_SORT_VALUE = 60;
 constexpr size_t TT_SIZE = 200000;
