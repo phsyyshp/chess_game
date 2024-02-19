@@ -115,7 +115,8 @@ Move Search::search(int depth, const Position &position) {
   }
   return bestMove;
 }
-Move Search::searchIt(int maxDepth, bool isInfoOn, const Position &position) {
+Move Search::searchIt(int maxDepth, bool isInfoOn, const Position &position,
+                      int wtime, int winc, int btime, int binc) {
   int depth = 1;
   int remainingTime = 0;
   int timeIncrement = 0;
@@ -126,13 +127,13 @@ Move Search::searchIt(int maxDepth, bool isInfoOn, const Position &position) {
   color turn = position.getTurn();
   switch (turn) {
   case white:
-    remainingTime = timeLeftWhite;
-    timeIncrement = timeIncrementWhite;
+    remainingTime = wtime;
+    timeIncrement = winc;
     break;
 
   case black:
-    remainingTime = timeLeftBlack;
-    timeIncrement = timeIncrementBlack;
+    remainingTime = btime;
+    timeIncrement = binc;
     break;
   default:
     break;

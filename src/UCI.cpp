@@ -3,7 +3,7 @@
 void UCI::uci(const std::vector<std::string> &subCommands) {
   // std::string message = "id name Engine v0.1.0-alpha";
   // logMessage(message);
-  std::cout << "id name Engine v0.1.9-alpha\n";
+  std::cout << "id name Engine v0.1.10-alpha\n";
   logMessage("uciok");
   std::cout << "uciok\n";
 }
@@ -38,8 +38,8 @@ void UCI::go(const std::vector<std::string> &tokens) {
   if (bincIt != tokens.end()) {
     binc = stoi(*(bincIt + 1));
   }
-  Search srch(wtime, winc, btime, binc);
-  Move bestMove = srch.searchIt(maxDepth, true, _position);
+  Move bestMove =
+      search_.searchIt(maxDepth, true, _position, wtime, winc, btime, binc);
   Move invalidMove(a1, a1, 0);
   if (bestMove.getMoveInt() != invalidMove.getMoveInt()) {
     std::string message;

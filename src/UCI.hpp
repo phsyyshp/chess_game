@@ -49,4 +49,5 @@ private:
           {"position", std::bind(&UCI::position, this, std::placeholders::_1)}};
   Position _position;
   std::string path;
+  Search search_;
 };

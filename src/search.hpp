@@ -16,7 +16,8 @@ public:
   // searchers;
   int negaMax(int depth, const Position &position);
   Move search(int depth, const Position &position);
-  Move searchIt(int maxDepth, bool isInfoOn, const Position &position);
+  Move searchIt(int maxDepth, bool isInfoOn, const Position &position,
+                int wtime, int winc, int btime, int binc);
   Move searchAB(int depth, std::chrono::high_resolution_clock::time_point start,
                 int remainingTime, int timeIncrement, const Position &position);
   int quiesce(int alpha, int beta, const Position &position);
@@ -33,9 +34,5 @@ public:
 private:
   std::array<std::array<Move, MAX_DEPTH>, MAX_KILLER_MOVES> killerMoves;
   int ply = 0;
-  int timeLeftWhite;
-  int timeIncrementWhite;
-  int timeLeftBlack;
-  int timeIncrementBlack;
   Move pv;
 };
