@@ -324,3 +324,4 @@ constexpr uint COLOR_INDEX = 768;
 // tt
 enum nodeType { EXACT, ALPHA, BETA };
 constexpr int TT_MOVE_SORT_VALUE = 100000;
+constexpr size_t TT_SIZE = 200000;

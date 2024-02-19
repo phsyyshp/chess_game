@@ -28,5 +28,5 @@ public:
   void clear();
 
 private:
-  std::array<hashEntry, 100> tt;
+  std::array<hashEntry, TT_SIZE> tt;
 };

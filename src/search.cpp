@@ -1,3 +1,5 @@
+// FIX IT: check if you used non reference for range where you need to change to
+// element of container.
 #include "search.hpp"
 
 // constructors;
@@ -293,6 +295,7 @@ void Search::scoreMoves(MoveList &moveList_, const Position &position) const {
   for (Move &move : moveList_) {
     int moveScore = 0;
     if (move.getMoveInt() == tt.getMove(position.getZobrist()).getMoveInt()) {
+      // std::cout << "la\n";
       move.setScore(TT_MOVE_SORT_VALUE);
     } else if (move.isCapture()) {
       // TODO: becarefull with overflow here
