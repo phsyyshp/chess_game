@@ -16,6 +16,11 @@ void TranspositionTable::replaceByDepth(const hashEntry &entry,
     add(entry);
   }
 }
+hashEntry TranspositionTable::getByKey(uint64_t zobristKey) const {
+
+  return tt[zobristKey % TT_SIZE];
+}
+
 void TranspositionTable::clear() {
 
   for (hashEntry &entry : tt) {
