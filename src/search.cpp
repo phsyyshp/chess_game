@@ -11,18 +11,6 @@ Search::Search() {
   }
 };
 
-Search::Search(int timeLeftWhite_, int timeIncrementWhite_, int timeLeftBlack_,
-               int timeIncrementBlack_)
-    : timeLeftWhite(timeLeftWhite_), timeIncrementWhite(timeIncrementWhite_),
-      timeLeftBlack(timeLeftBlack_), timeIncrementBlack(timeIncrementBlack_) {
-
-  Move invalidMove(a1, a1, false);
-  for (int i = 0; i < MAX_DEPTH; i++) {
-    for (int j = 0; j < MAX_KILLER_MOVES; j++) {
-      killerMoves[j][i] = invalidMove;
-    }
-  }
-}
 // getters;
 std::array<std::array<Move, MAX_DEPTH>, MAX_KILLER_MOVES>
 Search::getKillerMoves() const {
@@ -117,6 +105,7 @@ Move Search::search(int depth, const Position &position) {
 }
 Move Search::searchIt(int maxDepth, bool isInfoOn, const Position &position,
                       int wtime, int winc, int btime, int binc) {
+  ply = 0;
   int depth = 1;
   int remainingTime = 0;
   int timeIncrement = 0;
