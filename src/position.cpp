@@ -546,26 +546,42 @@ void Position::updateCastlingRights(int from, int movingPiece) {
   if (movingPiece == king) {
     gameState.setCastlingRigths(
         castlingRigths & NO_CASTLING_COLOR_MASK_LOOK_UP[gameState.getTurn()]);
+    switch (getTurn()) {
+    case white:
+      Zobrist::flipCastlingStatus(zobristHash, whiteKingSide);
+      Zobrist::flipCastlingStatus(zobristHash, whiteQueenSide);
+      break;
+    case black:
+      Zobrist::flipCastlingStatus(zobristHash, blackKingSide);
+      Zobrist::flipCastlingStatus(zobristHash, blackQueenSide);
+      break;
+    default:
+      break;
+    }
   }
   if (movingPiece == rook) {
     switch (from) {
     case a1:
       gameState.setCastlingRigths(castlingRigths &
                                   NO_WHITE_QUEEN_SIDE_CASTLING_MASK);
+      Zobrist::flipCastlingStatus(zobristHash, whiteQueenSide);
       break;
 
     case h1:
       gameState.setCastlingRigths(castlingRigths &
                                   NO_WHITE_KING_SIDE_CASTLING_MASK);
+      Zobrist::flipCastlingStatus(zobristHash, whiteKingSide);
       break;
     case a8:
       gameState.setCastlingRigths(castlingRigths &
                                   NO_BLACK_QUEEN_SIDE_CASTLING_MASK);
+      Zobrist::flipCastlingStatus(zobristHash, blackQueenSide);
       break;
 
     case h8:
       gameState.setCastlingRigths(castlingRigths &
                                   NO_BLACK_KING_SIDE_CASTLING_MASK);
+      Zobrist::flipCastlingStatus(zobristHash, blackKingSide);
       break;
 
     default:
