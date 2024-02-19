@@ -117,6 +117,22 @@ constexpr std::array<uint, 64> squareTofile = {
     6, 7, 0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3,
     4, 5, 6, 7, 0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3, 4, 5, 6, 7};
 // Castling;
+// Castling Rights Table
+// +-----------------------+---------------------+
+// |       Permission      |      Castling       |
+// +-----------------------+---------------------+
+// | canWhiteCastleQueenSide | 1 0 0 0 | 8
+// | canWhiteCastleKingSide  | 0 1 0 0 | 4
+// | canBlackCastleQueenSide | 0 0 1 0 | 2
+// | canBlackCastleKingSide  | 0 0 0 1 | 1
+// +-----------------------+---------------------+
+// QKqk
+enum castlingType {
+  blackKingSide,
+  blackQueenSide,
+  whiteKingSide,
+  whiteQueenSide
+};
 const std::array<std::string, 5> charToCatslingEncoding = {"-", "k", "q", "K",
                                                            "Q"};
 constexpr uint NO_WHITE_CASTLING_MASK = 0b0011u;
@@ -303,3 +319,5 @@ const uint32_t MVV_LVA_OFFSET = UINT32_MAX - 256;
 const int MAX_KILLER_MOVES = 2;
 const int MAX_DEPTH = 64;
 const int KILLER_VALUE = 10;
+// Zobrist
+constexpr uint COLOR_INDEX = 768;

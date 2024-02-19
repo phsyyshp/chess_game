@@ -19,6 +19,7 @@ Position::Position(const std::string &FENstr) {
       i++;
     }
   }
+  zobristHash = Zobrist::generateTotalZobristKey(*this);
 }
 Position::Position(const std::array<std::array<uint64_t, 6>, 2> &pieces_,
                    color turn_)
@@ -37,6 +38,7 @@ Position::Position(const std::array<std::array<uint64_t, 6>, 2> &pieces_,
       i++;
     }
   }
+  zobristHash = Zobrist::generateTotalZobristKey(*this);
 }
 // Setters;
 void Position::setWhitePiecesToInitialConfiguration() {
@@ -91,7 +93,7 @@ void Position::setBoardToInitialConfiguration() {
   clear();
   setWhitePiecesToInitialConfiguration();
   setBlackPiecesToInitialConfiguration();
-  // zobristHash = Zobrist::generateTotalZobristKey(*this);
+  zobristHash = Zobrist::generateTotalZobristKey(*this);
 }
 void Position::clear() {
   for (int i = 0; i < 64; i++) {
@@ -106,7 +108,10 @@ void Position::clear() {
   zobristHash = 0ull;
   capturedInLastMove = noPiece;
 }
-void Position::changeTurn() { gameState.changeTurn(); }
+void Position::changeTurn() {
+  gameState.changeTurn();
+  Zobrist::changeTurn(zobristHash);
+}
 
 void Position::setPly(int ply_) { ply = ply_; }
 
@@ -276,7 +281,7 @@ void Position::makeQuietMove(const Move &move) {
   // decoding move
   uint from = move.getFrom();
   uint to = move.getTo();
-  int movingPiece = mailbox[from];
+  piece movingPiece = mailbox[from];
   int oppositePieceColor = getOppositeTurn();
 
   updateCastlingRights(from, movingPiece);
@@ -286,12 +291,18 @@ void Position::makeQuietMove(const Move &move) {
 
   // moving
   pieces[gameState.getTurn()][movingPiece] &= ~fromMask;
+  Zobrist::removeAddPiece(zobristHash, from, movingPiece, getTurn());
   capturedInLastMove = noPiece;
 
   pieces[gameState.getTurn()][movingPiece] |= toMask;
+  Zobrist::removeAddPiece(zobristHash, to, movingPiece, getTurn());
   // Mailbox operations;
   mailbox[to] = mailbox[from];
   mailbox[from] = noPiece;
+  int epFile = gameState.getEnPassant();
+  if (epFile != NO_EP) {
+    Zobrist::flipEpStatus(zobristHash, epFile);
+  }
   gameState.setEnPassant(NO_EP);
 }
 void Position::capture(const Move &move) {

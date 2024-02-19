@@ -23,6 +23,7 @@ set(MAIN_SOURCES
     src/UCI.cpp
     src/gameState.cpp
     src/moveToStr.cpp
+    src/zobrist.cpp
     src/main.cpp 
 )
 
