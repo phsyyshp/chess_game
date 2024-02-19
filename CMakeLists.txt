@@ -43,6 +43,7 @@ set(TEST_SOURCES
     src/movelist.cpp
     src/UCI.cpp
     src/gameState.cpp
+    src/zobrist.cpp
     src/moveToStr.cpp
 )
 
