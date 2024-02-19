@@ -399,10 +399,12 @@ void Position::makeQueenCastle(const Move &move) {
 
   case black:
     pieces[black][rook] &= ~(0b1ull << a8);
+    Zobrist::removeAddPiece(zobristHash, a8, rook, black);
     pieces[black][rook] |= (0b1ull << d8);
+    Zobrist::removeAddPiece(zobristHash, d8, rook, black);
     pieces[black][king] >>= 2;
-    Zobrist::removeAddPiece(zobristHash, c8, king, white);
-    Zobrist::removeAddPiece(zobristHash, e8, king, white);
+    Zobrist::removeAddPiece(zobristHash, c8, king, black);
+    Zobrist::removeAddPiece(zobristHash, e8, king, black);
     mailbox[a8] = noPiece;
     mailbox[e8] = noPiece;
     mailbox[c8] = king;
@@ -414,6 +416,10 @@ void Position::makeQueenCastle(const Move &move) {
 
   default:
     break;
+  }
+  int epFile = gameState.getEnPassant();
+  if (epFile != NO_EP) {
+    Zobrist::flipEpStatus(zobristHash, epFile);
   }
   gameState.setEnPassant(NO_EP);
 }
@@ -427,29 +433,43 @@ void Position::makeKingCastle(const Move &move) {
   switch (turn) {
   case white:
     pieces[white][rook] &= ~(0b1ull << h1);
+    Zobrist::removeAddPiece(zobristHash, h1, rook, white);
     pieces[white][rook] |= (0b1ull << f1);
+    Zobrist::removeAddPiece(zobristHash, f1, rook, white);
     pieces[white][king] <<= 2;
+    Zobrist::removeAddPiece(zobristHash, g1, king, white);
+    Zobrist::removeAddPiece(zobristHash, e1, king, white);
     mailbox[h1] = noPiece;
     mailbox[e1] = noPiece;
     mailbox[g1] = king;
     mailbox[f1] = rook;
 
+    Zobrist::flipCastlingStatus(zobristHash, castlingType::whiteKingSide);
+    Zobrist::flipCastlingStatus(zobristHash, castlingType::whiteQueenSide);
     break;
 
   case black:
     pieces[black][rook] &= ~(0b1ull << h8);
+    Zobrist::removeAddPiece(zobristHash, h8, rook, black);
     pieces[black][rook] |= (0b1ull << f8);
+    Zobrist::removeAddPiece(zobristHash, f8, rook, black);
     pieces[black][king] <<= 2;
-
+    Zobrist::removeAddPiece(zobristHash, g8, king, white);
+    Zobrist::removeAddPiece(zobristHash, e8, king, white);
     mailbox[h8] = noPiece;
     mailbox[e8] = noPiece;
     mailbox[g8] = king;
     mailbox[f8] = rook;
-
+    Zobrist::flipCastlingStatus(zobristHash, castlingType::blackKingSide);
+    Zobrist::flipCastlingStatus(zobristHash, castlingType::blackQueenSide);
     break;
 
   default:
     break;
+  }
+  int epFile = gameState.getEnPassant();
+  if (epFile != NO_EP) {
+    Zobrist::flipEpStatus(zobristHash, epFile);
   }
   gameState.setEnPassant(NO_EP);
 }
@@ -459,7 +479,7 @@ void Position::makeKnightPromotion(const Move &move) {
   // decoding move
   uint from = move.getFrom();
   uint to = move.getTo();
-  int movingPiece = mailbox[from];
+  piece movingPiece = mailbox[from];
   int oppositePieceColor = getOppositeTurn();
 
   updateCastlingRights(from, movingPiece);
@@ -469,12 +489,19 @@ void Position::makeKnightPromotion(const Move &move) {
 
   // moving
   pieces[gameState.getTurn()][movingPiece] &= ~fromMask;
+  Zobrist::removeAddPiece(zobristHash, from, movingPiece, getTurn());
   capturedInLastMove = noPiece;
 
   pieces[gameState.getTurn()][knight] |= toMask;
+  Zobrist::removeAddPiece(zobristHash, to, knight, getTurn());
+
   // Mailbox operations;
   mailbox[to] = knight;
   mailbox[from] = noPiece;
+  int epFile = gameState.getEnPassant();
+  if (epFile != NO_EP) {
+    Zobrist::flipEpStatus(zobristHash, epFile);
+  }
   gameState.setEnPassant(NO_EP);
 }
 void Position::makeBishopPromotion(const Move &move) {
@@ -482,7 +509,7 @@ void Position::makeBishopPromotion(const Move &move) {
   // decoding move
   uint from = move.getFrom();
   uint to = move.getTo();
-  int movingPiece = mailbox[from];
+  piece movingPiece = mailbox[from];
   int oppositePieceColor = getOppositeTurn();
 
   updateCastlingRights(from, movingPiece);
@@ -492,12 +519,17 @@ void Position::makeBishopPromotion(const Move &move) {
 
   // moving
   pieces[gameState.getTurn()][movingPiece] &= ~fromMask;
+  Zobrist::removeAddPiece(zobristHash, from, movingPiece, getTurn());
   capturedInLastMove = noPiece;
 
   pieces[gameState.getTurn()][bishop] |= toMask;
   // Mailbox operations;
   mailbox[to] = bishop;
   mailbox[from] = noPiece;
+  int epFile = gameState.getEnPassant();
+  if (epFile != NO_EP) {
+    Zobrist::flipEpStatus(zobristHash, epFile);
+  }
   gameState.setEnPassant(NO_EP);
 }
 void Position::makeRookPromotion(const Move &move) {
@@ -521,6 +553,10 @@ void Position::makeRookPromotion(const Move &move) {
   // Mailbox operations;
   mailbox[to] = rook;
   mailbox[from] = noPiece;
+  int epFile = gameState.getEnPassant();
+  if (epFile != NO_EP) {
+    Zobrist::flipEpStatus(zobristHash, epFile);
+  }
   gameState.setEnPassant(NO_EP);
 }
 void Position::makeQueenPromotion(const Move &move) {
@@ -544,6 +580,10 @@ void Position::makeQueenPromotion(const Move &move) {
   // Mailbox operations;
   mailbox[to] = queen;
   mailbox[from] = noPiece;
+  int epFile = gameState.getEnPassant();
+  if (epFile != NO_EP) {
+    Zobrist::flipEpStatus(zobristHash, epFile);
+  }
   gameState.setEnPassant(NO_EP);
 }
 void Position::makeKnightPromoCapture(const Move &move) {
@@ -569,6 +609,10 @@ void Position::makeKnightPromoCapture(const Move &move) {
   // Mailbox operations;
   mailbox[to] = knight;
   mailbox[from] = noPiece;
+  int epFile = gameState.getEnPassant();
+  if (epFile != NO_EP) {
+    Zobrist::flipEpStatus(zobristHash, epFile);
+  }
   gameState.setEnPassant(NO_EP);
 }
 void Position::makeBishopPromoCapture(const Move &move) {
@@ -594,6 +638,10 @@ void Position::makeBishopPromoCapture(const Move &move) {
   // Mailbox operations;
   mailbox[to] = bishop;
   mailbox[from] = noPiece;
+  int epFile = gameState.getEnPassant();
+  if (epFile != NO_EP) {
+    Zobrist::flipEpStatus(zobristHash, epFile);
+  }
   gameState.setEnPassant(NO_EP);
 }
 void Position::makeRookPromoCapture(const Move &move) {
@@ -619,6 +667,10 @@ void Position::makeRookPromoCapture(const Move &move) {
   // Mailbox operations;
   mailbox[to] = rook;
   mailbox[from] = noPiece;
+  int epFile = gameState.getEnPassant();
+  if (epFile != NO_EP) {
+    Zobrist::flipEpStatus(zobristHash, epFile);
+  }
   gameState.setEnPassant(NO_EP);
 }
 void Position::makeQueenPromoCapture(const Move &move) {
@@ -644,6 +696,10 @@ void Position::makeQueenPromoCapture(const Move &move) {
   // Mailbox operations;
   mailbox[to] = queen;
   mailbox[from] = noPiece;
+  int epFile = gameState.getEnPassant();
+  if (epFile != NO_EP) {
+    Zobrist::flipEpStatus(zobristHash, epFile);
+  }
   gameState.setEnPassant(NO_EP);
 }
 // WARNING: this doesnt handle the case if rook is captured
