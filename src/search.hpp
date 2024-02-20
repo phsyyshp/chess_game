@@ -39,8 +39,9 @@ private:
   int maxMoveDuration;
   int maxDepth;
   bool isInfoOn;
-  uint nodes;
+  uint64_t nodes;
   Move pv;
+  bool isTimeExeeded;
   // TranspositionTable tt;
   // bool globalAncientFlag = false;
 };
