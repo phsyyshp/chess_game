@@ -4,11 +4,11 @@ void UCI::uci(const std::vector<std::string> &subCommands) {
   // std::string message = "id name Engine v0.1.0-alpha";
   // logMessage(message);
   std::cout << "id name Engine v0.1.10-alpha\n";
-  logMessage("uciok");
+  // logMessage("uciok");
   std::cout << "uciok\n";
 }
 void UCI::isready(const std::vector<std::string> &subCommands) {
-  logMessage("readyok");
+  // logMessage("readyok");
   std::cout << "readyok\n";
 }
 void UCI::go(const std::vector<std::string> &tokens) {
@@ -38,13 +38,14 @@ void UCI::go(const std::vector<std::string> &tokens) {
   if (bincIt != tokens.end()) {
     binc = stoi(*(bincIt + 1));
   }
+  bool isInfoOn = true;
   Move bestMove =
-      search_.searchIt(maxDepth, true, _position, wtime, winc, btime, binc);
+      search_.searchIt(maxDepth, isInfoOn, _position, wtime, winc, btime, binc);
   Move invalidMove(a1, a1, 0);
   if (bestMove.getMoveInt() != invalidMove.getMoveInt()) {
     std::string message;
     message += "bestmove ";
-    logMessage(message + bestMove.toStr());
+    // logMessage(message + bestMove.toStr());
     std::cout << "bestmove " << bestMove.toStr() << "\n";
   }
 }
@@ -76,8 +77,8 @@ void UCI::loop() {
 
   std::string message;
   while (std::getline(std::cin, combinedCommand)) {
-    message = "Input:" + combinedCommand;
-    logMessage(message);
+    // message = "Input:" + combinedCommand;
+    // logMessage(message);
     std::vector<std::string> tokens = tokenize(combinedCommand);
     std::string command = tokens[0];
     if (tokens[0] == "quit") {

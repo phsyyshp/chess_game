@@ -15,18 +15,16 @@ class UCI {
 
 public:
   UCI() {
-    std::string currentDIR = getExecutableDirectory();
-    std::string executableName = getExecutableName();
-    path = currentDIR + '/' + executableName + "debugLog";
+    // std::string currentDIR = getExecutableDirectory();
+    // std::string executableName = getExecutableName();
+    // path = currentDIR + '/' + executableName + "debugLog";
     // debugLog.open(path);
     // debugLog.close();
   }
 
   void loop();
-
   void manual(const std::string &command);
   void debugInit() const;
-
   void logMessage(std::string message);
   Position getPosition() const;
 
@@ -48,6 +46,6 @@ private:
            std::bind(&UCI::ucinewgame, this, std::placeholders::_1)},
           {"position", std::bind(&UCI::position, this, std::placeholders::_1)}};
   Position _position;
-  std::string path;
+  // std::string path;
   Search search_;
 };
