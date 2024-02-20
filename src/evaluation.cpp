@@ -2,6 +2,7 @@
 
 // getters;
 Position Evaluation::getPosition() const { return position; }
+// FIX IT: be sure if they are working correctly
 int Evaluation::getPieceCount(const piece &piece_, const color &color_) const {
   return __builtin_popcountll(position.getPieces()[color_][piece_]);
 }
