@@ -13,11 +13,10 @@ public:
   void clear();
   // searchers;
   Move getBestMove(const Position &position, int maxDepth, int wtime, int winc,
-                   int btime, int binc, bool isInfoOn) const;
+                   int btime, int binc, bool isInfoOn);
+  Move searchIt(const Position &position);
   int negaMax(int depth, const Position &position);
   Move search(int depth, const Position &position);
-  Move searchIt(const Position &position, int maxDepth, bool isInfoOn,
-                int MaxMoveDuration);
   Move searchAB(int depth, std::chrono::high_resolution_clock::time_point start,
                 int remainingTime, int timeIncrement, const Position &position);
   int quiesce(int alpha, int beta, const Position &position);
@@ -36,6 +35,11 @@ public:
 private:
   // std::array<std::array<Move, MAX_DEPTH>, MAX_KILLER_MOVES> killerMoves;
   int ply = 0;
+  std::chrono::high_resolution_clock::time_point start;
+  int maxMoveDuration;
+  int maxDepth;
+  bool isInfoOn;
+  uint nodes;
   Move pv;
   // TranspositionTable tt;
   // bool globalAncientFlag = false;

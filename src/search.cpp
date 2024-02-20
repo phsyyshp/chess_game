@@ -26,20 +26,64 @@ void Search::clear() {
 }
 // void Search::flipGlobalAncientFlag() { globalAncientFlag =
 // !globalAncientFlag; } getters;
-std::array<std::array<Move, MAX_DEPTH>, MAX_KILLER_MOVES>
-Search::getKillerMoves() const {
-  return killerMoves;
-}
+// std::array<std::array<Move, MAX_DEPTH>, MAX_KILLER_MOVES>
+// Search::getKillerMoves() const {
+//   return killerMoves;
+// }
 int Search::getPly() const { return ply; }
 
 // Searchers;
 
-Move Search::getBestMove(const Position &position, int maxDepth, int wtime,
-                         int winc, int btime, int binc, bool isInfoOn) const {
-  auto start = std::chrono::high_resolution_clock::now();
-  int maxMoveDuration =
+Move Search::getBestMove(const Position &position, int maxDepth_, int wtime,
+                         int winc, int btime, int binc, bool isInfoOn_) {
+  ply = 0;
+  nodes = 0;
+  start = std::chrono::high_resolution_clock::now();
+  maxMoveDuration =
       getMaxMoveDuration(position.getTurn(), wtime, winc, btime, binc);
-  return searchIt(position, maxDepth, isInfoOn, maxMoveDuration, start);
+  isInfoOn = isInfoOn_;
+  maxDepth = maxDepth_;
+  return searchIt(position);
+}
+Move Search::searchIt(const Position &position) {
+  int timeSpent = 0;
+  int depth = 1;
+  Move bestMove(a1, a1, 0); // invalid move;
+  while ((depth <= maxDepth) && (timeSpent < maxMoveDuration)) {
+    bestMove = search(depth, position);
+    pv = bestMove;
+    if (isInfoOn) {
+      std::cout << "info "
+                << "depth " << depth << '\n';
+      // << "depth " << depth << "ply" << ply + '\n';
+    }
+    depth++;
+    timeSpent = countTime(start);
+  }
+  return bestMove;
+}
+
+Move Search::search(int depth, const Position &position) {
+  int score;
+  Move bestMove;
+  Evaluation eval(position);
+  Position tempPosition;
+  int max = INT16_MIN;
+  MoveGeneration movGen(position);
+  movGen.generateAllMoves();
+  for (Move move : movGen.getMoves()) {
+    tempPosition = position;
+    if (tempPosition.makeMove(move)) {
+      ply++;
+      score = -negaMax(depth - 1, tempPosition);
+      ply--;
+      if (score > max) {
+        max = score;
+        bestMove = move;
+      }
+    }
+  }
+  return bestMove;
 }
 int Search::negaMax(int depth, const Position &position) {
 
@@ -47,7 +91,6 @@ int Search::negaMax(int depth, const Position &position) {
   Evaluation eval(position);
   Position tempPosition;
   if (depth == 0) {
-    // temp
     return eval.evaluate();
   }
   int max = INT16_MIN;
@@ -102,74 +145,6 @@ int Search::quiesce(int alpha, int beta, const Position &position) {
 
   return alpha;
 }
-Move Search::search(int depth, const Position &position) {
-  int score;
-  Move bestMove;
-  Evaluation eval(position);
-  Position tempPosition;
-  int max = INT16_MIN;
-  MoveGeneration movGen(position);
-  movGen.generateAllMoves();
-  for (Move move : movGen.getMoves()) {
-    tempPosition = position;
-    if (tempPosition.makeMove(move)) {
-      ply++;
-      score = -negaMax(depth - 1, tempPosition);
-      ply--;
-      if (score > max) {
-        max = score;
-        bestMove = move;
-        // std::cout << score << std::endl;
-      }
-    }
-  }
-  return bestMove;
-}
-Move Search::searchIt(const Position &position, int maxDepth, bool isInfoOn,
-                      int MaxMoveDuration, start) {
-  ply = 0;
-  int depth = 1;
-  int remainingTime = 0;
-  int timeIncrement = 0;
-  int timeSpent = 0;
-
-  Move bestMove(a1, a1, 0); // invalid move;
-  color turn = position.getTurn();
-  bool didSearchOccured = false;
-  while ((depth <= maxDepth) && (timeSpent <= maxMoveDuration)) {
-    bestMove = searchAB(depth, start, remainingTime, timeIncrement, position);
-    pv = bestMove;
-    if (isInfoOn) {
-      std::cout << "info "
-                << "depth " << depth << '\n';
-      // << "depth " << depth << "ply" << ply + '\n';
-    }
-    depth++;
-    timeSpent = countTime(start);
-    didSearchOccured = true;
-  }
-  if (didSearchOccured) {
-    flipGlobalAncientFlag();
-    return bestMove;
-  } else {
-    // std::cout << "la\n";
-    MoveGeneration movgen(position);
-    movgen.generateAllMoves();
-    std::cout << "info depth 1\n";
-    Position tempPosition;
-    tempPosition = position;
-    for (const Move &move : movgen.getMoves()) {
-      if (tempPosition.makeMove(move)) {
-        bestMove = move;
-        // std::cout << "legal\n";
-        return bestMove;
-      }
-      // std::cout << "nolegal\n";
-    }
-    return bestMove;
-  }
-}
-
 // TODO: Rigorous testing;
 Move Search::searchAB(int depth,
                       std::chrono::high_resolution_clock::time_point start,
