@@ -3,7 +3,7 @@
 void UCI::uci(const std::vector<std::string> &subCommands) {
   // std::string message = "id name Engine v0.1.0-alpha";
   // logMessage(message);
-  std::cout << "id name Engine v0.1.10-alpha\n";
+  std::cout << "id name Engine v0.2.0-alpha\n";
   // logMessage("uciok");
   std::cout << "uciok\n";
 }
