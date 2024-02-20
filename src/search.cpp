@@ -3,29 +3,29 @@
 #include "search.hpp"
 
 // constructors;
-Search::Search() {
-  // this is just zero;
-  Move invalidMove(a1, a1, false);
-  for (int i = 0; i < MAX_DEPTH; i++) {
-    for (int j = 0; j < MAX_KILLER_MOVES; j++) {
-      killerMoves[j][i] = invalidMove;
-    }
-  }
+Search::Search(){
+    // this is just zero;
+    // Move invalidMove(a1, a1, false);
+    // for (int i = 0; i < MAX_DEPTH; i++) {
+    //   for (int j = 0; j < MAX_KILLER_MOVES; j++) {
+    //     killerMoves[j][i] = invalidMove;
+    //   }
+    // }
 };
 
 void Search::clear() {
 
-  Move invalidMove(a1, a1, false);
-  for (int i = 0; i < MAX_DEPTH; i++) {
-    for (int j = 0; j < MAX_KILLER_MOVES; j++) {
-      killerMoves[j][i] = invalidMove;
-    }
-  }
-  tt.clear();
-  globalAncientFlag = false;
+  // Move invalidMove(a1, a1, false);
+  // for (int i = 0; i < MAX_DEPTH; i++) {
+  //   for (int j = 0; j < MAX_KILLER_MOVES; j++) {
+  //     killerMoves[j][i] = invalidMove;
+  //   }
+  // }
+  // tt.clear();
+  // globalAncientFlag = false;
 }
-void Search::flipGlobalAncientFlag() { globalAncientFlag = !globalAncientFlag; }
-// getters;
+// void Search::flipGlobalAncientFlag() { globalAncientFlag =
+// !globalAncientFlag; } getters;
 std::array<std::array<Move, MAX_DEPTH>, MAX_KILLER_MOVES>
 Search::getKillerMoves() const {
   return killerMoves;
@@ -33,6 +33,15 @@ Search::getKillerMoves() const {
 int Search::getPly() const { return ply; }
 
 // Searchers;
+
+Move Search::getBestMove(const Position &position, int maxDepth, int wtime,
+                         int winc, int btime, int binc, bool isInfoOn) const {
+
+  auto start = std::chrono::high_resolution_clock::now();
+  int maxMoveDuration =
+      getMaxMoveDuration(position.getTurn(), wtime, winc, btime, binc);
+  return searchIt(position, maxDepth, isInfoOn, maxMoveDuration, start);
+}
 int Search::negaMax(int depth, const Position &position) {
 
   int score;
@@ -117,32 +126,16 @@ Move Search::search(int depth, const Position &position) {
   }
   return bestMove;
 }
-Move Search::searchIt(int maxDepth, bool isInfoOn, const Position &position,
-
-                      int wtime, int winc, int btime, int binc) {
+Move Search::searchIt(const Position &position, int maxDepth, bool isInfoOn,
+                      int MaxMoveDuration, start) {
   ply = 0;
   int depth = 1;
   int remainingTime = 0;
   int timeIncrement = 0;
   int timeSpent = 0;
-  auto start = std::chrono::high_resolution_clock::now();
 
   Move bestMove(a1, a1, 0); // invalid move;
   color turn = position.getTurn();
-  switch (turn) {
-  case white:
-    remainingTime = wtime;
-    timeIncrement = winc;
-    break;
-
-  case black:
-    remainingTime = btime;
-    timeIncrement = binc;
-    break;
-  default:
-    break;
-  }
-  int maxMoveDuration = remainingTime / 20 + timeIncrement / 2;
   bool didSearchOccured = false;
   while ((depth <= maxDepth) && (timeSpent <= maxMoveDuration)) {
     bestMove = searchAB(depth, start, remainingTime, timeIncrement, position);
@@ -377,4 +370,19 @@ int Search::countTime(std::chrono::high_resolution_clock::time_point start) {
   auto elapsed =
       std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
   return elapsed.count();
+}
+int Search::getMaxMoveDuration(color turn, int wtime, int winc, int btime,
+                               int binc) const {
+  switch (turn) {
+  case white:
+    return wtime / 20 + winc / 2;
+    break;
+  case black:
+    return btime / 20 + binc / 2;
+    break;
+  default:
+    std::cerr << "invalid color\n";
+    return 0;
+    break;
+  }
 }
