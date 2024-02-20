@@ -42,6 +42,7 @@ private:
   uint64_t nodes;
   Move pv;
   bool isTimeExeeded;
+  int pvScore;
   // TranspositionTable tt;
   // bool globalAncientFlag = false;
 };

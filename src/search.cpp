@@ -38,6 +38,7 @@ Move Search::getBestMove(const Position &position, int maxDepth_, int wtime,
                          int winc, int btime, int binc, bool isInfoOn_) {
   ply = 0;
   nodes = 0ull;
+  pvScore = 0;
   isTimeExeeded = false;
   start = std::chrono::high_resolution_clock::now();
   maxMoveDuration =
@@ -53,13 +54,14 @@ Move Search::searchIt(const Position &position) {
   while ((depth <= maxDepth) && (timeSpent < maxMoveDuration)) {
     bestMove = search(depth, position);
     pv = bestMove;
-    depth++;
     timeSpent = countTime(start);
     if (isInfoOn) {
       std::cout << "info "
-                << "depth " << depth << " nodes " << nodes << " nps "
-                << nodes / timeSpent << '\n';
+                << "depth " << depth << " time " << timeSpent << " nodes "
+                << nodes << " nps " << nodes / (timeSpent + 1) * 1000
+                << " score " << pvScore << " pv " << pv.toStr() << '\n';
     }
+    depth++;
   }
   return bestMove;
 }
@@ -74,11 +76,13 @@ Move Search::search(int depth, const Position &position) {
   movGen.generateAllMoves();
   for (Move move : movGen.getMoves()) {
     if (isTimeExeeded) {
+      // std::cout << "lala\n";
       return pv; // isTimeExeeded can not be true before getting first pv;
       break;
     }
     tempPosition = position;
     if (tempPosition.makeMove(move)) {
+      nodes++;
       ply++;
       score = -negaMax(depth - 1, tempPosition);
       ply--;
@@ -88,11 +92,14 @@ Move Search::search(int depth, const Position &position) {
       }
     }
   }
+  pvScore = score;
+  std::cout << bestMove.toStr() << "\n";
   return bestMove;
 }
 int Search::negaMax(int depth, const Position &position) {
 
   int score = 0;
+  int moveCounter = 0;
   uint64_t nodesSearched = 0;
   Evaluation eval(position);
   Position tempPosition;
@@ -103,12 +110,13 @@ int Search::negaMax(int depth, const Position &position) {
   MoveGeneration movGen(position);
   movGen.generateAllMoves();
   for (Move move : movGen.getMoves()) {
+    if (countTime(start) > maxMoveDuration) {
+      isTimeExeeded = true; // data member;
+      break;
+    }
     tempPosition = position;
     if (tempPosition.makeMove(move)) {
-      if (countTime(start) > maxMoveDuration) {
-        isTimeExeeded = true; // data member;
-        break;
-      }
+      moveCounter++;
       ply++;
       score = -negaMax(depth - 1, tempPosition);
       nodesSearched++;
@@ -117,6 +125,11 @@ int Search::negaMax(int depth, const Position &position) {
         max = score;
       }
     }
+  }
+  if (moveCounter == 0 && position.isInCheck()) {
+    return -INT16_MIN + ply;
+  } else if (moveCounter == 0) {
+    return 0;
   }
   nodes += nodesSearched;
   return max;
