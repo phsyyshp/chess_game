@@ -181,7 +181,6 @@ int Search::quiesce(int alpha, int beta, const Position &position) {
   int score = 0;
   int moveCounter = 0;
   uint64_t nodesSearched = 0;
-
   int standingPat = eval.evaluate();
   if (standingPat >= beta) {
     return beta;
@@ -193,7 +192,10 @@ int Search::quiesce(int alpha, int beta, const Position &position) {
   movegen.generateAllMoves();
   MoveList capturedMoves = movegen.getMoves().getCapturedMoves();
   for (int j = 0; j < capturedMoves.size(); j++) {
-    pickMove(capturedMoves, j);
+    if (countTime(start) > maxMoveDuration) {
+      isTimeExeeded = true; // data member;
+      break;
+    }
     tempPosition = position;
     if (tempPosition.makeMove(capturedMoves[j])) {
       moveCounter++;
