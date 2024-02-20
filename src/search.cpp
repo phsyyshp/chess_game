@@ -76,7 +76,6 @@ Move Search::search(int depth, const Position &position) {
   movGen.generateAllMoves();
   for (Move move : movGen.getMoves()) {
     if (isTimeExeeded) {
-      // std::cout << "lala\n";
       return pv; // isTimeExeeded can not be true before getting first pv;
       break;
     }
@@ -133,6 +132,37 @@ int Search::negaMax(int depth, const Position &position) {
   }
   nodes += nodesSearched;
   return max;
+}
+Move Search::searchAB(int depth, const Position &position) {
+  int timeSpent = 0;
+  int score = 0;
+  bool moveFound = false;
+  Move bestMove(a1, a1, 0); // invalid move
+  Evaluation eval(position);
+  Position tempPosition;
+  int alpha = INT16_MIN;
+  int beta = INT16_MAX;
+  MoveGeneration movegen(position);
+  movegen.generateAllMoves();
+  for (int j = 0; j < movegen.getMoves().size(); j++) {
+    tempPosition = position;
+    if (tempPosition.makeMove(movegen.getMoves()[j])) {
+      if (!moveFound) {
+        bestMove = movegen.getMoves()[j];
+        moveFound = true;
+      }
+      ply++;
+      score = -alphaBeta(-beta, -alpha, depth - 1, tempPosition);
+      ply--;
+      if (score >= beta) {
+        return movegen.getMoves()[j];
+      }
+      if (score > alpha) {
+        alpha = score;
+        bestMove = movegen.getMoves()[j];
+      }
+    }
+  }
 }
 int Search::alphaBeta(int alpha, int beta, int depthLeft,
                       const Position &position) {
@@ -214,75 +244,7 @@ int Search::quiesce(int alpha, int beta, const Position &position) {
 
   return alpha;
 }
-// TODO: Rigorous testing;
-// Move Search::searchAB(int depth,
-//                       std::chrono::high_resolution_clock::time_point start,
-//                       int remainingTime, int timeIncrement,
-//                       const Position &position) {
-//   int timeSpent = 0;
-//   int score = 0;
-//   bool moveFound = false;
-//   int maxMoveDuration = remainingTime / 20 + timeIncrement / 2;
-//   Move bestMove;
-//   Evaluation eval(position);
-//   Position tempPosition;
-//   int alpha = INT16_MIN;
-//   int beta = INT16_MAX;
-//   bool isExact = false;
-
-//   int originalAlpha = alpha;
-//   MoveGeneration movegen(position);
-//   movegen.generateAllMoves();
-//   scoreMoves(movegen.getMoves(), position);
-//   int moveCounter = 0;
-//   for (int j = 0; j < movegen.getMoves().size(); j++) {
-//     pickMove(movegen.getMoves(), j);
-//     tempPosition = position;
-//     if (tempPosition.makeMove(movegen.getMoves()[j])) {
-//       if (!moveFound) {
-//         bestMove = movegen.getMoves()[j];
-//         moveFound = true;
-//       }
-//       ply++;
-//       score = -alphaBeta(-beta, -alpha, depth - 1, tempPosition);
-//       ply--;
-//       if (score >= beta) {
-//         storeKillerMove(movegen.getMoves()[j], ply);
-//         tt.replaceByDepth(hashEntry{position.getZobrist(), 0, score,
-//                                     nodeType::BETA, false,
-//                                     movegen.getMoves()[j]},
-//                           globalAncientFlag);
-//         return movegen.getMoves()[j];
-//       }
-//       if (score > alpha) {
-//         alpha = score;
-//         bestMove = movegen.getMoves()[j];
-
-//         isExact = true;
-//       }
-//     }
-//     timeSpent = countTime(start);
-//     if (timeSpent >= maxMoveDuration) {
-//       if (depth > 1) {
-
-//         bestMove = pv;
-//       }
-//       break;
-//     }
-//   }
-//   if (score < originalAlpha) {
-//     tt.replaceByDepth(hashEntry{position.getZobrist(), 0, score,
-//                                 nodeType::ALPHA, false, Move{a1, a1, 0}},
-//                       globalAncientFlag);
-//   }
-//   if (isExact) {
-
-//     tt.replaceByDepth(hashEntry{position.getZobrist(), 0, alpha,
-//                                 nodeType::EXACT, false, bestMove},
-//                       globalAncientFlag);
-//   }
-//   return bestMove;
-// }
+// TODO : Rigorous testing;
 
 /*TODO:
 -hash tables;

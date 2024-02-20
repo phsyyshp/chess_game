@@ -17,8 +17,7 @@ public:
   Move searchIt(const Position &position);
   int negaMax(int depth, const Position &position);
   Move search(int depth, const Position &position);
-  Move searchAB(int depth, std::chrono::high_resolution_clock::time_point start,
-                int remainingTime, int timeIncrement, const Position &position);
+  Move searchAB(int depth, const Position &position);
   int quiesce(int alpha, int beta, const Position &position);
   int alphaBeta(int alpha, int beta, int depthLeft, const Position &position);
   // move ordering;
