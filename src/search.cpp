@@ -36,7 +36,6 @@ int Search::getPly() const { return ply; }
 
 Move Search::getBestMove(const Position &position, int maxDepth, int wtime,
                          int winc, int btime, int binc, bool isInfoOn) const {
-
   auto start = std::chrono::high_resolution_clock::now();
   int maxMoveDuration =
       getMaxMoveDuration(position.getTurn(), wtime, winc, btime, binc);
