@@ -1,6 +1,10 @@
 #include "Move.hpp"
 #include "position.hpp"
 // getters
+Move &Move::operator=(const Move &rhs) {
+  moveNum = rhs.moveNum;
+  return *this;
+}
 uint32_t Move::getMoveInt() const { return moveNum; }
 uint Move::getFrom() const { return moveNum & 0x3f; }
 uint Move::getTo() const { return (moveNum >> 6) & 0x3f; }

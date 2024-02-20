@@ -13,6 +13,7 @@ public:
   Move(uint from, uint to, uint flags, int score)
       : moveNum((from & 0x3f) | ((to & 0x3f) << 6) | ((flags & 0xf) << 12) |
                 (score << 16)){};
+  Move &operator=(const Move &);
   // Setters;
   // TODO: maybe overflow error
   void setScore(const int &score);
