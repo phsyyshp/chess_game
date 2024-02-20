@@ -127,49 +127,91 @@ int Search::negaMax(int depth, const Position &position) {
     }
   }
   if (moveCounter == 0 && position.isInCheck()) {
-    return -INT16_MIN + ply;
+    return INT16_MIN + ply;
   } else if (moveCounter == 0) {
     return 0;
   }
   nodes += nodesSearched;
   return max;
 }
-// int Search::quiesce(int alpha, int beta, const Position &position) {
-//   Evaluation eval(position);
-//   Position tempPosition;
-//   MoveGeneration movegen(position);
-//   int score;
-//   int moveCounter = 0;
-//   int standingPat = eval.evaluate();
-//   if (standingPat >= beta) {
-//     return beta;
-//   }
-//   if (alpha < standingPat) {
-//     alpha = standingPat;
-//   }
+int Search::alphaBeta(int alpha, int beta, int depthLeft,
+                      const Position &position) {
+  Position tempPosition;
+  MoveGeneration movegen(position);
+  uint64_t nodesSearched = 0;
+  int score = 0;
+  if (depthLeft == 0) {
+    return quiesce(alpha, beta, position);
+  }
+  movegen.generateAllMoves();
+  int moveCounter = 0;
+  for (int j = 0; j < movegen.getMoves().size(); j++) {
+    if (countTime(start) > maxMoveDuration) {
+      isTimeExeeded = true; // data member;
+      break;
+    }
+    tempPosition = position;
+    if (tempPosition.makeMove(movegen.getMoves()[j])) {
+      moveCounter++;
+      ply++;
+      score = -alphaBeta(-beta, -alpha, depthLeft - 1, tempPosition);
+      nodesSearched++;
+      ply--;
+      if (score >= beta) {
+        return beta;
+      }
+      if (score > alpha) {
+        alpha = score;
+      }
+    }
+  }
+  // FIX IT : be sure ply doesnt just resets
+  if (moveCounter == 0 && position.isInCheck()) {
+    return INT16_MIN + ply;
+  } else if (moveCounter == 0) {
+    return 0;
+  }
+  return alpha;
+}
 
-//   movegen.generateAllMoves();
-//   MoveList capturedMoves = movegen.getMoves().getCapturedMoves();
-//   scoreMoves(capturedMoves, position);
-//   for (int j = 0; j < capturedMoves.size(); j++) {
-//     pickMove(capturedMoves, j);
-//     tempPosition = position;
-//     if (tempPosition.makeMove(capturedMoves[j])) {
-//       moveCounter++;
-//       ply++;
-//       score = -quiesce(-beta, -alpha, tempPosition);
-//       ply--;
-//       if (score >= beta) {
-//         return beta;
-//       }
-//       if (score > alpha) {
-//         alpha = score;
-//       }
-//     }
-//   }
+int Search::quiesce(int alpha, int beta, const Position &position) {
+  Evaluation eval(position);
+  Position tempPosition;
+  MoveGeneration movegen(position);
+  int score = 0;
+  int moveCounter = 0;
+  uint64_t nodesSearched = 0;
 
-//   return alpha;
-// }
+  int standingPat = eval.evaluate();
+  if (standingPat >= beta) {
+    return beta;
+  }
+  if (alpha < standingPat) {
+    alpha = standingPat;
+  }
+
+  movegen.generateAllMoves();
+  MoveList capturedMoves = movegen.getMoves().getCapturedMoves();
+  for (int j = 0; j < capturedMoves.size(); j++) {
+    pickMove(capturedMoves, j);
+    tempPosition = position;
+    if (tempPosition.makeMove(capturedMoves[j])) {
+      moveCounter++;
+      ply++;
+      score = -quiesce(-beta, -alpha, tempPosition);
+      nodesSearched++;
+      ply--;
+      if (score >= beta) {
+        return beta;
+      }
+      if (score > alpha) {
+        alpha = score;
+      }
+    }
+  }
+
+  return alpha;
+}
 // TODO: Rigorous testing;
 // Move Search::searchAB(int depth,
 //                       std::chrono::high_resolution_clock::time_point start,
@@ -243,86 +285,18 @@ int Search::negaMax(int depth, const Position &position) {
 /*TODO:
 -hash tables;
 */
-// int Search::alphaBeta(int alpha, int beta, int depthLeft,
-//                       const Position &position) {
-//   int originalAlpha = alpha;
-//   bool isExact = false;
-//   Position tempPosition;
-//   MoveGeneration movegen(position);
-//   hashEntry entry = tt.getByKey(position.getZobrist());
-//   if (entry.depth >= depthLeft && entry.zobrist == position.getZobrist()) {
-//     if (entry.flag == nodeType::EXACT) {
-//       return entry.score;
-//     } else if (entry.flag == nodeType::ALPHA && entry.score > alpha) {
-//       alpha = entry.score;
-//     } else if (entry.flag == nodeType::BETA && entry.score < beta) {
-//       beta = entry.score;
-//     }
-//     if (alpha >= beta) {
-//       return entry.score;
-//     }
-//   }
-//   Move bestMove;
-//   if (depthLeft == 0) {
-//     return quiesce(alpha, beta, position);
-//   }
-//   movegen.generateAllMoves();
-//   int score = 0;
-//   scoreMoves(movegen.getMoves(), position);
-//   int moveCounter = 0;
-//   for (int j = 0; j < movegen.getMoves().size(); j++) {
-//     pickMove(movegen.getMoves(), j);
-//     tempPosition = position;
-//     if (tempPosition.makeMove(movegen.getMoves()[j])) {
-//       moveCounter++;
-//       ply++;
-//       score = -alphaBeta(-beta, -alpha, depthLeft - 1, tempPosition);
-//       ply--;
-//       if (score >= beta) {
-//         storeKillerMove(movegen.getMoves()[j], ply);
-//         tt.replaceByDepth(hashEntry{position.getZobrist(), depthLeft, score,
-//                                     nodeType::BETA, false,
-//                                     movegen.getMoves()[j]},
-//                           globalAncientFlag);
-//         return beta;
-//       }
-//       if (score > alpha) {
-//         alpha = score;
-//         bestMove = movegen.getMoves()[j];
-//         isExact = true;
-//       }
-//     }
-//   }
-// FIX IT: be sure ply doesnt just resets
-//   if (moveCounter == 0 && position.isInCheck()) {
-//     return -50000 + ply;
-//   } else if (moveCounter == 0) {
-//     return 0;
-//   }
-//   if (score < originalAlpha) {
-//     tt.replaceByDepth(hashEntry{position.getZobrist(), depthLeft, score,
-//                                 nodeType::ALPHA, false, Move{a1, a1, 0}},
-//                       globalAncientFlag);
-//   }
-//   if (isExact) {
-
-//     tt.replaceByDepth(hashEntry{position.getZobrist(), depthLeft, alpha,
-//                                 nodeType::EXACT, false, bestMove},
-//                       globalAncientFlag);
-//   }
-//   return alpha;
-// }
-
 // Move ordering;
 
 // BE CAREFUL pass by reference without const;
 // FIX ME: maybe a bug here due to value overflow;
 
-// void Search::scoreMoves(MoveList &moveList_, const Position &position) const
+// void Search::scoreMoves(MoveList &moveList_, const Position &position)
+// const
 // {
 //   for (Move &move : moveList_) {
 //     int moveScore = 0;
-//     if (move.getMoveInt() == tt.getMove(position.getZobrist()).getMoveInt())
+//     if (move.getMoveInt() ==
+//     tt.getMove(position.getZobrist()).getMoveInt())
 //     {
 //       // std::cout << "la\n";
 //       move.setScore(TT_MOVE_SORT_VALUE);
