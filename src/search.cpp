@@ -38,6 +38,8 @@ Move Search::getBestMove(const Position &position, int maxDepth_, int wtime,
                          int winc, int btime, int binc, bool isInfoOn_) {
   ply = 0;
   nodes = 0ull;
+  Move invalidMove(a1, a1, 0);
+  pv = invalidMove;
   pvScore = 0;
   isTimeExeeded = false;
   start = std::chrono::high_resolution_clock::now();
@@ -52,7 +54,7 @@ Move Search::searchIt(const Position &position) {
   int depth = 1;
   Move bestMove(a1, a1, 0); // invalid move;
   while ((depth <= maxDepth) && (timeSpent < maxMoveDuration)) {
-    bestMove = search(depth, position);
+    bestMove = searchAB(depth, position);
     pv = bestMove;
     timeSpent = countTime(start);
     if (isInfoOn) {
@@ -92,7 +94,7 @@ Move Search::search(int depth, const Position &position) {
     }
   }
   pvScore = score;
-  std::cout << bestMove.toStr() << "\n";
+  // std::cout << bestMove.toStr() << "\n";
   return bestMove;
 }
 int Search::negaMax(int depth, const Position &position) {
@@ -136,7 +138,6 @@ int Search::negaMax(int depth, const Position &position) {
 Move Search::searchAB(int depth, const Position &position) {
   int timeSpent = 0;
   int score = 0;
-  bool moveFound = false;
   Move bestMove(a1, a1, 0); // invalid move
   Evaluation eval(position);
   Position tempPosition;
@@ -145,16 +146,20 @@ Move Search::searchAB(int depth, const Position &position) {
   MoveGeneration movegen(position);
   movegen.generateAllMoves();
   for (int j = 0; j < movegen.getMoves().size(); j++) {
+    if (isTimeExeeded) {
+      // isTimeExeeded can not be true before getting first pv because at depth
+      // 0 alpha beta only runs qsearch and it can not  switch this time flag.
+      return pv;
+      break;
+    }
     tempPosition = position;
     if (tempPosition.makeMove(movegen.getMoves()[j])) {
-      if (!moveFound) {
-        bestMove = movegen.getMoves()[j];
-        moveFound = true;
-      }
+      nodes++;
       ply++;
       score = -alphaBeta(-beta, -alpha, depth - 1, tempPosition);
       ply--;
       if (score >= beta) {
+        pvScore = score;
         return movegen.getMoves()[j];
       }
       if (score > alpha) {
@@ -163,6 +168,8 @@ Move Search::searchAB(int depth, const Position &position) {
       }
     }
   }
+  pvScore = score;
+  return bestMove;
 }
 int Search::alphaBeta(int alpha, int beta, int depthLeft,
                       const Position &position) {
@@ -184,10 +191,11 @@ int Search::alphaBeta(int alpha, int beta, int depthLeft,
     if (tempPosition.makeMove(movegen.getMoves()[j])) {
       moveCounter++;
       ply++;
-      score = -alphaBeta(-beta, -alpha, depthLeft - 1, tempPosition);
       nodesSearched++;
+      score = -alphaBeta(-beta, -alpha, depthLeft - 1, tempPosition);
       ply--;
       if (score >= beta) {
+        nodes += nodesSearched;
         return beta;
       }
       if (score > alpha) {
@@ -195,12 +203,12 @@ int Search::alphaBeta(int alpha, int beta, int depthLeft,
       }
     }
   }
-  // FIX IT : be sure ply doesnt just resets
   if (moveCounter == 0 && position.isInCheck()) {
     return INT16_MIN + ply;
   } else if (moveCounter == 0) {
     return 0;
   }
+  nodes += nodesSearched;
   return alpha;
 }
 
@@ -209,7 +217,6 @@ int Search::quiesce(int alpha, int beta, const Position &position) {
   Position tempPosition;
   MoveGeneration movegen(position);
   int score = 0;
-  int moveCounter = 0;
   uint64_t nodesSearched = 0;
   int standingPat = eval.evaluate();
   if (standingPat >= beta) {
@@ -223,17 +230,17 @@ int Search::quiesce(int alpha, int beta, const Position &position) {
   MoveList capturedMoves = movegen.getMoves().getCapturedMoves();
   for (int j = 0; j < capturedMoves.size(); j++) {
     if (countTime(start) > maxMoveDuration) {
-      isTimeExeeded = true; // data member;
+      // isTimeExeeded = true; // data member;
       break;
     }
     tempPosition = position;
     if (tempPosition.makeMove(capturedMoves[j])) {
-      moveCounter++;
       ply++;
       score = -quiesce(-beta, -alpha, tempPosition);
-      nodesSearched++;
+      // nodesSearched++;
       ply--;
       if (score >= beta) {
+        // nodes += nodesSearched;
         return beta;
       }
       if (score > alpha) {
@@ -242,6 +249,7 @@ int Search::quiesce(int alpha, int beta, const Position &position) {
     }
   }
 
+  // nodes += nodesSearched;
   return alpha;
 }
 // TODO : Rigorous testing;

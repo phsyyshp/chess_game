@@ -43,8 +43,8 @@ void UCI::go(const std::vector<std::string> &tokens) {
                                       binc, isInfoOn);
   Move invalidMove(a1, a1, 0);
   if (bestMove.getMoveInt() != invalidMove.getMoveInt()) {
-    std::string message;
-    message += "bestmove ";
+    // std::string message;
+    // message += "bestmove ";
     // logMessage(message + bestMove.toStr());
     std::cout << "bestmove " << bestMove.toStr() << "\n";
   }
