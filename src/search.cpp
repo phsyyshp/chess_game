@@ -52,13 +52,12 @@ Move Search::searchIt(const Position &position) {
   while ((depth <= maxDepth) && (timeSpent < maxMoveDuration)) {
     bestMove = search(depth, position);
     pv = bestMove;
+    depth++;
+    timeSpent = countTime(start);
     if (isInfoOn) {
       std::cout << "info "
                 << "depth " << depth << '\n';
-      // << "depth " << depth << "ply" << ply + '\n';
     }
-    depth++;
-    timeSpent = countTime(start);
   }
   return bestMove;
 }
