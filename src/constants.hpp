@@ -5,6 +5,10 @@
 enum color { white, black, invalid };
 const std::array<color, 2> oppositeColor = {black, white};
 enum piece { pawn, bishop, rook, queen, knight, king, noPiece };
+struct TimeInfo {
+  int remainingTime;
+  int timeIncrement;
+};
 enum square {
   a1,
   b1,
