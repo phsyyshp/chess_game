@@ -316,7 +316,7 @@ const std::array<std::array<int, 7>, 7> MVV_LVA = {
     pawnMVV_LVA,   bishopMVV_LVA, rookMVV_LVA,   queenMVV_LVA,
     knightMVV_LVA, kingMVV_LVA,   noPieceMVV_LVA};
 // TODO: becarefull with types reconsider it;
-const uint32_t MVV_LVA_OFFSET = UINT32_MAX - 256;
+const int MVV_LVA_OFFSET = INT16_MAX - 256;
 
 // Killer move constants;
 
