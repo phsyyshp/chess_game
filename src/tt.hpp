@@ -29,10 +29,8 @@ public:
     clear();
   }
   void add(const hashEntry &entry);
-  void replaceByDepth(const hashEntry &entry);
   hashEntry get(uint64_t zobristKey) const;
   Move getMove(uint64_t zobristKey) const;
-  hashEntry getByKey(uint64_t zobristKey) const;
   void clear();
 
 private:

@@ -22,7 +22,7 @@ public:
   int quiesce(int alpha, int beta, const Position &position);
   int alphaBeta(int alpha, int beta, int depthLeft, const Position &position);
   // move ordering;
-  void scoreMoves(MoveList &moveList_, const Position &position) const;
+  void scoreMoves(MoveList &moveList_, const Position &position);
   void pickMove(MoveList &moveList_, int startingIdx) const;
   void orderMoves(MoveList &movelist_);
   void storeKillerMove(const Move &move_, int ply);
@@ -43,6 +43,7 @@ private:
   Move pv;
   bool isTimeExeeded;
   int pvScore;
+  int hits = 0;
   std::array<std::array<Move, MAX_DEPTH>, MAX_KILLER_MOVES> killerMoves;
   TranspositionTable tt;
   // bool globalAncientFlag = false;
