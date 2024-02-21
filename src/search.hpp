@@ -11,6 +11,7 @@ public:
   getKillerMoves() const;
   int getPly() const;
   void clear();
+  void clearKillerMoves();
   // searchers;
   Move getBestMove(const Position &position, int maxDepth, int wtime, int winc,
                    int btime, int binc, bool isInfoOn);
@@ -43,6 +44,6 @@ private:
   bool isTimeExeeded;
   int pvScore;
   std::array<std::array<Move, MAX_DEPTH>, MAX_KILLER_MOVES> killerMoves;
-  // TranspositionTable tt;
+  TranspositionTable tt;
   // bool globalAncientFlag = false;
 };

@@ -3,20 +3,25 @@
 #include "constants.hpp"
 struct hashEntry {
   hashEntry()
-      : zobrist(0), depth(0), score(0), flag(nodeType::EXACT), ancient(true),
+      : zobristKey(0), depth(0), score(0), flag(nodeType::EXACT),
         move(a1, a1, false){};
 
-  hashEntry(uint64_t z, int depth_, int score_, nodeType flag_, bool ancient_,
+  hashEntry(uint64_t z, int depth_, int score_, nodeType flag_,
             const Move &move_)
-      : zobrist(z), depth(depth_), score(score_), flag(flag_),
-        ancient(ancient_), move(move_){};
-  uint64_t zobrist;
+      : zobristKey(z), depth(depth_), score(score_), flag(flag_), move(move_){};
+  bool operator==(const hashEntry &other) const {
+    return zobristKey == other.zobristKey && depth == other.depth &&
+           score == other.score && flag == other.flag &&
+           move.getMoveInt() == other.move.getMoveInt();
+  }
+
+  uint64_t zobristKey;
   int depth;
   int score;
   nodeType flag;
-  bool ancient;
   Move move;
 };
+const hashEntry nullEntry;
 class TranspositionTable {
 public:
   TranspositionTable() {
@@ -24,8 +29,8 @@ public:
     clear();
   }
   void add(const hashEntry &entry);
-  void replaceByDepth(const hashEntry &entry, bool globalAncientFlag);
-  hashEntry get(const hashEntry &entry) const;
+  void replaceByDepth(const hashEntry &entry);
+  hashEntry get(uint64_t zobristKey) const;
   Move getMove(uint64_t zobristKey) const;
   hashEntry getByKey(uint64_t zobristKey) const;
   void clear();
