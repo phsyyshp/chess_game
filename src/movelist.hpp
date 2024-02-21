@@ -13,7 +13,7 @@ public:
   int size() const;
 
   void swap(int i, int j);
-  MoveList getCapturedMoves() const;
+  MoveList getCapturedOrPromoMoves() const;
 
   class iterator {
   public:

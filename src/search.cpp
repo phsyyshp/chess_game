@@ -162,8 +162,8 @@ Move Search::searchAB(int depth, const Position &position) {
       if (score >= beta) {
         pvScore = score;
         storeKillerMove(movegen.getMoves()[j], ply);
-        tt.add(hashEntry{position.getZobrist(), depth, score, nodeType::BETA,
-                         movegen.getMoves()[j]});
+        // tt.add(hashEntry{position.getZobrist(), depth, score, nodeType::BETA,
+        //  movegen.getMoves()[j]});
         return movegen.getMoves()[j];
       }
       if (score > alpha) {
@@ -173,13 +173,13 @@ Move Search::searchAB(int depth, const Position &position) {
     }
   }
   pvScore = score;
-  if (alpha > INT16_MIN) {
-    tt.add(hashEntry{position.getZobrist(), depth, alpha, nodeType::EXACT,
-                     bestMove});
-  } else {
-    tt.add(hashEntry{position.getZobrist(), depth, alpha, nodeType::ALPHA,
-                     bestMove});
-  }
+  // if (alpha > INT16_MIN) {
+  //   tt.add(hashEntry{position.getZobrist(), depth, alpha, nodeType::EXACT,
+  //                    bestMove});
+  // } else {
+  //   tt.add(hashEntry{position.getZobrist(), depth, alpha, nodeType::ALPHA,
+  //                    bestMove});
+  // }
   return bestMove;
 }
 int Search::alphaBeta(int alpha, int beta, int depthLeft,
@@ -225,8 +225,9 @@ int Search::alphaBeta(int alpha, int beta, int depthLeft,
       if (score >= beta) {
         nodes += nodesSearched;
         storeKillerMove(movegen.getMoves()[j], ply);
-        tt.add(hashEntry{position.getZobrist(), depthLeft, score,
-                         nodeType::BETA, movegen.getMoves()[j]});
+        // tt.add(hashEntry{position.getZobrist(), depthLeft, score,
+        //  nodeType::BETA, movegen.getMoves()[j]});
+
         return beta;
       }
       if (score > alpha) {
@@ -241,13 +242,15 @@ int Search::alphaBeta(int alpha, int beta, int depthLeft,
     return 0;
   }
   nodes += nodesSearched;
-  if (alpha > originalAlpha) {
-    tt.add(hashEntry{position.getZobrist(), depthLeft, alpha, nodeType::EXACT,
-                     bestMove});
-  } else {
-    tt.add(hashEntry{position.getZobrist(), depthLeft, alpha, nodeType::ALPHA,
-                     bestMove});
-  }
+  // if (alpha > originalAlpha) {
+  //   tt.add(hashEntry{position.getZobrist(), depthLeft, alpha,
+  //   nodeType::EXACT,
+  //                    bestMove});
+  // } else {
+  //   tt.add(hashEntry{position.getZobrist(), depthLeft, alpha,
+  //   nodeType::ALPHA,
+  //                    bestMove});
+  // }
   return alpha;
 }
 
@@ -266,16 +269,16 @@ int Search::quiesce(int alpha, int beta, const Position &position) {
   }
 
   movegen.generateAllMoves();
-  MoveList capturedMoves = movegen.getMoves().getCapturedMoves();
-  scoreMoves(capturedMoves, position);
-  for (int j = 0; j < capturedMoves.size(); j++) {
+  MoveList capturedOrPromoMoves = movegen.getMoves().getCapturedOrPromoMoves();
+  scoreMoves(capturedOrPromoMoves, position);
+  for (int j = 0; j < capturedOrPromoMoves.size(); j++) {
     if (countTime(start) > maxMoveDuration) {
       // isTimeExeeded = true; // data member;
       break;
     }
-    pickMove(capturedMoves, j);
+    pickMove(capturedOrPromoMoves, j);
     tempPosition = position;
-    if (tempPosition.makeMove(capturedMoves[j])) {
+    if (tempPosition.makeMove(capturedOrPromoMoves[j])) {
       ply++;
       score = -quiesce(-beta, -alpha, tempPosition);
       nodesSearched++;
@@ -304,10 +307,12 @@ void Search::scoreMoves(MoveList &moveList_, const Position &position) {
     int moveScore = 0;
     int i = 0;
 
-    if (move.getMoveInt() == tt.getMove(position.getZobrist()).getMoveInt()) {
-      hits++;
-      move.setScore(MVV_LVA_OFFSET + TT_MOVE_SORT_VALUE);
-    } else if (move.isCapture()) {
+    // if (move.getMoveInt() == tt.getMove(position.getZobrist()).getMoveInt())
+    // {
+    //   hits++;
+    //   move.setScore(MVV_LVA_OFFSET + TT_MOVE_SORT_VALUE);
+    // } else
+    if (move.isCapture()) {
       // TODO: becarefull with overflow here
       moveScore = MVV_LVA_OFFSET + MVV_LVA[position.getPiece(move.getTo())]
                                           [position.getPiece(move.getFrom())];
