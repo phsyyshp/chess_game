@@ -135,7 +135,6 @@ void MoveGeneration::generateRightPawnCaptures() {
 }
 
 void MoveGeneration::generateSinglePawnPromotions() {
-  // TODO: add promotions
   uint64_t generatedMoves;
   uint64_t pawns;
   int to, from;
