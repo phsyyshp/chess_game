@@ -25,6 +25,7 @@ public:
   int getScore() const;
   // returns noPiece for non captures;
   bool isCapture() const;
+  bool isPromo() const;
 
   // Visualizers;
   void print() const;
