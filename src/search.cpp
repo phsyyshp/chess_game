@@ -61,7 +61,7 @@ Move Search::searchIt(const Position &position) {
       std::cout << "info "
                 << "depth " << depth << " time " << timeSpent << " nodes "
                 << nodes << " nps " << nodes / (timeSpent + 1) * 1000
-                << " score " << pvScore << " pv " << pv.toStr() << '\n';
+                << " score cp " << pvScore << " pv " << pv.toStr() << '\n';
     }
     depth++;
   }
@@ -145,6 +145,7 @@ Move Search::searchAB(int depth, const Position &position) {
   int beta = INT16_MAX;
   MoveGeneration movegen(position);
   movegen.generateAllMoves();
+  scoreMoves(movegen.getMoves(), position);
   for (int j = 0; j < movegen.getMoves().size(); j++) {
     if (isTimeExeeded) {
       // isTimeExeeded can not be true before getting first pv because at depth
@@ -152,6 +153,7 @@ Move Search::searchAB(int depth, const Position &position) {
       return pv;
       break;
     }
+    pickMove(movegen.getMoves(), j);
     tempPosition = position;
     if (tempPosition.makeMove(movegen.getMoves()[j])) {
       nodes++;
@@ -182,11 +184,13 @@ int Search::alphaBeta(int alpha, int beta, int depthLeft,
   }
   movegen.generateAllMoves();
   int moveCounter = 0;
+  scoreMoves(movegen.getMoves(), position);
   for (int j = 0; j < movegen.getMoves().size(); j++) {
     if (countTime(start) > maxMoveDuration) {
       isTimeExeeded = true; // data member;
       break;
     }
+    pickMove(movegen.getMoves(), j);
     tempPosition = position;
     if (tempPosition.makeMove(movegen.getMoves()[j])) {
       moveCounter++;
@@ -237,10 +241,10 @@ int Search::quiesce(int alpha, int beta, const Position &position) {
     if (tempPosition.makeMove(capturedMoves[j])) {
       ply++;
       score = -quiesce(-beta, -alpha, tempPosition);
-      // nodesSearched++;
+      nodesSearched++;
       ply--;
       if (score >= beta) {
-        // nodes += nodesSearched;
+        nodes += nodesSearched;
         return beta;
       }
       if (score > alpha) {
@@ -249,58 +253,36 @@ int Search::quiesce(int alpha, int beta, const Position &position) {
     }
   }
 
-  // nodes += nodesSearched;
+  nodes += nodesSearched;
   return alpha;
 }
-// TODO : Rigorous testing;
 
-/*TODO:
--hash tables;
-*/
 // Move ordering;
 
 // BE CAREFUL pass by reference without const;
 // FIX ME: maybe a bug here due to value overflow;
 
-// void Search::scoreMoves(MoveList &moveList_, const Position &position)
-// const
-// {
-//   for (Move &move : moveList_) {
-//     int moveScore = 0;
-//     if (move.getMoveInt() ==
-//     tt.getMove(position.getZobrist()).getMoveInt())
-//     {
-//       // std::cout << "la\n";
-//       move.setScore(TT_MOVE_SORT_VALUE);
-//     } else if (move.isCapture()) {
-//       // TODO: becarefull with overflow here
-//       moveScore = MVV_LVA[position.getPiece(move.getTo())]
-//                          [position.getPiece(move.getFrom())];
-//       move.setScore(moveScore);
-//     } else {
-//       int i = 0;
-//       while (i < MAX_KILLER_MOVES && moveScore == 0) {
-//         if (move.getMoveInt() == killerMoves[i][ply].getMoveInt()) {
-//           // TODO: Be Careful about setting already set score;
-//           // FIX ME: maybe a bug here due to value overflow;
-//           moveScore = -((i + 1) * KILLER_VALUE);
-//           move.setScore(moveScore);
-//         }
-//         i++;
-//       }
-//     }
-//   }
-// }
+void Search::scoreMoves(MoveList &moveList_, const Position &position) const {
+  for (Move &move : moveList_) {
+    int moveScore = 0;
+    if (move.isCapture()) {
+      // TODO: becarefull with overflow here
+      moveScore = MVV_LVA[position.getPiece(move.getTo())]
+                         [position.getPiece(move.getFrom())];
+      move.setScore(moveScore);
+    }
+  }
+}
 // BE CAREFUL pass by reference without const;
-// void Search::pickMove(MoveList &scoredMoveList_, int startingIdx) const {
+void Search::pickMove(MoveList &scoredMoveList_, int startingIdx) const {
 
-//   for (int i = startingIdx + 1; i < scoredMoveList_.size(); i++) {
-//     if (scoredMoveList_[i].getScore() >
-//         scoredMoveList_[startingIdx].getScore()) {
-//       scoredMoveList_.swap(startingIdx, i);
-//     }
-//   }
-// }
+  for (int i = startingIdx + 1; i < scoredMoveList_.size(); i++) {
+    if (scoredMoveList_[i].getScore() >
+        scoredMoveList_[startingIdx].getScore()) {
+      scoredMoveList_.swap(startingIdx, i);
+    }
+  }
+}
 // void Search::orderMoves(MoveList &movelist_) {}
 // TODO: test
 // void Search::storeKillerMove(const Move &move_, int ply) {
