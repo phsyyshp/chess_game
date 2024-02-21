@@ -322,7 +322,7 @@ const uint32_t MVV_LVA_OFFSET = UINT32_MAX - 256;
 
 // TODO: becarefull with types reconsider it;
 const int MAX_KILLER_MOVES = 2;
-const int MAX_DEPTH = 64;
+const int MAX_DEPTH = 100;
 const int KILLER_VALUE = 10;
 // Zobrist
 constexpr uint COLOR_INDEX = 768;
