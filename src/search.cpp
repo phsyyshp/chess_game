@@ -185,18 +185,17 @@ Move Search::searchAB(int depth, const Position &position) {
 }
 int Search::alphaBeta(int alpha, int beta, int depthLeft,
                       const Position &position) {
+  int hits = 0;
   hashEntry entry = tt.get(position.getZobrist());
   if (entry.depth >= depthLeft && entry.zobristKey == position.getZobrist()) {
-    if (entry.flag == nodeType::EXACT) {
-      return entry.score;
-    } else if (entry.flag == nodeType::ALPHA && entry.score > alpha) {
-      alpha = entry.score;
-    } else if (entry.flag == nodeType::BETA && entry.score < beta) {
-      beta = entry.score;
-    }
-    if (alpha >= beta) {
+    if ((entry.flag == nodeType::EXACT) ||
+        (entry.flag == nodeType::ALPHA && entry.score <= alpha) ||
+        (entry.flag == nodeType::BETA && entry.score >= beta)) {
+      // std::cout << hits + 2 << "\n";
       return entry.score;
     }
+    hits++;
+    // std::cout << hits << "\n";
   }
   Position tempPosition;
   MoveGeneration movegen(position);
@@ -247,6 +246,14 @@ int Search::alphaBeta(int alpha, int beta, int depthLeft,
 }
 
 int Search::quiesce(int alpha, int beta, const Position &position) {
+  hashEntry entry = tt.get(position.getZobrist());
+  if (entry.zobristKey == position.getZobrist()) {
+    if ((entry.flag == nodeType::EXACT) ||
+        (entry.flag == nodeType::ALPHA && entry.score <= alpha) ||
+        (entry.flag == nodeType::BETA && entry.score >= beta)) {
+      return entry.score;
+    }
+  }
   Evaluation eval(position);
   Position tempPosition;
   MoveGeneration movegen(position);
