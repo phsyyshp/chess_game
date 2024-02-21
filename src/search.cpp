@@ -163,6 +163,7 @@ Move Search::searchAB(int depth, const Position &position) {
       ply--;
       if (score >= beta) {
         pvScore = score;
+        storeKillerMove(movegen.getMoves()[j], ply);
         return movegen.getMoves()[j];
       }
       if (score > alpha) {
@@ -201,6 +202,7 @@ int Search::alphaBeta(int alpha, int beta, int depthLeft,
       ply--;
       if (score >= beta) {
         nodes += nodesSearched;
+        storeKillerMove(movegen.getMoves()[j], ply);
         return beta;
       }
       if (score > alpha) {
@@ -266,11 +268,23 @@ int Search::quiesce(int alpha, int beta, const Position &position) {
 void Search::scoreMoves(MoveList &moveList_, const Position &position) const {
   for (Move &move : moveList_) {
     int moveScore = 0;
+    int i = 0;
     if (move.isCapture()) {
       // TODO: becarefull with overflow here
       moveScore = MVV_LVA[position.getPiece(move.getTo())]
                          [position.getPiece(move.getFrom())];
       move.setScore(moveScore);
+    } else {
+      i = 0;
+      while (i < MAX_KILLER_MOVES && moveScore == 0) {
+        if (move.getMoveInt() == killerMoves[i][ply].getMoveInt()) {
+          // TODO: Be Careful about setting already set score;
+          // FIX ME: maybe a bug here due to value overflow;
+          moveScore = -((i + 1) * KILLER_VALUE);
+          move.setScore(moveScore);
+        }
+        i++;
+      }
     }
   }
 }
@@ -284,17 +298,17 @@ void Search::pickMove(MoveList &scoredMoveList_, int startingIdx) const {
     }
   }
 }
+void Search::storeKillerMove(const Move &move_, int ply) {
+
+  if (!move_.isCapture()) {
+    if (killerMoves[0][ply].getMoveInt() != move_.getMoveInt()) {
+      killerMoves[1][ply] = killerMoves[0][ply];
+      killerMoves[0][ply] = move_;
+    }
+  }
+}
 // void Search::orderMoves(MoveList &movelist_) {}
 // TODO: test
-// void Search::storeKillerMove(const Move &move_, int ply) {
-
-//   if (!move_.isCapture()) {
-//     if (killerMoves[0][ply].getMoveInt() != move_.getMoveInt()) {
-//       killerMoves[1][ply] = killerMoves[0][ply];
-//       killerMoves[0][ply] = move_;
-//     }
-//   }
-// }
 int Search::countTime(std::chrono::high_resolution_clock::time_point start) {
   auto end = std::chrono::high_resolution_clock::now();
   auto elapsed =
