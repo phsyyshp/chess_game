@@ -235,11 +235,13 @@ int Search::quiesce(int alpha, int beta, const Position &position) {
 
   movegen.generateAllMoves();
   MoveList capturedMoves = movegen.getMoves().getCapturedMoves();
+  scoreMoves(capturedMoves, position);
   for (int j = 0; j < capturedMoves.size(); j++) {
     if (countTime(start) > maxMoveDuration) {
       // isTimeExeeded = true; // data member;
       break;
     }
+    pickMove(capturedMoves, j);
     tempPosition = position;
     if (tempPosition.makeMove(capturedMoves[j])) {
       ply++;
