@@ -39,7 +39,10 @@ bool Move::isCapture() const { return (moveNum & CAPTURE_FLAG) != 0; }
 // setters
 // Warning! this does not override the already set score of a move. Must be used
 // only if the score of the move is not yet given.
-void Move::setScore(const int &score) { moveNum |= score << 16; }
+void Move::setScore(const int &score) {
+  moveNum &= 0xFFFF;
+  moveNum |= (score << 16);
+}
 
 // visualizers
 void Move::print() const {
