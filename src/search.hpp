@@ -42,6 +42,7 @@ private:
   Move pv;
   bool isTimeExeeded;
   int pvScore;
+  std::array<std::array<Move, MAX_DEPTH>, MAX_KILLER_MOVES> killerMoves;
   // TranspositionTable tt;
   // bool globalAncientFlag = false;
 };

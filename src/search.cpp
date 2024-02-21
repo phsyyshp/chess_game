@@ -3,24 +3,24 @@
 #include "search.hpp"
 
 // constructors;
-Search::Search(){
-    // this is just zero;
-    // Move invalidMove(a1, a1, false);
-    // for (int i = 0; i < MAX_DEPTH; i++) {
-    //   for (int j = 0; j < MAX_KILLER_MOVES; j++) {
-    //     killerMoves[j][i] = invalidMove;
-    //   }
-    // }
+Search::Search() {
+  // this is just zero;
+  Move invalidMove(a1, a1, false);
+  for (int i = 0; i < MAX_DEPTH; i++) {
+    for (int j = 0; j < MAX_KILLER_MOVES; j++) {
+      killerMoves[j][i] = invalidMove;
+    }
+  }
 };
 
 void Search::clear() {
 
-  // Move invalidMove(a1, a1, false);
-  // for (int i = 0; i < MAX_DEPTH; i++) {
-  //   for (int j = 0; j < MAX_KILLER_MOVES; j++) {
-  //     killerMoves[j][i] = invalidMove;
-  //   }
-  // }
+  Move invalidMove(a1, a1, false);
+  for (int i = 0; i < MAX_DEPTH; i++) {
+    for (int j = 0; j < MAX_KILLER_MOVES; j++) {
+      killerMoves[j][i] = invalidMove;
+    }
+  }
   // tt.clear();
   // globalAncientFlag = false;
 }
@@ -36,6 +36,7 @@ int Search::getPly() const { return ply; }
 
 Move Search::getBestMove(const Position &position, int maxDepth_, int wtime,
                          int winc, int btime, int binc, bool isInfoOn_) {
+  clear();
   ply = 0;
   nodes = 0ull;
   Move invalidMove(a1, a1, 0);
