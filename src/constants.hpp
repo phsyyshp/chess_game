@@ -329,4 +329,4 @@ constexpr uint COLOR_INDEX = 768;
 // tt
 enum nodeType { EXACT, ALPHA, BETA };
 constexpr int TT_MOVE_SORT_VALUE = 60;
-const std::size_t TT_SIZE = 600000;
+const std::size_t TT_SIZE = 2400000;
