@@ -428,8 +428,6 @@ void Position::makeQueenCastle(const Move &move) {
 void Position::makeKingCastle(const Move &move) {
 
   uint castlingRigths = gameState.getCastlingRigths();
-  gameState.setCastlingRigths(
-      castlingRigths & NO_CASTLING_COLOR_MASK_LOOK_UP[gameState.getTurn()]);
   int turn = getTurn();
   switch (turn) {
   case white:
@@ -445,8 +443,14 @@ void Position::makeKingCastle(const Move &move) {
     mailbox[g1] = king;
     mailbox[f1] = rook;
 
-    Zobrist::flipCastlingStatus(zobristHash, castlingType::whiteKingSide);
-    Zobrist::flipCastlingStatus(zobristHash, castlingType::whiteQueenSide);
+    if ((castlingRigths & WHITE_KING_SIDE_CASTLING_MASK) == 1) {
+      Zobrist::flipCastlingStatus(zobristHash, castlingType::whiteKingSide);
+    }
+    if ((castlingRigths & WHITE_QUEEN_SIDE_CASTLING_MASK) == 1) {
+      Zobrist::flipCastlingStatus(zobristHash, castlingType::whiteQueenSide);
+    }
+    gameState.setCastlingRigths(
+        castlingRigths & NO_CASTLING_COLOR_MASK_LOOK_UP[gameState.getTurn()]);
     break;
 
   case black:
@@ -461,8 +465,14 @@ void Position::makeKingCastle(const Move &move) {
     mailbox[e8] = noPiece;
     mailbox[g8] = king;
     mailbox[f8] = rook;
-    Zobrist::flipCastlingStatus(zobristHash, castlingType::blackKingSide);
-    Zobrist::flipCastlingStatus(zobristHash, castlingType::blackQueenSide);
+    if ((castlingRigths & BLACK_KING_SIDE_CASTLING_MASK) == 1) {
+      Zobrist::flipCastlingStatus(zobristHash, castlingType::blackKingSide);
+    }
+    if ((castlingRigths & BLACK_QUEEN_SIDE_CASTLING_MASK) == 1) {
+      Zobrist::flipCastlingStatus(zobristHash, castlingType::blackQueenSide);
+    }
+    gameState.setCastlingRigths(
+        castlingRigths & NO_CASTLING_COLOR_MASK_LOOK_UP[gameState.getTurn()]);
     break;
 
   default:
