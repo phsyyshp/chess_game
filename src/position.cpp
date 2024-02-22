@@ -374,8 +374,6 @@ void Position::makeEPCapture(const Move &move) {
 void Position::makeQueenCastle(const Move &move) {
   int turn = getTurn();
   uint castlingRigths = gameState.getCastlingRigths();
-  gameState.setCastlingRigths(
-      castlingRigths & NO_CASTLING_COLOR_MASK_LOOK_UP[gameState.getTurn()]);
 
   switch (turn) {
   case white:
@@ -393,8 +391,12 @@ void Position::makeQueenCastle(const Move &move) {
     mailbox[c1] = king;
     mailbox[d1] = rook;
 
-    Zobrist::flipCastlingStatus(zobristHash, castlingType::whiteKingSide);
-    Zobrist::flipCastlingStatus(zobristHash, castlingType::whiteQueenSide);
+    if ((castlingRigths & WHITE_KING_SIDE_CASTLING_MASK) != 0) {
+      Zobrist::flipCastlingStatus(zobristHash, castlingType::whiteKingSide);
+    }
+    if ((castlingRigths & WHITE_QUEEN_SIDE_CASTLING_MASK) != 0) {
+      Zobrist::flipCastlingStatus(zobristHash, castlingType::whiteQueenSide);
+    }
 
     break;
 
@@ -411,8 +413,12 @@ void Position::makeQueenCastle(const Move &move) {
     mailbox[c8] = king;
     mailbox[d8] = rook;
 
-    Zobrist::flipCastlingStatus(zobristHash, castlingType::blackKingSide);
-    Zobrist::flipCastlingStatus(zobristHash, castlingType::blackQueenSide);
+    if ((castlingRigths & BLACK_KING_SIDE_CASTLING_MASK) != 0) {
+      Zobrist::flipCastlingStatus(zobristHash, castlingType::blackKingSide);
+    }
+    if ((castlingRigths & BLACK_QUEEN_SIDE_CASTLING_MASK) != 0) {
+      Zobrist::flipCastlingStatus(zobristHash, castlingType::blackQueenSide);
+    }
     break;
 
   default:
@@ -423,6 +429,8 @@ void Position::makeQueenCastle(const Move &move) {
     Zobrist::flipEpStatus(zobristHash, epFile);
   }
   gameState.setEnPassant(NO_EP);
+  gameState.setCastlingRigths(
+      castlingRigths & NO_CASTLING_COLOR_MASK_LOOK_UP[gameState.getTurn()]);
 }
 // doesnt check if castling is legal;
 void Position::makeKingCastle(const Move &move) {
@@ -443,14 +451,12 @@ void Position::makeKingCastle(const Move &move) {
     mailbox[g1] = king;
     mailbox[f1] = rook;
 
-    if ((castlingRigths & WHITE_KING_SIDE_CASTLING_MASK) == 1) {
+    if ((castlingRigths & WHITE_KING_SIDE_CASTLING_MASK) != 0) {
       Zobrist::flipCastlingStatus(zobristHash, castlingType::whiteKingSide);
     }
-    if ((castlingRigths & WHITE_QUEEN_SIDE_CASTLING_MASK) == 1) {
+    if ((castlingRigths & WHITE_QUEEN_SIDE_CASTLING_MASK) != 0) {
       Zobrist::flipCastlingStatus(zobristHash, castlingType::whiteQueenSide);
     }
-    gameState.setCastlingRigths(
-        castlingRigths & NO_CASTLING_COLOR_MASK_LOOK_UP[gameState.getTurn()]);
     break;
 
   case black:
@@ -465,14 +471,12 @@ void Position::makeKingCastle(const Move &move) {
     mailbox[e8] = noPiece;
     mailbox[g8] = king;
     mailbox[f8] = rook;
-    if ((castlingRigths & BLACK_KING_SIDE_CASTLING_MASK) == 1) {
+    if ((castlingRigths & BLACK_KING_SIDE_CASTLING_MASK) != 0) {
       Zobrist::flipCastlingStatus(zobristHash, castlingType::blackKingSide);
     }
-    if ((castlingRigths & BLACK_QUEEN_SIDE_CASTLING_MASK) == 1) {
+    if ((castlingRigths & BLACK_QUEEN_SIDE_CASTLING_MASK) != 0) {
       Zobrist::flipCastlingStatus(zobristHash, castlingType::blackQueenSide);
     }
-    gameState.setCastlingRigths(
-        castlingRigths & NO_CASTLING_COLOR_MASK_LOOK_UP[gameState.getTurn()]);
     break;
 
   default:
@@ -483,6 +487,8 @@ void Position::makeKingCastle(const Move &move) {
     Zobrist::flipEpStatus(zobristHash, epFile);
   }
   gameState.setEnPassant(NO_EP);
+  gameState.setCastlingRigths(
+      castlingRigths & NO_CASTLING_COLOR_MASK_LOOK_UP[gameState.getTurn()]);
 }
 
 void Position::makePromotion(const Move &move, piece piece_) {
@@ -555,44 +561,60 @@ void Position::updateCastlingRights(int from, int movingPiece) {
 
   uint castlingRigths = gameState.getCastlingRigths();
   if (movingPiece == king) {
-    gameState.setCastlingRigths(
-        castlingRigths & NO_CASTLING_COLOR_MASK_LOOK_UP[gameState.getTurn()]);
     switch (getTurn()) {
     case white:
-      Zobrist::flipCastlingStatus(zobristHash, whiteKingSide);
-      Zobrist::flipCastlingStatus(zobristHash, whiteQueenSide);
+      if ((castlingRigths & WHITE_KING_SIDE_CASTLING_MASK) != 0) {
+        Zobrist::flipCastlingStatus(zobristHash, whiteKingSide);
+      }
+      if ((castlingRigths & WHITE_QUEEN_SIDE_CASTLING_MASK) != 0) {
+        Zobrist::flipCastlingStatus(zobristHash, whiteQueenSide);
+      }
       break;
     case black:
-      Zobrist::flipCastlingStatus(zobristHash, blackKingSide);
-      Zobrist::flipCastlingStatus(zobristHash, blackQueenSide);
+      if ((castlingRigths & BLACK_KING_SIDE_CASTLING_MASK) != 0) {
+        Zobrist::flipCastlingStatus(zobristHash, blackKingSide);
+      }
+      if ((castlingRigths & BLACK_QUEEN_SIDE_CASTLING_MASK) != 0) {
+        Zobrist::flipCastlingStatus(zobristHash, blackQueenSide);
+      }
       break;
     default:
       break;
     }
+    gameState.setCastlingRigths(
+        castlingRigths & NO_CASTLING_COLOR_MASK_LOOK_UP[gameState.getTurn()]);
   }
   if (movingPiece == rook) {
     switch (from) {
     case a1:
+      if ((castlingRigths & WHITE_QUEEN_SIDE_CASTLING_MASK) != 0) {
+        Zobrist::flipCastlingStatus(zobristHash, whiteQueenSide);
+      }
       gameState.setCastlingRigths(castlingRigths &
                                   NO_WHITE_QUEEN_SIDE_CASTLING_MASK);
-      Zobrist::flipCastlingStatus(zobristHash, whiteQueenSide);
       break;
 
     case h1:
+      if ((castlingRigths & WHITE_KING_SIDE_CASTLING_MASK) != 0) {
+        Zobrist::flipCastlingStatus(zobristHash, whiteKingSide);
+      }
       gameState.setCastlingRigths(castlingRigths &
                                   NO_WHITE_KING_SIDE_CASTLING_MASK);
-      Zobrist::flipCastlingStatus(zobristHash, whiteKingSide);
       break;
     case a8:
+      if ((castlingRigths & BLACK_QUEEN_SIDE_CASTLING_MASK) != 0) {
+        Zobrist::flipCastlingStatus(zobristHash, blackQueenSide);
+      }
       gameState.setCastlingRigths(castlingRigths &
                                   NO_BLACK_QUEEN_SIDE_CASTLING_MASK);
-      Zobrist::flipCastlingStatus(zobristHash, blackQueenSide);
       break;
 
     case h8:
+      if ((castlingRigths & BLACK_KING_SIDE_CASTLING_MASK) != 0) {
+        Zobrist::flipCastlingStatus(zobristHash, blackKingSide);
+      }
       gameState.setCastlingRigths(castlingRigths &
                                   NO_BLACK_KING_SIDE_CASTLING_MASK);
-      Zobrist::flipCastlingStatus(zobristHash, blackKingSide);
       break;
 
     default:
