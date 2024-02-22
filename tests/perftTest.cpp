@@ -37,6 +37,30 @@ uint64_t perftTest::perft(int depth) {
   }
   return nodes;
 }
+uint64_t perftTest::perftZobrist(uint64_t depth) {
+  Position tempPosition;
+  if (depth == 0) {
+    return 1;
+  }
+  uint64_t nodes = 0;
+  MoveGeneration movGen(position);
+  movGen.generateAllMoves();
+  if (tt[(position.getZobrist() ^ depth) % TT_SIZE].zobristKey != 0) {
+    return tt[(position.getZobrist() ^ depth) % TT_SIZE].nodes;
+  }
+  for (const auto &move : movGen.getMoves()) {
+    tempPosition = position;
+    if (position.makeMove(move)) {
+      assert(position.getZobrist() ==
+             Zobrist::generateTotalZobristKey(position));
+      nodes += perftZobrist(depth - 1);
+    }
+    position = tempPosition;
+  }
+  tt[(position.getZobrist() ^ depth) % TT_SIZE] =
+      perftTTentry{position.getZobrist(), nodes};
+  return nodes;
+}
 // FIX IT: the exit node gives wrong number due to illegal moves;
 uint64_t perftTest::perftBulk(int depth) {
 
