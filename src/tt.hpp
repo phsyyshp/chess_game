@@ -32,7 +32,9 @@ public:
   hashEntry get(uint64_t zobristKey) const;
   Move getMove(uint64_t zobristKey) const;
   void clear();
+  int fullness();
 
 private:
   std::vector<hashEntry> tt;
+  int numel = 0;
 };

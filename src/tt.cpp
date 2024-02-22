@@ -1,21 +1,24 @@
 #include "tt.hpp"
 
 void TranspositionTable::add(const hashEntry &entry) {
-  tt[entry.zobristKey % (TT_SIZE)] = entry;
+  tt[entry.zobristKey & (TT_SIZE - 1)] = entry;
+  numel++;
 }
 Move TranspositionTable::getMove(uint64_t zobristKey) const {
-  Move move_ = tt[zobristKey % (TT_SIZE)].move;
+  Move move_ = tt[zobristKey & (TT_SIZE - 1)].move;
   move_.setScore(0);
   return move_;
 }
 
 hashEntry TranspositionTable::get(uint64_t zobristKey) const {
 
-  return tt[zobristKey % (TT_SIZE)];
+  return tt[zobristKey & (TT_SIZE - 1)];
 }
 
 void TranspositionTable::clear() {
   for (hashEntry &entry : tt) {
     entry = nullEntry;
   }
+  numel = 0;
 }
+int TranspositionTable::fullness() { return 100 * numel / TT_SIZE; }

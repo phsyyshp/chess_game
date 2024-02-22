@@ -46,16 +46,21 @@ uint64_t perftTest::perftZobrist(uint64_t depth) {
   MoveGeneration movGen(position);
   movGen.generateAllMoves();
   if (tt[(position.getZobrist() ^ depth) % TT_SIZE].zobristKey != 0) {
-    return tt[(position.getZobrist() ^ depth) % TT_SIZE].nodes;
+    if (position.getZobrist() ==
+        tt[(position.getZobrist() ^ depth) % TT_SIZE].zobristKey) {
+      // std::cout << "la\n";
+      return tt[(position.getZobrist() ^ depth) % TT_SIZE].nodes;
+    }
   }
   for (const auto &move : movGen.getMoves()) {
     tempPosition = position;
     if (position.makeMove(move)) {
-      if (position.getZobrist() != Zobrist::generateTotalZobristKey(position)) {
-        position.printBoard();
-        assert(position.getZobrist() ==
-               Zobrist::generateTotalZobristKey(position));
-      }
+      // if (position.getZobrist() !=
+      // Zobrist::generateTotalZobristKey(position)) {
+      //   position.printBoard();
+      assert(position.getZobrist() ==
+             Zobrist::generateTotalZobristKey(position));
+      // }
       // std::cout << "0\n";
       nodes += perftZobrist(depth - 1);
     }
