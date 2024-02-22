@@ -1,4 +1,4 @@
-#include "Move.hpp"
+#include "move.hpp"
 #include "position.hpp"
 // getters
 Move &Move::operator=(const Move &rhs) {

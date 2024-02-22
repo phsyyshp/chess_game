@@ -1,5 +1,5 @@
+#include "moveGeneration.hpp"
 #include "moveToStr.hpp"
-#include "move_generation.hpp"
 #include "tt.hpp"
 #include "zobrist.hpp"
 #include <cassert>

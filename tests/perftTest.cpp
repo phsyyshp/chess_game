@@ -1,7 +1,5 @@
 
 #include "perftTest.hpp"
-#include "moveToStr.hpp"
-#include "move_generation.hpp"
 
 uint64_t perftTest::perftPseudoLegal(int depth) {
   Position tempPosition;

@@ -15,10 +15,10 @@ public:
   // searchers;
   Move getBestMove(const Position &position, int maxDepth, int wtime, int winc,
                    int btime, int binc, bool isInfoOn);
-  Move searchIt(const Position &position);
+  Move iterativeDeepening(const Position &position);
   int negaMax(int depth, const Position &position);
   Move search(int depth, const Position &position);
-  Move searchAB(int depth, const Position &position);
+  Move searchRoot(int depth, const Position &position);
   int quiesce(int alpha, int beta, const Position &position);
   int alphaBeta(int alpha, int beta, int depthLeft, const Position &position);
   // move ordering;

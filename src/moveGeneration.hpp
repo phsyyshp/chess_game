@@ -1,8 +1,7 @@
-#ifndef MOVEGENERATION_HPP
-#define MOVEGENERATION_HPP
+#pragma once
 
-#include "Move.hpp"
-#include "movelist.hpp"
+#include "move.hpp"
+#include "moveList.hpp"
 #include "position.hpp"
 class MoveGeneration {
 
@@ -51,4 +50,3 @@ private:
   MoveList moveList;
   Position position;
 };
-#endif

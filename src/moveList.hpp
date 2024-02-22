@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Move.hpp"
 #include "constants.hpp"
+#include "move.hpp"
 // TODO add iterator
 
 class MoveList {

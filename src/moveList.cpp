@@ -1,4 +1,4 @@
-#include "movelist.hpp"
+#include "moveList.hpp"
 
 void MoveList::push_back(Move move) {
   elements[lastSetIdx + 1] = move;

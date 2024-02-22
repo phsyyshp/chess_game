@@ -1,8 +1,7 @@
-#ifndef POSITION_HPP
-#define POSITION_HPP
-#include "Move.hpp"
+#pragma once
 #include "gameState.hpp"
 #include "loader.hpp"
+#include "move.hpp"
 #include "tables.hpp"
 #include "utilities.hpp"
 #include "zobrist.hpp"
@@ -74,4 +73,3 @@ private:
   uint64_t zobristHash;
   int ply = 0;
 };
-#endif

@@ -1,8 +1,8 @@
 #pragma once
 #include "constants.hpp"
 #include "float.h"
+#include "moveGeneration.hpp"
 #include "moveToStr.hpp"
-#include "move_generation.hpp"
 #include "position.hpp"
 #include "search.hpp"
 #include "utilities.hpp"

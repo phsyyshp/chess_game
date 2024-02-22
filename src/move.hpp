@@ -1,5 +1,4 @@
-#ifndef MOVE_HPP
-#define MOVE_HPP
+#pragma once
 
 #include "loader.hpp"
 // This forward declaration is for avoiding, circular dependency.
@@ -35,5 +34,3 @@ public:
 private:
   uint32_t moveNum;
 };
-
-#endif

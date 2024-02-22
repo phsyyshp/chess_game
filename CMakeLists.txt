@@ -10,16 +10,16 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O3 -flto -march=native")
 
 # Main application source files
 set(MAIN_SOURCES
-    src/move_generation.cpp
+    src/moveGeneration.cpp
     src/position.cpp
     src/loader.cpp
-    src/Move.cpp
+    src/move.cpp
     src/tables.cpp
     src/utilities.cpp
     src/bitoperations.cpp
     src/evaluation.cpp
     src/search.cpp
-    src/movelist.cpp
+    src/moveList.cpp
     src/UCI.cpp
     src/gameState.cpp
     src/moveToStr.cpp
@@ -32,16 +32,16 @@ set(MAIN_SOURCES
 set(TEST_SOURCES
     tests/perftTest.cpp
     tests/unitTests.cpp
-    src/move_generation.cpp
+    src/moveGeneration.cpp
     src/position.cpp
     src/loader.cpp
-    src/Move.cpp
+    src/move.cpp
     src/tables.cpp
     src/utilities.cpp
     src/bitoperations.cpp
     src/evaluation.cpp
     src/search.cpp
-    src/movelist.cpp
+    src/moveList.cpp
     src/UCI.cpp
     src/gameState.cpp
     src/zobrist.cpp

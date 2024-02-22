@@ -1,6 +1,6 @@
 #pragma once
-#include "Move.hpp"
 #include "constants.hpp"
+#include "move.hpp"
 struct hashEntry {
   hashEntry()
       : zobristKey(0), depth(0), score(0), flag(nodeType::EXACT),

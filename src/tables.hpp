@@ -1,5 +1,4 @@
-#ifndef TABLES_HPP
-#define TABLES_HPP
+#pragma once
 
 #include "loader.hpp"
 #include "utilities.hpp"
@@ -27,4 +26,3 @@ const std::array<uint64_t, 781> zobristTable = generateZobristTable();
 
 uint64_t getRookAttackMask(const square &sq, const uint64_t &occupancy);
 uint64_t getBishopAttackMask(const square &sq, const uint64_t &occupancy);
-#endif
