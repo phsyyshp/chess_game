@@ -45,5 +45,5 @@ private:
   int pvScore;
   int hits = 0;
   std::array<std::array<Move, MAX_DEPTH>, MAX_KILLER_MOVES> killerMoves;
-  // TranspositionTable tt;
+  TranspositionTable tt;
 };
