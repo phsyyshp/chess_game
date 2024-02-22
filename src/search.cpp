@@ -16,7 +16,7 @@ Search::Search() {
 void Search::clear() {
   clearKillerMoves();
   hits = 0;
-  tt.clear();
+  // tt.clear();
 }
 void Search::clearKillerMoves() {
 
@@ -312,6 +312,7 @@ void Search::scoreMoves(MoveList &moveList_, const Position &position) {
     //   hits++;
     //   move.setScore(MVV_LVA_OFFSET + TT_MOVE_SORT_VALUE);
     // } else
+
     if (move.isCapture()) {
       // TODO: becarefull with overflow here
       moveScore = MVV_LVA_OFFSET + MVV_LVA[position.getPiece(move.getTo())]
