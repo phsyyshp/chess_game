@@ -53,13 +53,10 @@ uint64_t perftTest::perftZobrist(uint64_t depth) {
     if (position.makeMove(move)) {
       if (position.getZobrist() != Zobrist::generateTotalZobristKey(position)) {
         position.printBoard();
-        std::cout << move.toStr() << '\n';
-        std::cout << position.getZobrist() << " "
-                  << Zobrist::generateTotalZobristKey(position) << '\n';
         assert(position.getZobrist() ==
                Zobrist::generateTotalZobristKey(position));
       }
-      std::cout << "0\n";
+      // std::cout << "0\n";
       nodes += perftZobrist(depth - 1);
     }
     position = tempPosition;

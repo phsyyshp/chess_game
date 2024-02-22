@@ -16,8 +16,8 @@ struct hashEntry {
   }
 
   uint64_t zobristKey;
-  int depth;
-  int score;
+  int8_t depth;
+  int16_t score;
   nodeType flag;
   Move move;
 };
