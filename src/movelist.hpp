@@ -58,6 +58,5 @@ public:
 
 private:
   int lastSetIdx;
-
   std::array<Move, 256> elements;
 };
