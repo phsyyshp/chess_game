@@ -11,7 +11,7 @@ void Search::clear() {
 }
 void Search::clearKillerMoves() {
 
-  Move invalidMove(a1, a1, false);
+  Move invalidMove(A1, A1, false);
   for (int i = 0; i < MAX_DEPTH; i++) {
     for (int j = 0; j < MAX_KILLER_MOVES; j++) {
       killerMoves[j][i] = invalidMove;
@@ -28,7 +28,7 @@ Move Search::getBestMove(const Position &position, int maxDepth_, int wtime,
   clearKillerMoves();
   ply = 0;
   nodes = 0ull;
-  Move invalidMove(a1, a1, 0);
+  Move invalidMove(A1, A1, 0);
   pv = invalidMove;
   pvScore = 0;
   isTimeExeeded = false;
@@ -42,7 +42,7 @@ Move Search::getBestMove(const Position &position, int maxDepth_, int wtime,
 Move Search::iterativeDeepening(const Position &position) {
   int timeSpent = 0;
   int depth = 1;
-  Move bestMove(a1, a1, 0); // invalid move;
+  Move bestMove(A1, A1, 0); // invalid move;
   while ((depth <= maxDepth) && (timeSpent < maxMoveDuration)) {
     bestMove = searchRoot(depth, position);
     pv = bestMove;
@@ -65,7 +65,7 @@ Move Search::searchRoot(int depth, const Position &position) {
 
   int timeSpent = 0;
   int score = 0;
-  Move bestMove(a1, a1, 0); // invalid move
+  Move bestMove(A1, A1, 0); // invalid move
   Evaluation eval(position);
   Position tempPosition;
   MoveGeneration movegen(position);
@@ -112,7 +112,7 @@ int Search::alphaBeta(int alpha, int beta, int depthLeft,
                       const Position &position) {
 
   int originalAlpha = alpha;
-  Move bestMove(a1, a1, 0);
+  Move bestMove(A1, A1, 0);
   Position tempPosition;
   MoveGeneration movegen(position);
   uint64_t nodesSearched = 0;
@@ -270,13 +270,13 @@ int Search::countTime(std::chrono::high_resolution_clock::time_point start) {
       std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
   return elapsed.count();
 }
-int Search::getMaxMoveDuration(color turn, int wtime, int winc, int btime,
+int Search::getMaxMoveDuration(Color turn, int wtime, int winc, int btime,
                                int binc) const {
   switch (turn) {
-  case white:
+  case WHITE:
     return wtime / 20 + winc / 2;
     break;
-  case black:
+  case BLACK:
     return btime / 20 + binc / 2;
     break;
   default:

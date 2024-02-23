@@ -8,19 +8,19 @@ public:
   Evaluation(const Position &position_) : position(position_) {}
   // getters;
   Position getPosition() const;
-  int getPieceCount(const piece &, const color &) const;
-  size_t getMobility(const color &color_) const;
+  int getPieceCount(const Piece &, const Color &) const;
+  size_t getMobility(const Color &color_) const;
   // pawn operations;
-  int getDoubledPawnCount(const color &) const;
+  int getDoubledPawnCount(const Color &) const;
   // int getBlockedPawnCount(const color &) const;
-  int getIsolatedPawnCount(const color &) const;
-  int pawnSquareTables(const color &color_) const;
+  int getIsolatedPawnCount(const Color &) const;
+  int pawnSquareTables(const Color &color_) const;
   // other piece operations
-  int knightSquareTables(const color &color_) const;
-  int queenSquareTables(const color &color_) const;
-  int rookSquareTables(const color &color_) const;
-  int bishopSquareTables(const color &color_) const;
-  int kingSquareTables(const color &color_) const;
+  int knightSquareTables(const Color &color_) const;
+  int queenSquareTables(const Color &color_) const;
+  int rookSquareTables(const Color &color_) const;
+  int bishopSquareTables(const Color &color_) const;
+  int kingSquareTables(const Color &color_) const;
   int pieceSquareTables() const;
   int evaluate() const;
 

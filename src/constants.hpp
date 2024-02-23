@@ -2,18 +2,18 @@
 #include <array>
 #include <iostream>
 #include <vector>
-enum color { white, black, invalid };
-const std::array<color, 2> oppositeColor = {black, white};
-enum piece { pawn, bishop, rook, queen, knight, king, noPiece };
+enum Color { WHITE, BLACK, INVALID };
+const std::array<Color, 2> OPPOSITE_COLOR = {BLACK, WHITE};
+enum Piece { PAWN, BISHOP, ROOK, QUEEN, KNIGHT, KING, NO_PIECE };
 struct TimeInfo {
   int remainingTime;
   int timeIncrement;
 };
-enum square {
-  a1,
-  b1,
-  c1,
-  d1,
+enum Square {
+  A1,
+  B1,
+  C1,
+  D1,
   e1,
   f1,
   g1,
@@ -162,7 +162,7 @@ const std::array<uint, 2> NO_CASTLING_COLOR_MASK_LOOK_UP = {
     NO_WHITE_CASTLING_MASK, NO_BLACK_CASTLING_MASK};
 
 constexpr uint64_t WHITE_QUEEN_SIDE_CASTLING_RAY =
-    (0b1ull << b1) | (0b1ull << c1) | (0b1ull << d1);
+    (0b1ull << B1) | (0b1ull << C1) | (0b1ull << D1);
 constexpr uint64_t WHITE_KING_SIDE_CASTLING_RAY =
     (0b1ull << f1) | (0b1ull << g1);
 constexpr uint64_t BLACK_QUEEN_SIDE_CASTLING_RAY =

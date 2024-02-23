@@ -9,7 +9,7 @@ class Position {
 public:
   // constructors:
   Position() = default;
-  Position(const std::array<std::array<uint64_t, 6>, 2> &pieces_, color turn_);
+  Position(const std::array<std::array<uint64_t, 6>, 2> &pieces_, Color turn_);
   Position(const std::string &FENstr);
 
   // operators:
@@ -21,25 +21,25 @@ public:
   void clear();
   // getters:
   std::array<std::array<uint64_t, 6>, 2> getPieces() const;
-  std::array<piece, 64> getMailbox() const;
-  color getTurn() const;
+  std::array<Piece, 64> getMailbox() const;
+  Color getTurn() const;
   uint64_t getZobrist() const;
   int getPly() const;
   GameState getGameState() const;
-  color getOppositeTurn() const;
-  color getPieceColor(const uint64_t &sqMask) const;
-  piece getPieceType(const uint64_t &sqMask) const;
-  piece getPiece(int square) const;
+  Color getOppositeTurn() const;
+  Color getPieceColor(const uint64_t &sqMask) const;
+  Piece getPieceType(const uint64_t &sqMask) const;
+  Piece getPiece(int square) const;
 
-  uint64_t getAllPieces(const color &color_) const;
+  uint64_t getAllPieces(const Color &color_) const;
   uint64_t getAttacksToKing() const;
-  piece getCapturedInLastMove() const;
-  uint64_t getAttacksToSquare(square square_) const;
+  Piece getCapturedInLastMove() const;
+  uint64_t getAttacksToSquare(Square square_) const;
 
   // bools:
   bool isInCheck() const;
   // TODO: refactor this
-  bool isInCheck(square square_) const;
+  bool isInCheck(Square square_) const;
   bool isEmpty(int square_) const;
   // movers:
   // assuming the move is pseudolegal,
@@ -61,14 +61,14 @@ private:
   void makeQueenCastle(const Move &move);
   void makeKingCastle(const Move &move);
 
-  void makePromotion(const Move &move, piece piece_);
-  void makePromoCapture(const Move &move, piece piece_);
+  void makePromotion(const Move &move, Piece piece_);
+  void makePromoCapture(const Move &move, Piece piece_);
 
   void updateCastlingRights(int from, int movingPiece);
   // members
   std::array<std::array<uint64_t, 6>, 2> pieces;
-  std::array<piece, 64> mailbox;
-  piece capturedInLastMove;
+  std::array<Piece, 64> mailbox;
+  Piece capturedInLastMove;
   GameState gameState;
   uint64_t zobristHash;
   int ply = 0;

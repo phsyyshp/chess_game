@@ -3,6 +3,7 @@
 #include "move.hpp"
 #include "moveList.hpp"
 #include "position.hpp"
+#include <bit>
 class MoveGeneration {
 
 public:

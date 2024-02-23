@@ -53,7 +53,7 @@ TEST(MoveListTest, swapNonScoredNonCapture) {
 TEST(MoveListTest, swapNonScoredCapture) {
   std::string FENstr =
       "r2q1rk1/1p1nbppp/p2pbn2/4p3/4P3/1NN1BP2/PPPQ2PP/2KR1B1R/";
-  Position position(FENtoPieces(FENstr), white);
+  Position position(FENtoPieces(FENstr), WHITE);
   MoveGeneration movegen(position);
   movegen.generateAllMoves();
   MoveList moves = movegen.getMoves();
@@ -111,7 +111,7 @@ TEST(Position, makeMove_legality_individualMoves_Test_nocheck) {
 
   std::string FENstr =
       "r2q1rk1/1p1nbppp/p2pbn2/4p3/4P3/1NN1BP2/PPPQ2PP/2KR1B1R/";
-  Position position(FENtoPieces(FENstr), white);
+  Position position(FENtoPieces(FENstr), WHITE);
   MoveGeneration movgen(position);
   movgen.generateAllMoves();
   MoveList ml = movgen.getMoves();
@@ -121,7 +121,7 @@ TEST(Position, makeMove_legality_individualMoves_Test_nocheck) {
 TEST(Position, makeMove_legality_individualMoves_Test_check) {
 
   std::string FENstr = "8/q1k5/8/8/8/8/1K6/8/";
-  Position position(FENtoPieces(FENstr), white);
+  Position position(FENtoPieces(FENstr), WHITE);
   moveToStr uci(position);
 
   bool isLegal = position.makeMove(uci.getMove("b2a2"));
@@ -132,7 +132,7 @@ TEST(Position, makeMove_legality_Test) {
 
   std::string FENstr =
       "r2q1rk1/1p1nbppp/p2pbn2/4p3/4P3/1NN1BP2/PPPQ2PP/2KR1B1R/";
-  Position position(FENtoPieces(FENstr), white);
+  Position position(FENtoPieces(FENstr), WHITE);
   MoveGeneration movgen(position);
   movgen.generateAllMoves();
   Position tempPosition;
@@ -174,7 +174,7 @@ TEST(Position, constructor_FEN) {
   uint turn = gs.getTurn();
   uint EP = gs.getEnPassant();
   ASSERT_EQ(0b1100, castling);
-  ASSERT_EQ(white, turn);
+  ASSERT_EQ(WHITE, turn);
   ASSERT_EQ(squareTofile[h6], EP);
 }
 TEST(Position, castling_rigths_update_rook_move) {
@@ -822,7 +822,7 @@ TEST(moveToStr, strToMove_Nocatpure) {
 TEST(moveToStr, strToMove_capture) {
   std::string FENstr =
       "r2q1rk1/1p1nbppp/p2pbn2/4p3/4P3/1NN1BP2/PPPQ2PP/2KR1B1R/";
-  Position position(FENtoPieces(FENstr), white);
+  Position position(FENtoPieces(FENstr), WHITE);
   moveToStr uci(position);
   std::string moveStr = "d2d6";
   Move UCImove = uci.getMove(moveStr);

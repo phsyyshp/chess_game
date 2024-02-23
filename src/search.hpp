@@ -29,7 +29,7 @@ public:
   void flipGlobalAncientFlag();
   // timing
   int countTime(std::chrono::high_resolution_clock::time_point);
-  int getMaxMoveDuration(color turn, int wtime, int winc, int btime,
+  int getMaxMoveDuration(Color turn, int wtime, int winc, int btime,
                          int binc) const;
 
 private:

@@ -7,35 +7,35 @@ std::string colorizeString(std::string str, std::string fgASCII,
 
   return colorizedString;
 }
-std::string getPieceIcon(piece pieceType, color pieceColor) {
-  if (pieceColor == white) {
+std::string getPieceIcon(Piece pieceType, Color pieceColor) {
+  if (pieceColor == WHITE) {
     switch (pieceType) {
-    case pawn:
+    case PAWN:
       return "\u2659";
-    case bishop:
+    case BISHOP:
       return "\u2657";
-    case rook:
+    case ROOK:
       return "\u2656";
-    case queen:
+    case QUEEN:
       return "\u2655";
-    case knight:
+    case KNIGHT:
       return "\u2658";
-    case king:
+    case KING:
       return "\u2654";
     }
-  } else if (pieceColor == black) { // black
+  } else if (pieceColor == BLACK) { // black
     switch (pieceType) {
-    case pawn:
+    case PAWN:
       return "\u265F";
-    case bishop:
+    case BISHOP:
       return "\u265D";
-    case rook:
+    case ROOK:
       return "\u265C";
-    case queen:
+    case QUEEN:
       return "\u265B";
-    case knight:
+    case KNIGHT:
       return "\u265E";
-    case king:
+    case KING:
       return "\u265A";
     }
   }
@@ -176,7 +176,7 @@ GameState FENtoGameStateInt(const std::string &FENstring) {
   } else {
     enPassantInt = squareTofile[findIndex(chessSq, enPassantStr)];
   }
-  GameState gameState(static_cast<color>(turn), castlingRigths, enPassantInt);
+  GameState gameState(static_cast<Color>(turn), castlingRigths, enPassantInt);
   return gameState;
 }
 uint64_t pseudoRandomNumberGenerator() {

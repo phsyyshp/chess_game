@@ -55,7 +55,7 @@ uint64_t Zobrist::generateEpZobristKey(const Position &position) {
   return out;
 }
 uint64_t Zobrist::generateColorZobristKey(const Position &position) {
-  if (position.getTurn() != white) {
+  if (position.getTurn() != WHITE) {
     return zobristTable[COLOR_INDEX];
   }
   return 0ull;
@@ -75,8 +75,8 @@ uint64_t Zobrist::generateTotalZobristKey(const Position &position) {
 void Zobrist::changeTurn(uint64_t &zobristKey) {
   zobristKey ^= zobristTable[COLOR_INDEX];
 }
-void Zobrist::removeAddPiece(uint64_t &zobristKey, int square_, piece piece_,
-                             color color_) {
+void Zobrist::removeAddPiece(uint64_t &zobristKey, int square_, Piece piece_,
+                             Color color_) {
   zobristKey ^= zobristTable[square_ + piece_ * 64 + color_ * 6 * 64];
 }
 

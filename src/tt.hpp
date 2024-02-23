@@ -4,7 +4,7 @@
 struct hashEntry {
   hashEntry()
       : zobristKey(0), depth(0), score(0), flag(nodeType::EXACT),
-        move(a1, a1, false){};
+        move(A1, A1, false){};
 
   hashEntry(uint64_t z, int depth_, int score_, nodeType flag_,
             const Move &move_)

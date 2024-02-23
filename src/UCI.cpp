@@ -41,7 +41,7 @@ void UCI::go(const std::vector<std::string> &tokens) {
   bool isInfoOn = true;
   Move bestMove = search_.getBestMove(_position, maxDepth, wtime, winc, btime,
                                       binc, isInfoOn);
-  Move invalidMove(a1, a1, 0);
+  Move invalidMove(A1, A1, 0);
   if (bestMove.getMoveInt() != invalidMove.getMoveInt()) {
     // std::string message;
     // message += "bestmove ";
