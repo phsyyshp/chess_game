@@ -88,7 +88,7 @@ Move Search::searchRoot(int depth, const Position &position) {
       if (score >= beta) {
         pvScore = score;
         storeKillerMove(movegen.getMoves()[j], ply);
-        tt.add(hashEntry{position.getZobrist(), depth, beta, nodeType::BETA,
+        tt.add(hashEntry{position.getZobrist(), depth, score, nodeType::BETA,
                          movegen.getMoves()[j]});
         return movegen.getMoves()[j];
       }
@@ -139,8 +139,8 @@ int Search::alphaBeta(int alpha, int beta, int depthLeft,
       if (score >= beta) {
         nodes += nodesSearched;
         storeKillerMove(movegen.getMoves()[j], ply);
-        tt.add(hashEntry{position.getZobrist(), depthLeft, beta, nodeType::BETA,
-                         movegen.getMoves()[j]});
+        tt.add(hashEntry{position.getZobrist(), depthLeft, score,
+                         nodeType::BETA, movegen.getMoves()[j]});
 
         return beta;
       }
@@ -220,11 +220,10 @@ void Search::scoreMoves(MoveList &moveList_, const Position &position) {
     int i = 0;
     Move ttMove = tt.getMove(position.getZobrist());
     if (move.getMoveInt() == ttMove.getMoveInt()) {
-      // if (tt.get(position.getZobrist()).zobristKey == position.getZobrist())
-      // {
-      hits++;
-      move.setScore(MVV_LVA_OFFSET + TT_MOVE_SORT_VALUE);
-      // }
+      if (tt.get(position.getZobrist()).zobristKey == position.getZobrist()) {
+        hits++;
+        move.setScore(MVV_LVA_OFFSET + TT_MOVE_SORT_VALUE);
+      }
     } else if (move.isCapture()) {
       // TODO: becarefull with overflow here
       moveScore = MVV_LVA_OFFSET + MVV_LVA[position.getPiece(move.getTo())]

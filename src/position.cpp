@@ -465,8 +465,8 @@ void Position::makeKingCastle(const Move &move) {
     pieces[BLACK][ROOK] |= (0b1ull << F8);
     Zobrist::removeAddPiece(zobristHash, F8, ROOK, BLACK);
     pieces[BLACK][KING] <<= 2;
-    Zobrist::removeAddPiece(zobristHash, G8, KING, WHITE);
-    Zobrist::removeAddPiece(zobristHash, E8, KING, WHITE);
+    Zobrist::removeAddPiece(zobristHash, G8, KING, BLACK);
+    Zobrist::removeAddPiece(zobristHash, E8, KING, BLACK);
     mailbox[H8] = NO_PIECE;
     mailbox[E8] = NO_PIECE;
     mailbox[G8] = KING;
