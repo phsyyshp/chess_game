@@ -71,5 +71,8 @@ private:
   Piece capturedInLastMove;
   GameState gameState;
   uint64_t zobristHash;
+  std::array<uint64_t, 2> occupanciesOfColor;
+  uint64_t occupancy;
+  Color turn;
   int ply = 0;
 };
