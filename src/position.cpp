@@ -19,6 +19,14 @@ Position::Position(const std::string &FENstr) {
       i++;
     }
   }
+  occupanciesOfColor[WHITE] = pieces[WHITE][ROOK] | pieces[WHITE][KNIGHT] |
+                              pieces[WHITE][BISHOP] | pieces[WHITE][QUEEN] |
+                              pieces[WHITE][KING] | pieces[WHITE][PAWN];
+  occupanciesOfColor[BLACK] = pieces[BLACK][ROOK] | pieces[BLACK][KNIGHT] |
+                              pieces[BLACK][BISHOP] | pieces[BLACK][QUEEN] |
+                              pieces[BLACK][KING] | pieces[BLACK][PAWN];
+
+  occupancy = occupanciesOfColor[WHITE] | occupanciesOfColor[BLACK];
   zobristHash = Zobrist::generateTotalZobristKey(*this);
 }
 Position::Position(const std::array<std::array<uint64_t, 6>, 2> &pieces_,
@@ -520,7 +528,6 @@ void Position::makePromotion(const Move &move, Piece piece_) {
   uint from = move.getFrom();
   uint to = move.getTo();
   Piece movingPiece = mailbox[from];
-  int oppositePieceColor = getOppositeTurn();
 
   updateCastlingRights(from, movingPiece);
   // bit masks
