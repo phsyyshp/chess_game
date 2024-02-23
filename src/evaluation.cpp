@@ -124,5 +124,5 @@ int Evaluation::evaluate() const {
   return (20000 * kingDiff + 900 * queenDiff + 500 * rookDiff +
           300 * (bishopDiff + knightDiff) + 100 * pawnDiff -
           50 * (isolinDiff + doubledPawnDiff) + pieceSquareTables()) *
-         whoToMove[position.getTurn()];
+         WHO_TO_MOVE[position.getTurn()];
 };

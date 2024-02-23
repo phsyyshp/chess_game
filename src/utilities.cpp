@@ -156,7 +156,7 @@ uint castlingStrToInt(const std::string &castlingStr) {
   }
   for (const char &c : castlingStr) {
     std::string cStr(1, c);
-    out |= 0b1 << (findIndex(charToCatslingEncoding, cStr) - 1);
+    out |= 0b1 << (findIndex(CHAR_TO_CATSLING_ENCODING, cStr) - 1);
   }
   return out;
 }
@@ -169,12 +169,12 @@ GameState FENtoGameStateInt(const std::string &FENstring) {
   std::string castlingStr = fieldVec[2];
   std::string colorChar = fieldVec[1];
   int enPassantInt;
-  uint turn = findIndex(colorLetters, colorChar);
+  uint turn = findIndex(COLOR_INITIALS, colorChar);
   uint castlingRigths = castlingStrToInt(castlingStr);
   if (enPassantStr == "-") {
     enPassantInt = 8;
   } else {
-    enPassantInt = squareTofile[findIndex(chessSq, enPassantStr)];
+    enPassantInt = SQUARE_TO_FILE[findIndex(SQUARE_NAMES, enPassantStr)];
   }
   GameState gameState(static_cast<Color>(turn), castlingRigths, enPassantInt);
   return gameState;

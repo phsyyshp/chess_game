@@ -175,7 +175,7 @@ TEST(Position, constructor_FEN) {
   uint EP = gs.getEnPassant();
   ASSERT_EQ(0b1100, castling);
   ASSERT_EQ(WHITE, turn);
-  ASSERT_EQ(squareTofile[h6], EP);
+  ASSERT_EQ(SQUARE_TO_FILE[H6], EP);
 }
 TEST(Position, castling_rigths_update_rook_move) {
 
@@ -816,7 +816,7 @@ TEST(moveToStr, strToMove_Nocatpure) {
   moveToStr uci(position);
   std::string moveStr = "d2d4";
   Move UCImove = uci.getMove(moveStr);
-  Move handMade(d2, d4, doublePawnPush);
+  Move handMade(D2, D4, doublePawnPush);
   ASSERT_EQ(handMade.getMoveInt(), UCImove.getMoveInt());
 }
 TEST(moveToStr, strToMove_capture) {
@@ -826,7 +826,7 @@ TEST(moveToStr, strToMove_capture) {
   moveToStr uci(position);
   std::string moveStr = "d2d6";
   Move UCImove = uci.getMove(moveStr);
-  Move handMade(d2, d6, captures);
+  Move handMade(D2, D6, captures);
   ASSERT_EQ(handMade.getMoveInt(), UCImove.getMoveInt());
 }
 TEST(moveToStr, makecastling_white_king_side) {
@@ -835,7 +835,7 @@ TEST(moveToStr, makecastling_white_king_side) {
       "rn3rk1/2q1bpp1/pp1pbn2/4p1Pp/4P3/1NNBBP2/PPPQ3P/R3K2R w KQ - 2 13");
   moveToStr uci(position);
   Move move = uci.getMove("e1g1");
-  Move handMade(e1, g1, kingCastle);
+  Move handMade(E1, G1, kingCastle);
   ASSERT_EQ(handMade.getMoveInt(), move.getMoveInt());
 }
 

@@ -42,52 +42,52 @@ Position::Position(const std::array<std::array<uint64_t, 6>, 2> &pieces_,
 }
 // Setters;
 void Position::setWhitePiecesToInitialConfiguration() {
-  pieces[WHITE][ROOK] = 0b1ULL << A1 | 0b1ULL << h1;
-  pieces[WHITE][KNIGHT] = 0b1ULL << g1 | 0b1ULL << B1;
-  pieces[WHITE][BISHOP] = 0b1ULL << f1 | 0b1ULL << C1;
+  pieces[WHITE][ROOK] = 0b1ULL << A1 | 0b1ULL << H1;
+  pieces[WHITE][KNIGHT] = 0b1ULL << G1 | 0b1ULL << B1;
+  pieces[WHITE][BISHOP] = 0b1ULL << F1 | 0b1ULL << C1;
   pieces[WHITE][QUEEN] = 0b1ULL << D1;
-  pieces[WHITE][KING] = 0b1ULL << e1;
+  pieces[WHITE][KING] = 0b1ULL << E1;
   pieces[WHITE][PAWN] = 0b11111111ULL << 8;
   mailbox[A1] = ROOK;
-  mailbox[h1] = ROOK;
-  mailbox[g1] = KNIGHT;
+  mailbox[H1] = ROOK;
+  mailbox[G1] = KNIGHT;
   mailbox[B1] = KNIGHT;
-  mailbox[f1] = BISHOP;
+  mailbox[F1] = BISHOP;
   mailbox[C1] = BISHOP;
   mailbox[D1] = QUEEN;
-  mailbox[e1] = KING;
-  mailbox[a2] = PAWN;
-  mailbox[b2] = PAWN;
-  mailbox[c2] = PAWN;
-  mailbox[d2] = PAWN;
-  mailbox[e2] = PAWN;
-  mailbox[f2] = PAWN;
-  mailbox[g2] = PAWN;
-  mailbox[h2] = PAWN;
+  mailbox[E1] = KING;
+  mailbox[A2] = PAWN;
+  mailbox[B2] = PAWN;
+  mailbox[C2] = PAWN;
+  mailbox[D2] = PAWN;
+  mailbox[E2] = PAWN;
+  mailbox[F2] = PAWN;
+  mailbox[G2] = PAWN;
+  mailbox[H2] = PAWN;
 }
 void Position::setBlackPiecesToInitialConfiguration() {
-  pieces[BLACK][ROOK] = 0b1ULL << a8 | 0b1ULL << h8;
-  pieces[BLACK][KNIGHT] = 0b1ULL << g8 | 0b1ULL << b8;
-  pieces[BLACK][BISHOP] = 0b1ULL << f8 | 0b1ULL << c8;
-  pieces[BLACK][QUEEN] = 0b1ULL << d8;
-  pieces[BLACK][KING] = 0b1ULL << e8;
+  pieces[BLACK][ROOK] = 0b1ULL << A8 | 0b1ULL << H8;
+  pieces[BLACK][KNIGHT] = 0b1ULL << G8 | 0b1ULL << B8;
+  pieces[BLACK][BISHOP] = 0b1ULL << F8 | 0b1ULL << C8;
+  pieces[BLACK][QUEEN] = 0b1ULL << D8;
+  pieces[BLACK][KING] = 0b1ULL << E8;
   pieces[BLACK][PAWN] = 0b11111111ULL << 6 * 8;
-  mailbox[a8] = ROOK;
-  mailbox[h8] = ROOK;
-  mailbox[g8] = KNIGHT;
-  mailbox[b8] = KNIGHT;
-  mailbox[f8] = BISHOP;
-  mailbox[c8] = BISHOP;
-  mailbox[d8] = QUEEN;
-  mailbox[e8] = KING;
-  mailbox[a7] = PAWN;
-  mailbox[b7] = PAWN;
-  mailbox[c7] = PAWN;
-  mailbox[d7] = PAWN;
-  mailbox[e7] = PAWN;
-  mailbox[f7] = PAWN;
-  mailbox[g7] = PAWN;
-  mailbox[h7] = PAWN;
+  mailbox[A8] = ROOK;
+  mailbox[H8] = ROOK;
+  mailbox[G8] = KNIGHT;
+  mailbox[B8] = KNIGHT;
+  mailbox[F8] = BISHOP;
+  mailbox[C8] = BISHOP;
+  mailbox[D8] = QUEEN;
+  mailbox[E8] = KING;
+  mailbox[A7] = PAWN;
+  mailbox[B7] = PAWN;
+  mailbox[C7] = PAWN;
+  mailbox[D7] = PAWN;
+  mailbox[E7] = PAWN;
+  mailbox[F7] = PAWN;
+  mailbox[G7] = PAWN;
+  mailbox[H7] = PAWN;
 }
 void Position::setBoardToInitialConfiguration() {
   clear();
@@ -341,7 +341,7 @@ void Position::capture(const Move &move) {
 }
 void Position::makeDoublePawnPush(const Move &move) {
   makeQuietMove(move);
-  uint file = squareTofile[move.getFrom()];
+  uint file = SQUARE_TO_FILE[move.getFrom()];
   Zobrist::flipEpStatus(zobristHash, file);
   gameState.setEnPassant(file);
 }
@@ -384,40 +384,40 @@ void Position::makeQueenCastle(const Move &move) {
 
     pieces[WHITE][KING] >>= 2;
     Zobrist::removeAddPiece(zobristHash, C1, KING, WHITE);
-    Zobrist::removeAddPiece(zobristHash, e1, KING, WHITE);
+    Zobrist::removeAddPiece(zobristHash, E1, KING, WHITE);
 
     mailbox[A1] = NO_PIECE;
-    mailbox[e1] = NO_PIECE;
+    mailbox[E1] = NO_PIECE;
     mailbox[C1] = KING;
     mailbox[D1] = ROOK;
 
     if ((castlingRigths & WHITE_KING_SIDE_CASTLING_MASK) != 0) {
-      Zobrist::flipCastlingStatus(zobristHash, castlingType::whiteKingSide);
+      Zobrist::flipCastlingStatus(zobristHash, castlingType::WHITE_KING_SIDE);
     }
     if ((castlingRigths & WHITE_QUEEN_SIDE_CASTLING_MASK) != 0) {
-      Zobrist::flipCastlingStatus(zobristHash, castlingType::whiteQueenSide);
+      Zobrist::flipCastlingStatus(zobristHash, castlingType::WHITE_QUEEN_SIDE);
     }
 
     break;
 
   case BLACK:
-    pieces[BLACK][ROOK] &= ~(0b1ull << a8);
-    Zobrist::removeAddPiece(zobristHash, a8, ROOK, BLACK);
-    pieces[BLACK][ROOK] |= (0b1ull << d8);
-    Zobrist::removeAddPiece(zobristHash, d8, ROOK, BLACK);
+    pieces[BLACK][ROOK] &= ~(0b1ull << A8);
+    Zobrist::removeAddPiece(zobristHash, A8, ROOK, BLACK);
+    pieces[BLACK][ROOK] |= (0b1ull << D8);
+    Zobrist::removeAddPiece(zobristHash, D8, ROOK, BLACK);
     pieces[BLACK][KING] >>= 2;
-    Zobrist::removeAddPiece(zobristHash, c8, KING, BLACK);
-    Zobrist::removeAddPiece(zobristHash, e8, KING, BLACK);
-    mailbox[a8] = NO_PIECE;
-    mailbox[e8] = NO_PIECE;
-    mailbox[c8] = KING;
-    mailbox[d8] = ROOK;
+    Zobrist::removeAddPiece(zobristHash, C8, KING, BLACK);
+    Zobrist::removeAddPiece(zobristHash, E8, KING, BLACK);
+    mailbox[A8] = NO_PIECE;
+    mailbox[E8] = NO_PIECE;
+    mailbox[C8] = KING;
+    mailbox[D8] = ROOK;
 
     if ((castlingRigths & BLACK_KING_SIDE_CASTLING_MASK) != 0) {
-      Zobrist::flipCastlingStatus(zobristHash, castlingType::blackKingSide);
+      Zobrist::flipCastlingStatus(zobristHash, castlingType::BLACK_KING_SIDE);
     }
     if ((castlingRigths & BLACK_QUEEN_SIDE_CASTLING_MASK) != 0) {
-      Zobrist::flipCastlingStatus(zobristHash, castlingType::blackQueenSide);
+      Zobrist::flipCastlingStatus(zobristHash, castlingType::BLACK_QUEEN_SIDE);
     }
     break;
 
@@ -439,43 +439,43 @@ void Position::makeKingCastle(const Move &move) {
   int turn = getTurn();
   switch (turn) {
   case WHITE:
-    pieces[WHITE][ROOK] &= ~(0b1ull << h1);
-    Zobrist::removeAddPiece(zobristHash, h1, ROOK, WHITE);
-    pieces[WHITE][ROOK] |= (0b1ull << f1);
-    Zobrist::removeAddPiece(zobristHash, f1, ROOK, WHITE);
+    pieces[WHITE][ROOK] &= ~(0b1ull << H1);
+    Zobrist::removeAddPiece(zobristHash, H1, ROOK, WHITE);
+    pieces[WHITE][ROOK] |= (0b1ull << F1);
+    Zobrist::removeAddPiece(zobristHash, F1, ROOK, WHITE);
     pieces[WHITE][KING] <<= 2;
-    Zobrist::removeAddPiece(zobristHash, g1, KING, WHITE);
-    Zobrist::removeAddPiece(zobristHash, e1, KING, WHITE);
-    mailbox[h1] = NO_PIECE;
-    mailbox[e1] = NO_PIECE;
-    mailbox[g1] = KING;
-    mailbox[f1] = ROOK;
+    Zobrist::removeAddPiece(zobristHash, G1, KING, WHITE);
+    Zobrist::removeAddPiece(zobristHash, E1, KING, WHITE);
+    mailbox[H1] = NO_PIECE;
+    mailbox[E1] = NO_PIECE;
+    mailbox[G1] = KING;
+    mailbox[F1] = ROOK;
 
     if ((castlingRigths & WHITE_KING_SIDE_CASTLING_MASK) != 0) {
-      Zobrist::flipCastlingStatus(zobristHash, castlingType::whiteKingSide);
+      Zobrist::flipCastlingStatus(zobristHash, castlingType::WHITE_KING_SIDE);
     }
     if ((castlingRigths & WHITE_QUEEN_SIDE_CASTLING_MASK) != 0) {
-      Zobrist::flipCastlingStatus(zobristHash, castlingType::whiteQueenSide);
+      Zobrist::flipCastlingStatus(zobristHash, castlingType::WHITE_QUEEN_SIDE);
     }
     break;
 
   case BLACK:
-    pieces[BLACK][ROOK] &= ~(0b1ull << h8);
-    Zobrist::removeAddPiece(zobristHash, h8, ROOK, BLACK);
-    pieces[BLACK][ROOK] |= (0b1ull << f8);
-    Zobrist::removeAddPiece(zobristHash, f8, ROOK, BLACK);
+    pieces[BLACK][ROOK] &= ~(0b1ull << H8);
+    Zobrist::removeAddPiece(zobristHash, H8, ROOK, BLACK);
+    pieces[BLACK][ROOK] |= (0b1ull << F8);
+    Zobrist::removeAddPiece(zobristHash, F8, ROOK, BLACK);
     pieces[BLACK][KING] <<= 2;
-    Zobrist::removeAddPiece(zobristHash, g8, KING, WHITE);
-    Zobrist::removeAddPiece(zobristHash, e8, KING, WHITE);
-    mailbox[h8] = NO_PIECE;
-    mailbox[e8] = NO_PIECE;
-    mailbox[g8] = KING;
-    mailbox[f8] = ROOK;
+    Zobrist::removeAddPiece(zobristHash, G8, KING, WHITE);
+    Zobrist::removeAddPiece(zobristHash, E8, KING, WHITE);
+    mailbox[H8] = NO_PIECE;
+    mailbox[E8] = NO_PIECE;
+    mailbox[G8] = KING;
+    mailbox[F8] = ROOK;
     if ((castlingRigths & BLACK_KING_SIDE_CASTLING_MASK) != 0) {
-      Zobrist::flipCastlingStatus(zobristHash, castlingType::blackKingSide);
+      Zobrist::flipCastlingStatus(zobristHash, castlingType::BLACK_KING_SIDE);
     }
     if ((castlingRigths & BLACK_QUEEN_SIDE_CASTLING_MASK) != 0) {
-      Zobrist::flipCastlingStatus(zobristHash, castlingType::blackQueenSide);
+      Zobrist::flipCastlingStatus(zobristHash, castlingType::BLACK_QUEEN_SIDE);
     }
     break;
 
@@ -564,18 +564,18 @@ void Position::updateCastlingRights(int from, int movingPiece) {
     switch (getTurn()) {
     case WHITE:
       if ((castlingRigths & WHITE_KING_SIDE_CASTLING_MASK) != 0) {
-        Zobrist::flipCastlingStatus(zobristHash, whiteKingSide);
+        Zobrist::flipCastlingStatus(zobristHash, WHITE_KING_SIDE);
       }
       if ((castlingRigths & WHITE_QUEEN_SIDE_CASTLING_MASK) != 0) {
-        Zobrist::flipCastlingStatus(zobristHash, whiteQueenSide);
+        Zobrist::flipCastlingStatus(zobristHash, WHITE_QUEEN_SIDE);
       }
       break;
     case BLACK:
       if ((castlingRigths & BLACK_KING_SIDE_CASTLING_MASK) != 0) {
-        Zobrist::flipCastlingStatus(zobristHash, blackKingSide);
+        Zobrist::flipCastlingStatus(zobristHash, BLACK_KING_SIDE);
       }
       if ((castlingRigths & BLACK_QUEEN_SIDE_CASTLING_MASK) != 0) {
-        Zobrist::flipCastlingStatus(zobristHash, blackQueenSide);
+        Zobrist::flipCastlingStatus(zobristHash, BLACK_QUEEN_SIDE);
       }
       break;
     default:
@@ -588,30 +588,30 @@ void Position::updateCastlingRights(int from, int movingPiece) {
     switch (from) {
     case A1:
       if ((castlingRigths & WHITE_QUEEN_SIDE_CASTLING_MASK) != 0) {
-        Zobrist::flipCastlingStatus(zobristHash, whiteQueenSide);
+        Zobrist::flipCastlingStatus(zobristHash, WHITE_QUEEN_SIDE);
       }
       gameState.setCastlingRigths(castlingRigths &
                                   NO_WHITE_QUEEN_SIDE_CASTLING_MASK);
       break;
 
-    case h1:
+    case H1:
       if ((castlingRigths & WHITE_KING_SIDE_CASTLING_MASK) != 0) {
-        Zobrist::flipCastlingStatus(zobristHash, whiteKingSide);
+        Zobrist::flipCastlingStatus(zobristHash, WHITE_KING_SIDE);
       }
       gameState.setCastlingRigths(castlingRigths &
                                   NO_WHITE_KING_SIDE_CASTLING_MASK);
       break;
-    case a8:
+    case A8:
       if ((castlingRigths & BLACK_QUEEN_SIDE_CASTLING_MASK) != 0) {
-        Zobrist::flipCastlingStatus(zobristHash, blackQueenSide);
+        Zobrist::flipCastlingStatus(zobristHash, BLACK_QUEEN_SIDE);
       }
       gameState.setCastlingRigths(castlingRigths &
                                   NO_BLACK_QUEEN_SIDE_CASTLING_MASK);
       break;
 
-    case h8:
+    case H8:
       if ((castlingRigths & BLACK_KING_SIDE_CASTLING_MASK) != 0) {
-        Zobrist::flipCastlingStatus(zobristHash, blackKingSide);
+        Zobrist::flipCastlingStatus(zobristHash, BLACK_KING_SIDE);
       }
       gameState.setCastlingRigths(castlingRigths &
                                   NO_BLACK_KING_SIDE_CASTLING_MASK);

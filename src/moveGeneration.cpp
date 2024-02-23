@@ -434,37 +434,37 @@ void MoveGeneration::generateCastling() {
   switch (color_) {
 
   case WHITE:
-    if ((!position.isInCheck(e1)) && (!position.isInCheck(D1)) &&
+    if ((!position.isInCheck(E1)) && (!position.isInCheck(D1)) &&
         (!position.isInCheck(C1)) &&
         (WHITE_QUEEN_SIDE_CASTLING_MASK & castlingRigths) &&
         ((allPieces & WHITE_QUEEN_SIDE_CASTLING_RAY) == 0)) {
 
-      moveList.push_back(Move{e1, C1, MoveType::queenCastle});
+      moveList.push_back(Move{E1, C1, MoveType::queenCastle});
     }
 
-    if ((!position.isInCheck(e1)) && (!position.isInCheck(f1)) &&
-        (!position.isInCheck(g1)) &&
+    if ((!position.isInCheck(E1)) && (!position.isInCheck(F1)) &&
+        (!position.isInCheck(G1)) &&
         (WHITE_KING_SIDE_CASTLING_MASK & castlingRigths) &&
         ((allPieces & WHITE_KING_SIDE_CASTLING_RAY) == 0)) {
 
-      moveList.push_back(Move{e1, g1, MoveType::kingCastle});
+      moveList.push_back(Move{E1, G1, MoveType::kingCastle});
     }
     break;
   case BLACK:
-    if ((!position.isInCheck(e8)) && (!position.isInCheck(d8)) &&
-        (!position.isInCheck(c8)) &&
+    if ((!position.isInCheck(E8)) && (!position.isInCheck(D8)) &&
+        (!position.isInCheck(C8)) &&
         (BLACK_QUEEN_SIDE_CASTLING_MASK & castlingRigths) &&
         ((allPieces & BLACK_QUEEN_SIDE_CASTLING_RAY) == 0)) {
 
-      moveList.push_back(Move{e8, c8, MoveType::queenCastle});
+      moveList.push_back(Move{E8, C8, MoveType::queenCastle});
     }
 
-    if ((!position.isInCheck(e8)) && (!position.isInCheck(f8)) &&
-        (!position.isInCheck(g8)) &&
+    if ((!position.isInCheck(E8)) && (!position.isInCheck(F8)) &&
+        (!position.isInCheck(G8)) &&
         (BLACK_KING_SIDE_CASTLING_MASK & castlingRigths) &&
         ((allPieces & BLACK_KING_SIDE_CASTLING_RAY) == 0)) {
 
-      moveList.push_back(Move{e8, g8, MoveType::kingCastle});
+      moveList.push_back(Move{E8, G8, MoveType::kingCastle});
     }
     break;
 

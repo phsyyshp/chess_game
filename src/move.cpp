@@ -47,17 +47,17 @@ void Move::setScore(const int &score) {
 
 // visualizers
 void Move::print() const {
-  std::cout << chessSq[getFrom()] << chessSq[getTo()];
+  std::cout << SQUARE_NAMES[getFrom()] << SQUARE_NAMES[getTo()];
   if (getFlags() >= 6) {
 
-    std::cout << chessSq[getFrom()] << chessSq[getTo()]
+    std::cout << SQUARE_NAMES[getFrom()] << SQUARE_NAMES[getTo()]
               << PROMOTION_TYPE_TO_STR[getFlags() - 6];
   }
 }
 std::string Move::toStr() const {
   if (getFlags() >= 6) {
-    return chessSq[getFrom()] + chessSq[getTo()] +
+    return SQUARE_NAMES[getFrom()] + SQUARE_NAMES[getTo()] +
            PROMOTION_TYPE_TO_STR[getFlags() - 6];
   }
-  return chessSq[getFrom()] + chessSq[getTo()];
+  return SQUARE_NAMES[getFrom()] + SQUARE_NAMES[getTo()];
 }
