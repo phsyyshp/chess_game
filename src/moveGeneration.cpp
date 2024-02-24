@@ -1,69 +1,56 @@
 #include "moveGeneration.hpp"
 // generate moves;
 void MoveGeneration::generateSinglePawnPushes() {
-  uint64_t generatedMoves;
-  uint64_t pawns;
   uint to, from;
-
+  uint64_t generatedMoves;
+  uint64_t pawns = position.getPieces()[position.getTurn()][PAWN];
   switch (position.getTurn()) {
   case Color::WHITE:
-    pawns = position.getPieces()[WHITE][PAWN];
     generatedMoves =
         ((pawns << 8) & (~position.getOccupancy())) & (~RANK_8_MASK);
-    while (generatedMoves) {
-      to = __builtin_ctzll(generatedMoves);
-      from = to - 8;
-      moveList.push_back(Move{from, to, QUIET_MOVE});
-      generatedMoves ^= (0b1ull << to);
-    }
     break;
   case Color::BLACK:
-
-    pawns = position.getPieces()[BLACK][PAWN];
     generatedMoves =
         ((pawns >> 8) & (~position.getOccupancy())) & (~RANK_1_MASK);
-    while (generatedMoves) {
-      to = __builtin_ctzll(generatedMoves);
-      from = to + 8;
-      moveList.push_back(Move{from, to, QUIET_MOVE});
-      generatedMoves ^= (0b1ull << to);
-    }
     break;
   default:
     break;
   }
+  while (generatedMoves) {
+    to = __builtin_ctzll(generatedMoves);
+    from = to - COLOR_TO_PUSH_FORWARD[position.getTurn()];
+    moveList.push_back(Move{from, to, QUIET_MOVE});
+    generatedMoves ^= (0b1ull << to);
+  }
 }
 void MoveGeneration::generateDoublePawnPushes() {
-  uint64_t pawns, pawns_at_initial_config, generatedMoves;
+  uint64_t generatedMoves, oneStepMoves;
   uint to, from;
-  uint64_t oneStepMoves;
+
   switch (position.getTurn()) {
   case WHITE:
-    pawns = position.getPieces()[WHITE][PAWN];
-    pawns_at_initial_config = pawns & ((0b1ULL << 2 * 8) - 1);
-    oneStepMoves = (pawns_at_initial_config << 8) & (~position.getOccupancy());
+
+    oneStepMoves = ((position.getPieces()[position.getTurn()][PAWN] &
+                     INITIAL_PAWN_RANK_MASK[position.getTurn()])
+                    << 8) &
+                   (~position.getOccupancy());
     generatedMoves = (oneStepMoves << 8) & (~position.getOccupancy());
-    while (generatedMoves) {
-      to = __builtin_ctzll(generatedMoves);
-      from = to - 16;
-      moveList.push_back(Move{from, to, DOUBLE_PAWN_PUSH});
-      generatedMoves ^= (0b1ull << to);
-    }
     break;
   case BLACK:
-    pawns = position.getPieces()[BLACK][PAWN];
-    pawns_at_initial_config = pawns & (0b11111111ULL << 6 * 8);
-    oneStepMoves = (pawns_at_initial_config >> 8) & (~position.getOccupancy());
+    oneStepMoves = ((position.getPieces()[position.getTurn()][PAWN] &
+                     INITIAL_PAWN_RANK_MASK[position.getTurn()]) >>
+                    8) &
+                   (~position.getOccupancy());
     generatedMoves = (oneStepMoves >> 8) & (~position.getOccupancy());
-    while (generatedMoves) {
-      to = __builtin_ctzll(generatedMoves);
-      from = to + 16;
-      moveList.push_back(Move{from, to, DOUBLE_PAWN_PUSH});
-      generatedMoves ^= (0b1ull << to);
-    }
     break;
   default:
     break;
+  }
+  while (generatedMoves) {
+    to = __builtin_ctzll(generatedMoves);
+    from = to - COLOR_TO_PUSH_TWO_FORWARD[position.getTurn()];
+    moveList.push_back(Move{from, to, DOUBLE_PAWN_PUSH});
+    generatedMoves ^= (0b1ull << to);
   }
 }
 void MoveGeneration::generateLeftPawnCaptures() {

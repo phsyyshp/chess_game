@@ -178,13 +178,13 @@ Piece Position::getPieceType(const uint64_t &sqMask) const {
   }
   return NO_PIECE;
 }
-Color Position::getTurn() const { return turn; }
+const Color &Position::getTurn() const { return turn; }
 Color Position::getOppositeTurn() const { return OPPOSITE_COLOR[turn]; }
-GameState Position::getGameState() const { return gameState; }
-uint64_t Position::getAllPieces(const Color &color_) const {
+const GameState &Position::getGameState() const { return gameState; }
+const uint64_t &Position::getAllPieces(const Color &color_) const {
   return occupanciesOfColor[color_];
 }
-uint64_t Position::getOccupancy() const { return occupancy; }
+const uint64_t &Position::getOccupancy() const { return occupancy; }
 Piece Position::getCapturedInLastMove() const { return capturedInLastMove; }
 uint64_t Position::getAttacksToKing() const {
 
@@ -708,8 +708,8 @@ void Position::updateCastlingRights(int from, int movingPiece) {
 //     pieces[oppositePieceColor][capturedInLastMove] |= (toMask);
 //   }
 // }
-std::array<Piece, 64> Position::getMailbox() const { return mailbox; }
-std::array<std::array<uint64_t, 6>, 2> Position::getPieces() const {
+const std::array<Piece, 64> &Position::getMailbox() const { return mailbox; }
+const std::array<std::array<uint64_t, 6>, 2> &Position::getPieces() const {
   return pieces;
 }
 // Misc

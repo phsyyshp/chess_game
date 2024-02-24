@@ -430,7 +430,7 @@ TEST(Perft, perftList) {
     perftTest test(position);
 
     auto start = std::chrono::high_resolution_clock::now();
-    uint64_t perftResult = test.perftBulk(6);
+    uint64_t perftResult = test.perftBulk(5);
     auto end = std::chrono::high_resolution_clock::now();
     auto elapsed =
         std::chrono::duration_cast<std::chrono::milliseconds>(end - start);

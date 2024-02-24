@@ -20,18 +20,18 @@ public:
   void setPly(int ply_);
   void clear();
   // getters:
-  std::array<std::array<uint64_t, 6>, 2> getPieces() const;
-  std::array<Piece, 64> getMailbox() const;
-  Color getTurn() const;
+  const std::array<std::array<uint64_t, 6>, 2> &getPieces() const;
+  const std::array<Piece, 64> &getMailbox() const;
+  const Color &getTurn() const;
   uint64_t getZobrist() const;
   int getPly() const;
-  GameState getGameState() const;
+  const GameState &getGameState() const;
   Color getOppositeTurn() const;
   Color getPieceColor(const uint64_t &sqMask) const;
   Piece getPieceType(const uint64_t &sqMask) const;
   Piece getPiece(int square) const;
-  uint64_t getOccupancy() const;
-  uint64_t getAllPieces(const Color &color_) const;
+  const uint64_t &getOccupancy() const;
+  const uint64_t &getAllPieces(const Color &color_) const;
   uint64_t getAttacksToKing() const;
   Piece getCapturedInLastMove() const;
   uint64_t getAttacksToSquare(Square square_) const;
@@ -45,7 +45,6 @@ public:
   // assuming the move is pseudolegal,
   // returns true if the is legal.
   bool makeMove(const Move &move);
-  void undoMove(const Move &move);
   // visualizers;
   void printBoard() const;
 

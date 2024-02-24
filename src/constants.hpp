@@ -112,10 +112,16 @@ const uint64_t A_FILE =
     0b0000000100000001000000010000000100000001000000010000000100000001ull;
 const uint64_t H_FILE =
     0b1000000010000000100000001000000010000000100000001000000010000000ull;
+// pawn pushes;
+const std::array<int, 2> COLOR_TO_PUSH_FORWARD = {8, -8};
+const std::array<int, 2> COLOR_TO_PUSH_TWO_FORWARD = {16, -16};
+
 // bitboard Ranks;
 
 constexpr uint64_t RANK_1_MASK = (0b11111111ULL);
 constexpr uint64_t RANK_8_MASK = (0b11111111ULL) << 7 * 8;
+const std::array<uint64_t, 2> INITIAL_PAWN_RANK_MASK = {
+    ((0b1ULL << 2 * 8) - 1), (0b11111111ULL << 6 * 8)};
 const std::array<int, 2> WHO_TO_MOVE = {1, -1};
 constexpr std::array<uint, 64> SQUARE_TO_FILE = {
     0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3, 4, 5,
