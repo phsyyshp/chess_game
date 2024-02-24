@@ -50,9 +50,8 @@ Move Search::iterativeDeepening(const Position &position) {
     if (isInfoOn) {
       std::cout << "info "
                 << "depth " << depth << " time " << timeSpent << " nodes "
-                << nodes << " nps "
-                << nodes / (timeSpent + 1) * 1000
-                // << " tthits " << hits << " hashfull " << tt.fullness()
+                << nodes << " nps " << nodes / (timeSpent + 1) * 1000
+                << " tthits " << hits << " hashfull " << tt.fullness()
                 << " score cp " << pvScore << " pv " << pv.toStr() << '\n';
     }
     depth++;
@@ -66,7 +65,7 @@ Move Search::searchRoot(int depth, const Position &position) {
   int originalAlpha = alpha;
 
   hashEntry entry = tt.get(position.getZobrist());
-  if (entry.zobristKey == position.getZobrist()) {
+  if (entry.zobristKey == position.getZobrist() && entry.depth >= depth) {
     if (entry.flag == nodeType::EXACT) {
       return entry.move;
     }
@@ -135,7 +134,7 @@ int Search::alphaBeta(int alpha, int beta, int depthLeft,
 
   int originalAlpha = alpha;
   hashEntry entry = tt.get(position.getZobrist());
-  if (entry.zobristKey == position.getZobrist()) {
+  if (entry.zobristKey == position.getZobrist() && entry.depth >= depthLeft) {
     if (entry.flag == nodeType::EXACT) {
       return entry.score;
     }
