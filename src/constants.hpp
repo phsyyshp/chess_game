@@ -335,6 +335,6 @@ const int KILLER_VALUE = 10;
 // Zobrist
 constexpr uint COLOR_INDEX = 768;
 // tt
-enum nodeType : uint8_t { EXACT, ALPHA, BETA };
+enum nodeType : uint8_t { UPPERBOUND, LOWERBOUND, EXACT };
 constexpr int TT_MOVE_SORT_VALUE = 60;
 const std::size_t TT_SIZE = 1048576 * 2;
