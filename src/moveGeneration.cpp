@@ -4,12 +4,11 @@ void MoveGeneration::generateSinglePawnPushes() {
   uint64_t generatedMoves;
   uint64_t pawns;
   uint to, from;
-  uint64_t ineligibleSquares =
-      position.getAllPieces(WHITE) | position.getAllPieces(BLACK);
   switch (position.getTurn()) {
   case Color::WHITE:
     pawns = position.getPieces()[WHITE][PAWN];
-    generatedMoves = ((pawns << 8) & (~ineligibleSquares)) & (~RANK_8_MASK);
+    generatedMoves =
+        ((pawns << 8) & (~position.getOccupancy())) & (~RANK_8_MASK);
     while (generatedMoves) {
       to = __builtin_ctzll(generatedMoves);
       from = to - 8;
@@ -20,7 +19,8 @@ void MoveGeneration::generateSinglePawnPushes() {
   case Color::BLACK:
 
     pawns = position.getPieces()[BLACK][PAWN];
-    generatedMoves = ((pawns >> 8) & (~ineligibleSquares)) & (~RANK_1_MASK);
+    generatedMoves =
+        ((pawns >> 8) & (~position.getOccupancy())) & (~RANK_1_MASK);
     while (generatedMoves) {
       to = __builtin_ctzll(generatedMoves);
       from = to + 8;
@@ -35,15 +35,13 @@ void MoveGeneration::generateSinglePawnPushes() {
 void MoveGeneration::generateDoublePawnPushes() {
   uint64_t pawns, pawns_at_initial_config, generatedMoves;
   uint to, from;
-  uint64_t ineligibleSquares =
-      position.getAllPieces(WHITE) | position.getAllPieces(BLACK);
   uint64_t oneStepMoves;
   switch (position.getTurn()) {
   case WHITE:
     pawns = position.getPieces()[WHITE][PAWN];
     pawns_at_initial_config = pawns & ((0b1ULL << 2 * 8) - 1);
-    oneStepMoves = (pawns_at_initial_config << 8) & (~ineligibleSquares);
-    generatedMoves = (oneStepMoves << 8) & (~ineligibleSquares);
+    oneStepMoves = (pawns_at_initial_config << 8) & (~position.getOccupancy());
+    generatedMoves = (oneStepMoves << 8) & (~position.getOccupancy());
     while (generatedMoves) {
       to = __builtin_ctzll(generatedMoves);
       from = to - 16;
@@ -54,8 +52,8 @@ void MoveGeneration::generateDoublePawnPushes() {
   case BLACK:
     pawns = position.getPieces()[BLACK][PAWN];
     pawns_at_initial_config = pawns & (0b11111111ULL << 6 * 8);
-    oneStepMoves = (pawns_at_initial_config >> 8) & (~ineligibleSquares);
-    generatedMoves = (oneStepMoves >> 8) & (~ineligibleSquares);
+    oneStepMoves = (pawns_at_initial_config >> 8) & (~position.getOccupancy());
+    generatedMoves = (oneStepMoves >> 8) & (~position.getOccupancy());
     while (generatedMoves) {
       to = __builtin_ctzll(generatedMoves);
       from = to + 16;
@@ -138,12 +136,11 @@ void MoveGeneration::generateSinglePawnPromotions() {
   uint64_t generatedMoves;
   uint64_t pawns;
   uint to, from;
-  uint64_t ineligibleSquares =
-      position.getAllPieces(WHITE) | position.getAllPieces(BLACK);
   switch (position.getTurn()) {
   case Color::WHITE:
     pawns = position.getPieces()[WHITE][PAWN];
-    generatedMoves = ((pawns << 8) & (~ineligibleSquares)) & (RANK_8_MASK);
+    generatedMoves =
+        ((pawns << 8) & (~position.getOccupancy())) & (RANK_8_MASK);
     while (generatedMoves) {
       to = __builtin_ctzll(generatedMoves);
       from = to - 8;
@@ -158,7 +155,8 @@ void MoveGeneration::generateSinglePawnPromotions() {
   case Color::BLACK:
 
     pawns = position.getPieces()[BLACK][PAWN];
-    generatedMoves = ((pawns >> 8) & (~ineligibleSquares)) & (RANK_1_MASK);
+    generatedMoves =
+        ((pawns >> 8) & (~position.getOccupancy())) & (RANK_1_MASK);
     while (generatedMoves) {
       to = __builtin_ctzll(generatedMoves);
       from = to + 8;
@@ -346,8 +344,6 @@ void MoveGeneration::generateKnightMoves() {
 }
 void MoveGeneration::generateBishopMoves() {
   uint64_t eligibleSquares = ~position.getAllPieces(position.getTurn());
-  uint64_t occupancy =
-      position.getAllPieces(WHITE) | position.getAllPieces(BLACK);
   int64_t remainingBishops = position.getPieces()[position.getTurn()][BISHOP];
   uint64_t generatedMoves;
 
@@ -356,7 +352,8 @@ void MoveGeneration::generateBishopMoves() {
   uint isCaptureFlag;
   while (remainingBishops) {
     from = static_cast<Square>(__builtin_ctzll(remainingBishops));
-    generatedMoves = getBishopAttackMask(from, occupancy) & eligibleSquares;
+    generatedMoves =
+        getBishopAttackMask(from, position.getOccupancy()) & eligibleSquares;
 
     while (generatedMoves) {
       to = __builtin_ctzll(generatedMoves);
@@ -369,8 +366,6 @@ void MoveGeneration::generateBishopMoves() {
 }
 void MoveGeneration::generateRookMoves() {
   uint64_t eligibleSquares = ~position.getAllPieces(position.getTurn());
-  uint64_t occupancy =
-      position.getAllPieces(WHITE) | position.getAllPieces(BLACK);
   uint64_t remainingRooks = position.getPieces()[position.getTurn()][ROOK];
   Square from;
   uint to;
@@ -378,7 +373,8 @@ void MoveGeneration::generateRookMoves() {
   uint isCaptureFlag;
   while (remainingRooks) {
     from = static_cast<Square>(__builtin_ctzll(remainingRooks));
-    generatedMoves = getRookAttackMask(from, occupancy) & eligibleSquares;
+    generatedMoves =
+        getRookAttackMask(from, position.getOccupancy()) & eligibleSquares;
     while (generatedMoves) {
       to = __builtin_ctzll(generatedMoves);
       isCaptureFlag = !position.isEmpty(to) * 4;
@@ -390,16 +386,15 @@ void MoveGeneration::generateRookMoves() {
 }
 void MoveGeneration::generateQueenMoves() {
   uint64_t eligibleSquares = ~position.getAllPieces(position.getTurn());
-  uint64_t occupancy =
-      position.getAllPieces(WHITE) | position.getAllPieces(BLACK);
   uint64_t remainingQueens = position.getPieces()[position.getTurn()][QUEEN];
   uint to;
   uint isCaptureFlag;
   while (remainingQueens) {
     Square from = static_cast<Square>(__builtin_ctzll(remainingQueens));
-    uint64_t generatedMoves = (getRookAttackMask(from, occupancy) |
-                               getBishopAttackMask(from, occupancy)) &
-                              eligibleSquares;
+    uint64_t generatedMoves =
+        (getRookAttackMask(from, position.getOccupancy()) |
+         getBishopAttackMask(from, position.getOccupancy())) &
+        eligibleSquares;
     while (generatedMoves) {
       to = __builtin_ctzll(generatedMoves);
 
@@ -495,8 +490,6 @@ void MoveGeneration::generateAllMoves() {
 
 uint64_t MoveGeneration::generateRookAttackMaps() {
   uint64_t eligibleSquares = ~position.getAllPieces(position.getOppositeTurn());
-  uint64_t occupancy =
-      position.getAllPieces(WHITE) | position.getAllPieces(BLACK);
   uint64_t remainingRooks =
       position.getPieces()[position.getOppositeTurn()][ROOK];
   Square square_;
@@ -504,34 +497,31 @@ uint64_t MoveGeneration::generateRookAttackMaps() {
   uint64_t generatedAttacks = 0b0ull;
   while (remainingRooks) {
     square_ = static_cast<Square>(__builtin_ctzll(remainingRooks));
-    generatedAttacks |= getRookAttackMask(square_, occupancy) & eligibleSquares;
+    generatedAttacks |=
+        getRookAttackMask(square_, position.getOccupancy()) & eligibleSquares;
     remainingRooks ^= (0b1ull << square_);
   }
   return generatedAttacks;
 }
 uint64_t MoveGeneration::generateBishopAttackMaps() {
-  uint64_t occupancy =
-      position.getAllPieces(WHITE) | position.getAllPieces(BLACK);
   uint64_t remainingBishops =
       position.getPieces()[position.getOppositeTurn()][BISHOP];
   Square square_;
   uint64_t generatedAttacks = 0b0ull;
   while (remainingBishops) {
     square_ = static_cast<Square>(__builtin_ctzll(remainingBishops));
-    generatedAttacks |= getBishopAttackMask(square_, occupancy);
+    generatedAttacks |= getBishopAttackMask(square_, position.getOccupancy());
     remainingBishops ^= (0b1ull << square_);
   }
   return generatedAttacks;
 }
 uint64_t MoveGeneration::generateQueenAttackMaps() {
-  uint64_t occupancy =
-      position.getAllPieces(WHITE) | position.getAllPieces(BLACK);
   uint64_t queenMask = position.getPieces()[position.getOppositeTurn()][QUEEN];
   Square square_;
   if (queenMask) {
     square_ = static_cast<Square>(__builtin_ctzll(queenMask));
-    return (getRookAttackMask(square_, occupancy) |
-            getBishopAttackMask(square_, occupancy));
+    return (getRookAttackMask(square_, position.getOccupancy()) |
+            getBishopAttackMask(square_, position.getOccupancy()));
   }
   return 0b0ull;
 }

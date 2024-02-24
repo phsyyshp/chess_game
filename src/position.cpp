@@ -4,6 +4,7 @@ Position::Position(const std::string &FENstr) {
   std::vector<std::string> fieldVec = FENtoFields(FENstr);
   pieces = FENtoPieces(fieldVec[0]);
   gameState = FENtoGameStateInt(FENstr);
+  turn = gameState.getTurn();
   // ply = stoi(fieldVec[5]);
   for (int j = 0; j < 64; j++) {
     mailbox[j] = NO_PIECE;
@@ -32,6 +33,7 @@ Position::Position(const std::string &FENstr) {
 Position::Position(const std::array<std::array<uint64_t, 6>, 2> &pieces_,
                    Color turn_)
     : pieces(pieces_), gameState(turn_) {
+  turn = turn_;
   for (int j = 0; j < 64; j++) {
     mailbox[j] = NO_PIECE;
   }
@@ -46,6 +48,14 @@ Position::Position(const std::array<std::array<uint64_t, 6>, 2> &pieces_,
       i++;
     }
   }
+  occupanciesOfColor[WHITE] = pieces[WHITE][ROOK] | pieces[WHITE][KNIGHT] |
+                              pieces[WHITE][BISHOP] | pieces[WHITE][QUEEN] |
+                              pieces[WHITE][KING] | pieces[WHITE][PAWN];
+  occupanciesOfColor[BLACK] = pieces[BLACK][ROOK] | pieces[BLACK][KNIGHT] |
+                              pieces[BLACK][BISHOP] | pieces[BLACK][QUEEN] |
+                              pieces[BLACK][KING] | pieces[BLACK][PAWN];
+
+  occupancy = occupanciesOfColor[WHITE] | occupanciesOfColor[BLACK];
   zobristHash = Zobrist::generateTotalZobristKey(*this);
 }
 // Setters;
@@ -101,6 +111,15 @@ void Position::setBoardToInitialConfiguration() {
   clear();
   setWhitePiecesToInitialConfiguration();
   setBlackPiecesToInitialConfiguration();
+  occupanciesOfColor[WHITE] = pieces[WHITE][ROOK] | pieces[WHITE][KNIGHT] |
+                              pieces[WHITE][BISHOP] | pieces[WHITE][QUEEN] |
+                              pieces[WHITE][KING] | pieces[WHITE][PAWN];
+  occupanciesOfColor[BLACK] = pieces[BLACK][ROOK] | pieces[BLACK][KNIGHT] |
+                              pieces[BLACK][BISHOP] | pieces[BLACK][QUEEN] |
+                              pieces[BLACK][KING] | pieces[BLACK][PAWN];
+
+  occupancy = occupanciesOfColor[WHITE] | occupanciesOfColor[BLACK];
+
   zobristHash = Zobrist::generateTotalZobristKey(*this);
 }
 void Position::clear() {
@@ -159,22 +178,19 @@ Piece Position::getPieceType(const uint64_t &sqMask) const {
   }
   return NO_PIECE;
 }
-Color Position::getTurn() const { return gameState.getTurn(); }
+Color Position::getTurn() const { return turn; }
 Color Position::getOppositeTurn() const { return OPPOSITE_COLOR[turn]; }
 GameState Position::getGameState() const { return gameState; }
 uint64_t Position::getAllPieces(const Color &color_) const {
-  return pieces[color_][ROOK] | pieces[color_][KNIGHT] |
-         pieces[color_][BISHOP] | pieces[color_][QUEEN] | pieces[color_][KING] |
-         pieces[color_][PAWN];
+  return occupanciesOfColor[color_];
 }
+uint64_t Position::getOccupancy() const { return occupancy; }
 Piece Position::getCapturedInLastMove() const { return capturedInLastMove; }
 uint64_t Position::getAttacksToKing() const {
 
-  uint64_t allPieces = getAllPieces(BLACK) | getAllPieces(WHITE);
-  Color colorOfKing = gameState.getTurn();
   Color oppositeColor = getOppositeTurn();
   Square squareOfKing =
-      static_cast<Square>(__builtin_ctzll(pieces[colorOfKing][KING]));
+      static_cast<Square>(__builtin_ctzll(pieces[turn][KING]));
   uint64_t oppositePawns = pieces[oppositeColor][PAWN];
   uint64_t oppositeKnights = pieces[oppositeColor][KNIGHT];
   uint64_t oppositeRooks = pieces[oppositeColor][ROOK];
@@ -184,16 +200,14 @@ uint64_t Position::getAttacksToKing() const {
   uint64_t oppositeRookQueens = oppositeRooks | oppositeQueens;
   uint64_t oppositeBishopQueens = oppositeBishops | oppositeQueens;
   return (knightLookUpTable[squareOfKing] & oppositeKnights) |
-         (pawnLookUpTable[colorOfKing][squareOfKing] & oppositePawns) |
-         (getBishopAttackMask(squareOfKing, allPieces) & oppositeBishopQueens) |
-         (getRookAttackMask(squareOfKing, allPieces) & oppositeRookQueens) |
+         (pawnLookUpTable[turn][squareOfKing] & oppositePawns) |
+         (getBishopAttackMask(squareOfKing, occupancy) & oppositeBishopQueens) |
+         (getRookAttackMask(squareOfKing, occupancy) & oppositeRookQueens) |
          (kingLookUpTable[squareOfKing] & oppositeKing);
 }
 
 uint64_t Position::getAttacksToSquare(Square square_) const {
 
-  uint64_t allPieces = getAllPieces(BLACK) | getAllPieces(WHITE);
-  Color colorOfVictim = gameState.getTurn();
   Color oppositeColor = getOppositeTurn();
   Square victimSq = square_;
   uint64_t oppositePawns = pieces[oppositeColor][PAWN];
@@ -205,9 +219,9 @@ uint64_t Position::getAttacksToSquare(Square square_) const {
   uint64_t oppositeKing = pieces[oppositeColor][KING];
   uint64_t oppositeBishopQueens = oppositeBishops | oppositeQueens;
   return (knightLookUpTable[victimSq] & oppositeKnights) |
-         (pawnLookUpTable[colorOfVictim][victimSq] & oppositePawns) |
-         (getBishopAttackMask(victimSq, allPieces) & oppositeBishopQueens) |
-         (getRookAttackMask(victimSq, allPieces) & oppositeRookQueens) |
+         (pawnLookUpTable[turn][victimSq] & oppositePawns) |
+         (getBishopAttackMask(victimSq, occupancy) & oppositeBishopQueens) |
+         (getRookAttackMask(victimSq, occupancy) & oppositeRookQueens) |
          (kingLookUpTable[victimSq] & oppositeKing);
 }
 // bools
@@ -431,7 +445,7 @@ void Position::makeQueenCastle(const Move &move) {
     occupanciesOfColor[BLACK] &= ~(0b1ull << A8);
     Zobrist::removeAddPiece(zobristHash, A8, ROOK, BLACK);
     pieces[BLACK][ROOK] |= (0b1ull << D8);
-    occupanciesOfColor[WHITE] |= (0b1ull << D8);
+    occupanciesOfColor[BLACK] |= (0b1ull << D8);
 
     Zobrist::removeAddPiece(zobristHash, D8, ROOK, BLACK);
     pieces[BLACK][KING] >>= 2;
@@ -472,16 +486,21 @@ void Position::makeKingCastle(const Move &move) {
   switch (turn) {
   case WHITE:
     pieces[WHITE][ROOK] &= ~(0b1ull << H1);
+    occupanciesOfColor[WHITE] &= ~(0b1ull << H1);
     Zobrist::removeAddPiece(zobristHash, H1, ROOK, WHITE);
     pieces[WHITE][ROOK] |= (0b1ull << F1);
+    occupanciesOfColor[WHITE] |= (0b1ull << F1);
     Zobrist::removeAddPiece(zobristHash, F1, ROOK, WHITE);
     pieces[WHITE][KING] <<= 2;
+    occupanciesOfColor[WHITE] &= ~(0b1ull << E1);
+    occupanciesOfColor[WHITE] |= (0b1ull << G1);
     Zobrist::removeAddPiece(zobristHash, G1, KING, WHITE);
     Zobrist::removeAddPiece(zobristHash, E1, KING, WHITE);
     mailbox[H1] = NO_PIECE;
     mailbox[E1] = NO_PIECE;
     mailbox[G1] = KING;
     mailbox[F1] = ROOK;
+    occupancy = occupanciesOfColor[WHITE] | occupanciesOfColor[BLACK];
 
     if ((castlingRigths & WHITE_KING_SIDE_CASTLING_MASK) != 0) {
       Zobrist::flipCastlingStatus(zobristHash, castlingType::WHITE_KING_SIDE);
@@ -493,16 +512,23 @@ void Position::makeKingCastle(const Move &move) {
 
   case BLACK:
     pieces[BLACK][ROOK] &= ~(0b1ull << H8);
+    occupanciesOfColor[BLACK] &= ~(0b1ull << H8);
     Zobrist::removeAddPiece(zobristHash, H8, ROOK, BLACK);
     pieces[BLACK][ROOK] |= (0b1ull << F8);
+    occupanciesOfColor[BLACK] |= (0b1ull << F8);
+
     Zobrist::removeAddPiece(zobristHash, F8, ROOK, BLACK);
     pieces[BLACK][KING] <<= 2;
+    occupanciesOfColor[BLACK] &= ~(0b1ull << E8);
+    occupanciesOfColor[BLACK] |= (0b1ull << G8);
     Zobrist::removeAddPiece(zobristHash, G8, KING, BLACK);
     Zobrist::removeAddPiece(zobristHash, E8, KING, BLACK);
     mailbox[H8] = NO_PIECE;
     mailbox[E8] = NO_PIECE;
     mailbox[G8] = KING;
     mailbox[F8] = ROOK;
+    occupancy = occupanciesOfColor[WHITE] | occupanciesOfColor[BLACK];
+
     if ((castlingRigths & BLACK_KING_SIDE_CASTLING_MASK) != 0) {
       Zobrist::flipCastlingStatus(zobristHash, castlingType::BLACK_KING_SIDE);
     }
@@ -535,11 +561,14 @@ void Position::makePromotion(const Move &move, Piece piece_) {
   uint64_t fromMask = (0b1ull << from);
 
   // moving
-  pieces[gameState.getTurn()][movingPiece] &= ~fromMask;
+  pieces[turn][movingPiece] &= ~fromMask;
+  occupanciesOfColor[turn] &= ~fromMask;
   Zobrist::removeAddPiece(zobristHash, from, movingPiece, getTurn());
   capturedInLastMove = NO_PIECE;
 
-  pieces[gameState.getTurn()][piece_] |= toMask;
+  pieces[turn][piece_] |= toMask;
+  occupanciesOfColor[turn] |= toMask;
+  occupancy = occupanciesOfColor[WHITE] | occupanciesOfColor[BLACK];
   Zobrist::removeAddPiece(zobristHash, to, piece_, getTurn());
 
   // Mailbox operations;
@@ -564,18 +593,25 @@ void Position::makePromoCapture(const Move &move, Piece piece_) {
   uint64_t toMask = (0b1ull << to);
   uint64_t fromMask = (0b1ull << from);
   // moving
-  pieces[gameState.getTurn()][movingPiece] &= ~fromMask;
+  pieces[turn][movingPiece] &= ~fromMask;
+  occupanciesOfColor[turn] &= ~fromMask;
+
   Zobrist::removeAddPiece(zobristHash, from, movingPiece, getTurn());
   Piece capturedPieceType = mailbox[to];
   if (capturedPieceType == ROOK) {
     updateCastlingRights(to, ROOK);
   }
   pieces[oppositePieceColor][capturedPieceType] &= (~toMask);
+  occupanciesOfColor[oppositePieceColor] &= ~toMask;
+
   Zobrist::removeAddPiece(zobristHash, to, capturedPieceType,
                           getOppositeTurn());
 
   capturedInLastMove = capturedPieceType;
-  pieces[gameState.getTurn()][piece_] |= toMask;
+  pieces[turn][piece_] |= toMask;
+  occupanciesOfColor[turn] |= toMask;
+
+  occupancy = occupanciesOfColor[WHITE] | occupanciesOfColor[BLACK];
   Zobrist::removeAddPiece(zobristHash, to, piece_, getTurn());
   // Mailbox operations;
   mailbox[to] = piece_;

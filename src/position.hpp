@@ -30,7 +30,7 @@ public:
   Color getPieceColor(const uint64_t &sqMask) const;
   Piece getPieceType(const uint64_t &sqMask) const;
   Piece getPiece(int square) const;
-
+  uint64_t getOccupancy() const;
   uint64_t getAllPieces(const Color &color_) const;
   uint64_t getAttacksToKing() const;
   Piece getCapturedInLastMove() const;

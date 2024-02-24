@@ -434,6 +434,31 @@ TEST(Perft, perft_king_capture) {
 //     ASSERT_EQ(stoull(data[1]), perftResult);
 //   }
 // }
+// TEST(Perft, perftFEN6) {
+//   std::string FEN = "n1n5/1Pk5/8/8/8/8/5Kp1/5N1N w - - 0 1";
+//   // , "28859283"
+//   Position position(FEN);
+//   perftTest pt(position);
+//   perftDivideInterface(FEN);
+// }
+TEST(Zobrist, RemainingPerft) {
+
+  std::vector<std::vector<std::string>> chessData = {
+      {"n1n5/1Pk5/8/8/8/8/5Kp1/5N1N w - - 0 1", "37665329"},
+      {"8/PPPk4/8/8/8/8/4Kppp/8 w - - 0 1", "28859283"},
+      {"n1n5/PPPk4/8/8/8/8/4Kppp/5N1N w - - 0 1", "71179139"},
+      {"8/Pk6/8/8/8/8/6Kp/8 b - - 0 1", "1030499"},
+      {"n1n5/1Pk5/8/8/8/8/5Kp1/5N1N b - - 0 1", "37665329"},
+      {"8/PPPk4/8/8/8/8/4Kppp/8 b - - 0 1", "28859283"},
+      {"n1n5/PPPk4/8/8/8/8/4Kppp/5N1N b - - 0 1", "71179139"}};
+  for (auto data : chessData) {
+    Position position(data[0]);
+    perftTest test(position);
+    uint64_t perftResult = test.perftZobrist(6);
+    std::cout << data[0] << " " << data[1] << '\n';
+    ASSERT_EQ(stoull(data[1]), perftResult);
+  }
+}
 TEST(Zobrist, zobristPerft) {
 
   std::vector<std::vector<std::string>> chessData = {
