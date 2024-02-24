@@ -4,6 +4,7 @@ void MoveGeneration::generateSinglePawnPushes() {
   uint64_t generatedMoves;
   uint64_t pawns;
   uint to, from;
+
   switch (position.getTurn()) {
   case Color::WHITE:
     pawns = position.getPieces()[WHITE][PAWN];

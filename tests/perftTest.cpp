@@ -18,7 +18,7 @@ uint64_t perftTest::perftPseudoLegal(int depth) {
   }
   return nodes;
 }
-uint64_t perftTest::perft(int depth) {
+uint64_t perftTest::perft(int depth, const Position &position) {
   Position tempPosition;
   if (depth == 0) {
     return 1;
@@ -28,10 +28,9 @@ uint64_t perftTest::perft(int depth) {
   movGen.generateAllMoves();
   for (const auto &move : movGen.getMoves()) {
     tempPosition = position;
-    if (position.makeMove(move)) {
-      nodes += perft(depth - 1);
+    if (tempPosition.makeMove(move)) {
+      nodes += perft(depth - 1, tempPosition);
     }
-    position = tempPosition;
   }
   return nodes;
 }
@@ -88,7 +87,7 @@ uint64_t perftTest::perftBulk(int depth) {
   return nodes;
 }
 
-MoveList perftDivide(Position position, int depth) {
+MoveList perftDivide(const Position &position, int depth) {
   MoveGeneration movGen(position);
   movGen.generateAllMoves();
   Position tempPosition;
@@ -98,16 +97,15 @@ MoveList perftDivide(Position position, int depth) {
   std::vector<std::string> printVec;
   for (const auto &move : movGen.getMoves()) {
     tempPosition = position;
-    if (position.makeMove(move)) {
+    if (tempPosition.makeMove(move)) {
       ml.push_back(move);
-      perftTest test(position);
-      nodes = test.perft(depth - 1);
+      perftTest test(tempPosition);
+      nodes = test.perft(depth - 1, tempPosition);
       totalNodes += nodes;
       std::string perftResult =
           "│ " + move.toStr() + " | " + std::to_string(nodes);
       printVec.push_back(perftResult);
     }
-    position = tempPosition;
   }
 
   std::sort(printVec.begin(), printVec.end());

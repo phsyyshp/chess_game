@@ -23,7 +23,7 @@ public:
     std::fill(tt.begin(), tt.end(), perftTTentry{});
   };
   uint64_t perftPseudoLegal(int depth);
-  uint64_t perft(int depth);
+  uint64_t perft(int depth, const Position &position);
   uint64_t perftZobrist(uint64_t depth);
 
   // FIX IT: the exit node gives wrong number due to illegal moves;
@@ -33,6 +33,6 @@ private:
   Position position;
   std::vector<perftTTentry> tt;
 };
-MoveList perftDivide(Position position, int depth);
+MoveList perftDivide(const Position &position, int depth);
 void perftDivideInterface();
 void perftDivideInterface(std::string FENstr);
