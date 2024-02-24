@@ -16,8 +16,6 @@ public:
   Move getBestMove(const Position &position, int maxDepth, int wtime, int winc,
                    int btime, int binc, bool isInfoOn);
   Move iterativeDeepening(const Position &position);
-  int negaMax(int depth, const Position &position);
-  Move search(int depth, const Position &position);
   Move searchRoot(int depth, const Position &position);
   int quiesce(int alpha, int beta, const Position &position);
   int alphaBeta(int alpha, int beta, int depthLeft, const Position &position);
@@ -45,5 +43,5 @@ private:
   int pvScore;
   int hits = 0;
   std::array<std::array<Move, MAX_DEPTH>, MAX_KILLER_MOVES> killerMoves;
-  TranspositionTable tt;
+  // TranspositionTable tt;
 };
