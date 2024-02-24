@@ -430,11 +430,11 @@ TEST(Perft, perftList) {
     perftTest test(position);
 
     auto start = std::chrono::high_resolution_clock::now();
-    uint64_t perftResult = test.perftBulk(5);
+    uint64_t perftResult = test.perft(6, position);
     auto end = std::chrono::high_resolution_clock::now();
     auto elapsed =
         std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-    std::cout << data[0] << " " << data[1] << "nps"
+    std::cout << data[0] << " " << data[1] << " nps "
               << perftResult * 1000 / (elapsed.count()) << '\n';
     ASSERT_EQ(stoull(data[1]), perftResult);
   }

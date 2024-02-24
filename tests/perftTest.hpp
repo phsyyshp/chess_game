@@ -27,7 +27,7 @@ public:
   uint64_t perftZobrist(uint64_t depth);
 
   // FIX IT: the exit node gives wrong number due to illegal moves;
-  uint64_t perftBulk(int depth);
+  uint64_t perftBulk(int depth, const Position &position);
 
 private:
   Position position;

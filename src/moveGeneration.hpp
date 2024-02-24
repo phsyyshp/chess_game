@@ -49,5 +49,5 @@ public:
 
 private:
   MoveList moveList;
-  Position position;
+  const Position &position;
 };

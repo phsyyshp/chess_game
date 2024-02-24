@@ -68,7 +68,7 @@ uint64_t perftTest::perftZobrist(uint64_t depth) {
   return nodes;
 }
 // FIX IT: the exit node gives wrong number due to illegal moves;
-uint64_t perftTest::perftBulk(int depth) {
+uint64_t perftTest::perftBulk(int depth, const Position &position) {
 
   Position tempPosition;
   MoveGeneration movGen(position);
@@ -79,10 +79,9 @@ uint64_t perftTest::perftBulk(int depth) {
   }
   for (auto &move : movGen.getMoves()) {
     tempPosition = position;
-    if (position.makeMove(move)) {
-      nodes += perftBulk(depth - 1);
+    if (tempPosition.makeMove(move)) {
+      nodes += perftBulk(depth - 1, tempPosition);
     }
-    position = tempPosition;
   }
   return nodes;
 }
