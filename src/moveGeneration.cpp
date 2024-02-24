@@ -20,7 +20,7 @@ void MoveGeneration::generateSinglePawnPushes() {
     to = __builtin_ctzll(generatedMoves);
     from = to - COLOR_TO_PUSH_FORWARD[position.getTurn()];
     moveList.push_back(Move{from, to, QUIET_MOVE});
-    generatedMoves ^= (0b1ull << to);
+    generatedMoves &= generatedMoves - 1;
   }
 }
 void MoveGeneration::generateDoublePawnPushes() {
@@ -50,7 +50,7 @@ void MoveGeneration::generateDoublePawnPushes() {
     to = __builtin_ctzll(generatedMoves);
     from = to - COLOR_TO_PUSH_TWO_FORWARD[position.getTurn()];
     moveList.push_back(Move{from, to, DOUBLE_PAWN_PUSH});
-    generatedMoves ^= (0b1ull << to);
+    generatedMoves &= generatedMoves - 1;
   }
 }
 void MoveGeneration::generateLeftPawnCaptures() {
@@ -68,7 +68,7 @@ void MoveGeneration::generateLeftPawnCaptures() {
       to = __builtin_ctzll(generatedMoves);
       from = to - 9;
       moveList.push_back(Move{from, to, CAPTURE});
-      generatedMoves ^= (0b1ull << to);
+      generatedMoves &= generatedMoves - 1;
     }
     break;
   case BLACK:
@@ -79,7 +79,7 @@ void MoveGeneration::generateLeftPawnCaptures() {
       to = __builtin_ctzll(generatedMoves);
       from = to + 7;
       moveList.push_back(Move{from, to, CAPTURE});
-      generatedMoves ^= (0b1ull << to);
+      generatedMoves &= generatedMoves - 1;
     }
     break;
   default:
@@ -101,7 +101,7 @@ void MoveGeneration::generateRightPawnCaptures() {
       to = __builtin_ctzll(generatedMoves);
       from = to - 7;
       moveList.push_back(Move{from, to, CAPTURE});
-      generatedMoves ^= (0b1ull << to);
+      generatedMoves &= generatedMoves - 1;
     }
     break;
   case BLACK:
@@ -112,7 +112,7 @@ void MoveGeneration::generateRightPawnCaptures() {
       to = __builtin_ctzll(generatedMoves);
       from = to + 9;
       moveList.push_back(Move{from, to, CAPTURE});
-      generatedMoves ^= (0b1ull << to);
+      generatedMoves &= generatedMoves - 1;
     }
     break;
   default:
@@ -137,7 +137,7 @@ void MoveGeneration::generateSinglePawnPromotions() {
       moveList.push_back(Move{from, to, MoveType::rookPromotion});
       moveList.push_back(Move{from, to, MoveType::knightPromotion});
 
-      generatedMoves ^= (0b1ull << to);
+      generatedMoves &= generatedMoves - 1;
     }
     break;
   case Color::BLACK:
@@ -178,7 +178,7 @@ void MoveGeneration::generateLeftPawnPromoCaptures() {
       moveList.push_back(Move{from, to, MoveType::queenPromoCapture});
       moveList.push_back(Move{from, to, MoveType::rookPromoCapture});
       moveList.push_back(Move{from, to, MoveType::knightPromoCapture});
-      generatedMoves ^= (0b1ull << to);
+      generatedMoves &= generatedMoves - 1;
     }
     break;
   case BLACK:
@@ -192,7 +192,7 @@ void MoveGeneration::generateLeftPawnPromoCaptures() {
       moveList.push_back(Move{from, to, MoveType::queenPromoCapture});
       moveList.push_back(Move{from, to, MoveType::rookPromoCapture});
       moveList.push_back(Move{from, to, MoveType::knightPromoCapture});
-      generatedMoves ^= (0b1ull << to);
+      generatedMoves &= generatedMoves - 1;
     }
     break;
   default:
@@ -217,7 +217,7 @@ void MoveGeneration::generateRightPawnPromoCaptures() {
       moveList.push_back(Move{from, to, MoveType::queenPromoCapture});
       moveList.push_back(Move{from, to, MoveType::rookPromoCapture});
       moveList.push_back(Move{from, to, MoveType::knightPromoCapture});
-      generatedMoves ^= (0b1ull << to);
+      generatedMoves &= generatedMoves - 1;
     }
     break;
   case BLACK:
@@ -231,7 +231,7 @@ void MoveGeneration::generateRightPawnPromoCaptures() {
       moveList.push_back(Move{from, to, MoveType::queenPromoCapture});
       moveList.push_back(Move{from, to, MoveType::rookPromoCapture});
       moveList.push_back(Move{from, to, MoveType::knightPromoCapture});
-      generatedMoves ^= (0b1ull << to);
+      generatedMoves &= generatedMoves - 1;
     }
     break;
   default:
@@ -325,7 +325,7 @@ void MoveGeneration::generateKnightMoves() {
       to = __builtin_ctzll(generatedMoves);
       isCaptureFlag = !position.isEmpty(to) * 4;
       moveList.push_back(Move{from, to, isCaptureFlag});
-      generatedMoves ^= (0b1ull << to);
+      generatedMoves &= generatedMoves - 1;
     }
     remainingKnigths ^= (0b1ull << from);
   }
@@ -347,7 +347,7 @@ void MoveGeneration::generateBishopMoves() {
       to = __builtin_ctzll(generatedMoves);
       isCaptureFlag = !position.isEmpty(to) * 4;
       moveList.push_back(Move{from, to, isCaptureFlag});
-      generatedMoves ^= (0b1ull << to);
+      generatedMoves &= generatedMoves - 1;
     }
     remainingBishops ^= (0b1ull << from);
   }
@@ -367,7 +367,7 @@ void MoveGeneration::generateRookMoves() {
       to = __builtin_ctzll(generatedMoves);
       isCaptureFlag = !position.isEmpty(to) * 4;
       moveList.push_back(Move{from, to, isCaptureFlag});
-      generatedMoves ^= (0b1ull << to);
+      generatedMoves &= generatedMoves - 1;
     }
     remainingRooks ^= (0b1ull << from);
   }
@@ -388,7 +388,7 @@ void MoveGeneration::generateQueenMoves() {
 
       isCaptureFlag = !position.isEmpty(to) * 4;
       moveList.push_back(Move{from, to, isCaptureFlag});
-      generatedMoves ^= (0b1ull << to);
+      generatedMoves &= generatedMoves - 1;
     }
     remainingQueens ^= (0b1ull << from);
   }
@@ -405,7 +405,7 @@ void MoveGeneration::generateKingMoves() {
     to = __builtin_ctzll(generatedMoves);
     isCaptureFlag = !position.isEmpty(to) * 4;
     moveList.push_back(Move{from, to, isCaptureFlag});
-    generatedMoves ^= (0b1ull << to);
+    generatedMoves &= generatedMoves - 1;
   }
 }
 // TODO: Optimize it;
