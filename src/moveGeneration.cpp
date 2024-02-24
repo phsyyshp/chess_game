@@ -148,7 +148,7 @@ void MoveGeneration::generateSinglePawnPromotions() {
     while (generatedMoves) {
       to = __builtin_ctzll(generatedMoves);
       from = to + 8;
-      generatedMoves ^= (0b1ull << to);
+      generatedMoves &= generatedMoves - 1;
       moveList.push_back(Move{from, to, MoveType::bishopPromotion});
       moveList.push_back(Move{from, to, MoveType::queenPromotion});
       moveList.push_back(Move{from, to, MoveType::rookPromotion});
@@ -327,7 +327,7 @@ void MoveGeneration::generateKnightMoves() {
       moveList.push_back(Move{from, to, isCaptureFlag});
       generatedMoves &= generatedMoves - 1;
     }
-    remainingKnigths ^= (0b1ull << from);
+    remainingKnigths &= remainingKnigths - 1;
   }
 }
 void MoveGeneration::generateBishopMoves() {
@@ -349,7 +349,7 @@ void MoveGeneration::generateBishopMoves() {
       moveList.push_back(Move{from, to, isCaptureFlag});
       generatedMoves &= generatedMoves - 1;
     }
-    remainingBishops ^= (0b1ull << from);
+    remainingBishops &= remainingBishops - 1;
   }
 }
 void MoveGeneration::generateRookMoves() {
@@ -369,7 +369,7 @@ void MoveGeneration::generateRookMoves() {
       moveList.push_back(Move{from, to, isCaptureFlag});
       generatedMoves &= generatedMoves - 1;
     }
-    remainingRooks ^= (0b1ull << from);
+    remainingRooks &= remainingRooks - 1;
   }
 }
 void MoveGeneration::generateQueenMoves() {
@@ -390,7 +390,7 @@ void MoveGeneration::generateQueenMoves() {
       moveList.push_back(Move{from, to, isCaptureFlag});
       generatedMoves &= generatedMoves - 1;
     }
-    remainingQueens ^= (0b1ull << from);
+    remainingQueens &= remainingQueens - 1;
   }
 }
 void MoveGeneration::generateKingMoves() {
@@ -485,7 +485,7 @@ uint64_t MoveGeneration::generateRookAttackMaps() {
     square_ = static_cast<Square>(__builtin_ctzll(remainingRooks));
     generatedAttacks |=
         getRookAttackMask(square_, position.getOccupancy()) & eligibleSquares;
-    remainingRooks ^= (0b1ull << square_);
+    remainingRooks &= remainingRooks - 1;
   }
   return generatedAttacks;
 }
@@ -497,7 +497,7 @@ uint64_t MoveGeneration::generateBishopAttackMaps() {
   while (remainingBishops) {
     square_ = static_cast<Square>(__builtin_ctzll(remainingBishops));
     generatedAttacks |= getBishopAttackMask(square_, position.getOccupancy());
-    remainingBishops ^= (0b1ull << square_);
+    remainingBishops &= remainingBishops - 1;
   }
   return generatedAttacks;
 }
