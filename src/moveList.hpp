@@ -9,7 +9,7 @@ public:
   MoveList() : lastSetIdx(-1) {}
 
   void push_back(Move move);
-  const Move &operator[](int n) const { return elements[n]; }
+  const Move operator[](int n) const { return elements[n]; }
   int size() const;
 
   void swap(int i, int j);

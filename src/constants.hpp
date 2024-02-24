@@ -115,6 +115,8 @@ const uint64_t H_FILE =
 // pawn pushes;
 const std::array<int, 2> COLOR_TO_PUSH_FORWARD = {8, -8};
 const std::array<int, 2> COLOR_TO_PUSH_TWO_FORWARD = {16, -16};
+const std::array<int, 2> COLOR_TO_PUSH_LEFT_FORWARD = {9, -7};
+const std::array<int, 2> COLOR_TO_PUSH_RIGHT_FORWARD = {7, -9};
 
 // bitboard Ranks;
 

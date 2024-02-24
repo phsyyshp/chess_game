@@ -411,8 +411,6 @@ void MoveGeneration::generateKingMoves() {
 // TODO: Optimize it;
 void MoveGeneration::generateCastling() {
   int color_ = position.getTurn();
-  uint64_t allPieces =
-      position.getAllPieces(BLACK) | position.getAllPieces(WHITE);
   uint castlingRigths = position.getGameState().getCastlingRigths();
   switch (color_) {
 
@@ -420,7 +418,7 @@ void MoveGeneration::generateCastling() {
     if ((!position.isInCheck(E1)) && (!position.isInCheck(D1)) &&
         (!position.isInCheck(C1)) &&
         (WHITE_QUEEN_SIDE_CASTLING_MASK & castlingRigths) &&
-        ((allPieces & WHITE_QUEEN_SIDE_CASTLING_RAY) == 0)) {
+        ((position.getOccupancy() & WHITE_QUEEN_SIDE_CASTLING_RAY) == 0)) {
 
       moveList.push_back(Move{E1, C1, MoveType::queenCastle});
     }
@@ -428,7 +426,7 @@ void MoveGeneration::generateCastling() {
     if ((!position.isInCheck(E1)) && (!position.isInCheck(F1)) &&
         (!position.isInCheck(G1)) &&
         (WHITE_KING_SIDE_CASTLING_MASK & castlingRigths) &&
-        ((allPieces & WHITE_KING_SIDE_CASTLING_RAY) == 0)) {
+        ((position.getOccupancy() & WHITE_KING_SIDE_CASTLING_RAY) == 0)) {
 
       moveList.push_back(Move{E1, G1, MoveType::kingCastle});
     }
@@ -437,7 +435,7 @@ void MoveGeneration::generateCastling() {
     if ((!position.isInCheck(E8)) && (!position.isInCheck(D8)) &&
         (!position.isInCheck(C8)) &&
         (BLACK_QUEEN_SIDE_CASTLING_MASK & castlingRigths) &&
-        ((allPieces & BLACK_QUEEN_SIDE_CASTLING_RAY) == 0)) {
+        ((position.getOccupancy() & BLACK_QUEEN_SIDE_CASTLING_RAY) == 0)) {
 
       moveList.push_back(Move{E8, C8, MoveType::queenCastle});
     }
@@ -445,7 +443,7 @@ void MoveGeneration::generateCastling() {
     if ((!position.isInCheck(E8)) && (!position.isInCheck(F8)) &&
         (!position.isInCheck(G8)) &&
         (BLACK_KING_SIDE_CASTLING_MASK & castlingRigths) &&
-        ((allPieces & BLACK_KING_SIDE_CASTLING_RAY) == 0)) {
+        ((position.getOccupancy() & BLACK_KING_SIDE_CASTLING_RAY) == 0)) {
 
       moveList.push_back(Move{E8, G8, MoveType::kingCastle});
     }
