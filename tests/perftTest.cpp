@@ -34,7 +34,7 @@ uint64_t perftTest::perft(int depth, const Position &position) {
   }
   return nodes;
 }
-uint64_t perftTest::perftZobrist(uint64_t depth) {
+uint64_t perftTest::perftZobrist(uint64_t depth, const Position &position) {
   Position tempPosition;
   if (depth == 0) {
     return 1;
@@ -51,17 +51,17 @@ uint64_t perftTest::perftZobrist(uint64_t depth) {
   }
   for (const auto &move : movGen.getMoves()) {
     tempPosition = position;
-    if (position.makeMove(move)) {
-      if (position.getZobrist() != Zobrist::generateTotalZobristKey(position)) {
-        std::cout << move.toStr() << "\n";
-        position.printBoard();
-        assert(position.getZobrist() ==
-               Zobrist::generateTotalZobristKey(position));
-      }
+    if (tempPosition.makeMove(move)) {
+      // if (position.getZobrist() !=
+      // Zobrist::generateTotalZobristKey(position)) {
+      //   std::cout << move.toStr() << "\n";
+      //   position.printBoard();
+      //   assert(position.getZobrist() ==
+      //          Zobrist::generateTotalZobristKey(position));
+      // }
       // std::cout << "0\n";
-      nodes += perftZobrist(depth - 1);
+      nodes += perftZobrist(depth - 1, tempPosition);
     }
-    position = tempPosition;
   }
   tt[(position.getZobrist() ^ depth) % TT_SIZE] =
       perftTTentry{position.getZobrist(), nodes};

@@ -65,7 +65,8 @@ Move Search::searchRoot(int depth, const Position &position) {
   int originalAlpha = alpha;
 
   hashEntry entry = tt.get(position.getZobrist());
-  if (entry.zobristKey == position.getZobrist() && entry.depth >= depth) {
+  if (entry.zobristKey == position.getZobrist() && entry.depth >= depth &&
+      ply != 0) {
     if (entry.flag == nodeType::EXACT) {
       return entry.move;
     }
