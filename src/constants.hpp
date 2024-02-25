@@ -336,5 +336,5 @@ const int KILLER_VALUE = 10;
 constexpr uint COLOR_INDEX = 768;
 // tt
 enum nodeType : uint8_t { UPPERBOUND, LOWERBOUND, EXACT };
-constexpr int TT_MOVE_SORT_VALUE = 60;
+constexpr int TT_MOVE_SORT_VALUE = 260;
 const std::size_t TT_SIZE = 1048576 * 2;
