@@ -31,7 +31,7 @@ uint Move::getFlags() const {
 */
   return (moveNum >> 12) & 0xf;
 }
-int Move::getScore() const { return (moveNum) >> 17; }
+uint Move::getScore() const { return (moveNum) >> 17; }
 
 // bools
 bool Move::isCapture() const { return (moveNum & CAPTURE_FLAG) != 0; }
@@ -40,7 +40,7 @@ bool Move::isPromo() const { return 6 <= getFlags(); }
 // setters
 // Warning! this does not override the already set score of a move. Must be used
 // only if the score of the move is not yet given.
-void Move::setScore(const int &score) {
+void Move::setScore(const uint &score) {
   moveNum &= 0xFFFF;
   moveNum |= (score << 16);
 }

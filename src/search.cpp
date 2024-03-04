@@ -60,9 +60,9 @@ Move Search::iterativeDeepening(const Position &position) {
 }
 
 Move Search::searchRoot(int depth, const Position &position) {
-  int alpha = INT16_MIN;
-  int beta = INT16_MAX;
-  int originalAlpha = alpha;
+  int16_t alpha = -MAX_SCORE;
+  int16_t beta = MAX_SCORE;
+  int16_t originalAlpha = alpha;
 
   // hashEntry entry = tt.get(position.getZobrist());
   // if (entry.zobristKey == position.getZobrist() && entry.depth >= depth &&
@@ -80,7 +80,7 @@ Move Search::searchRoot(int depth, const Position &position) {
   //   }
   // }
   int timeSpent = 0;
-  int score = INT16_MIN;
+  int16_t score = -MAX_SCORE;
   Move bestMove(A1, A1, 0); // invalid move
   Evaluation eval(position);
   Position tempPosition;
@@ -99,8 +99,8 @@ Move Search::searchRoot(int depth, const Position &position) {
     if (tempPosition.makeMove(movegen.getMoves()[j])) {
       nodes++;
       ply++;
-      score =
-          std::max(score, -alphaBeta(-beta, -alpha, depth - 1, tempPosition));
+      score = std::max(score, static_cast<int16_t>(-alphaBeta(
+                                  -beta, -alpha, depth - 1, tempPosition)));
       ply--;
       if (score > alpha) {
         alpha = score;
@@ -130,10 +130,10 @@ Move Search::searchRoot(int depth, const Position &position) {
 
   return bestMove;
 }
-int Search::alphaBeta(int alpha, int beta, int depthLeft,
-                      const Position &position) {
+int16_t Search::alphaBeta(int16_t alpha, int16_t beta, int depthLeft,
+                          const Position &position) {
 
-  int originalAlpha = alpha;
+  int16_t originalAlpha = alpha;
 
   hashEntry entry = tt.get(position.getZobrist());
   if (entry.zobristKey == position.getZobrist() && entry.depth >= depthLeft) {
@@ -141,9 +141,9 @@ int Search::alphaBeta(int alpha, int beta, int depthLeft,
       return entry.score;
     }
     if (entry.flag == nodeType::LOWERBOUND) {
-      alpha = std::max(alpha, static_cast<int>(entry.score));
+      alpha = std::max(alpha, entry.score);
     } else if (entry.flag == nodeType::UPPERBOUND) {
-      beta = std::min(beta, static_cast<int>(entry.score));
+      beta = std::min(beta, entry.score);
     }
     if (alpha >= beta) {
       return entry.score;
@@ -155,8 +155,7 @@ int Search::alphaBeta(int alpha, int beta, int depthLeft,
   Move bestMove(A1, A1, 0);
   Position tempPosition;
   MoveGeneration movegen(position);
-  uint64_t nodesSearched = 0;
-  int score = INT16_MIN;
+  int16_t score = -MAX_SCORE;
   movegen.generateAllMoves();
   int moveCounter = 0;
   scoreMoves(movegen.getMoves(), position);
@@ -170,25 +169,22 @@ int Search::alphaBeta(int alpha, int beta, int depthLeft,
     pickMove(movegen.getMoves(), j);
     tempPosition = position;
     if (tempPosition.makeMove(movegen.getMoves()[j])) {
+      bestMove = movegen.getMoves()[j];
       moveCounter++;
       ply++;
       nodes++;
-      score = std::max(score,
-                       -alphaBeta(-beta, -alpha, depthLeft - 1, tempPosition));
+      score = std::max(score, static_cast<int16_t>(-alphaBeta(
+                                  -beta, -alpha, depthLeft - 1, tempPosition)));
       ply--;
-      if (score > alpha) {
-        alpha = score;
-        bestMove = movegen.getMoves()[j];
-      }
+      alpha = std::max(alpha, score);
       if (alpha >= beta) {
         storeKillerMove(movegen.getMoves()[j], ply);
-        bestMove = movegen.getMoves()[j];
         break;
       }
     }
   }
   if (moveCounter == 0 && position.isInCheck()) {
-    return INT16_MIN + ply;
+    return -MAX_SCORE + ply;
   } else if (moveCounter == 0) {
     return 0;
   }
@@ -207,13 +203,12 @@ int Search::alphaBeta(int alpha, int beta, int depthLeft,
   return score;
 }
 
-int Search::quiesce(int alpha, int beta, const Position &position) {
+int16_t Search::quiesce(int16_t alpha, int16_t beta, const Position &position) {
   Evaluation eval(position);
   Position tempPosition;
   MoveGeneration movegen(position);
-  int score = 0;
-  uint64_t nodesSearched = 0;
-  int standingPat = eval.evaluate();
+  int16_t score = -MAX_SCORE;
+  int16_t standingPat = eval.evaluate();
   if (standingPat >= beta) {
     return beta;
   }
@@ -257,7 +252,7 @@ int Search::quiesce(int alpha, int beta, const Position &position) {
 
 void Search::scoreMoves(MoveList &moveList_, const Position &position) {
   for (Move &move : moveList_) {
-    int moveScore = 0;
+    uint moveScore = 0;
     int i = 0;
     Move ttMove = tt.getMove(position.getZobrist());
     if (move.getMoveInt() == ttMove.getMoveInt()) {

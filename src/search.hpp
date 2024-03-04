@@ -18,8 +18,9 @@ public:
                    int btime, int binc, bool isInfoOn);
   Move iterativeDeepening(const Position &position);
   Move searchRoot(int depth, const Position &position);
-  int quiesce(int alpha, int beta, const Position &position);
-  int alphaBeta(int alpha, int beta, int depthLeft, const Position &position);
+  int16_t quiesce(int16_t alpha, int16_t beta, const Position &position);
+  int16_t alphaBeta(int16_t alpha, int16_t beta, int depthLeft,
+                    const Position &position);
   // move ordering;
   void scoreMoves(MoveList &moveList_, const Position &position);
   void pickMove(MoveList &moveList_, int startingIdx) const;
@@ -41,7 +42,7 @@ private:
   uint64_t nodes;
   Move pv;
   bool isTimeExeeded;
-  int pvScore;
+  int16_t pvScore;
   int hits = 0;
   std::array<std::array<Move, MAX_DEPTH>, MAX_KILLER_MOVES> killerMoves;
   TranspositionTable tt;
