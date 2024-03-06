@@ -85,7 +85,7 @@ int16_t Search::search(int16_t alpha, int16_t beta, int depthLeft,
   }
   Position tempPosition;
   MoveGeneration movegen(position);
-  int16_t score = -MAX_SCORE;
+  int16_t score = -MAX_SCORE, tempScore = -MAX_SCORE;
   Move move_(A1, A1, 0); // invalid move;
   movegen.generateAllMoves();
   int moveCounter = 0;
@@ -107,20 +107,23 @@ int16_t Search::search(int16_t alpha, int16_t beta, int depthLeft,
     pickMove(movegen.getMoves(), j);
     tempPosition = position;
     if (tempPosition.makeMove(movegen.getMoves()[j])) {
-      move_ = movegen.getMoves()[j];
       moveCounter++;
       ply++;
       nodes++;
-      score = std::max(
-          score, static_cast<int16_t>(-search(-beta, -alpha, depthLeft - 1,
-                                              tempPosition, false)));
+      tempScore = static_cast<int16_t>(
+          -search(-beta, -alpha, depthLeft - 1, tempPosition, false));
+      if (score < tempScore) {
+        score = tempScore;
+        move_ = movegen.getMoves()[j];
+      }
       ply--;
       alpha = std::max(alpha, score);
 
-      if (isRoot) {
-        std::cout << move_.toStr() << " " << score << '\n';
-      }
+      // if (isRoot) {
+      //   std::cout << move_.toStr() << " " << score << '\n';
+      // }
       if (alpha >= beta) {
+        move_ = movegen.getMoves()[j];
         storeKillerMove(move_, ply);
         break;
       }
@@ -145,7 +148,7 @@ int16_t Search::search(int16_t alpha, int16_t beta, int depthLeft,
                      move_});
   }
   if (isRoot) {
-    std::cout << move_.toStr() << '\n';
+    // std::cout << move_.toStr() << '\n';
     bestMove = move_;
   }
   return score;
