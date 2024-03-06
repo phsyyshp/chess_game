@@ -16,7 +16,7 @@ public:
   // searchers;
   Move getBestMove(const Position &position, int maxDepth, int wtime, int winc,
                    int btime, int binc, bool isInfoOn);
-  Move iterativeDeepening(const Position &position);
+  void iterativeDeepening(const Position &position);
   Move searchRoot(int depth, const Position &position);
   int16_t quiesce(int16_t alpha, int16_t beta, const Position &position);
   int16_t search(int16_t alpha, int16_t beta, int depthLeft,

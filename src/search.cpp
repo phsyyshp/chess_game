@@ -30,6 +30,7 @@ Move Search::getBestMove(const Position &position, int maxDepth_, int wtime,
   nodes = 0ull;
   Move invalidMove(A1, A1, 0);
   pv = invalidMove;
+  bestMove = invalidMove;
   pvScore = 0;
   isTimeExeeded = false;
   start = std::chrono::high_resolution_clock::now();
@@ -37,9 +38,10 @@ Move Search::getBestMove(const Position &position, int maxDepth_, int wtime,
       getMaxMoveDuration(position.getTurn(), wtime, winc, btime, binc);
   isInfoOn = isInfoOn_;
   maxDepth = maxDepth_;
-  return iterativeDeepening(position);
+  iterativeDeepening(position);
+  return bestMove;
 }
-Move Search::iterativeDeepening(const Position &position) {
+void Search::iterativeDeepening(const Position &position) {
   int timeSpent = 0;
   int depth = 1;
   int16_t score;
@@ -58,85 +60,11 @@ Move Search::iterativeDeepening(const Position &position) {
     }
     depth++;
   }
-  return bestMove;
 }
 
-Move Search::searchRoot(int depth, const Position &position) {
-  int16_t alpha = -MAX_SCORE;
-  int16_t beta = MAX_SCORE;
-  int16_t originalAlpha = alpha;
-
-  // hashEntry entry = tt.get(position.getZobrist());
-  // if (entry.zobristKey == position.getZobrist() && entry.depth >= depth &&
-  //     ply != 0) {
-  //   if (entry.flag == nodeType::EXACT) {
-  //     return entry.move;
-  //   }
-  //   if (entry.flag == nodeType::LOWERBOUND) {
-  //     alpha = std::max(alpha, static_cast<int>(entry.score));
-  //   } else if (entry.flag == nodeType::UPPERBOUND) {
-  //     beta = std::min(beta, static_cast<int>(entry.score));
-  //   }
-  //   if (alpha >= beta) {
-  //     return entry.move;
-  //   }
-  // }
-  int timeSpent = 0;
-  int16_t score = -MAX_SCORE;
-  Move bestMove(A1, A1, 0); // invalid move
-  Evaluation eval(position);
-  Position tempPosition;
-  MoveGeneration movegen(position);
-  movegen.generateAllMoves();
-  scoreMoves(movegen.getMoves(), position);
-  for (int j = 0; j < movegen.getMoves().size(); j++) {
-    if (isTimeExeeded) {
-      // isTimeExeeded can not be true before getting first pv because at depth
-      // 0 alpha beta only runs qsearch and it can not  switch this time flag.
-      return pv;
-      break;
-    }
-    pickMove(movegen.getMoves(), j);
-    tempPosition = position;
-    if (tempPosition.makeMove(movegen.getMoves()[j])) {
-      nodes++;
-      ply++;
-      score = std::max(score, static_cast<int16_t>(-alphaBeta(
-                                  -beta, -alpha, depth - 1, tempPosition)));
-      ply--;
-      if (score > alpha) {
-        alpha = score;
-        bestMove = movegen.getMoves()[j];
-      }
-      if (alpha >= beta) {
-        pvScore = score;
-        storeKillerMove(movegen.getMoves()[j], ply);
-        bestMove = movegen.getMoves()[j];
-        break;
-      }
-    }
-  }
-  pvScore = score;
-
-  if (score <= originalAlpha) {
-    tt.add(hashEntry{position.getZobrist(), depth, score, nodeType::UPPERBOUND,
-                     bestMove});
-  } else if (score >= beta) {
-    tt.add(hashEntry{position.getZobrist(), depth, score, nodeType::LOWERBOUND,
-                     bestMove});
-  } else {
-
-    tt.add(hashEntry{position.getZobrist(), depth, score, nodeType::EXACT,
-                     bestMove});
-  }
-
-  return bestMove;
-}
 int16_t Search::search(int16_t alpha, int16_t beta, int depthLeft,
                        const Position &position, bool isRoot) {
-
   int16_t originalAlpha = alpha;
-
   hashEntry entry = tt.get(position.getZobrist());
   if (entry.zobristKey == position.getZobrist() && entry.depth >= depthLeft &&
       !isRoot) {
@@ -189,14 +117,16 @@ int16_t Search::search(int16_t alpha, int16_t beta, int depthLeft,
       ply--;
       alpha = std::max(alpha, score);
       if (alpha >= beta) {
-        storeKillerMove(movegen.getMoves()[j], ply);
+        storeKillerMove(move_, ply);
         break;
       }
     }
   }
-  if (moveCounter == 0 && position.isInCheck()) {
+  // FIX IT: moveCounter may be 0 due to time constraint in no mate/stalemate
+  // case.
+  if (!isRoot && moveCounter == 0 && position.isInCheck()) {
     return -MAX_SCORE + ply;
-  } else if (moveCounter == 0) {
+  } else if (!isRoot && moveCounter == 0) {
     return 0;
   }
 
@@ -211,6 +141,7 @@ int16_t Search::search(int16_t alpha, int16_t beta, int depthLeft,
                      move_});
   }
   if (isRoot) {
+    std::cout << move_.toStr() << '\n';
     bestMove = move_;
   }
   return score;
