@@ -110,19 +110,23 @@ int Evaluation::pieceSquareTables() const {
          knightSquareTables(WHITE) - knightSquareTables(BLACK);
   //  kingSquareTables(white) - kingSquareTables(black);
 }
-int Evaluation::evaluate() const {
-  int kingDiff = getPieceCount(KING, WHITE) - getPieceCount(KING, BLACK);
-  int queenDiff = getPieceCount(QUEEN, WHITE) - getPieceCount(QUEEN, BLACK);
-  int knightDiff = getPieceCount(KNIGHT, WHITE) - getPieceCount(KNIGHT, BLACK);
-  int rookDiff = getPieceCount(ROOK, WHITE) - getPieceCount(ROOK, BLACK);
-  int bishopDiff = getPieceCount(BISHOP, WHITE) - getPieceCount(BISHOP, BLACK);
-  int pawnDiff = getPieceCount(PAWN, WHITE) - getPieceCount(PAWN, BLACK);
-  int doubledPawnDiff = getDoubledPawnCount(WHITE) - getDoubledPawnCount(BLACK);
-  int isolinDiff = getIsolatedPawnCount(WHITE) - getIsolatedPawnCount(BLACK);
+// be carefull with value overflow;
+int16_t Evaluation::evaluate() const {
+  int16_t queenDiff = getPieceCount(QUEEN, WHITE) - getPieceCount(QUEEN, BLACK);
+  int16_t knightDiff =
+      getPieceCount(KNIGHT, WHITE) - getPieceCount(KNIGHT, BLACK);
+  int16_t rookDiff = getPieceCount(ROOK, WHITE) - getPieceCount(ROOK, BLACK);
+  int16_t bishopDiff =
+      getPieceCount(BISHOP, WHITE) - getPieceCount(BISHOP, BLACK);
+  int16_t pawnDiff = getPieceCount(PAWN, WHITE) - getPieceCount(PAWN, BLACK);
+  int16_t doubledPawnDiff =
+      getDoubledPawnCount(WHITE) - getDoubledPawnCount(BLACK);
+  int16_t isolinDiff =
+      getIsolatedPawnCount(WHITE) - getIsolatedPawnCount(BLACK);
   // size_t mobilityDiff = getMobility(white) - getMobility(black);
 
-  return (20000 * kingDiff + 900 * queenDiff + 500 * rookDiff +
-          300 * (bishopDiff + knightDiff) + 100 * pawnDiff -
-          50 * (isolinDiff + doubledPawnDiff) + pieceSquareTables()) *
+  return (900 * queenDiff + 500 * rookDiff + 300 * (bishopDiff + knightDiff) +
+          100 * pawnDiff - 50 * (isolinDiff + doubledPawnDiff) +
+          pieceSquareTables()) *
          WHO_TO_MOVE[position.getTurn()];
 };

@@ -116,6 +116,10 @@ int16_t Search::search(int16_t alpha, int16_t beta, int depthLeft,
                                               tempPosition, false)));
       ply--;
       alpha = std::max(alpha, score);
+
+      if (isRoot) {
+        std::cout << move_.toStr() << " " << score << '\n';
+      }
       if (alpha >= beta) {
         storeKillerMove(move_, ply);
         break;
