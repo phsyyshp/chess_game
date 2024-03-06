@@ -42,17 +42,19 @@ Move Search::getBestMove(const Position &position, int maxDepth_, int wtime,
 Move Search::iterativeDeepening(const Position &position) {
   int timeSpent = 0;
   int depth = 1;
-  Move bestMove(A1, A1, 0); // invalid move;
+  int16_t score;
   while ((depth <= maxDepth) && (timeSpent < maxMoveDuration)) {
-    bestMove = searchRoot(depth, position);
-    pv = bestMove;
+    int16_t alpha = -MAX_SCORE;
+    int16_t beta = MAX_SCORE;
+
+    score = search(alpha, beta, depth, position, true);
     timeSpent = countTime(start);
     if (isInfoOn) {
       std::cout << "info "
                 << "depth " << depth << " time " << timeSpent << " nodes "
                 << nodes << " nps " << nodes / (timeSpent + 1) * 1000
                 << " tthits " << hits << " hashfull " << tt.fullness()
-                << " score cp " << pvScore << " pv " << pv.toStr() << '\n';
+                << " score cp " << score << " pv " << bestMove.toStr() << '\n';
     }
     depth++;
   }
@@ -130,13 +132,14 @@ Move Search::searchRoot(int depth, const Position &position) {
 
   return bestMove;
 }
-int16_t Search::alphaBeta(int16_t alpha, int16_t beta, int depthLeft,
-                          const Position &position) {
+int16_t Search::search(int16_t alpha, int16_t beta, int depthLeft,
+                       const Position &position, bool isRoot) {
 
   int16_t originalAlpha = alpha;
 
   hashEntry entry = tt.get(position.getZobrist());
-  if (entry.zobristKey == position.getZobrist() && entry.depth >= depthLeft) {
+  if (entry.zobristKey == position.getZobrist() && entry.depth >= depthLeft &&
+      !isRoot) {
     if (entry.flag == nodeType::EXACT) {
       return entry.score;
     }
@@ -152,16 +155,23 @@ int16_t Search::alphaBeta(int16_t alpha, int16_t beta, int depthLeft,
   if (depthLeft == 0) {
     return quiesce(alpha, beta, position);
   }
-  Move bestMove(A1, A1, 0);
   Position tempPosition;
   MoveGeneration movegen(position);
   int16_t score = -MAX_SCORE;
+  Move move_(A1, A1, 0); // invalid move;
   movegen.generateAllMoves();
   int moveCounter = 0;
   scoreMoves(movegen.getMoves(), position);
   for (int j = 0; j < movegen.getMoves().size(); j++) {
     // if (nodes % 4096 == 0) {
-    if (countTime(start) > maxMoveDuration) {
+    if (isRoot) {
+      if (isTimeExeeded) {
+        // isTimeExeeded can not be true before getting first pv because at
+        // depth 0 alpha beta only runs qsearch and it can not  switch this time
+        // flag.
+        break;
+      }
+    } else if (countTime(start) > maxMoveDuration) {
       isTimeExeeded = true; // data member;
       break;
     }
@@ -169,12 +179,13 @@ int16_t Search::alphaBeta(int16_t alpha, int16_t beta, int depthLeft,
     pickMove(movegen.getMoves(), j);
     tempPosition = position;
     if (tempPosition.makeMove(movegen.getMoves()[j])) {
-      bestMove = movegen.getMoves()[j];
+      move_ = movegen.getMoves()[j];
       moveCounter++;
       ply++;
       nodes++;
-      score = std::max(score, static_cast<int16_t>(-alphaBeta(
-                                  -beta, -alpha, depthLeft - 1, tempPosition)));
+      score = std::max(
+          score, static_cast<int16_t>(-search(-beta, -alpha, depthLeft - 1,
+                                              tempPosition, false)));
       ply--;
       alpha = std::max(alpha, score);
       if (alpha >= beta) {
@@ -191,14 +202,16 @@ int16_t Search::alphaBeta(int16_t alpha, int16_t beta, int depthLeft,
 
   if (score <= originalAlpha) {
     tt.add(hashEntry{position.getZobrist(), depthLeft, score,
-                     nodeType::UPPERBOUND, bestMove});
+                     nodeType::UPPERBOUND, move_});
   } else if (score >= beta) {
     tt.add(hashEntry{position.getZobrist(), depthLeft, score,
-                     nodeType::LOWERBOUND, bestMove});
+                     nodeType::LOWERBOUND, move_});
   } else {
-
     tt.add(hashEntry{position.getZobrist(), depthLeft, score, nodeType::EXACT,
-                     bestMove});
+                     move_});
+  }
+  if (isRoot) {
+    bestMove = move_;
   }
   return score;
 }

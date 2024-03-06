@@ -19,8 +19,8 @@ public:
   Move iterativeDeepening(const Position &position);
   Move searchRoot(int depth, const Position &position);
   int16_t quiesce(int16_t alpha, int16_t beta, const Position &position);
-  int16_t alphaBeta(int16_t alpha, int16_t beta, int depthLeft,
-                    const Position &position);
+  int16_t search(int16_t alpha, int16_t beta, int depthLeft,
+                 const Position &position, bool isRoot);
   // move ordering;
   void scoreMoves(MoveList &moveList_, const Position &position);
   void pickMove(MoveList &moveList_, int startingIdx) const;
@@ -46,4 +46,5 @@ private:
   int hits = 0;
   std::array<std::array<Move, MAX_DEPTH>, MAX_KILLER_MOVES> killerMoves;
   TranspositionTable tt;
+  Move bestMove;
 };
