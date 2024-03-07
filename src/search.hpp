@@ -45,4 +45,5 @@ private:
   std::array<std::array<Move, MAX_DEPTH>, MAX_KILLER_MOVES> killerMoves;
   TranspositionTable tt;
   Move bestMove;
+  int16_t pvScore;
 };

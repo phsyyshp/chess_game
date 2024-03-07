@@ -30,6 +30,7 @@ Move Search::getBestMove(const Position &position, int maxDepth_, int wtime,
   nodes = 0ull;
   Move invalidMove(A1, A1, 0);
   bestMove = invalidMove;
+  pvScore = 0;
   isTimeExeeded = false;
   start = std::chrono::high_resolution_clock::now();
   maxMoveDuration =
@@ -48,6 +49,7 @@ void Search::iterativeDeepening(const Position &position) {
     int16_t beta = MAX_SCORE;
 
     score = search(alpha, beta, depth, position, true);
+    pvScore = score;
     timeSpent = countTime(start);
     if (isInfoOn) {
       std::cout << "info "
@@ -125,7 +127,7 @@ int16_t Search::search(int16_t alpha, int16_t beta, int depthLeft,
     }
   }
   if (isTimeExeeded) {
-    return 0;
+    return pvScore;
   }
   if (!isRoot && moveCounter == 0) {
     if (position.isInCheck()) {
@@ -145,7 +147,6 @@ int16_t Search::search(int16_t alpha, int16_t beta, int depthLeft,
                      move_});
   }
   if (isRoot) {
-    // std::cout << move_.toStr() << '\n';
     bestMove = move_;
   }
   return score;
