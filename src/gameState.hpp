@@ -2,8 +2,8 @@
 #include "constants.hpp"
 class GameState {
 public:
-  GameState() : gameStateNum((white & 0x1) | ((0b1111u) << 1) | ((0x8) << 5)){};
-  GameState(color turn)
+  GameState() : gameStateNum((WHITE & 0x1) | ((0b1111u) << 1) | ((0x8) << 5)){};
+  GameState(Color turn)
       : gameStateNum((turn & 0x1) | ((0b1111u << 1)) | ((0x8 << 5))){};
 
   // Castling Rights Table
@@ -17,11 +17,11 @@ public:
   // +-----------------------+---------------------+
   // QKqk
 
-  GameState(color turn, const uint &castlingRigths, const uint &enPassant)
+  GameState(Color turn, const uint &castlingRigths, const uint &enPassant)
       : gameStateNum((turn & 0x1) | ((castlingRigths & 0xf) << 1) |
                      ((enPassant & 0xf) << 5)) {}
   // getters
-  color getTurn() const;
+  Color getTurn() const;
   uint getCastlingRigths() const;
   uint getEnPassant() const;
   uint32_t getGameStateNum() const;

@@ -1,6 +1,7 @@
 #pragma once
 #include "evaluation.hpp"
 #include "tt.hpp"
+#include <algorithm>
 #include <chrono>
 class Search {
 public:
@@ -11,29 +12,38 @@ public:
   getKillerMoves() const;
   int getPly() const;
   void clear();
+  void clearKillerMoves();
   // searchers;
-  int negaMax(int depth, const Position &position);
-  Move search(int depth, const Position &position);
-  Move searchIt(int maxDepth, bool isInfoOn, const Position &position,
-                int wtime, int winc, int btime, int binc);
-  Move searchAB(int depth, std::chrono::high_resolution_clock::time_point start,
-                int remainingTime, int timeIncrement, const Position &position);
-  int quiesce(int alpha, int beta, const Position &position);
-  int alphaBeta(int alpha, int beta, int depthLeft, const Position &position);
+  Move getBestMove(const Position &position, int maxDepth, int wtime, int winc,
+                   int btime, int binc, bool isInfoOn);
+  void iterativeDeepening(const Position &position);
+  Move searchRoot(int depth, const Position &position);
+  int16_t quiesce(int16_t alpha, int16_t beta, const Position &position);
+  int16_t search(int16_t alpha, int16_t beta, int depthLeft,
+                 const Position &position, bool isRoot);
   // move ordering;
-  void scoreMoves(MoveList &moveList_, const Position &position) const;
+  void scoreMoves(MoveList &moveList_, const Position &position);
   void pickMove(MoveList &moveList_, int startingIdx) const;
   void orderMoves(MoveList &movelist_);
   void storeKillerMove(const Move &move_, int ply);
-
   void flipGlobalAncientFlag();
   // timing
   int countTime(std::chrono::high_resolution_clock::time_point);
+  int getMaxMoveDuration(Color turn, int wtime, int winc, int btime,
+                         int binc) const;
 
 private:
-  std::array<std::array<Move, MAX_DEPTH>, MAX_KILLER_MOVES> killerMoves;
+  // std::array<std::array<Move, MAX_DEPTH>, MAX_KILLER_MOVES> killerMoves;
   int ply = 0;
-  Move pv;
+  std::chrono::high_resolution_clock::time_point start;
+  int maxMoveDuration;
+  int maxDepth;
+  bool isInfoOn;
+  uint64_t nodes;
+  bool isTimeExeeded;
+  int hits = 0;
+  std::array<std::array<Move, MAX_DEPTH>, MAX_KILLER_MOVES> killerMoves;
   TranspositionTable tt;
-  bool globalAncientFlag = false;
+  Move bestMove;
+  int16_t pvScore;
 };

@@ -2,18 +2,19 @@
 
 // getters;
 Position Evaluation::getPosition() const { return position; }
-int Evaluation::getPieceCount(const piece &piece_, const color &color_) const {
+// FIX IT: be sure if they are working correctly
+int Evaluation::getPieceCount(const Piece &piece_, const Color &color_) const {
   return __builtin_popcountll(position.getPieces()[color_][piece_]);
 }
 // Pawn operations;
-int Evaluation::getDoubledPawnCount(const color &color_) const {
+int Evaluation::getDoubledPawnCount(const Color &color_) const {
   switch (color_) {
-  case white:
+  case WHITE:
     return __builtin_popcountll(
-        whitePawnsInFrontOwn(position.getPieces()[white][pawn]));
-  case black:
+        whitePawnsInFrontOwn(position.getPieces()[WHITE][PAWN]));
+  case BLACK:
     return __builtin_popcountll(
-        blackPawnsInFrontOwn(position.getPieces()[black][pawn]));
+        blackPawnsInFrontOwn(position.getPieces()[BLACK][PAWN]));
   default:
     std::cerr << color_ << " is not valid color" << std::endl;
     throw std::range_error("invalid color");
@@ -21,19 +22,19 @@ int Evaluation::getDoubledPawnCount(const color &color_) const {
   }
 }
 // int Evaluation::getBlockedPawnCount(const color &color_) const {}
-int Evaluation::getIsolatedPawnCount(const color &color_) const {
-  return __builtin_popcountll(isolanis(position.getPieces()[color_][pawn]));
+int Evaluation::getIsolatedPawnCount(const Color &color_) const {
+  return __builtin_popcountll(isolanis(position.getPieces()[color_][PAWN]));
 }
-size_t Evaluation::getMobility(const color &color_) const {
+size_t Evaluation::getMobility(const Color &color_) const {
   MoveGeneration movgen(position);
   movgen.generateAllMoves();
   return movgen.getNumberOfMoves();
 };
 // Square tables
-int Evaluation::pawnSquareTables(const color &color_) const {
+int Evaluation::pawnSquareTables(const Color &color_) const {
   int out = 0;
   int tempSq;
-  uint64_t remainingPawns = position.getPieces()[color_][pawn];
+  uint64_t remainingPawns = position.getPieces()[color_][PAWN];
   while (remainingPawns) {
     tempSq = __builtin_ctzll(remainingPawns);
     out += pawnSqTbls[color_][tempSq];
@@ -41,11 +42,11 @@ int Evaluation::pawnSquareTables(const color &color_) const {
   }
   return out;
 }
-int Evaluation::knightSquareTables(const color &color_) const {
+int Evaluation::knightSquareTables(const Color &color_) const {
 
   int out = 0;
   int tempSq;
-  uint64_t remainingKnights = position.getPieces()[color_][knight];
+  uint64_t remainingKnights = position.getPieces()[color_][KNIGHT];
   while (remainingKnights) {
     tempSq = __builtin_ctzll(remainingKnights);
     out += knightSqTbls[color_][tempSq];
@@ -53,11 +54,11 @@ int Evaluation::knightSquareTables(const color &color_) const {
   }
   return out;
 }
-int Evaluation::queenSquareTables(const color &color_) const {
+int Evaluation::queenSquareTables(const Color &color_) const {
 
   int out = 0;
   int tempSq;
-  uint64_t remainingQueens = position.getPieces()[color_][queen];
+  uint64_t remainingQueens = position.getPieces()[color_][QUEEN];
   while (remainingQueens) {
     tempSq = __builtin_ctzll(remainingQueens);
     out += queenSqTbls[color_][tempSq];
@@ -65,10 +66,10 @@ int Evaluation::queenSquareTables(const color &color_) const {
   }
   return out;
 }
-int Evaluation::rookSquareTables(const color &color_) const {
+int Evaluation::rookSquareTables(const Color &color_) const {
   int out = 0;
   int tempSq;
-  uint64_t remainingRooks = position.getPieces()[color_][rook];
+  uint64_t remainingRooks = position.getPieces()[color_][ROOK];
   while (remainingRooks) {
     tempSq = __builtin_ctzll(remainingRooks);
     out += rookSqTbls[color_][tempSq];
@@ -76,10 +77,10 @@ int Evaluation::rookSquareTables(const color &color_) const {
   }
   return out;
 }
-int Evaluation::bishopSquareTables(const color &color_) const {
+int Evaluation::bishopSquareTables(const Color &color_) const {
   int out = 0;
   int tempSq;
-  uint64_t remainingBishops = position.getPieces()[color_][bishop];
+  uint64_t remainingBishops = position.getPieces()[color_][BISHOP];
   while (remainingBishops) {
     tempSq = __builtin_ctzll(remainingBishops);
     out += bishopSqTbls[color_][tempSq];
@@ -87,11 +88,11 @@ int Evaluation::bishopSquareTables(const color &color_) const {
   }
   return out;
 }
-int Evaluation::kingSquareTables(const color &color_) const {
+int Evaluation::kingSquareTables(const Color &color_) const {
 
   int out = 0;
   int tempSq;
-  uint64_t kingMask = position.getPieces()[color_][king];
+  uint64_t kingMask = position.getPieces()[color_][KING];
   tempSq = __builtin_ctzll(kingMask);
   if (position.getPly() >= 20 && position.getPly() <= 80) {
 
@@ -102,26 +103,30 @@ int Evaluation::kingSquareTables(const color &color_) const {
   return out;
 }
 int Evaluation::pieceSquareTables() const {
-  return rookSquareTables(white) - rookSquareTables(black) +
-         pawnSquareTables(white) - pawnSquareTables(black) +
-         bishopSquareTables(white) - bishopSquareTables(black) +
-         queenSquareTables(white) - queenSquareTables(black) +
-         knightSquareTables(white) - knightSquareTables(black);
+  return rookSquareTables(WHITE) - rookSquareTables(BLACK) +
+         pawnSquareTables(WHITE) - pawnSquareTables(BLACK) +
+         bishopSquareTables(WHITE) - bishopSquareTables(BLACK) +
+         queenSquareTables(WHITE) - queenSquareTables(BLACK) +
+         knightSquareTables(WHITE) - knightSquareTables(BLACK);
   //  kingSquareTables(white) - kingSquareTables(black);
 }
-int Evaluation::evaluate() const {
-  int kingDiff = getPieceCount(king, white) - getPieceCount(king, black);
-  int queenDiff = getPieceCount(queen, white) - getPieceCount(queen, black);
-  int knightDiff = getPieceCount(knight, white) - getPieceCount(knight, black);
-  int rookDiff = getPieceCount(rook, white) - getPieceCount(rook, black);
-  int bishopDiff = getPieceCount(bishop, white) - getPieceCount(bishop, black);
-  int pawnDiff = getPieceCount(pawn, white) - getPieceCount(pawn, black);
-  int doubledPawnDiff = getDoubledPawnCount(white) - getDoubledPawnCount(black);
-  int isolinDiff = getIsolatedPawnCount(white) - getIsolatedPawnCount(black);
+// be carefull with value overflow;
+int16_t Evaluation::evaluate() const {
+  int16_t queenDiff = getPieceCount(QUEEN, WHITE) - getPieceCount(QUEEN, BLACK);
+  int16_t knightDiff =
+      getPieceCount(KNIGHT, WHITE) - getPieceCount(KNIGHT, BLACK);
+  int16_t rookDiff = getPieceCount(ROOK, WHITE) - getPieceCount(ROOK, BLACK);
+  int16_t bishopDiff =
+      getPieceCount(BISHOP, WHITE) - getPieceCount(BISHOP, BLACK);
+  int16_t pawnDiff = getPieceCount(PAWN, WHITE) - getPieceCount(PAWN, BLACK);
+  int16_t doubledPawnDiff =
+      getDoubledPawnCount(WHITE) - getDoubledPawnCount(BLACK);
+  int16_t isolinDiff =
+      getIsolatedPawnCount(WHITE) - getIsolatedPawnCount(BLACK);
   // size_t mobilityDiff = getMobility(white) - getMobility(black);
 
-  return (20000 * kingDiff + 900 * queenDiff + 500 * rookDiff +
-          300 * (bishopDiff + knightDiff) + 100 * pawnDiff -
-          50 * (isolinDiff + doubledPawnDiff) + pieceSquareTables()) *
-         whoToMove[position.getTurn()];
+  return (900 * queenDiff + 500 * rookDiff + 300 * (bishopDiff + knightDiff) +
+          100 * pawnDiff - 50 * (isolinDiff + doubledPawnDiff) +
+          pieceSquareTables()) *
+         WHO_TO_MOVE[position.getTurn()];
 };

@@ -2,77 +2,81 @@
 #include <array>
 #include <iostream>
 #include <vector>
-enum color { white, black, invalid };
-const std::array<color, 2> oppositeColor = {black, white};
-enum piece { pawn, bishop, rook, queen, knight, king, noPiece };
-enum square {
-  a1,
-  b1,
-  c1,
-  d1,
-  e1,
-  f1,
-  g1,
-  h1,
-  a2,
-  b2,
-  c2,
-  d2,
-  e2,
-  f2,
-  g2,
-  h2,
-  a3,
-  b3,
-  c3,
-  d3,
-  e3,
-  f3,
-  g3,
-  h3,
-  a4,
-  b4,
-  c4,
-  d4,
-  e4,
-  f4,
-  g4,
-  h4,
-  a5,
-  b5,
-  c5,
-  d5,
-  e5,
-  f5,
-  g5,
-  h5,
-  a6,
-  b6,
-  c6,
-  d6,
-  e6,
-  f6,
-  g6,
-  h6,
-  a7,
-  b7,
-  c7,
-  d7,
-  e7,
-  f7,
-  g7,
-  h7,
-  a8,
-  b8,
-  c8,
-  d8,
-  e8,
-  f8,
-  g8,
-  h8
+enum Color { WHITE, BLACK, INVALID };
+const std::array<Color, 2> OPPOSITE_COLOR = {BLACK, WHITE};
+enum Piece { PAWN, BISHOP, ROOK, QUEEN, KNIGHT, KING, NO_PIECE };
+struct TimeInfo {
+  int remainingTime;
+  int timeIncrement;
 };
-const std::array<std::string, 2> colorLetters = {"w", "b"};
-const std::array<std::string, 64> chessSq = {
+enum Square {
+  A1,
+  B1,
+  C1,
+  D1,
+  E1,
+  F1,
+  G1,
+  H1,
+  A2,
+  B2,
+  C2,
+  D2,
+  E2,
+  F2,
+  G2,
+  H2,
+  A3,
+  B3,
+  C3,
+  D3,
+  E3,
+  F3,
+  G3,
+  H3,
+  A4,
+  B4,
+  C4,
+  D4,
+  E4,
+  F4,
+  G4,
+  H4,
+  A5,
+  B5,
+  C5,
+  D5,
+  E5,
+  F5,
+  G5,
+  H5,
+  A6,
+  B6,
+  C6,
+  D6,
+  E6,
+  F6,
+  G6,
+  H6,
+  A7,
+  B7,
+  C7,
+  D7,
+  E7,
+  F7,
+  G7,
+  H7,
+  A8,
+  B8,
+  C8,
+  D8,
+  E8,
+  F8,
+  G8,
+  H8
+};
+const std::array<std::string, 2> COLOR_INITIALS = {"w", "b"};
+const std::array<std::string, 64> SQUARE_NAMES = {
     "a1", "b1", "c1", "d1", "e1", "f1", "g1", "h1", "a2", "b2", "c2",
     "d2", "e2", "f2", "g2", "h2", "a3", "b3", "c3", "d3", "e3", "f3",
     "g3", "h3", "a4", "b4", "c4", "d4", "e4", "f4", "g4", "h4", "a5",
@@ -108,12 +112,20 @@ const uint64_t A_FILE =
     0b0000000100000001000000010000000100000001000000010000000100000001ull;
 const uint64_t H_FILE =
     0b1000000010000000100000001000000010000000100000001000000010000000ull;
+// pawn pushes;
+const std::array<int, 2> COLOR_TO_PUSH_FORWARD = {8, -8};
+const std::array<int, 2> COLOR_TO_PUSH_TWO_FORWARD = {16, -16};
+const std::array<int, 2> COLOR_TO_PUSH_LEFT_FORWARD = {9, -7};
+const std::array<int, 2> COLOR_TO_PUSH_RIGHT_FORWARD = {7, -9};
+
 // bitboard Ranks;
 
 constexpr uint64_t RANK_1_MASK = (0b11111111ULL);
 constexpr uint64_t RANK_8_MASK = (0b11111111ULL) << 7 * 8;
-const std::array<int, 2> whoToMove = {1, -1};
-constexpr std::array<uint, 64> squareTofile = {
+const std::array<uint64_t, 2> INITIAL_PAWN_RANK_MASK = {
+    ((0b1ULL << 2 * 8) - 1), (0b11111111ULL << 6 * 8)};
+const std::array<int, 2> WHO_TO_MOVE = {1, -1};
+constexpr std::array<uint, 64> SQUARE_TO_FILE = {
     0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3, 4, 5,
     6, 7, 0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3,
     4, 5, 6, 7, 0, 1, 2, 3, 4, 5, 6, 7, 0, 1, 2, 3, 4, 5, 6, 7};
@@ -129,13 +141,13 @@ constexpr std::array<uint, 64> squareTofile = {
 // +-----------------------+---------------------+
 // QKqk
 enum castlingType {
-  blackKingSide,
-  blackQueenSide,
-  whiteKingSide,
-  whiteQueenSide
+  BLACK_KING_SIDE,
+  BLACK_QUEEN_SIDE,
+  WHITE_KING_SIDE,
+  WHITE_QUEEN_SIDE
 };
-const std::array<std::string, 5> charToCatslingEncoding = {"-", "k", "q", "K",
-                                                           "Q"};
+const std::array<std::string, 5> CHAR_TO_CATSLING_ENCODING = {"-", "k", "q",
+                                                              "K", "Q"};
 constexpr uint NO_WHITE_CASTLING_MASK = 0b0011u;
 constexpr uint NO_BLACK_CASTLING_MASK = 0b1100u;
 constexpr uint NO_WHITE_QUEEN_SIDE_CASTLING_MASK = 0b0111u;
@@ -158,13 +170,13 @@ const std::array<uint, 2> NO_CASTLING_COLOR_MASK_LOOK_UP = {
     NO_WHITE_CASTLING_MASK, NO_BLACK_CASTLING_MASK};
 
 constexpr uint64_t WHITE_QUEEN_SIDE_CASTLING_RAY =
-    (0b1ull << b1) | (0b1ull << c1) | (0b1ull << d1);
+    (0b1ull << B1) | (0b1ull << C1) | (0b1ull << D1);
 constexpr uint64_t WHITE_KING_SIDE_CASTLING_RAY =
-    (0b1ull << f1) | (0b1ull << g1);
+    (0b1ull << F1) | (0b1ull << G1);
 constexpr uint64_t BLACK_QUEEN_SIDE_CASTLING_RAY =
-    (0b1ull << b8) | (0b1ull << c8) | (0b1ull << d8);
+    (0b1ull << B8) | (0b1ull << C8) | (0b1ull << D8);
 constexpr uint64_t BLACK_KING_SIDE_CASTLING_RAY =
-    (0b1ull << f8) | (0b1ull << g8);
+    (0b1ull << F8) | (0b1ull << G8);
 
 // enPassant;
 constexpr uint NO_EP = 8;
@@ -198,7 +210,7 @@ constexpr uint EP_CAPTURE = 5;
 // shifted flags;
 constexpr uint32_t CAPTURE_FLAG = 0b100u << 12;
 // piece Square tables;
-const std::array<int, 64> pawnSqTblsBlack = {
+const std::array<int, 64> PAWN_SQ_TBLS_BLACK = {
     0,  0,  0,  0,   0,   0,  0,  0,  50, 50, 50,  50, 50, 50,  50, 50,
     10, 10, 20, 30,  30,  20, 10, 10, 5,  5,  10,  25, 25, 10,  5,  5,
     0,  0,  0,  20,  20,  0,  0,  0,  5,  -5, -10, 0,  0,  -10, -5, 5,
@@ -277,7 +289,7 @@ const std::array<int, 64> middleGameKingSqTblsWhite = {
     -30, -30, -40, -40, -50, -50, -40, -40, -30, -30, -40, -40, -50,
     -50, -40, -40, -30, -30, -40, -40, -50, -50, -40, -40, -30};
 const std::array<std::array<int, 64>, 2> pawnSqTbls = {pawnSqTblsWhite,
-                                                       pawnSqTblsBlack};
+                                                       PAWN_SQ_TBLS_BLACK};
 const std::array<std::array<int, 64>, 2> knightSqTbls = {knightSqTblsWhite,
                                                          knightSqTblsBlack};
 const std::array<std::array<int, 64>, 2> rookSqTbls = {rookSqTblsWhite,
@@ -312,17 +324,18 @@ const std::array<std::array<int, 7>, 7> MVV_LVA = {
     pawnMVV_LVA,   bishopMVV_LVA, rookMVV_LVA,   queenMVV_LVA,
     knightMVV_LVA, kingMVV_LVA,   noPieceMVV_LVA};
 // TODO: becarefull with types reconsider it;
-const uint32_t MVV_LVA_OFFSET = UINT32_MAX - 256;
+const uint MVV_LVA_OFFSET = INT16_MAX - 256;
 
 // Killer move constants;
 
 // TODO: becarefull with types reconsider it;
 const int MAX_KILLER_MOVES = 2;
-const int MAX_DEPTH = 64;
+const int MAX_DEPTH = 100;
 const int KILLER_VALUE = 10;
 // Zobrist
 constexpr uint COLOR_INDEX = 768;
 // tt
-enum nodeType { EXACT, ALPHA, BETA };
-constexpr int TT_MOVE_SORT_VALUE = 60;
-const std::size_t TT_SIZE = 600000;
+enum nodeType : uint8_t { UPPERBOUND, LOWERBOUND, EXACT };
+constexpr uint TT_MOVE_SORT_VALUE = 260;
+const std::size_t TT_SIZE = 1048576 * 2;
+constexpr int16_t MAX_SCORE = INT16_MAX;

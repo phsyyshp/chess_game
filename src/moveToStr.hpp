@@ -1,7 +1,7 @@
 
 #pragma once
 #include "constants.hpp"
-#include "move_generation.hpp"
+#include "moveGeneration.hpp"
 #include "position.hpp"
 #include "utilities.hpp"
 class moveToStr {

@@ -15,8 +15,8 @@ public:
 
   static uint64_t generateColorZobristKey(const Position &position);
   static void changeTurn(uint64_t &zobristKey);
-  static void removeAddPiece(uint64_t &zobristKey, int square_, piece piece_,
-                             color color_);
+  static void removeAddPiece(uint64_t &zobristKey, int square_, Piece piece_,
+                             Color color_);
   static void flipEpStatus(uint64_t &zobristKey, int file);
   static void flipCastlingStatus(uint64_t &zobristKey,
                                  castlingType casltingType_);

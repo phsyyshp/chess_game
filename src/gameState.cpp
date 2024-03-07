@@ -1,8 +1,8 @@
 #include "gameState.hpp"
 
 // getters
-color GameState::getTurn() const {
-  return static_cast<color>(gameStateNum & 0x1);
+Color GameState::getTurn() const {
+  return static_cast<Color>(gameStateNum & 0x1);
 }
 uint GameState::getCastlingRigths() const { return (gameStateNum >> 1) & 0xf; }
 uint GameState::getEnPassant() const { return (gameStateNum >> 5) & 0xf; }
@@ -19,5 +19,5 @@ void GameState::setEnPassant(uint file) {
 }
 
 void GameState::clear() {
-  gameStateNum = (white & 0x1) | ((0b1111u) << 1) | ((0x8) << 5);
+  gameStateNum = (WHITE & 0x1) | ((0b1111u) << 1) | ((0x8) << 5);
 }

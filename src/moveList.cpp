@@ -1,4 +1,4 @@
-#include "movelist.hpp"
+#include "moveList.hpp"
 
 void MoveList::push_back(Move move) {
   elements[lastSetIdx + 1] = move;
@@ -12,12 +12,12 @@ void MoveList::swap(int i, int j) {
   elements[i] = temp;
 }
 // TODO: possible optimizations here.
-MoveList MoveList::getCapturedMoves() const {
-  MoveList captureMoves;
+MoveList MoveList::getCapturedOrPromoMoves() const {
+  MoveList captureOrPromoMoves;
   for (int i = 0; i < (lastSetIdx + 1); i++) {
-    if (elements[i].isCapture()) {
-      captureMoves.push_back(elements[i]);
+    if (elements[i].isCapture() || elements[i].isPromo()) {
+      captureOrPromoMoves.push_back(elements[i]);
     }
   }
-  return captureMoves;
+  return captureOrPromoMoves;
 }

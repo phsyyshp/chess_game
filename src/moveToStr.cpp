@@ -19,12 +19,12 @@ Move moveToStr::getMove(const std::string &moveStr) const {
   if (isalpha(moveStr[moveStr.length() - 1])) {
   }
 
-  color color_ = position.getTurn();
-  color oppositeColor = position.getOppositeTurn();
+  Color color_ = position.getTurn();
+  Color oppositeColor = position.getOppositeTurn();
   std::string fromStr = std::string(1, moveStr[0]) + moveStr[1];
   std::string toStr = std::string(1, moveStr[2]) + moveStr[3];
-  int to = findIndex(chessSq, toStr);
-  int from = findIndex(chessSq, fromStr);
+  int to = findIndex(SQUARE_NAMES, toStr);
+  int from = findIndex(SQUARE_NAMES, fromStr);
   int moveType_;
   int promotionType;
   MoveGeneration mg(position);

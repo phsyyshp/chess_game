@@ -1,9 +1,9 @@
-#ifndef MOVEGENERATION_HPP
-#define MOVEGENERATION_HPP
+#pragma once
 
-#include "Move.hpp"
-#include "movelist.hpp"
+#include "move.hpp"
+#include "moveList.hpp"
 #include "position.hpp"
+#include <bit>
 class MoveGeneration {
 
 public:
@@ -49,6 +49,5 @@ public:
 
 private:
   MoveList moveList;
-  Position position;
+  const Position &position;
 };
-#endif

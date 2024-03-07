@@ -1,5 +1,6 @@
 #include "zobrist.hpp"
 // TODO: check all the methods for wrong indexing
+// enum Piece { PAWN, BISHOP, ROOK, QUEEN, KNIGHT, KING, NO_PIECE };
 uint64_t Zobrist::generatePieceZobristKey(int piece_, int color_,
                                           const Position &position) {
 
@@ -12,7 +13,7 @@ uint64_t Zobrist::generatePieceZobristKey(int piece_, int color_,
     remainingPieces ^= (0b1ull << square_);
   }
   // zobrist table is in form of;
-  // wPx64,wBx64,wRx64,wQx64,wNx64,wKx64,wPx64,bBx64,bRx64,bQx64,bNx64,bKx64,sideTomove,castlingRigths,theFileOFValidEnPassant
+  // wPx64,wBx64,wRx64,wQx64,wNx64,wKx64,bPx64,bBx64,bRx64,bQx64,bNx64,bKx64,sideTomove,castlingRigths,theFileOFValidEnPassant
   //   return zobristTable[piece_ * square_ + 6 * 64 * color_];
   return out;
 };
@@ -55,7 +56,7 @@ uint64_t Zobrist::generateEpZobristKey(const Position &position) {
   return out;
 }
 uint64_t Zobrist::generateColorZobristKey(const Position &position) {
-  if (position.getTurn() != white) {
+  if (position.getTurn() != WHITE) {
     return zobristTable[COLOR_INDEX];
   }
   return 0ull;
@@ -75,8 +76,8 @@ uint64_t Zobrist::generateTotalZobristKey(const Position &position) {
 void Zobrist::changeTurn(uint64_t &zobristKey) {
   zobristKey ^= zobristTable[COLOR_INDEX];
 }
-void Zobrist::removeAddPiece(uint64_t &zobristKey, int square_, piece piece_,
-                             color color_) {
+void Zobrist::removeAddPiece(uint64_t &zobristKey, int square_, Piece piece_,
+                             Color color_) {
   zobristKey ^= zobristTable[square_ + piece_ * 64 + color_ * 6 * 64];
 }
 

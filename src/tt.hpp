@@ -1,22 +1,27 @@
 #pragma once
-#include "Move.hpp"
 #include "constants.hpp"
+#include "move.hpp"
 struct hashEntry {
   hashEntry()
-      : zobrist(0), depth(0), score(0), flag(nodeType::EXACT), ancient(true),
-        move(a1, a1, false){};
+      : zobristKey(0), depth(0), score(0), flag(nodeType::EXACT),
+        move(A1, A1, false){};
 
-  hashEntry(uint64_t z, int depth_, int score_, nodeType flag_, bool ancient_,
+  hashEntry(uint64_t z, int depth_, int score_, nodeType flag_,
             const Move &move_)
-      : zobrist(z), depth(depth_), score(score_), flag(flag_),
-        ancient(ancient_), move(move_){};
-  uint64_t zobrist;
-  int depth;
-  int score;
+      : zobristKey(z), depth(depth_), score(score_), flag(flag_), move(move_){};
+  bool operator==(const hashEntry &other) const {
+    return zobristKey == other.zobristKey && depth == other.depth &&
+           score == other.score && flag == other.flag &&
+           move.getMoveInt() == other.move.getMoveInt();
+  }
+
+  uint64_t zobristKey;
+  int8_t depth;
+  int16_t score;
   nodeType flag;
-  bool ancient;
   Move move;
 };
+const hashEntry nullEntry;
 class TranspositionTable {
 public:
   TranspositionTable() {
@@ -24,12 +29,12 @@ public:
     clear();
   }
   void add(const hashEntry &entry);
-  void replaceByDepth(const hashEntry &entry, bool globalAncientFlag);
-  hashEntry get(const hashEntry &entry) const;
+  hashEntry get(uint64_t zobristKey) const;
   Move getMove(uint64_t zobristKey) const;
-  hashEntry getByKey(uint64_t zobristKey) const;
   void clear();
+  int fullness();
 
 private:
   std::vector<hashEntry> tt;
+  int numel = 0;
 };

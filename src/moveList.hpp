@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Move.hpp"
 #include "constants.hpp"
+#include "move.hpp"
 // TODO add iterator
 
 class MoveList {
@@ -9,11 +9,11 @@ public:
   MoveList() : lastSetIdx(-1) {}
 
   void push_back(Move move);
-  Move operator[](int n) const { return elements[n]; }
+  const Move operator[](int n) const { return elements[n]; }
   int size() const;
 
   void swap(int i, int j);
-  MoveList getCapturedMoves() const;
+  MoveList getCapturedOrPromoMoves() const;
 
   class iterator {
   public:
