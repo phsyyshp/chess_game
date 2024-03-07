@@ -24,7 +24,7 @@ public:
   };
   uint64_t perftPseudoLegal(int depth);
   uint64_t perft(int depth, const Position &position);
-  uint64_t perftZobrist(uint64_t depth);
+  uint64_t perftZobrist(uint64_t depth, const Position &position);
 
   // FIX IT: the exit node gives wrong number due to illegal moves;
   uint64_t perftBulk(int depth, const Position &position);

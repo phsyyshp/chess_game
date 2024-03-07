@@ -1,6 +1,7 @@
 #pragma once
 #include "evaluation.hpp"
 #include "tt.hpp"
+#include <algorithm>
 #include <chrono>
 class Search {
 public:
@@ -15,10 +16,11 @@ public:
   // searchers;
   Move getBestMove(const Position &position, int maxDepth, int wtime, int winc,
                    int btime, int binc, bool isInfoOn);
-  Move iterativeDeepening(const Position &position);
+  void iterativeDeepening(const Position &position);
   Move searchRoot(int depth, const Position &position);
-  int quiesce(int alpha, int beta, const Position &position);
-  int alphaBeta(int alpha, int beta, int depthLeft, const Position &position);
+  int16_t quiesce(int16_t alpha, int16_t beta, const Position &position);
+  int16_t search(int16_t alpha, int16_t beta, int depthLeft,
+                 const Position &position, bool isRoot);
   // move ordering;
   void scoreMoves(MoveList &moveList_, const Position &position);
   void pickMove(MoveList &moveList_, int startingIdx) const;
@@ -38,10 +40,10 @@ private:
   int maxDepth;
   bool isInfoOn;
   uint64_t nodes;
-  Move pv;
   bool isTimeExeeded;
-  int pvScore;
   int hits = 0;
   std::array<std::array<Move, MAX_DEPTH>, MAX_KILLER_MOVES> killerMoves;
-  // TranspositionTable tt;
+  TranspositionTable tt;
+  Move bestMove;
+  int16_t pvScore;
 };

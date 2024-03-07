@@ -22,7 +22,7 @@ public:
   int bishopSquareTables(const Color &color_) const;
   int kingSquareTables(const Color &color_) const;
   int pieceSquareTables() const;
-  int evaluate() const;
+  int16_t evaluate() const;
 
 private:
   Position position;

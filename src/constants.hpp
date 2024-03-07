@@ -324,7 +324,7 @@ const std::array<std::array<int, 7>, 7> MVV_LVA = {
     pawnMVV_LVA,   bishopMVV_LVA, rookMVV_LVA,   queenMVV_LVA,
     knightMVV_LVA, kingMVV_LVA,   noPieceMVV_LVA};
 // TODO: becarefull with types reconsider it;
-const int MVV_LVA_OFFSET = INT16_MAX - 256;
+const uint MVV_LVA_OFFSET = INT16_MAX - 256;
 
 // Killer move constants;
 
@@ -335,6 +335,7 @@ const int KILLER_VALUE = 10;
 // Zobrist
 constexpr uint COLOR_INDEX = 768;
 // tt
-enum nodeType : uint8_t { EXACT, ALPHA, BETA };
-constexpr int TT_MOVE_SORT_VALUE = 60;
+enum nodeType : uint8_t { UPPERBOUND, LOWERBOUND, EXACT };
+constexpr uint TT_MOVE_SORT_VALUE = 260;
 const std::size_t TT_SIZE = 1048576 * 2;
+constexpr int16_t MAX_SCORE = INT16_MAX;

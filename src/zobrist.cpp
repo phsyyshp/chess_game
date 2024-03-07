@@ -1,5 +1,6 @@
 #include "zobrist.hpp"
 // TODO: check all the methods for wrong indexing
+// enum Piece { PAWN, BISHOP, ROOK, QUEEN, KNIGHT, KING, NO_PIECE };
 uint64_t Zobrist::generatePieceZobristKey(int piece_, int color_,
                                           const Position &position) {
 
@@ -12,7 +13,7 @@ uint64_t Zobrist::generatePieceZobristKey(int piece_, int color_,
     remainingPieces ^= (0b1ull << square_);
   }
   // zobrist table is in form of;
-  // wPx64,wBx64,wRx64,wQx64,wNx64,wKx64,wPx64,bBx64,bRx64,bQx64,bNx64,bKx64,sideTomove,castlingRigths,theFileOFValidEnPassant
+  // wPx64,wBx64,wRx64,wQx64,wNx64,wKx64,bPx64,bBx64,bRx64,bQx64,bNx64,bKx64,sideTomove,castlingRigths,theFileOFValidEnPassant
   //   return zobristTable[piece_ * square_ + 6 * 64 * color_];
   return out;
 };
