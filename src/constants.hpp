@@ -337,5 +337,5 @@ constexpr uint COLOR_INDEX = 768;
 // tt
 enum nodeType : uint8_t { UPPERBOUND, LOWERBOUND, EXACT };
 constexpr uint TT_MOVE_SORT_VALUE = 260;
-const std::size_t TT_SIZE = 1048576;
+const std::size_t TT_SIZE = 1048576 * 2;
 constexpr int16_t MAX_SCORE = INT16_MAX;

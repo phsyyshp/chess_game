@@ -29,9 +29,7 @@ Move Search::getBestMove(const Position &position, int maxDepth_, int wtime,
   ply = 0;
   nodes = 0ull;
   Move invalidMove(A1, A1, 0);
-  pv = invalidMove;
   bestMove = invalidMove;
-  pvScore = 0;
   isTimeExeeded = false;
   start = std::chrono::high_resolution_clock::now();
   maxMoveDuration =
@@ -119,9 +117,6 @@ int16_t Search::search(int16_t alpha, int16_t beta, int depthLeft,
       ply--;
       alpha = std::max(alpha, score);
 
-      // if (isRoot) {
-      //   std::cout << move_.toStr() << " " << score << '\n';
-      // }
       if (alpha >= beta) {
         move_ = movegen.getMoves()[j];
         storeKillerMove(move_, ply);
@@ -129,14 +124,16 @@ int16_t Search::search(int16_t alpha, int16_t beta, int depthLeft,
       }
     }
   }
-  // FIX IT: moveCounter may be 0 due to time constraint in no mate/stalemate
-  // case.
-  if (!isRoot && moveCounter == 0 && position.isInCheck()) {
-    return -MAX_SCORE + ply;
-  } else if (!isRoot && moveCounter == 0) {
+  if (isTimeExeeded) {
     return 0;
   }
-
+  if (!isRoot && moveCounter == 0) {
+    if (position.isInCheck()) {
+      return -MAX_SCORE + ply;
+    } else {
+      return 0;
+    }
+  }
   if (score <= originalAlpha) {
     tt.add(hashEntry{position.getZobrist(), depthLeft, score,
                      nodeType::UPPERBOUND, move_});

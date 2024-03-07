@@ -40,9 +40,7 @@ private:
   int maxDepth;
   bool isInfoOn;
   uint64_t nodes;
-  Move pv;
   bool isTimeExeeded;
-  int16_t pvScore;
   int hits = 0;
   std::array<std::array<Move, MAX_DEPTH>, MAX_KILLER_MOVES> killerMoves;
   TranspositionTable tt;
