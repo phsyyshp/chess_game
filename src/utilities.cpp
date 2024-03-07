@@ -7,35 +7,35 @@ std::string colorizeString(std::string str, std::string fgASCII,
 
   return colorizedString;
 }
-std::string getPieceIcon(piece pieceType, color pieceColor) {
-  if (pieceColor == white) {
+std::string getPieceIcon(Piece pieceType, Color pieceColor) {
+  if (pieceColor == WHITE) {
     switch (pieceType) {
-    case pawn:
+    case PAWN:
       return "\u2659";
-    case bishop:
+    case BISHOP:
       return "\u2657";
-    case rook:
+    case ROOK:
       return "\u2656";
-    case queen:
+    case QUEEN:
       return "\u2655";
-    case knight:
+    case KNIGHT:
       return "\u2658";
-    case king:
+    case KING:
       return "\u2654";
     }
-  } else if (pieceColor == black) { // black
+  } else if (pieceColor == BLACK) { // black
     switch (pieceType) {
-    case pawn:
+    case PAWN:
       return "\u265F";
-    case bishop:
+    case BISHOP:
       return "\u265D";
-    case rook:
+    case ROOK:
       return "\u265C";
-    case queen:
+    case QUEEN:
       return "\u265B";
-    case knight:
+    case KNIGHT:
       return "\u265E";
-    case king:
+    case KING:
       return "\u265A";
     }
   }
@@ -156,7 +156,7 @@ uint castlingStrToInt(const std::string &castlingStr) {
   }
   for (const char &c : castlingStr) {
     std::string cStr(1, c);
-    out |= 0b1 << (findIndex(charToCatslingEncoding, cStr) - 1);
+    out |= 0b1 << (findIndex(CHAR_TO_CATSLING_ENCODING, cStr) - 1);
   }
   return out;
 }
@@ -169,14 +169,14 @@ GameState FENtoGameStateInt(const std::string &FENstring) {
   std::string castlingStr = fieldVec[2];
   std::string colorChar = fieldVec[1];
   int enPassantInt;
-  uint turn = findIndex(colorLetters, colorChar);
+  uint turn = findIndex(COLOR_INITIALS, colorChar);
   uint castlingRigths = castlingStrToInt(castlingStr);
   if (enPassantStr == "-") {
     enPassantInt = 8;
   } else {
-    enPassantInt = squareTofile[findIndex(chessSq, enPassantStr)];
+    enPassantInt = SQUARE_TO_FILE[findIndex(SQUARE_NAMES, enPassantStr)];
   }
-  GameState gameState(static_cast<color>(turn), castlingRigths, enPassantInt);
+  GameState gameState(static_cast<Color>(turn), castlingRigths, enPassantInt);
   return gameState;
 }
 uint64_t pseudoRandomNumberGenerator() {

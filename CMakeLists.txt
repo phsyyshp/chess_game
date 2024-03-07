@@ -7,22 +7,27 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Optimizer flags
 set(CMAKE_CXX_FLAGS_RELEASE "-O3 -flto -march=native")
+# Profiling flags
+# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pg")
+# set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pg")
 
 # Main application source files
 set(MAIN_SOURCES
-    src/move_generation.cpp
+    src/moveGeneration.cpp
     src/position.cpp
     src/loader.cpp
-    src/Move.cpp
+    src/move.cpp
     src/tables.cpp
     src/utilities.cpp
     src/bitoperations.cpp
     src/evaluation.cpp
     src/search.cpp
-    src/movelist.cpp
+    src/moveList.cpp
     src/UCI.cpp
     src/gameState.cpp
     src/moveToStr.cpp
+    src/zobrist.cpp
+    src/tt.cpp
     src/main.cpp 
 )
 
@@ -30,26 +35,28 @@ set(MAIN_SOURCES
 set(TEST_SOURCES
     tests/perftTest.cpp
     tests/unitTests.cpp
-    src/move_generation.cpp
+    src/moveGeneration.cpp
     src/position.cpp
     src/loader.cpp
-    src/Move.cpp
+    src/move.cpp
     src/tables.cpp
     src/utilities.cpp
     src/bitoperations.cpp
     src/evaluation.cpp
     src/search.cpp
-    src/movelist.cpp
+    src/moveList.cpp
     src/UCI.cpp
     src/gameState.cpp
+    src/zobrist.cpp
     src/moveToStr.cpp
+    src/tt.cpp
 )
 
 # Set the output directory for the executable
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_SOURCE_DIR}/bin)
 
 # Create the main executable
-add_executable(engine_0_1_9_alpha ${MAIN_SOURCES})
+add_executable(engine_0_3_0_alpha ${MAIN_SOURCES})
 
 # Create the unit tests executable
 add_executable(unitTests ${TEST_SOURCES})

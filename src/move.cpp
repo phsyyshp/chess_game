@@ -1,6 +1,10 @@
-#include "Move.hpp"
+#include "move.hpp"
 #include "position.hpp"
 // getters
+Move &Move::operator=(const Move &rhs) {
+  moveNum = rhs.moveNum;
+  return *this;
+}
 uint32_t Move::getMoveInt() const { return moveNum; }
 uint Move::getFrom() const { return moveNum & 0x3f; }
 uint Move::getTo() const { return (moveNum >> 6) & 0x3f; }
@@ -27,29 +31,33 @@ uint Move::getFlags() const {
 */
   return (moveNum >> 12) & 0xf;
 }
-int Move::getScore() const { return (moveNum) >> 17; }
+uint Move::getScore() const { return (moveNum) >> 17; }
 
 // bools
 bool Move::isCapture() const { return (moveNum & CAPTURE_FLAG) != 0; }
 
+bool Move::isPromo() const { return 6 <= getFlags(); }
 // setters
 // Warning! this does not override the already set score of a move. Must be used
 // only if the score of the move is not yet given.
-void Move::setScore(const int &score) { moveNum |= score << 16; }
+void Move::setScore(const uint &score) {
+  moveNum &= 0xFFFF;
+  moveNum |= (score << 16);
+}
 
 // visualizers
 void Move::print() const {
-  std::cout << chessSq[getFrom()] << chessSq[getTo()];
+  std::cout << SQUARE_NAMES[getFrom()] << SQUARE_NAMES[getTo()];
   if (getFlags() >= 6) {
 
-    std::cout << chessSq[getFrom()] << chessSq[getTo()]
+    std::cout << SQUARE_NAMES[getFrom()] << SQUARE_NAMES[getTo()]
               << PROMOTION_TYPE_TO_STR[getFlags() - 6];
   }
 }
 std::string Move::toStr() const {
   if (getFlags() >= 6) {
-    return chessSq[getFrom()] + chessSq[getTo()] +
+    return SQUARE_NAMES[getFrom()] + SQUARE_NAMES[getTo()] +
            PROMOTION_TYPE_TO_STR[getFlags() - 6];
   }
-  return chessSq[getFrom()] + chessSq[getTo()];
+  return SQUARE_NAMES[getFrom()] + SQUARE_NAMES[getTo()];
 }

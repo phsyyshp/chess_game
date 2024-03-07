@@ -1,12 +1,24 @@
 #include "tt.hpp"
+
 void TranspositionTable::add(const hashEntry &entry) {
-  tt[entry.zobrist % 100] = entry;
+  tt[entry.zobristKey & (TT_SIZE - 1)] = entry;
+  numel++;
 }
-hashEntry TranspositionTable::get(const hashEntry &entry) {
-  return tt[entry.zobrist % 100];
+Move TranspositionTable::getMove(uint64_t zobristKey) const {
+  Move move_ = tt[zobristKey & (TT_SIZE - 1)].move;
+  move_.setScore(0);
+  return move_;
 }
-void TranspositionTable::replaceByDepth(const hashEntry &entry) {
-  if (get(entry).depth < entry.depth) {
-    add(entry);
+
+hashEntry TranspositionTable::get(uint64_t zobristKey) const {
+
+  return tt[zobristKey & (TT_SIZE - 1)];
+}
+
+void TranspositionTable::clear() {
+  for (hashEntry &entry : tt) {
+    entry = nullEntry;
   }
+  numel = 0;
 }
+int TranspositionTable::fullness() { return 100 * numel / TT_SIZE; }

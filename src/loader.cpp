@@ -1,22 +1,22 @@
 #include "loader.hpp"
-std::string pieceToStr(piece pieceType) {
+std::string pieceToStr(Piece pieceType) {
   switch (pieceType) {
-  case bishop:
+  case BISHOP:
     return "bishop";
     break;
-  case queen:
+  case QUEEN:
     return "queen";
     break;
-  case king:
+  case KING:
     return "king";
     break;
-  case pawn:
+  case PAWN:
     return "pawn";
     break;
-  case knight:
+  case KNIGHT:
     return "knight";
     break;
-  case rook:
+  case ROOK:
     return "rook";
     break;
   default:
@@ -77,7 +77,7 @@ std::vector<std::vector<uint64_t>> fileToVec2(std::string fileName) {
   in.close();
   return lookUpTables;
 }
-std::vector<magicTbls> fileToLookUpsVec(piece pieceType) {
+std::vector<magicTbls> fileToLookUpsVec(Piece pieceType) {
   std::string pieceNameStr = pieceToStr(pieceType);
   std::string shiftFile = pieceNameStr + "_shifts.txt";
   std::string masksFile = pieceNameStr + "_masks.txt";

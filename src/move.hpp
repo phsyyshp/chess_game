@@ -1,5 +1,4 @@
-#ifndef MOVE_HPP
-#define MOVE_HPP
+#pragma once
 
 #include "loader.hpp"
 // This forward declaration is for avoiding, circular dependency.
@@ -10,20 +9,22 @@ public:
   Move() = default;
   Move(uint from, uint to, uint flags)
       : moveNum((from & 0x3f) | ((to & 0x3f) << 6) | ((flags & 0xf) << 12)){};
-  Move(uint from, uint to, uint flags, int score)
+  Move(uint from, uint to, uint flags, uint score)
       : moveNum((from & 0x3f) | ((to & 0x3f) << 6) | ((flags & 0xf) << 12) |
                 (score << 16)){};
+  Move &operator=(const Move &);
   // Setters;
   // TODO: maybe overflow error
-  void setScore(const int &score);
+  void setScore(const uint &score);
   // Getters;
   uint32_t getMoveInt() const;
   uint getTo() const;
   uint getFrom() const;
   uint getFlags() const;
-  int getScore() const;
+  uint getScore() const;
   // returns noPiece for non captures;
   bool isCapture() const;
+  bool isPromo() const;
 
   // Visualizers;
   void print() const;
@@ -33,5 +34,3 @@ public:
 private:
   uint32_t moveNum;
 };
-
-#endif

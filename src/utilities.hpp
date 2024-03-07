@@ -5,7 +5,7 @@
 #include <array>
 #include <random>
 std::string colorizeString(std::string, std::string, std::string);
-std::string getPieceIcon(piece pieceType, color pieceColor);
+std::string getPieceIcon(Piece pieceType, Color pieceColor);
 
 std::array<std::string, 8> FENtoRanks(std::string FENstring);
 

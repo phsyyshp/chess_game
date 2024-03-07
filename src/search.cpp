@@ -1,68 +1,163 @@
 #include "search.hpp"
 
-// constructors;
-Search::Search() {
-  // this is just zero;
-  Move invalidMove(a1, a1, false);
-  for (int i = 0; i < MAX_DEPTH; i++) {
-    for (int j = 0; j < MAX_KILLER_MOVES; j++) {
-      killerMoves[j][i] = invalidMove;
-    }
-  }
-};
+// Constructors;
 
-Search::Search(int timeLeftWhite_, int timeIncrementWhite_, int timeLeftBlack_,
-               int timeIncrementBlack_)
-    : timeLeftWhite(timeLeftWhite_), timeIncrementWhite(timeIncrementWhite_),
-      timeLeftBlack(timeLeftBlack_), timeIncrementBlack(timeIncrementBlack_) {
+Search::Search() { clearKillerMoves(); };
 
-  Move invalidMove(a1, a1, false);
+void Search::clear() {
+  clearKillerMoves();
+  hits = 0;
+  tt.clear();
+}
+void Search::clearKillerMoves() {
+
+  Move invalidMove(A1, A1, false);
   for (int i = 0; i < MAX_DEPTH; i++) {
     for (int j = 0; j < MAX_KILLER_MOVES; j++) {
       killerMoves[j][i] = invalidMove;
     }
   }
 }
-// getters;
-std::array<std::array<Move, MAX_DEPTH>, MAX_KILLER_MOVES>
-Search::getKillerMoves() const {
-  return killerMoves;
-}
+// Getters;
 int Search::getPly() const { return ply; }
 
 // Searchers;
-int Search::negaMax(int depth, const Position &position) {
 
-  int score;
-  Evaluation eval(position);
-  Position tempPosition;
-  if (depth == 0) {
-    // temp
-    return eval.evaluate();
+Move Search::getBestMove(const Position &position, int maxDepth_, int wtime,
+                         int winc, int btime, int binc, bool isInfoOn_) {
+  clearKillerMoves();
+  ply = 0;
+  nodes = 0ull;
+  Move invalidMove(A1, A1, 0);
+  bestMove = invalidMove;
+  pvScore = 0;
+  isTimeExeeded = false;
+  start = std::chrono::high_resolution_clock::now();
+  maxMoveDuration =
+      getMaxMoveDuration(position.getTurn(), wtime, winc, btime, binc);
+  isInfoOn = isInfoOn_;
+  maxDepth = maxDepth_;
+  iterativeDeepening(position);
+  return bestMove;
+}
+void Search::iterativeDeepening(const Position &position) {
+  int timeSpent = 0;
+  int depth = 1;
+  int16_t score;
+  while ((depth <= maxDepth) && (timeSpent < maxMoveDuration)) {
+    int16_t alpha = -MAX_SCORE;
+    int16_t beta = MAX_SCORE;
+
+    score = search(alpha, beta, depth, position, true);
+    pvScore = score;
+    timeSpent = countTime(start);
+    if (isInfoOn) {
+      std::cout << "info "
+                << "depth " << depth << " time " << timeSpent << " nodes "
+                << nodes << " nps " << nodes / (timeSpent + 1) * 1000
+                << " tthits " << hits << " hashfull " << tt.fullness()
+                << " score cp " << score << " pv " << bestMove.toStr() << '\n';
+    }
+    depth++;
   }
-  int max = INT16_MIN;
-  MoveGeneration movGen(position);
-  movGen.generateAllMoves();
-  for (Move move : movGen.getMoves()) {
+}
+
+int16_t Search::search(int16_t alpha, int16_t beta, int depthLeft,
+                       const Position &position, bool isRoot) {
+  int16_t originalAlpha = alpha;
+  hashEntry entry = tt.get(position.getZobrist());
+  if (entry.zobristKey == position.getZobrist() && entry.depth >= depthLeft &&
+      !isRoot) {
+    if (entry.flag == nodeType::EXACT) {
+      return entry.score;
+    }
+    if (entry.flag == nodeType::LOWERBOUND) {
+      alpha = std::max(alpha, entry.score);
+    } else if (entry.flag == nodeType::UPPERBOUND) {
+      beta = std::min(beta, entry.score);
+    }
+    if (alpha >= beta) {
+      return entry.score;
+    }
+  }
+  if (depthLeft == 0) {
+    return quiesce(alpha, beta, position);
+  }
+  Position tempPosition;
+  MoveGeneration movegen(position);
+  int16_t score = -MAX_SCORE, tempScore = -MAX_SCORE;
+  Move move_(A1, A1, 0); // invalid move;
+  movegen.generateAllMoves();
+  int moveCounter = 0;
+  scoreMoves(movegen.getMoves(), position);
+  for (int j = 0; j < movegen.getMoves().size(); j++) {
+    // if (nodes % 4096 == 0) {
+    if (isRoot) {
+      if (isTimeExeeded) {
+        // isTimeExeeded can not be true before getting first pv because at
+        // depth 0 alpha beta only runs qsearch and it can not  switch this time
+        // flag.
+        break;
+      }
+    } else if (countTime(start) > maxMoveDuration) {
+      isTimeExeeded = true; // data member;
+      break;
+    }
+    // }
+    pickMove(movegen.getMoves(), j);
     tempPosition = position;
-    if (tempPosition.makeMove(move)) {
+    if (tempPosition.makeMove(movegen.getMoves()[j])) {
+      moveCounter++;
       ply++;
-      score = -negaMax(depth - 1, tempPosition);
+      nodes++;
+      tempScore = static_cast<int16_t>(
+          -search(-beta, -alpha, depthLeft - 1, tempPosition, false));
+      if (score < tempScore) {
+        score = tempScore;
+        move_ = movegen.getMoves()[j];
+      }
       ply--;
-      if (score > max) {
-        max = score;
+      alpha = std::max(alpha, score);
+
+      if (alpha >= beta) {
+        move_ = movegen.getMoves()[j];
+        storeKillerMove(move_, ply);
+        break;
       }
     }
   }
-  return max;
+  if (isTimeExeeded) {
+    return pvScore;
+  }
+  if (!isRoot && moveCounter == 0) {
+    if (position.isInCheck()) {
+      return -MAX_SCORE + ply;
+    } else {
+      return 0;
+    }
+  }
+  if (score <= originalAlpha) {
+    tt.add(hashEntry{position.getZobrist(), depthLeft, score,
+                     nodeType::UPPERBOUND, move_});
+  } else if (score >= beta) {
+    tt.add(hashEntry{position.getZobrist(), depthLeft, score,
+                     nodeType::LOWERBOUND, move_});
+  } else {
+    tt.add(hashEntry{position.getZobrist(), depthLeft, score, nodeType::EXACT,
+                     move_});
+  }
+  if (isRoot) {
+    bestMove = move_;
+  }
+  return score;
 }
-int Search::quiesce(int alpha, int beta, const Position &position) {
+
+int16_t Search::quiesce(int16_t alpha, int16_t beta, const Position &position) {
   Evaluation eval(position);
   Position tempPosition;
   MoveGeneration movegen(position);
-  int score;
-  int moveCounter = 0;
-  int standingPat = eval.evaluate();
+  int16_t score = -MAX_SCORE;
+  int16_t standingPat = eval.evaluate();
   if (standingPat >= beta) {
     return beta;
   }
@@ -71,176 +166,23 @@ int Search::quiesce(int alpha, int beta, const Position &position) {
   }
 
   movegen.generateAllMoves();
-  MoveList capturedMoves = movegen.getMoves().getCapturedMoves();
-  scoreMoves(capturedMoves, position);
-  for (int j = 0; j < capturedMoves.size(); j++) {
-    pickMove(capturedMoves, j);
-    tempPosition = position;
-    if (tempPosition.makeMove(capturedMoves[j])) {
-      moveCounter++;
-      ply++;
-      score = -quiesce(-beta, -alpha, tempPosition);
-      ply--;
-      if (score >= beta) {
-        return beta;
-      }
-      if (score > alpha) {
-        alpha = score;
-      }
-    }
-  }
-
-  return alpha;
-}
-Move Search::search(int depth, const Position &position) {
-  int score;
-  Move bestMove;
-  Evaluation eval(position);
-  Position tempPosition;
-  int max = INT16_MIN;
-  MoveGeneration movGen(position);
-  movGen.generateAllMoves();
-  for (Move move : movGen.getMoves()) {
-    tempPosition = position;
-    if (tempPosition.makeMove(move)) {
-      ply++;
-      score = -negaMax(depth - 1, tempPosition);
-      ply--;
-      if (score > max) {
-        max = score;
-        bestMove = move;
-        // std::cout << score << std::endl;
-      }
-    }
-  }
-  return bestMove;
-}
-Move Search::searchIt(int maxDepth, bool isInfoOn, const Position &position) {
-  int depth = 1;
-  int remainingTime = 0;
-  int timeIncrement = 0;
-  int timeSpent = 0;
-  auto start = std::chrono::high_resolution_clock::now();
-
-  Move bestMove(a1, a1, 0); // invalid move;
-  color turn = position.getTurn();
-  switch (turn) {
-  case white:
-    remainingTime = timeLeftWhite;
-    timeIncrement = timeIncrementWhite;
-    break;
-
-  case black:
-    remainingTime = timeLeftBlack;
-    timeIncrement = timeIncrementBlack;
-    break;
-  default:
-    break;
-  }
-  int maxMoveDuration = remainingTime / 20 + timeIncrement / 2;
-  bool didSearchOccured = false;
-  while ((depth <= maxDepth) && (timeSpent <= maxMoveDuration)) {
-    bestMove = searchAB(depth, start, remainingTime, timeIncrement, position);
-    pv = bestMove;
-    if (isInfoOn) {
-      std::cout << "info "
-                << "depth " << depth << '\n';
-    }
-    depth++;
-    timeSpent = countTime(start);
-    didSearchOccured = true;
-  }
-  if (didSearchOccured) {
-    return bestMove;
-  } else {
-    // std::cout << "la\n";
-    MoveGeneration movgen(position);
-    movgen.generateAllMoves();
-    std::cout << "info depth 1\n";
-    Position tempPosition;
-    tempPosition = position;
-    for (const Move &move : movgen.getMoves()) {
-      if (tempPosition.makeMove(move)) {
-        bestMove = move;
-        // std::cout << "legal\n";
-        return bestMove;
-      }
-      // std::cout << "nolegal\n";
-    }
-    return bestMove;
-  }
-}
-
-// TODO: Rigorous testing;
-Move Search::searchAB(int depth,
-                      std::chrono::high_resolution_clock::time_point start,
-                      int remainingTime, int timeIncrement,
-                      const Position &position) {
-  int timeSpent = 0;
-  int score = 0;
-  bool moveFound = false;
-  int maxMoveDuration = remainingTime / 20 + timeIncrement / 2;
-  Move bestMove;
-  Evaluation eval(position);
-  Position tempPosition;
-  int alpha = INT16_MIN;
-  int beta = INT16_MAX;
-  MoveGeneration movGen(position);
-  movGen.generateAllMoves();
-  for (Move move : movGen.getMoves()) {
-    tempPosition = position;
-    if (tempPosition.makeMove(move)) {
-      if (!moveFound) {
-        bestMove = move;
-        moveFound = true;
-      }
-      ply++;
-      score = -alphaBeta(-beta, -alpha, depth - 1, tempPosition);
-      ply--;
-      if (score >= beta) {
-        return move;
-      }
-      if (score > alpha) {
-        alpha = score;
-        bestMove = move;
-      }
-    }
-    timeSpent = countTime(start);
-    if (timeSpent >= maxMoveDuration) {
-      if (depth > 1) {
-
-        bestMove = pv;
-      }
+  MoveList capturedOrPromoMoves = movegen.getMoves().getCapturedOrPromoMoves();
+  scoreMoves(capturedOrPromoMoves, position);
+  for (int j = 0; j < capturedOrPromoMoves.size(); j++) {
+    // if (nodes % 4096 == 0) {
+    if (countTime(start) > maxMoveDuration) {
+      // isTimeExeeded = true; // data member;
       break;
     }
-  }
-  return bestMove;
-}
-
-/*TODO:
--hash tables;
-*/
-int Search::alphaBeta(int alpha, int beta, int depthLeft,
-                      const Position &position) {
-  Position tempPosition;
-  MoveGeneration movgen(position);
-  if (depthLeft == 0) {
-    return quiesce(alpha, beta, position);
-  }
-  movgen.generateAllMoves();
-  int score = 0;
-  scoreMoves(movgen.getMoves(), position);
-  int moveCounter = 0;
-  for (int j = 0; j < movgen.getMoves().size(); j++) {
-    pickMove(movgen.getMoves(), j);
+    // }
+    pickMove(capturedOrPromoMoves, j);
     tempPosition = position;
-    if (tempPosition.makeMove(movgen.getMoves()[j])) {
-      moveCounter++;
+    if (tempPosition.makeMove(capturedOrPromoMoves[j])) {
       ply++;
-      score = -alphaBeta(-beta, -alpha, depthLeft - 1, tempPosition);
+      score = -quiesce(-beta, -alpha, tempPosition);
+      nodes++;
       ply--;
       if (score >= beta) {
-        storeKillerMove(movgen.getMoves()[j], ply);
         return beta;
       }
       if (score > alpha) {
@@ -248,9 +190,7 @@ int Search::alphaBeta(int alpha, int beta, int depthLeft,
       }
     }
   }
-  if (moveCounter == 0 && position.isInCheck()) {
-    return -10000 + ply;
-  }
+
   return alpha;
 }
 
@@ -259,21 +199,29 @@ int Search::alphaBeta(int alpha, int beta, int depthLeft,
 // BE CAREFUL pass by reference without const;
 // FIX ME: maybe a bug here due to value overflow;
 
-void Search::scoreMoves(MoveList &moveList_, const Position &position) const {
+void Search::scoreMoves(MoveList &moveList_, const Position &position) {
   for (Move &move : moveList_) {
-    int moveScore = 0;
-    if (move.isCapture()) {
+    uint moveScore = 0;
+    int i = 0;
+    Move ttMove = tt.getMove(position.getZobrist());
+    if (move.getMoveInt() == ttMove.getMoveInt()) {
+      if (tt.get(position.getZobrist()).zobristKey == position.getZobrist()) {
+        hits++;
+        move.setScore(MVV_LVA_OFFSET + TT_MOVE_SORT_VALUE);
+        // std::cout << move.toStr() << "\n";
+      }
+    } else if (move.isCapture()) {
       // TODO: becarefull with overflow here
-      moveScore = MVV_LVA[position.getPiece(move.getTo())]
-                         [position.getPiece(move.getFrom())];
+      moveScore = MVV_LVA_OFFSET + MVV_LVA[position.getPiece(move.getTo())]
+                                          [position.getPiece(move.getFrom())];
       move.setScore(moveScore);
     } else {
-      int i = 0;
+      i = 0;
       while (i < MAX_KILLER_MOVES && moveScore == 0) {
         if (move.getMoveInt() == killerMoves[i][ply].getMoveInt()) {
           // TODO: Be Careful about setting already set score;
           // FIX ME: maybe a bug here due to value overflow;
-          moveScore = -((i + 1) * KILLER_VALUE);
+          moveScore = MVV_LVA_OFFSET - ((i + 1) * KILLER_VALUE);
           move.setScore(moveScore);
         }
         i++;
@@ -291,8 +239,6 @@ void Search::pickMove(MoveList &scoredMoveList_, int startingIdx) const {
     }
   }
 }
-void Search::orderMoves(MoveList &movelist_) {}
-// TODO: test
 void Search::storeKillerMove(const Move &move_, int ply) {
 
   if (!move_.isCapture()) {
@@ -302,9 +248,25 @@ void Search::storeKillerMove(const Move &move_, int ply) {
     }
   }
 }
+
 int Search::countTime(std::chrono::high_resolution_clock::time_point start) {
   auto end = std::chrono::high_resolution_clock::now();
   auto elapsed =
       std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
   return elapsed.count();
+}
+int Search::getMaxMoveDuration(Color turn, int wtime, int winc, int btime,
+                               int binc) const {
+  switch (turn) {
+  case WHITE:
+    return wtime / 20 + winc / 2;
+    break;
+  case BLACK:
+    return btime / 20 + binc / 2;
+    break;
+  default:
+    std::cerr << "invalid color\n";
+    return 0;
+    break;
+  }
 }
