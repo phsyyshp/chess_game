@@ -41,6 +41,8 @@ public:
   // TODO: refactor this
   bool isInCheck(Square square_) const;
   bool isEmpty(int square_) const;
+  bool isThreeFoldRep() const;
+
   // movers:
   // assuming the move is pseudolegal,
   // returns true if the is legal.
@@ -74,4 +76,5 @@ private:
   uint64_t occupancy;
   Color turn;
   int ply = 0;
+  std::array<uint64_t, 256> positionHistory;
 };

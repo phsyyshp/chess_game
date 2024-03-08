@@ -55,8 +55,8 @@ void Search::iterativeDeepening(const Position &position) {
       std::cout << "info "
                 << "depth " << depth << " time " << timeSpent << " nodes "
                 << nodes << " nps " << nodes / (timeSpent + 1) * 1000
-                << " tthits " << hits << " hashfull " << tt.fullness()
-                << " score cp " << score << " pv " << bestMove.toStr() << '\n';
+                << " hashfull " << tt.fullness() << " score cp " << score
+                << " pv " << bestMove.toStr() << '\n';
     }
     depth++;
   }
@@ -64,6 +64,10 @@ void Search::iterativeDeepening(const Position &position) {
 
 int16_t Search::search(int16_t alpha, int16_t beta, int depthLeft,
                        const Position &position, bool isRoot) {
+  if (!isRoot && position.isThreeFoldRep()) {
+    // std::cout << "la\n";
+    return 1 - (nodes & 2);
+  }
   int16_t originalAlpha = alpha;
   hashEntry entry = tt.get(position.getZobrist());
   if (entry.zobristKey == position.getZobrist() && entry.depth >= depthLeft &&
@@ -95,8 +99,8 @@ int16_t Search::search(int16_t alpha, int16_t beta, int depthLeft,
     if (isRoot) {
       if (isTimeExeeded) {
         // isTimeExeeded can not be true before getting first pv because at
-        // depth 0 alpha beta only runs qsearch and it can not  switch this time
-        // flag.
+        // depth 0 alpha beta only runs qsearch and it can not  switch this
+        // time flag.
         break;
       }
     } else if (countTime(start) > maxMoveDuration) {
@@ -126,9 +130,12 @@ int16_t Search::search(int16_t alpha, int16_t beta, int depthLeft,
       }
     }
   }
+  // If time is up we need to quit the search before filling the tt table with
+  // incomplete search results.
   if (isTimeExeeded) {
     return pvScore;
   }
+
   if (!isRoot && moveCounter == 0) {
     if (position.isInCheck()) {
       return -MAX_SCORE + ply;

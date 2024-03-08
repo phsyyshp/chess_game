@@ -35,6 +35,7 @@ public:
 private:
   // std::array<std::array<Move, MAX_DEPTH>, MAX_KILLER_MOVES> killerMoves;
   int ply = 0;
+  int gamePly = 0;
   std::chrono::high_resolution_clock::time_point start;
   int maxMoveDuration;
   int maxDepth;

@@ -121,6 +121,7 @@ void Position::setBoardToInitialConfiguration() {
   occupancy = occupanciesOfColor[WHITE] | occupanciesOfColor[BLACK];
 
   zobristHash = Zobrist::generateTotalZobristKey(*this);
+  positionHistory[0] = zobristHash;
 }
 void Position::clear() {
   mailbox.fill(NO_PIECE);
@@ -133,6 +134,7 @@ void Position::clear() {
   occupancy = 0ull;
   occupanciesOfColor = {0ull, 0ull};
   capturedInLastMove = NO_PIECE;
+  positionHistory.fill(0ull);
 }
 void Position::changeTurn() {
   turn = OPPOSITE_COLOR[turn];
@@ -153,6 +155,7 @@ Position &Position::operator=(const Position &rhs) {
   occupanciesOfColor = rhs.occupanciesOfColor;
   occupancy = rhs.occupancy;
   turn = rhs.turn;
+  positionHistory = rhs.positionHistory;
   return *this;
 }
 // Getters;
@@ -293,6 +296,7 @@ bool Position::makeMove(const Move &move) {
   // gameState
   changeTurn();
   ply++;
+  positionHistory[ply] = zobristHash;
   return isLegal;
 }
 
@@ -746,4 +750,20 @@ void Position::printBoard() const {
     std::cout << "\n";
   }
   std::cout << std::endl;
+}
+
+bool Position::isThreeFoldRep() const {
+  int repetition = 0;
+  for (int i = ply - 2; i >= ply - 8; i -= 2) {
+    if (positionHistory[i] == zobristHash) {
+      repetition++;
+    }
+    if (repetition == 2) {
+      return true;
+    }
+  }
+  return false;
+  // return std::count(positionHistory.begin(), positionHistory.begin() + ply +
+  // 1,
+  //                   zobristHash) >= 3;
 }
