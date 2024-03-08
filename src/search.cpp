@@ -178,7 +178,6 @@ int16_t Search::quiesce(int16_t alpha, int16_t beta, const Position &position) {
   for (int j = 0; j < capturedOrPromoMoves.size(); j++) {
     // if (nodes % 4096 == 0) {
     if (countTime(start) > maxMoveDuration) {
-      // isTimeExeeded = true; // data member;
       break;
     }
     // }
@@ -215,7 +214,6 @@ void Search::scoreMoves(MoveList &moveList_, const Position &position) {
       if (tt.get(position.getZobrist()).zobristKey == position.getZobrist()) {
         hits++;
         move.setScore(MVV_LVA_OFFSET + TT_MOVE_SORT_VALUE);
-        // std::cout << move.toStr() << "\n";
       }
     } else if (move.isCapture()) {
       // TODO: becarefull with overflow here

@@ -228,7 +228,6 @@ uint64_t Position::getAttacksToSquare(Square square_) const {
          (kingLookUpTable[victimSq] & oppositeKing);
 }
 // bools
-// FIX IT: kings can become adjacent;
 bool Position::isInCheck() const { return (getAttacksToKing()) != 0; }
 bool Position::isInCheck(Square square_) const {
   return (getAttacksToSquare(square_) != 0);
