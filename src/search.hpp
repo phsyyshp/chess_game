@@ -6,7 +6,9 @@
 class Search {
 public:
   // constructors;
-  Search();
+  Search(std::array<uint64_t, 100> &pH);
+  // setter;
+  void setPositionHistory(std::array<uint64_t, 100> &positionHistory_);
   // getters;
   std::array<std::array<Move, MAX_DEPTH>, MAX_KILLER_MOVES>
   getKillerMoves() const;
@@ -46,4 +48,5 @@ private:
   TranspositionTable tt;
   Move bestMove;
   int16_t pvScore;
+  std::array<uint64_t, 100> &positionHistory;
 };

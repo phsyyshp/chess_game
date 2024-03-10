@@ -251,6 +251,23 @@ TEST(Utillities, FENtoFields) {
   ASSERT_EQ("0", fieldVec[4]);
   ASSERT_EQ("c6", fieldVec[3]);
 }
+TEST(Position, drawTEST) {
+
+  UCI uci;
+  uci.manual("ucinewgame");
+  uci.manual(
+      "position startpos moves d2d4 g8f6 c2c4 e7e6 g1f3 b7b6 b1c3 c8b7 c1g5 "
+      "b7f3 e2f3 f8b4 d1c1 b8c6 a2a3 b4c3 c1c3 d7d6 d4d5 c6e5 f3f4 e5d7 d5e6 "
+      "f7e6 f1d3 e8f7 f4f5 e6e5 a1d1 e5e4 g5f6 d7f6 d3c2 d8d7 f2f3 d7f5 h1f1 "
+      "a8e8 f3e4 f5g4 c3d2 g4h4 g2g3 h4g4 c2d3 g4e6 d2c3 f7g6 f1f4 d6d5 e4e5 "
+      "g6h6 f4h4 f6h5 c3d2 g7g5 d3e2 e6e5 h4h5 h6g6 d2d3 e5e4 h2h4 h7h6 g3g4 "
+      "e4d3 d1d3 d5c4 d3c3 b6b5 h4g5 h6g5 h5h8 e8h8 e2f3 h8h2 b2b3 h2a2 b3c4 "
+      "a2a1 e1f2 a1a2 f2g3 b5c4 c3c4 a2a3 c4c6 g6f7 c6c7 f7f6 c7b7 a3a2 f3e4 "
+      "f6e5 e4f3 e5f6 f3e4 a7a5 e4d5 a2d2 d5b3 d2b2 b7b5 f6e7 b3a4 b2b5 a4b5 "
+      "e7d6 g3f3 d6c5 b5d7 c5d4 d7a4 d4d3 a4b5 d3d4 b5a4 d4d3 a4b5");
+  Position pos = uci.getPosition();
+  std::cout << pos.isThreeFoldRep(uci.positionHistory) << "\n";
+}
 TEST(Perft, perft_castling) {
   Position position("rn1qk2r/p4p1p/bp1p1n2/2P1p1p1/1b1p4/1PN1PNP1/PB1Q1PBP/"
                     "R3K2R w KQkq - 0 12");

@@ -28,6 +28,8 @@ public:
   void logMessage(std::string message);
   Position getPosition() const;
 
+  std::array<uint64_t, 100> positionHistory;
+
 private:
   // commands:
   std::ofstream debugLog;
@@ -46,6 +48,5 @@ private:
            std::bind(&UCI::ucinewgame, this, std::placeholders::_1)},
           {"position", std::bind(&UCI::position, this, std::placeholders::_1)}};
   Position _position;
-  // std::string path;
-  Search search_;
+  Search search_{positionHistory};
 };
