@@ -14,6 +14,7 @@ public:
   getKillerMoves() const;
   int getPly() const;
   void clear();
+  void initSearch();
   void clearKillerMoves();
   // searchers;
   Move getBestMove(const Position &position, int maxDepth, int wtime, int winc,
@@ -49,4 +50,6 @@ private:
   Move bestMove;
   int16_t pvScore;
   std::array<uint64_t, 100> &positionHistory;
+  std::array<std::array<int, 64>, 64> LMRtable;
+  std::array<std::array<int, 11>, 2> LateMovePruningCounts;
 };

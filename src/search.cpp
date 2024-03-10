@@ -21,6 +21,18 @@ void Search::clearKillerMoves() {
     }
   }
 }
+void Search::initSearch() {
+
+  for (int depth = 1; depth < 64; depth++)
+    for (int played = 1; played < 64; played++)
+      LMRtable[depth][played] = 0.7844 + log(depth) * log(played) / 2.4696;
+
+  for (int depth = 1; depth <= 10; depth++) {
+    LateMovePruningCounts[0][depth] = 2.0767 + 0.3743 * depth * depth;
+    LateMovePruningCounts[1][depth] = 3.8733 + 0.7124 * depth * depth;
+  }
+}
+
 // Getters;
 int Search::getPly() const { return ply; }
 
@@ -95,6 +107,8 @@ int16_t Search::search(int16_t alpha, int16_t beta, int depthLeft,
 
   MoveGeneration movegen(position);
   int16_t score = -MAX_SCORE, tempScore = -MAX_SCORE;
+  bool isQuiet;
+  bool skipQuiets = false;
   Move move_(A1, A1, 0); // invalid move;
   movegen.generateAllMoves();
   int moveCounter = 0;
@@ -117,7 +131,15 @@ int16_t Search::search(int16_t alpha, int16_t beta, int depthLeft,
     tempPosition = position;
     if (tempPosition.makeMove(movegen.getMoves()[j], positionHistory)) {
       moveCounter++;
-      ply++;
+      if (skipQuiets) {
+        if (movegen.getMoves()[j].isQuiet()) {
+          continue;
+        }
+      }
+      // Prunings
+      // Late Move Pruning
+      if (bestScore >)
+        ply++;
       nodes++;
       tempScore = static_cast<int16_t>(
           -search(-beta, -alpha, depthLeft - 1, tempPosition, false));

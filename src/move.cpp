@@ -34,6 +34,7 @@ uint Move::getFlags() const {
 uint Move::getScore() const { return (moveNum) >> 17; }
 
 // bools
+bool Move::isQuiet() const { return getFlags() <= 1; }
 bool Move::isCapture() const { return (moveNum & CAPTURE_FLAG) != 0; }
 
 bool Move::isPromo() const { return 6 <= getFlags(); }

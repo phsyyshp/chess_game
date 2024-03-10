@@ -26,6 +26,7 @@ public:
   bool isCapture() const;
   bool isPromo() const;
 
+  bool isQuiet() const;
   // Visualizers;
   void print() const;
 
