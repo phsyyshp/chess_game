@@ -80,7 +80,6 @@ void Search::iterativeDeepening(const Position &position) {
 int16_t Search::search(int16_t alpha, int16_t beta, int depthLeft,
                        const Position &position, bool isRoot) {
   if (!isRoot && position.isThreeFoldRep(positionHistory)) {
-    // std::cout << "la\n";
     return 1 - (nodes & 2);
   }
   int16_t originalAlpha = alpha;
@@ -106,6 +105,8 @@ int16_t Search::search(int16_t alpha, int16_t beta, int depthLeft,
   uint64_t tempZobristHash = positionHistory[(position.getPly() + 1) % 100];
 
   MoveGeneration movegen(position);
+  int16_t bestScore = -MAX_SCORE, value = -MAX_SCORE;
+  Move bestMoveOfNode(A1, A1, 0); // invalid move;
   int16_t score = -MAX_SCORE, tempScore = -MAX_SCORE;
   bool isQuiet;
   bool skipQuiets = false;
@@ -141,21 +142,27 @@ int16_t Search::search(int16_t alpha, int16_t beta, int depthLeft,
       if (bestScore >)
         ply++;
       nodes++;
-      tempScore = static_cast<int16_t>(
+      value = static_cast<int16_t>(
           -search(-beta, -alpha, depthLeft - 1, tempPosition, false));
-      if (score < tempScore) {
-        score = tempScore;
-        move_ = movegen.getMoves()[j];
-      }
       ply--;
-      alpha = std::max(alpha, score);
+      if (bestScore < value) {
 
-      if (alpha >= beta) {
-        move_ = movegen.getMoves()[j];
-        storeKillerMove(move_, ply);
-        break;
+        bestScore = value;
+        bestMoveOfNode = movegen.getMoves()[j];
+
+        if (value > alpha) {
+          alpha = value;
+
+          if (alpha >= beta) {
+            break;
+          }
+        }
       }
     }
+  }
+  if (bestScore >= beta && !bestMoveOfNode.isCapture() &&
+      !bestMoveOfNode.isPromo()) {
+    storeKillerMove(bestMoveOfNode, ply);
   }
   positionHistory[(position.getPly() + 1) % 100] = tempZobristHash;
   // If time is up we need to quit the search before filling the tt table
@@ -171,35 +178,54 @@ int16_t Search::search(int16_t alpha, int16_t beta, int depthLeft,
       return 0;
     }
   }
-  if (score <= originalAlpha) {
-    tt.add(hashEntry{position.getZobrist(), depthLeft, score,
-                     nodeType::UPPERBOUND, move_});
-  } else if (score >= beta) {
-    tt.add(hashEntry{position.getZobrist(), depthLeft, score,
-                     nodeType::LOWERBOUND, move_});
+  if (bestScore <= originalAlpha) {
+    tt.add(hashEntry{position.getZobrist(), depthLeft, bestScore,
+                     nodeType::UPPERBOUND, bestMoveOfNode});
+  } else if (bestScore >= beta) {
+    tt.add(hashEntry{position.getZobrist(), depthLeft, bestScore,
+                     nodeType::LOWERBOUND, bestMoveOfNode});
   } else {
-    tt.add(hashEntry{position.getZobrist(), depthLeft, score, nodeType::EXACT,
-                     move_});
+    tt.add(hashEntry{position.getZobrist(), depthLeft, bestScore,
+                     nodeType::EXACT, bestMoveOfNode});
   }
   if (isRoot) {
-    bestMove = move_;
+    bestMove = bestMoveOfNode;
   }
-  return score;
+  return bestScore;
 }
 
 int16_t Search::quiesce(int16_t alpha, int16_t beta, const Position &position) {
+  hashEntry entry = tt.get(position.getZobrist());
+
+  if (entry.zobristKey == position.getZobrist()) {
+    if (entry.flag == nodeType::EXACT) {
+      return entry.score;
+    }
+    if (entry.flag == nodeType::LOWERBOUND) {
+      alpha = std::max(alpha, entry.score);
+    } else if (entry.flag == nodeType::UPPERBOUND) {
+      beta = std::min(beta, entry.score);
+    }
+    if (alpha >= beta) {
+      return entry.score;
+    }
+  }
+  uint16_t originalAlpha = alpha;
+  bool isComplete = true;
+  int moveCounter = 0;
   Evaluation eval(position);
   Position tempPosition;
   uint64_t tempZobristHash = positionHistory[(position.getPly() + 1) % 100];
-
+  Move bestMoveOfNode(A1, A1, 0);
   MoveGeneration movegen(position);
-  int16_t score = -MAX_SCORE;
-  int16_t standingPat = eval.evaluate();
-  if (standingPat >= beta) {
-    return beta;
+  // int16_t bestScore = -MAX_SCORE;
+  int16_t value;
+  int16_t bestScore = eval.evaluate();
+  if (alpha < bestScore) {
+    alpha = bestScore;
   }
-  if (alpha < standingPat) {
-    alpha = standingPat;
+  if (alpha >= beta) {
+    return bestScore;
   }
 
   movegen.generateAllMoves();
@@ -207,28 +233,48 @@ int16_t Search::quiesce(int16_t alpha, int16_t beta, const Position &position) {
   scoreMoves(capturedOrPromoMoves, position);
   for (int j = 0; j < capturedOrPromoMoves.size(); j++) {
     // if (nodes % 4096 == 0) {
+    // FIX IT:  think about this time managment better;
     if (countTime(start) > maxMoveDuration) {
+      isComplete = false;
       break;
     }
     // }
     pickMove(capturedOrPromoMoves, j);
     tempPosition = position;
     if (tempPosition.makeMove(capturedOrPromoMoves[j], positionHistory)) {
+      moveCounter++;
       ply++;
-      score = -quiesce(-beta, -alpha, tempPosition);
+      value = -quiesce(-beta, -alpha, tempPosition);
       nodes++;
       ply--;
-      if (score >= beta) {
-        return beta;
-      }
-      if (score > alpha) {
-        alpha = score;
+      if (value > bestScore) {
+        bestScore = value;
+        bestMoveOfNode = capturedOrPromoMoves[j];
+
+        if (value > alpha) {
+          alpha = value;
+        }
+
+        if (alpha >= beta) {
+          break;
+        }
       }
     }
   }
   positionHistory[(position.getPly() + 1) % 100] = tempZobristHash;
-
-  return alpha;
+  if (isComplete && (moveCounter != 0)) {
+    if (bestScore <= originalAlpha) {
+      tt.add(hashEntry{position.getZobrist(), 0, bestScore,
+                       nodeType::UPPERBOUND, bestMoveOfNode});
+    } else if (bestScore >= beta) {
+      tt.add(hashEntry{position.getZobrist(), 0, bestScore,
+                       nodeType::LOWERBOUND, bestMoveOfNode});
+    } else {
+      tt.add(hashEntry{position.getZobrist(), 0, bestScore, nodeType::EXACT,
+                       bestMoveOfNode});
+    }
+  }
+  return bestScore;
 }
 
 // Move ordering;
