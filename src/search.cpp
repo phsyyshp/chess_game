@@ -2,13 +2,16 @@
 
 // Constructors;
 
-Search::Search() { clearKillerMoves(); };
+Search::Search(std::array<uint64_t, 100> &pH) : positionHistory(pH) {
+  clearKillerMoves();
+};
 
 void Search::clear() {
   clearKillerMoves();
   hits = 0;
   tt.clear();
 }
+
 void Search::clearKillerMoves() {
 
   Move invalidMove(A1, A1, false);
@@ -64,7 +67,7 @@ void Search::iterativeDeepening(const Position &position) {
 
 int16_t Search::search(int16_t alpha, int16_t beta, int depthLeft,
                        const Position &position, bool isRoot) {
-  if (!isRoot && position.isThreeFoldRep()) {
+  if (!isRoot && position.isThreeFoldRep(positionHistory)) {
     // std::cout << "la\n";
     return 1 - (nodes & 2);
   }
@@ -88,6 +91,8 @@ int16_t Search::search(int16_t alpha, int16_t beta, int depthLeft,
     return quiesce(alpha, beta, position);
   }
   Position tempPosition;
+  uint64_t tempZobristHash = positionHistory[(position.getPly() + 1) % 100];
+
   MoveGeneration movegen(position);
   int16_t score = -MAX_SCORE, tempScore = -MAX_SCORE;
   Move move_(A1, A1, 0); // invalid move;
@@ -110,7 +115,7 @@ int16_t Search::search(int16_t alpha, int16_t beta, int depthLeft,
     // }
     pickMove(movegen.getMoves(), j);
     tempPosition = position;
-    if (tempPosition.makeMove(movegen.getMoves()[j])) {
+    if (tempPosition.makeMove(movegen.getMoves()[j], positionHistory)) {
       moveCounter++;
       ply++;
       nodes++;
@@ -130,8 +135,9 @@ int16_t Search::search(int16_t alpha, int16_t beta, int depthLeft,
       }
     }
   }
-  // If time is up we need to quit the search before filling the tt table with
-  // incomplete search results.
+  positionHistory[(position.getPly() + 1) % 100] = tempZobristHash;
+  // If time is up we need to quit the search before filling the tt table
+  // with incomplete search results.
   if (isTimeExeeded) {
     return pvScore;
   }
@@ -162,6 +168,8 @@ int16_t Search::search(int16_t alpha, int16_t beta, int depthLeft,
 int16_t Search::quiesce(int16_t alpha, int16_t beta, const Position &position) {
   Evaluation eval(position);
   Position tempPosition;
+  uint64_t tempZobristHash = positionHistory[(position.getPly() + 1) % 100];
+
   MoveGeneration movegen(position);
   int16_t score = -MAX_SCORE;
   int16_t standingPat = eval.evaluate();
@@ -183,7 +191,7 @@ int16_t Search::quiesce(int16_t alpha, int16_t beta, const Position &position) {
     // }
     pickMove(capturedOrPromoMoves, j);
     tempPosition = position;
-    if (tempPosition.makeMove(capturedOrPromoMoves[j])) {
+    if (tempPosition.makeMove(capturedOrPromoMoves[j], positionHistory)) {
       ply++;
       score = -quiesce(-beta, -alpha, tempPosition);
       nodes++;
@@ -196,6 +204,7 @@ int16_t Search::quiesce(int16_t alpha, int16_t beta, const Position &position) {
       }
     }
   }
+  positionHistory[(position.getPly() + 1) % 100] = tempZobristHash;
 
   return alpha;
 }

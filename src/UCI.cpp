@@ -53,6 +53,7 @@ void UCI::go(const std::vector<std::string> &tokens) {
 void UCI::position(const std::vector<std::string> &tokens) {
   if (tokens[0] == "startpos") {
     _position.setBoardToInitialConfiguration();
+    positionHistory[0] = _position.getZobrist();
   } else {
     // TODO: FEN
   }
@@ -60,11 +61,12 @@ void UCI::position(const std::vector<std::string> &tokens) {
   for (auto it = moves + 1; it != tokens.end() && (moves != tokens.end());
        it++) {
     moveToStr ms(_position);
-    _position.makeMove(ms.getMove(*it));
+    _position.makeMove(ms.getMove(*it), positionHistory);
   }
 }
 void UCI::ucinewgame(const std::vector<std::string> &tokens) {
   _position.clear();
+  positionHistory.fill(0ull);
   search_.clear();
 }
 void UCI::loop() {

@@ -121,7 +121,6 @@ void Position::setBoardToInitialConfiguration() {
   occupancy = occupanciesOfColor[WHITE] | occupanciesOfColor[BLACK];
 
   zobristHash = Zobrist::generateTotalZobristKey(*this);
-  positionHistory[0] = zobristHash;
 }
 void Position::clear() {
   mailbox.fill(NO_PIECE);
@@ -134,7 +133,6 @@ void Position::clear() {
   occupancy = 0ull;
   occupanciesOfColor = {0ull, 0ull};
   capturedInLastMove = NO_PIECE;
-  positionHistory.fill(0ull);
 }
 void Position::changeTurn() {
   turn = OPPOSITE_COLOR[turn];
@@ -155,7 +153,6 @@ Position &Position::operator=(const Position &rhs) {
   occupanciesOfColor = rhs.occupanciesOfColor;
   occupancy = rhs.occupancy;
   turn = rhs.turn;
-  positionHistory = rhs.positionHistory;
   return *this;
 }
 // Getters;
@@ -242,6 +239,64 @@ bool Position::isEmpty(int square_) const {
 // returns true if pseudo legal input is also legal;
 // Use it for temprory changes.
 // It changes turns automatically for now.
+bool Position::makeMove(const Move &move,
+                        std::array<uint64_t, 100> &positionHistory) {
+  uint flag = move.getFlags();
+  switch (flag) {
+  case MoveType::quietMoves:
+    makeQuietMove(move);
+    break;
+  case MoveType::captures:
+    capture(move);
+    break;
+  case MoveType::doublePawnPush:
+    makeDoublePawnPush(move);
+    break;
+  case MoveType::ePCapture:
+    makeEPCapture(move);
+    break;
+  case MoveType::kingCastle:
+    makeKingCastle(move);
+    break;
+  case MoveType::queenCastle:
+    makeQueenCastle(move);
+    break;
+  case MoveType::rookPromotion:
+    makePromotion(move, ROOK);
+    break;
+  case MoveType::rookPromoCapture:
+    makePromoCapture(move, ROOK);
+    break;
+  case MoveType::queenPromotion:
+    makePromotion(move, QUEEN);
+    break;
+  case MoveType::queenPromoCapture:
+    makePromoCapture(move, QUEEN);
+    break;
+  case MoveType::bishopPromotion:
+    makePromotion(move, BISHOP);
+    break;
+  case MoveType::bishopPromoCapture:
+    makePromoCapture(move, BISHOP);
+    break;
+  case MoveType::knightPromotion:
+    makePromotion(move, KNIGHT);
+    break;
+  case MoveType::knightPromoCapture:
+    makePromoCapture(move, KNIGHT);
+    break;
+  default:
+    break;
+  }
+  // legality
+  bool isLegal = !isInCheck();
+  // gameState
+  changeTurn();
+  ply++;
+  positionHistory[ply % 100] = zobristHash;
+  return isLegal;
+}
+
 bool Position::makeMove(const Move &move) {
   uint flag = move.getFlags();
   switch (flag) {
@@ -295,10 +350,8 @@ bool Position::makeMove(const Move &move) {
   // gameState
   changeTurn();
   ply++;
-  positionHistory[ply] = zobristHash;
   return isLegal;
 }
-
 // it does not change turn automatically;
 void Position::makeQuietMove(const Move &move) {
 
@@ -751,10 +804,11 @@ void Position::printBoard() const {
   std::cout << std::endl;
 }
 
-bool Position::isThreeFoldRep() const {
+bool Position::isThreeFoldRep(
+    const std::array<uint64_t, 100> &positionHistory) const {
   int repetition = 0;
-  for (int i = ply - 2; i >= ply - 8; i -= 2) {
-    if (positionHistory[i] == zobristHash) {
+  for (int i = (ply - 2); i >= 0 && i > (ply - 100); i -= 2) {
+    if (positionHistory[i % 100] == zobristHash && ply % 100 != i % 100) {
       repetition++;
     }
     if (repetition == 2) {
@@ -762,7 +816,4 @@ bool Position::isThreeFoldRep() const {
     }
   }
   return false;
-  // return std::count(positionHistory.begin(), positionHistory.begin() + ply +
-  // 1,
-  //                   zobristHash) >= 3;
 }
