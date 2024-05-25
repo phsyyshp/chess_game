@@ -44,7 +44,10 @@ go wtime 8080 btime 8080 winc 80 binc 80
 After this set of commands engine will start calculating the best move for the given position, whitin the given time limits. 
 
 Alternatively, you can use the engine with a third party GUI.
-
+## Demo
+Here is a demo of the engine playing against itself,
+on cutechess gui.
+[Demo](https://www.github.com/phsyyshp/chess_game/ChessEngineDemo.mp4)
 
 
 
