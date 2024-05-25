@@ -33,7 +33,7 @@ cd bin
 ```
 
 ## Using the Engine
-While engine running you can use it with UCI commands. Here is an example:
+While engine is running you can use it with UCI commands. Here is an example:
 ```
 uci
 isready
