@@ -47,7 +47,8 @@ Alternatively, you can use the engine with a third party GUI.
 ## Demo
 Here is a demo of the engine playing against itself,
 on cutechess gui.
-<iframe allow="fullscreen" allowfullscreen height="720" src="https://streamable.com/e/9cc886?nocontrols=1" width="1280" style="border:none;"></iframe>
+https://github.com/phsyyshp/chess_game/assets/27218386/21b8935d-10f1-4267-a32e-5ac3840e07c0
+
 
 
 
