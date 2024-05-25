@@ -47,10 +47,7 @@ Alternatively, you can use the engine with a third party GUI.
 ## Demo
 Here is a demo of the engine playing against itself,
 on cutechess gui.
-<video width="600" controls>
-  <source src="https://github.com/phsyyshp/chess_game/raw/master/ChessEngineDemo.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
+<iframe allow="fullscreen" allowfullscreen height="720" src="https://streamable.com/e/9cc886?nocontrols=1" width="1280" style="border:none;"></iframe>
 
 
 
